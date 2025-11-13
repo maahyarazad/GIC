@@ -8,6 +8,8 @@ import './ContactUsForm.css';
 import { Paperclip } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { IoMdClose } from "react-icons/io";
+
+
 const server_endpoint = import.meta.env.VITE_SERVER_API_URL;
 const ContactForm = ({ siteData, sectionId }) => {
 
@@ -82,7 +84,7 @@ const ContactForm = ({ siteData, sectionId }) => {
     };
 
     return (
-        <section className="container py-5 request-form-section" id={sectionId}>
+        <section className="container py-5 request-form-section" id={sectionId} >
 
             <div className="row">
                 <div className="col-12 col-md-6 p-lg-4 p-2">

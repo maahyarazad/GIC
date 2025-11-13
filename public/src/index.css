@@ -30,6 +30,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "ivymode", sans-serif;
 }
 
+.contrast-color {
+  color: var(--primary-contrast-color);
+}
+
 .btn-primary-contrast {
   position: relative;
   overflow: hidden;
@@ -100,4 +104,15 @@ h1, h2, h3, h4, h5, h6 {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.slide-down {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-down.visible {
+  opacity: 1;
+  transform: translateY(0);
 }/*# sourceMappingURL=index.css.map */

@@ -8,6 +8,7 @@ import Burger from '@animated-burgers/burger-rotate'
 // don't forget the styles
 import '@animated-burgers/burger-rotate/dist/styles.css'
 // import logo from '../../Assets/palmx-logo.jpeg'
+import MobileBackGround from '../../Assets/pexels-pixabay-262347.jpg'
 
 
 const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }) => {
@@ -82,8 +83,16 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
-    const handleScroll = (e, key) => {
+    const handleScroll = (e, key, type, path) => {
         e.preventDefault();
+
+        if (type === 'link') {
+
+            navigate(path)
+            setMenuOpen(false);
+
+            return;
+        }
 
         if (location.pathname !== '/') {
             setPendingScrollKey(key); // Save scroll target
@@ -175,15 +184,13 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     if (!navbarLinks || !companyName) return null
 
     return (
-        <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''} `}
-
+        <nav
+            className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`}
+            style={{
+                backgroundColor: `${scrolled ? 'var(--primary-gray-color)' : 'transparent'}`
+            }}
         >
-            <div className="navbar-section-left">
-                <div className="logo-container-header">
-                    {/* {companyName && companyName} */}
-                    {/* <img alt="Company Logo" className="header-logo" /> */}
-                </div>
-            </div>
+
 
             <div className="d-flex justify-content-center flex-column" >
 
@@ -198,57 +205,84 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
+                <div className={`navbar-section-middle ${showNavbar ? "d-none" : ""}`}>
+
+
+
+                    <ul className="navbar-links desktop-only">
+
+                        <div className={`logo-section ${showNavbar ? "d-none" : ""}`}>
+                            {/* <div className="lang-switch">
+                                <label className="switch">
+                                    <input type="checkbox" onChange={switchLanguage} checked={language === 'DE'} />
+                                    <span className="slider" />
+                                </label>
+                                <span className="lang-label">{language}</span>
+                            </div>
+                            <button className="btn btn-primary-contrast" onClick={GetStarted} type="button">{siteData.getStartedNow}</button> */}
+                        </div>
+                        {navbarLinks?.map((link) => (
+                            <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
+                                {
+                                    link.type === 'link' && <a href={link.path}>{link.label}</a>
+                                }
+                                {
+                                    link.type === 'button' && <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                                }
+                            </li>
+                        ))}
+                    </ul>
+
+                </div>
+
                 <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`}
 
                     style={{
-
-                        transition: "transform 0.4s ease, opacity 0.4s ease",
-                        transform: showNavbar ? "translateY(0)" : "translateY(-100%)",
+                        height: showNavbar ? '3vh' : 0,
+                        // transition: "transform 0.4s ease, opacity 0.4s ease",
+                        // transform: showNavbar ? "translateY(0)" : "translateY(-100%)",
                         opacity: showNavbar ? 1 : 0,
                     }}
                 >
 
+
                     {/* Desktop Nav Links */}
+
                     <ul className="navbar-links desktop-only">
-                        <ul className="navbar-links desktop-only">
-                            {navbarLinks?.map((link) => (
-                                <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                                    {
-                                        link.type === 'link' && <a href={link.path}>{link.label}</a>
-                                    }
-                                    {
-                                        link.type === 'button' && <Link onClick={(e) => handleScroll(e, link.id)}>{link.label}</Link>
-                                    }
-                                </li>
-                            ))}
-                        </ul>
+                        {navbarLinks?.map((link) => (
+                            <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
+                                {
+                                    link.type === 'link' && <a href={link.path}>{link.label}</a>
+                                }
+                                {
+                                    link.type === 'button' && <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                                }
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
 
             </div>
 
-            <div className="navbar-section-right desktop-only">
-                {/* <div className="lang-switch">
-                    <label className="switch">
-                        <input type="checkbox" onChange={switchLanguage} checked={language === 'DE'} />
-                        <span className="slider" />
-                    </label>
-                    <span className="lang-label">{language}</span>
-                </div> */}
-                {/* <button className="btn btn-primary-contrast" onClick={GetStarted} type="button">{siteData.getStartedNow}</button> */}
-            </div>
 
             {/* Slide-out Mobile Menu */}
-            <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}>
+            <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
+                style={{
+                    backgroundImage: `url(${MobileBackGround})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}
+            >
                 <ul className="mobile-links">
                     {navbarLinks?.map((link) => (
-                        <li key={link.path}>
-                            <Link onClick={(e) => handleScroll(e, link.id)}>{link.label}</Link>
+                        <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
+                            <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         </li>
                     ))}
                 </ul>
-                <div className="mobile-lang-switch">
+                {/* <div className="mobile-lang-switch">
                     <label className="switch">
                         <input type="checkbox" onChange={switchLanguage} checked={language === 'DE'} />
                         <span className="slider" />
@@ -261,7 +295,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                     onClick={GetStarted}
                 >
                     {siteData.getStartedNow}
-                </button>
+                </button> */}
             </div>
         </nav>
     );

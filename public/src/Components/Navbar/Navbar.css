@@ -8,57 +8,32 @@
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  background-color: var(--primary-gray-color) !important;
   transition: all 120ms ease-in-out;
   /* Toggle Switch */
   /* Hamburger Icon */
   /* Mobile Menu */
   /* Responsive */
 }
-.navbar a,
-.navbar div {
+.navbar .navbar-section-middle {
+  position: relative;
+}
+.navbar .navbar-section-middle .logo-section {
+  position: absolute;
+}
+.navbar a, .navbar li div {
   color: var(--primary-color) !important;
-  transition: all 120ms ease-in-out;
 }
-.navbar a:hover,
-.navbar div:hover {
-  color: inherit !important;
-  transition: all 120ms ease-in-out;
-}
-.navbar.navbar-scrolled {
-  height: 8vh;
-  transition: all 120ms ease-in-out;
-}
-.navbar.navbar-scrolled a,
-.navbar.navbar-scrolled div {
-  color: var(--primary-color) !important;
-  transition: all 120ms ease-in-out;
-}
-.navbar.navbar-scrolled .navbar-links.desktop-only li.active a {
+.navbar .navbar-links.desktop-only li.active a {
   color: var(--primary-contrast-color) !important;
 }
-.navbar.navbar-scrolled .navbar-links.desktop-only li a {
-  font-size: 1.1em;
-  padding: 0.5em 1em;
+.navbar .navbar-links.desktop-only li a {
+  font-size: 1.2em;
+  padding: 0em 1.3em 0em 1.3em;
   color: var(--primary-color);
   transition: all 120ms ease-in-out;
 }
-.navbar.navbar-scrolled .navbar-links.desktop-only li a:hover {
+.navbar .navbar-links.desktop-only li a:hover {
   color: var(--primary-color) !important;
-}
-.navbar:not(.navbar-scrolled) .navbar-links.desktop-only a {
-  font-size: 1.1em;
-  padding: 0.5em 0;
-  color: var(--primary-color) !important;
-  transition: all 120ms ease-in-out;
-}
-.navbar:not(.navbar-scrolled) .navbar-links.desktop-only a:hover {
-  background: transparent;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
-  border-radius: 5px;
-  color: var(--primary-contrast-color) !important;
-  transition: all 120ms ease-in-out;
 }
 .navbar .navbar-section-right {
   display: flex;
@@ -94,7 +69,10 @@
 .navbar .navbar-links li a,
 .navbar .mobile-links li a {
   text-decoration: none;
-  color: #333 !important;
+}
+.navbar .navbar-links li.active a,
+.navbar .mobile-links li.active a {
+  color: var(--primary-contrast-color) !important;
 }
 .navbar .get-started {
   background-color: var(--primary-contrast-color);
@@ -175,32 +153,26 @@
 }
 .navbar .mobile-menu {
   position: fixed;
-  right: -100%;
-  width: 300px;
+  left: -100%;
+  width: 100vw;
+  height: 90vh;
+  top: 10vh;
   background: #fff;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
   padding: 2rem;
-  transition: right 0.3s ease-in-out;
-  display: none; /* moved here to avoid override issues */
+  transition: all 0.3s ease-in-out;
+  display: none;
+  /* moved here to avoid override issues */
   flex-direction: column;
   gap: 1.5rem;
   z-index: 999;
-  border-top-left-radius: 5px;
-}
-.navbar .mobile-menu.scrolled {
-  top: 8vh;
-  height: 92vh;
-}
-.navbar .mobile-menu:not(.scrolled) {
-  top: 10vh;
-  height: 90vh;
 }
 .navbar .mobile-menu ul {
   display: flex;
   flex-direction: column;
 }
 .navbar .mobile-menu.open {
-  right: 0;
+  left: 0;
 }
 .navbar .mobile-menu .close-btn {
   background: none;
@@ -218,6 +190,9 @@
     display: block;
   }
   .navbar .desktop-only {
+    display: none;
+  }
+  .navbar .navbar-section-middle {
     display: none;
   }
   .navbar .menu-toggle {

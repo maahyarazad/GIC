@@ -15,6 +15,7 @@ import ParticleJsContainer from './Components/ParticleJsContainer/ParticleJsCont
 import './App.css';
 import ContactUs from './Pages/ContactUs';
 import MainLoader from './Components/MainLoader';
+import Layout from './Components/Layout/Layout';
 
 
 const App = () => {
@@ -89,7 +90,7 @@ const App = () => {
                 pauseOnHover
                 theme="light"
             />
-        
+
             <Navbar onLanguageChange={handleLanguageChange} 
                             navbarLinks={siteData.navLinks}
                             siteData={siteData.getStarted}
@@ -100,7 +101,9 @@ const App = () => {
                 <Route path="/" element={<Home siteData={siteData} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/services" element={<Services />} />
-                <Route path="/contact-us" element={<ContactUs siteData={siteData}/>} />
+                           
+                <Route path="/contact-us" element={ <Layout><ContactUs siteData={siteData}/>        </Layout>} />
+
             </Routes>
             <Footer footerData={siteData.footer} />
             <BackToTop />

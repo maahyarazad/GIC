@@ -40,6 +40,7 @@ const Footer = ({ footerData }) => {
 
 
 
+              
                 <div className='row'>
 
                     <div className="col">
@@ -47,10 +48,10 @@ const Footer = ({ footerData }) => {
                         <div className='d-flex justify-content-lg-center justify-content-start ps-lg-0 ps-5 py-4'>
 
 
-                            <div className='d-flex flex-column align-items-center text-center'>
-                                <img alt="GIC logo" width={200} />
+                            <div className='d-flex flex-column align-items-center text-center relative'>
+                                 <a href='/' className='s-font gic-logo' style={{fontSize: '5em', textDecoration: 'none', left: '15vw', top: '-2vh'}}>GIC</a>
                                 <div className='footer-text'>
-                                   
+
                                     Building C1
                                     Office 1208,  Ajman FreeZone,  Ajman, UAE
                                 </div>

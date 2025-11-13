@@ -2,7 +2,7 @@
 .navbar {
   position: sticky;
   top: 0;
-  height: 10vh;
+  height: 8vh;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -14,13 +14,40 @@
   /* Mobile Menu */
   /* Responsive */
 }
+.navbar .menu-button {
+  position: absolute;
+  left: 10px;
+}
 .navbar .navbar-section-middle {
   position: relative;
+  width: 90vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .navbar .navbar-section-middle .logo-section {
   position: absolute;
 }
-.navbar a, .navbar li div {
+.navbar .navbar-section-middle .gic-logo {
+  display: block;
+  position: relative;
+  /* ensure relative positioning */
+}
+.navbar .navbar-section-middle .gic-logo::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  right: -30px;
+  /* adjust distance from .gic-logo */
+  height: 80%;
+  /* vertical line height */
+  width: 2px;
+  /* line thickness */
+  background-color: rgb(169, 168, 168);
+  /* line color */
+}
+.navbar a,
+.navbar li div {
   color: var(--primary-color) !important;
 }
 .navbar .navbar-links.desktop-only li.active a {
@@ -155,8 +182,8 @@
   position: fixed;
   left: -100%;
   width: 100vw;
-  height: 90vh;
-  top: 10vh;
+  height: 94vh;
+  top: 8vh;
   background: #fff;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
   padding: 2rem;
@@ -198,5 +225,29 @@
   .navbar .menu-toggle {
     display: flex;
     margin-right: 1em;
+  }
+}
+@media screen and (max-width: 1199px) {
+  .navbar .navbar-section-middle {
+    position: relative;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .navbar .navbar-section-middle .gic-logo {
+    display: none;
+  }
+  .navbar .navbar-section-middle .logo-section {
+    position: absolute;
+  }
+  .navbar .navbar-links.desktop-only li.active a {
+    color: var(--primary-contrast-color) !important;
+  }
+  .navbar .navbar-links.desktop-only li a {
+    font-size: 1em;
+    padding: 0em 1em 0em 1em;
+    color: var(--primary-color);
+    transition: all 120ms ease-in-out;
   }
 }/*# sourceMappingURL=Navbar.css.map */

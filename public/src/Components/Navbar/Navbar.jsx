@@ -186,19 +186,24 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     return (
         <nav
             className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`}
-            style={{
-                backgroundColor: `${scrolled ? 'var(--primary-gray-color)' : 'transparent'}`
-            }}
+          style={{
+  backgroundColor: scrolled 
+    ? 'var(--primary-gray-color)' 
+    : (location.pathname === '/' ? 'transparent' : 'black')
+}}
         >
 
 
-            <div className="d-flex justify-content-center flex-column" >
+            <div className="d-flex justify-content-center flex-column relative" >
 
-                <button className={`menu-toggle ${scrolled ? 'scrolled' : ''}`} aria-label="Toggle menu">
-                    <Burger isOpen={menuOpen} direction="right" onClick={toggleMenu}>
+                <div className='menu-button'>
 
-                    </Burger>
-                </button>
+                    <button className={`menu-toggle ${scrolled ? 'scrolled' : ''}`} aria-label="Toggle menu">
+                        <Burger isOpen={menuOpen} direction="right" onClick={toggleMenu}>
+
+                        </Burger>
+                    </button>
+                </div>
 
 
 
@@ -209,18 +214,10 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
+
+                    <a href='/' className='s-font position-absolute gic-logo' style={{fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'}}>GIC</a>
                     <ul className="navbar-links desktop-only">
 
-                        <div className={`logo-section ${showNavbar ? "d-none" : ""}`}>
-                            {/* <div className="lang-switch">
-                                <label className="switch">
-                                    <input type="checkbox" onChange={switchLanguage} checked={language === 'DE'} />
-                                    <span className="slider" />
-                                </label>
-                                <span className="lang-label">{language}</span>
-                            </div>
-                            <button className="btn btn-primary-contrast" onClick={GetStarted} type="button">{siteData.getStartedNow}</button> */}
-                        </div>
                         {navbarLinks?.map((link) => (
                             <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                                 {
@@ -246,9 +243,10 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                 >
 
 
+                      <a href='/' className='s-font position-absolute gic-logo' style={{fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'}}>GIC</a>
                     {/* Desktop Nav Links */}
-
                     <ul className="navbar-links desktop-only">
+                        
                         {navbarLinks?.map((link) => (
                             <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                                 {

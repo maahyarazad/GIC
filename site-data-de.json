@@ -1,0 +1,334 @@
+{
+  "companyName": "PalmX",
+  "companyLogo": "https://cdn.dribbble.com/userupload/18467822/file/original-6dc62fc38015a876784c9dcc98737906.jpg?resize=400x0",
+  "getStarted":{
+    "getStartedNow":"Jetzt loslegen!",
+    "getStarted":"Loslegen"
+  },
+  "navLinks": [
+    {
+      "label": "Dienstleistungen",
+      "path": "/services",
+      "type": "button",
+      "id": 1
+    },
+    {
+      "label": "Referenzen",
+      "path": "/Show Cases",
+      "type": "button",
+      "id": 2
+    }
+  ],
+  "serviceCards_1_title": "Branchen, denen wir helfen",
+  "serviceCards_1": [
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/1639328.svg",
+      "imageAlt": "Gesundheitswesen-Icon",
+      "title": "Gesundheitswesen",
+      "description": "Wir entwickeln Dienstleistungen, Werkzeuge und Systeme, um Patienten und Mitarbeiter mit aktueller Software zu versorgen.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/2429310.svg",
+      "imageAlt": "Bildungs-Icon",
+      "title": "Bildung",
+      "description": "E-Learning-Lösungen, die Bildung flexibel, ansprechend und äußerst effizient gestalten.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/35594.svg",
+      "imageAlt": "Einzelhandel- und Handels-Icon",
+      "title": "Einzelhandel",
+      "description": "Wir bauen stärkere Verbindungen zu Kunden durch Web- und mobile Anwendungen mit überlegener Einkaufserfahrung und 24/7 Verfügbarkeit.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/2126877.svg",
+      "imageAlt": "Fertigungs-Icon",
+      "title": "Fertigung",
+      "description": "Umfassende Softwarelösungen für das Management von Lieferketten, Bestandsverwaltung, Lager, Produktionsüberwachung, Prozessautomatisierung und mehr.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/295469.svg",
+      "imageAlt": "Professionelle Dienstleistungen-Icon",
+      "title": "Professionelle Dienstleistungen",
+      "description": "Wir entwickeln CRM-, Management-Tools, Abrechnungsprodukte, Dokumentenmanagementsysteme und mehr. Unsere Lösungen sind für Fachleute von Fachleuten entwickelt.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/1254501.svg",
+      "imageAlt": "Telekommunikation-Icon",
+      "title": "Telekommunikation",
+      "description": "Wir verbessern die globale Kommunikation, indem wir Lösungen für das Netzwerkmanagement, Kundenerfahrung, IoT, Sicherheit, Automatisierung und Analytik entwickeln.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/152745.svg",
+      "imageAlt": "Logistik- und Transport-Icon",
+      "title": "Logistik & Transport",
+      "description": "Software für Frachtreservierung, Transportmanagement und optimierte Lieferkettenoperationen, um Waren und Geschäfte in Bewegung zu halten.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/147296.svg",
+      "imageAlt": "Ingenieur- und Bau-Icon",
+      "title": "Ingenieurwesen & Bau",
+      "description": "Von fortschrittlichen BIM-Lösungen und Kostenabschätzungstools bis hin zur IoT-Integration legen wir das Fundament für die Bauindustrie.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://svgsilh.com/svg/644850.svg",
+      "imageAlt": "Marketing- und Werbe-Icon",
+      "title": "Marketing & Werbung",
+      "description": "Wir bauen effektive Kundenbeziehungen mit Marketingautomatisierungstools, die helfen, Strategien zu optimieren, Erkenntnisse zu gewinnen und mutige Ziele zu erreichen.",
+      "services": [],
+      "showServicesList": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    }
+  ],
+  "testimonials": [
+    {
+      "review": "Das System hat dank der durchdachten Meinungen von PalmX einen erheblichen Wettbewerbsvorteil in der Branche geschaffen.",
+      "additionalInfo": "Sie haben die Verantwortung für die ständige Aktualisierung eines Projektmanagement-Tools mit einem hohen Detaillierungsgrad übernommen und waren bestrebt, die bestmögliche Lösung zu schaffen.",
+      "authorImage": "https://sumatosoft.com/wp-content/uploads/2023/01/photo.png",
+      "authorName": "Alexander McCaig",
+      "authorPosition": "Mitbegründer & CEO, Tartle"
+    },
+    {
+      "review": "Ich war von den Preisen von PalmX beeindruckt, insbesondere für das Projekt, das ich durchführen wollte, und im Vergleich zu den Angeboten, die ich von vielen anderen Firmen erhalten habe.",
+      "additionalInfo": "Auch ihre Kommunikationsfähigkeiten waren großartig; es fühlte sich nie wie ein Fernprojekt an. Es schien, als ob PalmX nebenan arbeitet, weil ihr Projektmanager mich immer auf dem Laufenden hielt. Anfänglich.",
+      "authorImage": "https://sumatosoft.com/wp-content/uploads/2022/12/5cc8378b669af259c74ec736_b_dorsinvil-2-1-1.jpg",
+      "authorName": "Benjamin Dorsinvil",
+      "authorPosition": "Gründer, SellBig"
+    },
+    {
+      "review": "Wir haben eine andere Firma ausprobiert, die einer unserer Partner genutzt hatte, aber sie hat nicht funktioniert. Ich habe das Gefühl, dass PalmX eine bessere Untersuchung dessen durchführt, was wir verlangen. Sie sagen uns, wie sie eine Aufgabe planen und fragen, ob das für uns funktioniert. Wir haben sie gewählt, weil ihr Ansatz zu uns gepasst hat.",
+      "additionalInfo": "",
+      "authorImage": "https://sumatosoft.com/wp-content/uploads/2023/01/photo6.png",
+      "authorName": "Damian Gevertz",
+      "authorPosition": "Gründer & CEO, Widgety"
+    },
+    {
+      "review": "PalmX ist in jeder Hinsicht großartig, einschließlich Kosten, Professionalität, Transparenz und Bereitschaft zur Unterstützung. Ich denke, sie waren großartige Berater, als wir noch nicht bereit waren mit einer vollständig ausgearbeiteten Idee, die auf den Markt kommen könnte.",
+      "additionalInfo": "Sie kennen das Geschäft und die Start-up-Szene auch global.",
+      "authorImage": "https://sumatosoft.com/wp-content/uploads/2023/01/photo13.png",
+      "authorName": "David Logan",
+      "authorPosition": "Gründer, Umergence"
+    },
+    {
+      "review": "PalmX ist die Firma, mit der man arbeiten sollte, wenn man hohe Standards einhalten möchte. Die professionellen Arbeitsabläufe, an die sie sich halten, führen zu außergewöhnlicher Qualität.",
+      "additionalInfo": "Wichtig ist, dass sie Ihnen helfen, mit der Geschäftslogik Ihrer Anwendung zu denken, und sie folgen nicht blind, was Sie sagen. Was sehr wichtig ist. Insgesamt großartige Fähigkeiten, gute Kommunikation und bisher mit den Ergebnissen zufrieden.",
+      "authorImage": "https://sumatosoft.com/wp-content/uploads/2023/01/photo2.png",
+      "authorName": "Domien Van Eynde",
+      "authorPosition": "Teamleiter, Daiokan.com"
+    }
+  ],
+  "serviceCards_2_title": "Fortgeschrittene Technologien, mit denen wir arbeiten",
+  "serviceCards_2": [
+    {
+      "href": "https://sumatosoft.com/solutions/big-data",
+      "imageSrc": "https://svgsilh.com/svg/434037.svg",
+      "imageAlt": "Big Data-Icon",
+      "title": "Big Data",
+      "description": "Daten sind das Lebenselixier der modernen digitalen Ära, und wir sind an der Spitze, um Unternehmen zu helfen, Daten für ihre Bedürfnisse zu verarbeiten und zu transformieren. Ob es darum geht, Abläufe zu optimieren, Kundenerfahrungen zu verbessern oder Markttrends zu identifizieren, unsere Big Data-Expertise verwandelt Rohdaten in ein strategisches Asset für das Unternehmen.",
+      "services": [
+        "Datenaufnahme und -integration aus mehreren Quellen",
+        "skalierbare Datenpipeline-Entwicklung",
+        "fortgeschrittene Datenanalytik und -visualisierung",
+        "prädiktive Modellierung und Prognosen",
+        "Echtzeit-Datenverarbeitung und -analyse",
+        "Big Data-Infrastrukturaufbau und -management",
+        "Design von Datenlager und -see",
+        "Integration von maschinellem Lernen für verbesserte Einblicke",
+        "Analyse des Kundenverhaltens und von Trends",
+        "Daten- Sicherheits- und Compliance-Lösungen"
+      ],
+      "linkText": "Big Data-Dienstleistungen",
+      "showServicesList": true,
+      "hoverEffect": true,
+      "fixHeight": false
+    },
+    {
+      "href": "https://sumatosoft.com/solutions/internet-of-things-software-development",
+      "imageSrc": "https://svgsilh.com/svg/1873373.svg",
+      "imageAlt": "IoT-Icon",
+      "title": "Internet der Dinge (IoT)",
+      "description": "Verbinden Sie Geräte, überwachen Sie die Abläufe und optimieren Sie die Arbeitsabläufe mit unseren IoT-Lösungen. Von der intelligenten Fertigung und vorausschauenden Wartung bis hin zur Optimierung der Lieferkette und Fernüberwachung liefern wir maßgeschneiderte IoT-Projekte, die Innovationen in verschiedenen Branchen vorantreiben.",
+      "services": [
+        "Entwicklung maßgeschneiderter IoT-Lösungen",
+        "Integration und Konnektivität von IoT-Geräten",
+        "Echtzeit-Datenaufnahme und -analyse",
+        "vorausschauende Wartungslösungen",
+        "intelligente Fertigungs- und Automatisierungssysteme",
+        "Flottenmanagement- und Verfolgungsanwendungen",
+        "IoT-Beratung",
+        "Fernüberwachungs- und Kontrollsysteme",
+        "IoT-Datenvisualisierung und Dashboards",
+        "sichere IoT-Infrastruktur und Compliance"
+      ],
+      "linkText": "IoT-Softwareentwicklung",
+      "showServicesList": true,
+      "hoverEffect": true,
+      "fixHeight": false
+    },
+    {
+      "href": "https://sumatosoft.com/solutions/artificial-intelligence",
+      "imageSrc": "https://svgsilh.com/svg/2099120.svg",
+      "imageAlt": "KI-Icon",
+      "title": "Künstliche Intelligenz",
+      "description": "Von prädiktiver Analytik über maschinelles Lernen, Computer Vision, Chatbot-Assistenten bis hin zu KI-gestützten Gesundheitsdiagnosen erstreckt sich der Einfluss von KI über alle Branchen. Wir entwerfen maßgeschneiderte KI-Modelle und integrieren KI-Tools in unsere Projekte, um die digitale Transformation voranzutreiben.",
+      "services": [
+        "Entwicklung maßgeschneiderter KI-Modelle",
+        "lösungen für prädiktive Analytik und Prognosen",
+        "Implementierung von Algorithmen für maschinelles Lernen",
+        "natürliche Sprachverarbeitung (NLP) für Chatbots und Assistenten",
+        "Computer Vision für Bild- und Videoanalyse",
+        "KI-gestützte Gesundheitsdiagnosen und Entscheidungsunterstützung",
+        "KI-Tools für vorausschauende Wartung",
+        "Beratung zur Implementierung von KI",
+        "Sentiment-Analyse und Vorhersage des Kundenverhaltens",
+        "KI-Integration mit bestehenden Softwaresystemen"
+      ],
+      "linkText": "KI-Entwicklung",
+      "showServicesList": true,
+      "hoverEffect": true,
+      "fixHeight": false
+    },
+    {
+      "href": "https://sumatosoft.com/solutions/blockchain",
+      "imageSrc": "https://svgsilh.com/svg/311941.svg",
+      "imageAlt": "Blockchain-Icon",
+      "title": "Blockchain",
+      "description": "Nutzen Sie das Potenzial der Blockchain-Technologie mit unseren Dienstleistungen. Von Smart Contracts und digitalen Wallets bis hin zu Rückverfolgbarkeit in der Lieferkette und finanziellen Transaktionen entwickeln wir sichere Softwarelösungen mit manipulationssicheren Aufzeichnungen und vollständiger Datenintegrität.",
+      "services": [
+        "Entwicklung und Prüfung von Smart Contracts",
+        "Entwicklung maßgeschneiderter Blockchain-Anwendungen",
+        "Integration von Blockchain mit bestehenden Systemen",
+        "Entwicklung dezentraler Anwendungen (dApps)",
+        "Tokenisierung und Erstellung digitaler Vermögenswerte",
+        "private und öffentliche Blockchain-Netzwerke",
+        "Blockchain-basierte Lieferkettenlösungen",
+        "Beratung zur Blockchain-Entwicklung",
+        "Blockchain-gestütztes Identitätsmanagement",
+        "sichere und manipulationssichere Datenspeicherlösungen"
+      ],
+      "linkText": "Blockchain-Entwicklung",
+      "showServicesList": true,
+      "hoverEffect": true,
+      "fixHeight": false
+    }
+  ],
+  "ContactUs": {
+    "h2": "Lass uns anfangen",
+    "p": "Was kommt als Nächstes",
+    "steps": [
+      "1. Teilen Sie uns Ihre Anforderungen mit",
+      "2. Analysieren Sie diese mit unseren Experten",
+      "3. Erhalten Sie einen detaillierten Vorschlag",
+      "4. Starten Sie das Projekt"
+    ],
+    "questionText": "Wenn Sie Fragen haben, schreiben Sie uns eine E-Mail an",
+    "privacy": "Mit dem Absenden stimmen Sie der Erfassung Ihres Namens und Ihrer E-Mail-Adresse zu Kommunikationszwecken zu.",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "form": {
+      "nameLabel": "Mein Name",
+      "emailLabel": "E-Mail-Adresse",
+      "messageLabel": "Nachricht",
+      "attachFile": "Datei anhängen",
+      "selectedFile": " Ausgewählte Datei:"
+    },
+    "sendYourRequest": "Ihre Anfrage senden",
+    "sending": ""
+  },
+  "homeSliders": [
+    {
+      "id": 1,
+      "title": "Nahtlose Erlebnisse über Web & Mobile schaffen",
+      "text": "Schöne Websites und leistungsstarke Android- & iOS-Anwendungen.",
+      "image": "https://png.pngtree.com/background/20210709/original/pngtree-technology-business-blue-background-glare-picture-image_939240.jpg"
+    }
+  ],
+  "footer": {
+    "companyName": "PalmX",
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXZlaUXIWozu3xqknYB3S9nknCPGFPAEVZLA&s",
+    "about": "PalmX ist ein führender Anbieter innovativer Geschäftslösungen.",
+    "navLinks": [
+      {
+        "label": "Datenschutzrichtlinie",
+        "path": "/privacy-policy"
+      },
+      {
+        "label": "Nutzungsbedingungen",
+        "path": "/terms-of-service"
+      },
+      {
+        "label": "Karriere",
+        "path": "/careers"
+      }
+    ],
+    "socialLinks": [
+      {
+        "platform": "Facebook",
+        "url": "https://facebook.com/TechSolutions",
+        "icon": "fab fa-facebook-f"
+      },
+      {
+        "platform": "Twitter",
+        "url": "https://twitter.com/TechSolutions",
+        "icon": "fab fa-twitter"
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://linkedin.com/company/TechSolutions",
+        "icon": "fab fa-linkedin"
+      }
+    ],
+    "contact": {
+      "email": "hallo@palm-x.com",
+      "phone": "+1 123-456-7890"
+    }
+  }
+}

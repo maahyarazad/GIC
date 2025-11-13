@@ -1,0 +1,151 @@
+.ripple-container svg {
+  color: var(--primary-contrast-color);
+}
+
+.ripple-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-direction: column;
+}
+
+.ripple {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(0, 128, 255, 0.3);
+  /* Blue ripple */
+  animation: rippleWave 1.5s infinite ease-out;
+  z-index: -1;
+}
+
+
+@keyframes rippleWave {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+
+  70% {
+    transform: scale(1.6);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+
+
+.loader {
+  height: 30px;
+  aspect-ratio: 2.5;
+  --_g: no-repeat radial-gradient(farthest-side, #fefefe 90%, #0000);
+  background: var(--_g), var(--_g), var(--_g), var(--_g);
+  background-size: 20% 50%;
+  animation: l44 1s infinite linear alternate;
+}
+
+@keyframes l44 {
+
+  0%,
+  5% {
+    background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+  }
+
+  12.5% {
+    background-position: calc(0*100%/3) 0, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+  }
+
+  25% {
+    background-position: calc(0*100%/3) 0, calc(1*100%/3) 0, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+  }
+
+  37.5% {
+    background-position: calc(0*100%/3) 100%, calc(1*100%/3) 0, calc(2*100%/3) 0, calc(3*100%/3) 50%
+  }
+
+  50% {
+    background-position: calc(0*100%/3) 100%, calc(1*100%/3) 100%, calc(2*100%/3) 0, calc(3*100%/3) 0
+  }
+
+  62.5% {
+    background-position: calc(0*100%/3) 50%, calc(1*100%/3) 100%, calc(2*100%/3) 100%, calc(3*100%/3) 0
+  }
+
+  75% {
+    background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 100%, calc(3*100%/3) 100%
+  }
+
+  87.5% {
+    background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 100%
+  }
+
+  95%,
+  100% {
+    background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+  }
+}
+
+.type-writer-ollama {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.typewriter-ollama p {
+  color: white;
+  font-size: inherit;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+
+
+  width: 80vw;
+  /* or a fixed width like 400px */
+  /* limit height */
+  overflow-y: auto;
+  /* vertical scrollbar if needed */
+  overflow-x: hidden;
+  /* prevent horizontal scrolling */
+  padding: 1rem;
+  border-radius: 8px;
+
+  word-wrap: break-word;
+  /* wrap long words */
+  white-space: pre-wrap;
+
+}
+
+.typewriter-ollama p.show {
+  max-height: 500px;
+  /* or large enough to show all text */
+}
+
+@media screen and (max-width: 768px) {
+  .ripple-container {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .typewriter-ollama p {
+    font-size: 1rem;
+    max-width: 90vw;
+    padding: 0.75rem;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto;
+  }
+
+  .loader {
+    height: 20px;
+  }
+}

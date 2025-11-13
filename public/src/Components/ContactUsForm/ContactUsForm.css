@@ -1,0 +1,119 @@
+.request-form-section input,
+.request-form-section textarea {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-radius: 0px;
+    background-color: transparent !important;
+    color: white !important;
+}
+
+.request-form-section .form-control.is-invalid,
+.request-form-section .was-validated .form-control:invalid {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid red;
+
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent !important;
+    color: white !important;
+
+}
+
+
+.request-form-section input:not(:placeholder-shown) {
+    background-color: transparent !important;
+    color: white !important;
+}
+
+.request-form-section input::placeholder,
+.request-form-section textarea::placeholder {
+    background-color: transparent !important;
+    color: gray !important;
+}
+
+
+.request-form-section input:focus,
+.request-form-section textarea:focus,
+.request-form-section input:focus-visible,
+.request-form-section textarea:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--primary-color);
+    background-color: transparent !important;
+    color: white !important;
+}
+
+.request-form-section p,
+.request-form-section ul,
+.request-form-section label {
+    color: rgb(255, 255, 255);
+}
+
+.request-form-section {
+    border-radius: 1rem;
+    /* 2xl */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1.5rem;
+
+    margin-bottom: 1.5rem;
+    border-radius: 5px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.2); 
+    backdrop-filter: blur(5px);          
+    -webkit-backdrop-filter: blur(5px); 
+}
+
+.lets-start {
+    font-size: 3rem;
+    color: var(--primary-contrast-color) !important;
+}
+
+.request-form-section a {
+    color: var(--primary-contrast-color) !important;
+}
+
+
+.request-form-section li {
+    font-size: 1.5rem;
+    line-height: 3rem;
+}
+
+
+.attachment-button {
+    background: transparent !important;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.1s ease-in;
+}
+
+/* .attachment-button::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 5px;
+  background-color: white;
+  transition: width 0.3s ease;
+} */
+
+.attachment-button:hover{
+  color: var(--primary-contrast-color) !important;
+  transform: scale(1.1);
+  transition: all 0.1s ease-in;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .request-form-section li {
+        font-size: inherit !important;
+            line-height: 1.5rem !important
+    }
+}

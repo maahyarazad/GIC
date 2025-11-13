@@ -1,0 +1,44 @@
+.typewriter-container{
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+     align-items: center;
+     flex-direction: column;
+}
+
+.typewriter{
+    display: flex;
+    /* align-self: center; */
+}
+
+.typewriter p {
+  color: var(--primary-contrast-color);
+  font-size: 5rem;
+  /* margin-inline: auto; */
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid;
+  width: 0;
+  animation: typing 2.5s steps(20, end) infinite, blink 1s step-end infinite;
+}
+
+@keyframes typing{
+    from{
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink{
+    50%{
+        border-color: transparent;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .typewriter p{
+       font-size: 3rem; 
+    };
+}

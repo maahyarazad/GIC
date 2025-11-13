@@ -1,0 +1,277 @@
+/* Base styles */
+.navbar {
+  position: sticky;
+  top: 0;
+  height: 10vh;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--primary-gray-color) !important;
+  transition: all 120ms ease-in-out;
+
+  a,
+  div {
+    color: var(--primary-color) !important;
+    transition: all 120ms ease-in-out;
+
+    &:hover {
+      color: inherit !important;
+      transition: all 120ms ease-in-out;
+    }
+  }
+
+  &.navbar-scrolled {
+    height: 8vh;
+    transition: all 120ms ease-in-out;
+
+    a,
+    div {
+      color: var(--primary-color) !important;
+      transition: all 120ms ease-in-out;
+    }
+
+    .navbar-links.desktop-only {
+      li {
+        &.active {
+          a {
+            color: var(--primary-contrast-color) !important;
+          }
+        }
+        a {
+          font-size: 1.1em;
+          padding: 0.5em 1em;
+          color: var(--primary-color);
+          transition: all 120ms ease-in-out;
+
+          &:hover {
+                  color: var(--primary-color) !important;
+            // background: rgba(255, 255, 255, 0.284);
+            // backdrop-filter: blur(10px);
+            // -webkit-backdrop-filter: blur(10px);
+            // border-radius: 5px;
+            // color: var(--primary-contrast-color);
+            // transition: all 120ms ease-in-out;
+          }
+        }
+      }
+    }
+  }
+
+  &:not(.navbar-scrolled) {
+    .navbar-links.desktop-only {
+      a {
+        font-size: 1.1em;
+        padding: 0.5em 0;
+        color: var(--primary-color) !important;
+        transition: all 120ms ease-in-out;
+
+        &:hover {
+          background: transparent;
+          backdrop-filter: blur(1px);
+          -webkit-backdrop-filter: blur(1px);
+          border-radius: 5px;
+          color: var(--primary-contrast-color) !important;
+          transition: all 120ms ease-in-out;
+        }
+      }
+    }
+  }
+
+  .navbar-section-right {
+    display: flex;
+  }
+
+  .navbar-section-left {
+    position: relative;
+  }
+
+  .logo-container-header {
+    max-width: 70px;
+    max-height: 70px;
+    overflow: hidden !important;
+    border-radius: 50%;
+    display: inline-block;
+    position: fixed;
+    top: 15px;
+
+    .header-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(2) translateY(2px);
+      transition: transform 0.3s ease;
+    }
+  }
+
+  .navbar-links,
+  .mobile-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    padding: 0;
+    margin: 0;
+
+    li {
+      a {
+        text-decoration: none;
+        color: #333 !important;
+      }
+    }
+  }
+
+  .get-started {
+    background-color: var(--primary-contrast-color);
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .lang-label {
+      padding-right: 1em;
+      font-weight: bold;
+      color: var(--primary-contrast-color);
+    }
+  }
+
+  /* Toggle Switch */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      &:checked + .slider {
+        background-color: var(--primary-contrast-color);
+
+        &::before {
+          transform: translateX(20px);
+        }
+      }
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background-color: #ccc;
+      border-radius: 24px;
+      transition: 0.4s;
+
+      &::before {
+        content: "";
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.4s;
+      }
+    }
+  }
+
+  /* Hamburger Icon */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    .bar {
+      height: 3px;
+      width: 100%;
+      background-color: white !important;
+      border-radius: 3px;
+    }
+
+    &.scrolled,
+    &:not(.scrolled) {
+      .burger-lines,
+      .burger-lines::before,
+      .burger-lines::after {
+        background-color: var(--primary-contrast-color);
+      }
+    }
+  }
+
+  /* Mobile Menu */
+  .mobile-menu {
+    position: fixed;
+    right: -100%;
+    width: 300px;
+    background: #fff;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    transition: right 0.3s ease-in-out;
+    display: none; /* moved here to avoid override issues */
+    flex-direction: column;
+    gap: 1.5rem;
+    z-index: 999;
+    border-top-left-radius: 5px;
+
+    &.scrolled {
+      top: 8vh;
+      height: 92vh;
+    }
+
+    &:not(.scrolled) {
+      top: 10vh;
+      height: 90vh;
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &.open {
+      right: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      align-self: flex-end;
+      cursor: pointer;
+    }
+  }
+
+  /* Responsive */
+  @media screen and (max-width: 600px) {
+    .mobile-menu {
+      display: block;
+    }
+
+    .desktop-only {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: flex;
+      margin-right: 1em;
+    }
+
+    /* Corrected this part: apply justify-content to navbar */
+    justify-content: start;
+  }
+}

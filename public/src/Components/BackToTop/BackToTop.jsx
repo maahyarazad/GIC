@@ -74,7 +74,7 @@ const BackToTop = () => {
                     ref={circleRef}
                 />
             </svg>
-            <span className="arrow">↑</span>
+            <span className="arrow contrast-color">↑</span>
         </button>
     );
 };

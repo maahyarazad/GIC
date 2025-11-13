@@ -27,20 +27,9 @@ const Footer = ({ footerData }) => {
 
     return (
         <footer className="footer"
-        // style={{
-        //         backgroundImage: `url(${background})`,
-        //         backgroundSize: 'cover',
-        //         backgroundPosition: 'center',
-        //         backgroundRepeat: 'no-repeat',
-        //         // position: 'relative',
-        //     }}
+       
 
         >
-            <div className="row w-100">
-
-
-
-              
                 <div className='row'>
 
                     <div className="col">
@@ -48,8 +37,10 @@ const Footer = ({ footerData }) => {
                         <div className='d-flex justify-content-lg-center justify-content-start ps-lg-0 ps-5 py-4'>
 
 
-                            <div className='d-flex flex-column align-items-center text-center relative'>
-                                 <a href='/' className='s-font gic-logo' style={{fontSize: '5em', textDecoration: 'none', left: '15vw', top: '-2vh'}}>GIC</a>
+                            <div className='d-flex flex-column align-items-start justify-content-lg-center align-items-lg-center relative'>
+                                 <a href='/' className='s-font contrast-color' 
+                                    style={{fontSize: '5em', textDecoration: 'none', left: '15vw', top: '-2vh'}}
+                                    >GIC</a>
                                 <div className='footer-text'>
 
                                     Building C1
@@ -63,8 +54,17 @@ const Footer = ({ footerData }) => {
 
                     </div>
 
+                    
+
 
                 </div>
+
+
+
+
+
+
+
 
 
                 <div className='row'>
@@ -74,22 +74,22 @@ const Footer = ({ footerData }) => {
                         <div className='d-flex justify-content-lg-center justify-content-start ps-lg-0 ps-5'>
 
 
-                            <div class="footer-input-container">
+                            <div className="footer-input-container">
                                 <input type="text" placeholder='Subscribe For News' />
-                                <i class="arrow-icon pi pi-arrow-right"></i>
+                                <i className="arrow-icon pi pi-arrow-right text-white"></i>
                             </div>
 
                         </div>
 
                     </div>
 
-                    <div className="col-12 col-lg-6 p-lg-0 p-5
+                    <div className="col-12 col-lg-6 p-lg-0 p-5 mb-4
                     d-flex align-items-start justify-content-center flex-column">
                         <div className='d-flex justify-content-lg-center justify-content-start flex-column align-items-baseline'>
 
                             {footerData.navLinks.map((link) => (
                                 <div key={link.label}>
-                                    <a href={link.path}>{link.label}</a>
+                                    <a  href={link.path}>{link.label}</a>
                                 </div>
                             ))}
 
@@ -99,7 +99,7 @@ const Footer = ({ footerData }) => {
 
                     </div>
                 </div>
-            </div>
+           
         </footer>
     );
 };

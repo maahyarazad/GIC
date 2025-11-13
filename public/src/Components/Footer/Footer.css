@@ -1,8 +1,9 @@
 .footer {
-  background-color: rgb(15, 15, 12) !important;
-  height: 50vh;
+  background-color: var(--primary-gray-color);
+  min-height: 50vh;
+  width: 100vw;
   font-family: Arial, sans-serif;
-  color: #ededed;
+  color: var(--primary-color);
   border-top: 1px solid #ddd;
 }
 .footer a {

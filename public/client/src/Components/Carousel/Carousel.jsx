@@ -66,10 +66,27 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
         if(currentIndex === maxIndex) return;
         setCurrentIndex(prev => (prev + 1));
     };
+
+    const startX = useRef(0);
+const handleStart = (e) => {
+    startX.current = e.touches[0].clientX;
+  };
+
+  const handleEnd = (e) => {
+    const diff = startX.current - e.changedTouches[0].clientX;
+
+    if (Math.abs(diff) > 50) {
+      diff > 0 ? goNext() : goPrev();
+    }
+  };
+
     return (
         <>
             <div className="carousel-wrapper">
-                <div ref={containerRef} className="carousel-container">
+                <div ref={containerRef} 
+                onTouchStart={handleStart}
+                                onTouchEnd={handleEnd}
+                className="carousel-container">
                     <div
                         className="carousel-track"
                         style={{
@@ -78,6 +95,7 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
                     >
                         {items.map((item, idx) => (
                             <div
+                                
                                 key={idx}
                                 className="carousel-slide"
                                 style={{ minWidth: slideWidth, maxWidth: containerRef?.current?.clientWidth }}

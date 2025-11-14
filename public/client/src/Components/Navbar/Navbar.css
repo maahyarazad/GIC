@@ -178,7 +178,7 @@
 .navbar .menu-toggle.scrolled .burger-lines::after, .navbar .menu-toggle:not(.scrolled) .burger-lines,
 .navbar .menu-toggle:not(.scrolled) .burger-lines::before,
 .navbar .menu-toggle:not(.scrolled) .burger-lines::after {
-  background-color: var(--primary-contrast-color);
+  background-color: var(--primary-color);
 }
 .navbar .mobile-menu {
   position: fixed;

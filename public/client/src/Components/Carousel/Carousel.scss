@@ -136,6 +136,9 @@
         right: auto;  /* unset right */
         width: 2.5rem;
         height: 2.5rem;
+        background-color: transparent;
+        color: var(--primary-gray-color);
+        font-size: 2rem;
     }
 
     .carousel-btn-next {
@@ -144,5 +147,8 @@
         left: auto; /* unset left */
         width: 2.5rem;
         height: 2.5rem;
+            background-color: transparent;
+            color: var(--primary-gray-color);
+            font-size: 2rem;
     }
 }

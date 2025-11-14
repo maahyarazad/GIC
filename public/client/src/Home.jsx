@@ -10,21 +10,30 @@ import Carousel from './Components/Carousel/Carousel';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from './Hooks/UseInView';
 import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
+import SlidingDownImage from './Assets/emir-new-img-top-extra-small-v01-bg.jpg';
+import SlidingDownImageInvert from './Assets/ChatGPT Image Nov 14, 2025, 05_09_22 PM.png';
+
+import HeroSection from './Components/Sample';
+import EmirStyleHero from './Components/Sample';
+
+
 const Home = ({ siteData }) => {
 
     const [ref, isVisible] = UseInView();
     const [_ref, _isVisible] = UseInView();
 
 
-    const [_ref1, _isVisible1] = UseInView({delay: 300});
-    const [_ref2, _isVisible2] = UseInView({delay: 500});
-    const [_ref3, _isVisible3] = UseInView({delay: 700});
+    const [_ref1, _isVisible1] = UseInView({ delay: 300 });
+    const [_ref2, _isVisible2] = UseInView({ delay: 500 });
+    const [_ref3, _isVisible3] = UseInView({ delay: 700 });
 
 
-    const [_ref7, _isVisible7] = UseInView({delay: 700});
-    const [_ref4, _isVisible4] = UseInView({delay: 300});
-    const [_ref5, _isVisible5] = UseInView({delay: 500});
-    const [_ref6, _isVisible6] = UseInView({delay: 700});
+    const [_ref7, _isVisible7] = UseInView({ delay: 700 });
+    const [_ref4, _isVisible4] = UseInView({ delay: 300 });
+    const [_ref5, _isVisible5] = UseInView({ delay: 500 });
+    const [_ref6, _isVisible6] = UseInView({ delay: 700 });
+
+    const [_ref10, _isVisible10] = UseInView();
 
 
 
@@ -56,6 +65,21 @@ const Home = ({ siteData }) => {
         };
     }, []);
 
+    const [topValue, setTopValue] = useState(0);
+
+    useEffect(() => {
+        if (!_isVisible10) return
+
+
+        let i = 5;
+        const interval = setInterval(() => {
+            setTopValue(i);
+            i++;
+        }, 25);
+
+        return () => clearInterval(interval);
+    }, [_isVisible10]);
+
 
     if (!siteData) return null;
 
@@ -76,13 +100,13 @@ const Home = ({ siteData }) => {
             ))}
 
 
-    <FloatingSocialMedia    size ={18} />
+            <FloatingSocialMedia size={18} />
 
 
 
 
 
-        <div className="container mx-auto px-4 py-6 my-6" id="section-3" style={{ marginTop: '15vh', marginBottom: '15vh'}}>
+            <div className="container mx-auto px-4 py-6 my-6" id="section-3" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
                 <div
                     ref={_ref}
                     className={`slide-down ${_isVisible ? "visible" : ""}`}
@@ -90,15 +114,15 @@ const Home = ({ siteData }) => {
                     <div className="row align-items-center">
                         {/* Text Column */}
                         <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0">
-                            <h2  
-                                 ref={_ref1}
+                            <h2
+                                ref={_ref1}
                                 className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
-                            <h3  
-                                 ref={_ref2}
+                            <h3
+                                ref={_ref2}
                                 className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
-                            <h5  
-                                 ref={_ref3}
-                                className={`fs-4 pb-3 slide-down ${_isVisible3 ? "visible" : ""}`}  style={{lineHeight: 2}}>{siteData.aboutUs.description}</h5>
+                            <h5
+                                ref={_ref3}
+                                className={`fs-4 pb-3 slide-down ${_isVisible3 ? "visible" : ""}`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
                         </div>
 
                         {/* Image Column */}
@@ -115,7 +139,7 @@ const Home = ({ siteData }) => {
 
 
 
-            <div className="container mx-auto px-4 py-6 my-6" id="section-2" style={{ marginTop: '15vh', marginBottom: '15vh'}}>
+            <div className="container mx-auto px-4 py-6 my-6" id="section-2" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
                 <div
                     ref={ref}
                     className={`slide-down ${isVisible ? "visible" : ""}`}
@@ -141,9 +165,9 @@ const Home = ({ siteData }) => {
 
 
 
-           
 
-        <div className="container mx-auto px-4 py-6 my-6" id="section-4"  style={{ marginTop: '15vh', marginBottom: '15vh'}}>
+
+            <div className="container mx-auto px-4 py-6 my-6" id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
                 <div
                     ref={_ref7}
                     className={`slide-down ${_isVisible7 ? "visible" : ""}`}
@@ -159,19 +183,63 @@ const Home = ({ siteData }) => {
                         </div>
                         {/* Text Column */}
                         <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
-                            <h2  
-                                 ref={_ref4}
+                            <h2
+                                ref={_ref4}
                                 className={`fs-1 pb-3 slide-down ${_isVisible4 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
-                            <h3  
-                                 ref={_ref5}
+                            <h3
+                                ref={_ref5}
                                 className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible5 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
-                            <h5  
-                                 ref={_ref6}
-                                className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`}  style={{lineHeight: 2}}>{siteData.aboutUs.description}</h5>
+                            <h5
+                                ref={_ref6}
+                                className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
                         </div>
 
                     </div>
                 </div>
+            </div>
+
+
+
+            <div id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh', position: 'relative', height: '100vh', width: '100vh', overflow: 'hidden' }}
+                ref={_ref10}
+                className={`container mx-auto px-4 py-6 my-6 position-relative slide-down ${_isVisible10 ? "visible" : ""}`}>
+
+
+
+                <div
+                    style={{
+                        backgroundImage: `url(${SlidingDownImage})`,
+
+                        backgroundPosition: "center",
+                        position: "absolute", // changed from fixed to absolute for section behavior
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 1,
+
+                    }}
+                />
+
+                {/* White sliding panel */}
+                <div
+                    style={{
+                        backgroundImage: `url(${SlidingDownImage})`,
+                        filter:'filter: grayscale(100%)',
+                        position: "absolute",
+                        top: `${topValue}%`,
+                        left: 0,
+
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 1,
+                    }}
+                >
+
+                </div>
+
+
+
             </div>
 
 

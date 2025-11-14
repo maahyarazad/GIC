@@ -49,7 +49,7 @@ const htmlBody = `
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>PalmX – Application Request Received</title>
+    <title>GIC – Application Request Received</title>
     <style>
       body {
         margin: 0;
@@ -169,7 +169,7 @@ const htmlBody = `
 const mailOptions = {
     from: process.env.EMAIL_SENDER,
     to: email,
-    subject: 'PalmX – Application Request Received',
+    subject: 'GIC – Application Request Received',
     html: htmlBody,
     attachments: [
       {
@@ -281,7 +281,7 @@ const htmlBody = `
 
 
   const mailOptions = {
-    from: `"PalmX Bot" ${process.env.EMAIL_SENDER}>`,
+    from: `"GIC" ${process.env.EMAIL_SENDER}>`,
     // to: `${process.env.EMAIL_SENDER}`,
     to: `maahyarazad@gmail.com`,
     subject: 'New Application Request Submitted',

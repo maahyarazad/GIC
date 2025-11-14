@@ -1,0 +1,8 @@
+.service-grid-title{
+    font-size: 3rem;
+    color: aliceblue;
+}
+
+.highlighted-word{
+    color: var(--primary-contrast-color);
+}

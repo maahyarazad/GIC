@@ -1,0 +1,45 @@
+.floating-social-media {
+
+
+  
+  display: flex;
+
+  background-color: transparent;
+  gap: 5px;
+  padding: 10px;
+  z-index: 99;
+
+  >a {
+    min-height: 35px;
+    min-width: 35px;
+    padding: 5px;
+    background-color: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    border-color: gray;
+
+
+
+
+    svg {
+      color: gray;
+    }
+
+    &:hover {
+      background-color: var(--primary-contrast-color);
+      transform: scale(1.1);
+      transition: all 0.2s ease-in-out;
+      color: white; /* Optional: if you want icon color to change on hover */
+      
+      svg {
+        color: white; /* or any color you want on hover */
+      }
+    }
+  }
+
+}

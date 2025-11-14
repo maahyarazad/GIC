@@ -22,12 +22,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     const [shouldScroll, setShouldScroll] = useState(false);
     const [pendingScrollKey, setPendingScrollKey] = useState(null);
 
-    useEffect(() => {
-        navbarLinks?.map((link) => {
-            // console.log(link.path)
-            console.log(location.pathname.startsWith(link.path));
-        });
-    })
+
 
     const [showNavbar, setShowNavbar] = useState(false);
 

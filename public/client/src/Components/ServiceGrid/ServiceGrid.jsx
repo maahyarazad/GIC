@@ -17,7 +17,7 @@ const ServiceGrid = ({ data, containerTitle, serviceKeyName, gridClass }) => {
                 if (entry.isIntersecting) {
                     const index = cardRefs.current.indexOf(entry.target);
                     if (index !== -1 && !visibleCards.includes(index)) {
-                        console.log(`Card ${index} is visible`);
+                        
                         setVisibleCards((prev) => [...prev, index]);
                         observer.unobserve(entry.target);
                     }

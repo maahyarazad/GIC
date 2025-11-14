@@ -76,7 +76,7 @@ const Home = ({ siteData }) => {
             ))}
 
 
- <FloatingSocialMedia    size ={18} />
+    <FloatingSocialMedia    size ={18} />
 
 
 

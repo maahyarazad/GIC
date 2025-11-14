@@ -3,16 +3,19 @@
   max-width: 80vw;
   height: 50vh;
   margin: 0 auto;
+  /* overflow visible to allow buttons outside */
   overflow: visible;
-  /* allow buttons outside */
+  /* Optional: Add box-sizing */
+  box-sizing: border-box;
 }
 
 .carousel-container {
-  overflow: hidden;
-  /* clip slides */
+  overflow: hidden; /* clip slides */
   height: 100%;
   background-color: #f5f5f5;
   position: relative;
+  border-radius: 0.5rem; /* Uncomment if you want rounded corners */
+  box-sizing: border-box;
 }
 
 .carousel-track {
@@ -21,6 +24,7 @@
   gap: 1rem;
   height: 100%;
   transition: transform 0.5s ease;
+  box-sizing: border-box;
 }
 
 .carousel-slide {
@@ -32,6 +36,7 @@
   flex-direction: column;
   height: 100%;
   position: relative;
+  box-sizing: border-box;
 }
 .carousel-slide a {
   text-decoration: none;
@@ -52,7 +57,6 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  justify-items: center;
   position: relative;
 }
 .carousel-slide picture .content img {
@@ -66,8 +70,8 @@
   position: absolute;
   margin: 0 0 0.375rem 0;
   font-size: 2rem;
-  flex-shrink: 0;
   color: var(--primary-contrast-color);
+  flex-shrink: 0;
 }
 .carousel-slide picture .content p {
   top: 40vh;
@@ -103,12 +107,35 @@
   background-color: rgba(0, 0, 0, 0.7);
 }
 
+/* Make buttons stay visible but not cause horizontal scroll */
 .carousel-btn-prev {
-  left: -3rem;
-  /* 3rem outside the carousel */
+  left: 0;
+  margin-left: -3rem;
+  /* instead of left: -3rem, margin-left to keep them visible without overflow */
+  z-index: 10;
 }
 
 .carousel-btn-next {
-  right: -3rem;
-  /* 3rem outside the carousel */
+  right: 0;
+  margin-right: -3rem;
+  /* same here */
+  z-index: 10;
+}
+
+/* Responsive fixes */
+@media screen and (max-width: 600px) {
+  .carousel-btn-prev {
+    left: 0;
+    margin-left: 0;
+    right: auto; /* unset right */
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  .carousel-btn-next {
+    right: 0;
+    margin-right: 0;
+    left: auto; /* unset left */
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 }/*# sourceMappingURL=Carousel.css.map */

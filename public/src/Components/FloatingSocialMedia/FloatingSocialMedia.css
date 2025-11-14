@@ -1,5 +1,4 @@
 .floating-social-media {
-  position: fixed;
   display: flex;
   background-color: transparent;
   gap: 5px;
@@ -21,9 +20,14 @@
   border-color: gray;
 }
 .floating-social-media > a svg {
-  color: var(--primary-gray-color);
+  color: gray;
 }
 .floating-social-media > a:hover {
-  background: #ddd;
+  background-color: var(--primary-contrast-color);
   transform: scale(1.1);
+  transition: all 0.2s ease-in-out;
+  color: white; /* Optional: if you want icon color to change on hover */
+}
+.floating-social-media > a:hover svg {
+  color: white; /* or any color you want on hover */
 }/*# sourceMappingURL=FloatingSocialMedia.css.map */

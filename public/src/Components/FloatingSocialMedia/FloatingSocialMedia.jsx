@@ -25,38 +25,38 @@ export default function FloatingSocialMedia({
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [coords, setCoords] = useState({ top: '50%', left: 'auto' });
+const scrollTimeout = useRef(null);
 
-    useEffect(() => {
+   useEffect(() => {
+    const handleScroll = () => {
+      // Hide sidebar immediately on scroll
+      setShowSidebar(false);
 
-        const handleScroll = () => {
-            const scrollTop = window.scrollY;
-            setWidth(window.innerWidth);
-            setHeight(window.innerHeight);
+      // Detect screen width and set position
+      const width = window.innerWidth;
+      if (width < 576) {
+        setPosition("bottom");
+      } else {
+        setPosition("right");
+      }
 
-            if (window.innerWidth < 576) {
-                setPosition('bottom');
-            } else {
-                setPosition('right');
-            }
+      // Clear any existing timer
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
 
-            if (scrollTop > 50) { // desktop only
-                setShowSidebar(true);
-            }
+      // After 300ms of no scroll, show sidebar again
+      scrollTimeout.current = setTimeout(() => {
+        setShowSidebar(true);
+      }, 300);
+    };
 
-            if (scrollTop < 50) {
-                setShowSidebar(false);
-            }
-        };
+    window.addEventListener("scroll", handleScroll);
 
-        handleScroll();
-        window.addEventListener("scroll", handleScroll);
-
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-
-    }, []);
+    // Cleanup
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    };
+  }, []);
 
     function getFloatingSocialMediaClass(position, showSidebar) {
         const flex = position === 'right' ? 'flex-column' : 'flex-row';
@@ -79,7 +79,7 @@ export default function FloatingSocialMedia({
                 return {
                     top: `calc(50% - ${elHeight / 2}px)`,
                     left: 'auto',
-                    right: '20px',
+                    right: '5px',
                     bottom: 'auto',
                 };
             }
@@ -88,7 +88,7 @@ export default function FloatingSocialMedia({
                     top: 'auto',
                     left: `calc(50% - ${elWidth / 2}px)`,
                     right: 'auto',
-                    bottom: '0px',
+                    bottom: '10px',
                 };
             }
             return {};
@@ -116,7 +116,7 @@ export default function FloatingSocialMedia({
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <Icon size={size} style={{ color: "gray" }} />
+                    <Icon size={size}  />
 
                 </a>
             ))}

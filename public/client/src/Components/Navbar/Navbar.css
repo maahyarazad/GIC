@@ -42,7 +42,7 @@
   /* adjust distance from .gic-logo */
   height: 80%;
   /* vertical line height */
-  width: 2px;
+  width: 0.5px;
   /* line thickness */
   background-color: rgb(169, 168, 168);
   /* line color */
@@ -90,12 +90,13 @@
 .navbar .mobile-links {
   list-style: none;
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   padding: 0;
   margin: 0;
 }
 .navbar .navbar-links li a,
 .navbar .mobile-links li a {
+  font-size: larger;
   text-decoration: none;
 }
 .navbar .navbar-links li.active a,

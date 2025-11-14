@@ -40,6 +40,13 @@ h6 {
   color: var(--primary-contrast-color) !important;
 }
 
+.contrast-color:link,
+.contrast-color:visited,
+.contrast-color:hover,
+.contrast-color:active {
+  color: var(--primary-contrast-color) !important;
+}
+
 .s-font {
   font-family: "ivymode", sans-serif;
 }

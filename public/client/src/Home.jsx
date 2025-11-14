@@ -16,15 +16,15 @@ const Home = ({ siteData }) => {
     const [_ref, _isVisible] = UseInView();
 
 
-    const [_ref1, _isVisible1] = UseInView({threshold: 0.3,delay: 300});
-    const [_ref2, _isVisible2] = UseInView({threshold: 0.3,delay: 500});
-    const [_ref3, _isVisible3] = UseInView({threshold: 0.3,delay: 700});
+    const [_ref1, _isVisible1] = UseInView({delay: 300});
+    const [_ref2, _isVisible2] = UseInView({delay: 500});
+    const [_ref3, _isVisible3] = UseInView({delay: 700});
 
 
-    const [_ref7, _isVisible7] = UseInView({threshold: 0.3,delay: 700});
-    const [_ref4, _isVisible4] = UseInView({threshold: 0.3,delay: 300});
-    const [_ref5, _isVisible5] = UseInView({threshold: 0.3,delay: 500});
-    const [_ref6, _isVisible6] = UseInView({threshold: 0.3,delay: 700});
+    const [_ref7, _isVisible7] = UseInView({delay: 700});
+    const [_ref4, _isVisible4] = UseInView({delay: 300});
+    const [_ref5, _isVisible5] = UseInView({delay: 500});
+    const [_ref6, _isVisible6] = UseInView({delay: 700});
 
 
 

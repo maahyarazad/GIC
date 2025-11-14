@@ -265,13 +265,18 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
             {/* Slide-out Mobile Menu */}
             <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
                 style={{
-                    backgroundImage: `url(${MobileBackGround})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                }}
+  backgroundImage: `
+    linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
+    url(${MobileBackGround})
+  `,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat'
+}}
+
             >
                 <ul className="mobile-links">
+                    <a href='/' className='s-font absolute gic-logo contrast-color' style={{fontSize: '4.5em', textDecoration: 'none'}}>GIC</a>
                     {navbarLinks?.map((link) => (
                         <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                             <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>

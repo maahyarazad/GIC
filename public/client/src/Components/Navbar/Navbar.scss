@@ -8,11 +8,11 @@
     justify-content: center;
     align-items: center;
     padding: 1rem;
-box-sizing: border-box;
+    box-sizing: border-box;
     transition: all 120ms ease-in-out;
 
 
-    .menu-button{
+    .menu-button {
 
         position: absolute;
         left: 10px;
@@ -43,10 +43,11 @@ box-sizing: border-box;
             /* adjust distance from .gic-logo */
             height: 80%;
             /* vertical line height */
-            width: 2px;
+            width: 0.5px;
             /* line thickness */
             background-color: rgb(169, 168, 168);
             /* line color */
+            
         }
     }
 
@@ -152,12 +153,13 @@ box-sizing: border-box;
     .mobile-links {
         list-style: none;
         display: flex;
-        gap: 1.5rem;
+        gap: 1rem;
         padding: 0;
         margin: 0;
 
         li {
             a {
+                font-size: larger;
                 text-decoration: none;
                 // color: #333 !important;
             }

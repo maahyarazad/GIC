@@ -12,7 +12,6 @@
   /* clip slides */
   height: 100%;
   background-color: #f5f5f5;
-  border-radius: 0.5rem;
   position: relative;
 }
 
@@ -26,8 +25,6 @@
 
 .carousel-slide {
   flex-shrink: 0;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   background-color: #fff;
   cursor: pointer;
   overflow: hidden;
@@ -51,7 +48,7 @@
   width: 100%;
 }
 .carousel-slide picture .content {
-  padding: 0.625rem;
+  padding: 0rem;
   flex-grow: 1;
   display: flex;
   justify-content: center;
@@ -60,24 +57,24 @@
 }
 .carousel-slide picture .content img {
   width: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  display: block;
+  height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 .carousel-slide picture .content h3 {
-  top: 25vh;
+  top: 30vh;
   position: absolute;
   margin: 0 0 0.375rem 0;
   font-size: 2rem;
   flex-shrink: 0;
-  color: var(--primary-color);
+  color: var(--primary-contrast-color);
 }
 .carousel-slide picture .content p {
-  top: 35vh;
+  top: 40vh;
   position: absolute;
   margin: 0;
   font-size: 0.9rem;
-  color: var(--primary-color);
+  color: var(--primary-gray-color);
   flex-grow: 1;
 }
 

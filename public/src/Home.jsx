@@ -133,7 +133,7 @@ const Home = ({ siteData }) => {
 
                         {/* Carousel */}
                         <div className="col-12">
-                            <Carousel items={siteData.advisoryItems} itemsPerPage={siteData.advisoryItems.length} gap={30} />
+                            <Carousel items={siteData.advisoryItems} itemsPerPage={3} gap={15} />
                         </div>
                     </div>
                 </div>

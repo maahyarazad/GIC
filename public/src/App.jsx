@@ -18,6 +18,7 @@ import MainLoader from './Components/MainLoader';
 import Layout from './Components/Layout/Layout';
 
 
+
 const App = () => {
     const [siteData, setSiteData] = useState(null);
     const [language, setLanguage] = useState('EN');
@@ -107,6 +108,7 @@ const App = () => {
             </Routes>
             <Footer footerData={siteData.footer} />
             <BackToTop />
+            
         </BrowserRouter>
     );
 

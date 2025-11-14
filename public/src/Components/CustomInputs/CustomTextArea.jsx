@@ -2,7 +2,7 @@
 import { useField } from "formik";
 
 
-const CustomTextarea = ({ label, ...props }) => {
+const CustomTextarea = ({ label,required= false , ...props }) => {
     const [field, meta] = useField(props);
     const hasError = meta.touched && meta.error;
 
@@ -11,7 +11,7 @@ const CustomTextarea = ({ label, ...props }) => {
 
             <div className="col-12 col-md-2 d-flex justify-content-md-start align-items-top mb-2 mb-md-0">
                 <label htmlFor={props.id || props.name} className="form-label mb-0 text-md-start text-nowrap">
-                    {label}
+                    {label} {required && <strong className="text-danger">*</strong>}
                 </label>
             </div>
 

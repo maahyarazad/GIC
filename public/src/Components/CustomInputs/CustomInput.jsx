@@ -1,7 +1,7 @@
 
 import { useField } from "formik";
 
-const CustomInput = ({ label, ...props }) => {
+const CustomInput = ({ label, required = false ,...props }) => {
     const [field, meta] = useField(props);
     const hasError = meta.touched && meta.error;
 
@@ -10,7 +10,7 @@ const CustomInput = ({ label, ...props }) => {
 
             <div className="col-12 col-md-2 d-flex justify-content-md-start mb-2 mb-md-0">
                 <label htmlFor={props.id || props.name} className="form-label mb-0 text-md-end text-nowrap">
-                    {label}
+                    {label} {required && <strong className="text-danger">*</strong>}
                 </label>
             </div>
 

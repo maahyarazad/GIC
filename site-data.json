@@ -274,21 +274,23 @@
         }
     ],
     "ContactUs": {
-        "h2": "Let’s start",
-        "p": "What’s next",
+        "h2": "Contact Us",
+        "p": "Lorem ipsum dolor sit amet.",
         "steps": [
-            "1. Share your requirements",
-            "2. Analyze them with our experts",
-            "3. Get a detailed proposal",
-            "4. Kick off the project"
+            "Lorem ipsum dolor sit amet.",
+            "Lorem ipsum dolor sit amet.",
+            "Lorem ipsum dolor sit amet.",
+            "Lorem ipsum dolor sit amet.",
+            "Lorem ipsum dolor sit amet."
         ],
         "questionText": " If you have any questions, email us at",
         "privacy": "By submitting, you agree to the collection of your name and email for communication purposes.",
         "privacyPolicy": "Privacy Policy",
         "form": {
-            "nameLabel": "My Name",
+            "nameLabel": "Full Name",
             "emailLabel": "Email Address",
             "messageLabel": "Message",
+            "phone": "Phone Number",
             "attachFile": "Attach File",
             "selectedFile": " Selected file:"
         },

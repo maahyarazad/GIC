@@ -1,0 +1,29 @@
+.floating-social-media {
+  position: fixed;
+  display: flex;
+  background-color: transparent;
+  gap: 5px;
+  padding: 10px;
+  z-index: 99;
+}
+.floating-social-media > a {
+  min-height: 35px;
+  min-width: 35px;
+  padding: 5px;
+  background-color: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-color: gray;
+}
+.floating-social-media > a svg {
+  color: var(--primary-gray-color);
+}
+.floating-social-media > a:hover {
+  background: #ddd;
+  transform: scale(1.1);
+}/*# sourceMappingURL=FloatingSocialMedia.css.map */

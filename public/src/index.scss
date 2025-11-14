@@ -48,25 +48,25 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--primary-color);
+  color: var(--primary-gray-color);
+  border: 1px solid var(--primary-gray-color);
   border-radius: 0;
   padding: 0.75rem 1.5rem;
   cursor: pointer;
   transition: color 0.3s ease-in-out;
 
   // Liquid fill animation (left → right)
-  &::before {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 0;
-    width: 0%;
-    height: 99%;
-    background-color: rgba(85, 85, 85, 0.5);
-    transition: width 0.5s ease-in-out;
-    z-index: 0;
-  }
+  // &::before {
+  //   content: "";
+  //   position: absolute;
+  //   top: 1px;
+  //   left: 0;
+  //   width: 0%;
+  //   height: 99%;
+  //   background-color: rgba(85, 85, 85, 0.5);
+  //   transition: width 0.5s ease-in-out;
+  //   z-index: 0;
+  // }
 
   // Text stays on top of the "liquid"
   span {
@@ -76,14 +76,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   &:hover {
-    border-color: var(--primary-color); // keep same border width/color
-
-    &::before {
-      width: 100%;
-    }
+    background-color: var(--primary-contrast-color);
+    border-color: var(--primary-contrast-color); // keep same border width/color
+    // &::before {
+    //   width: 100%;
+    // }
 
     span {
-      color: var(--primary-color);
+      // color: var(--primary-color);
     }
   }
 }
@@ -135,6 +135,30 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .slide-down.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.slide-left {
+  opacity: 0;
+  transform: translateX(+50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+.slide-up {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.slide-up.visible {
   opacity: 1;
   transform: translateY(0);
 }

@@ -93,17 +93,17 @@ const ContactForm = ({ siteData, sectionId }) => {
 
                         <h2 className="h3 fw-bold mb-2 lets-start">{siteData.h2}</h2>
                         <p className="fw-semibold mb-3">{siteData.p}</p>
-                        <ul className="mb-4 ps-3 list-unstyled">
+                        <div className="mb-4 ps-3 list-unstyled">
                             {siteData.steps.map((step, index) => (
-                            <li key={index}>{step}</li>
+                            <p key={index}>{step}</p>
                             ))}
                             
-                        </ul>
+                        </div>
 
                         <p className="mb-4">
                             {siteData.questionText}
                             <a href="mailto:hallo@palm-x.com" className="ms-1 text-decoration-underline text-primary">
-                                hallo@palm-x.com
+                                info@GIC.com
                             </a>
                         </p>
                     </div>
@@ -116,11 +116,14 @@ const ContactForm = ({ siteData, sectionId }) => {
                         >
                             {({ setFieldValue, isSubmitting }) => (
                                 <Form className="mb-5">
-                                    <CustomInput name="name" type="text" label={siteData.form.nameLabel} placeholder="John Smith" />
 
-                                    <CustomInput name="email" type="email" label={siteData.form.emailLabel} placeholder="name@company.com" />
+                                    <CustomInput name="name" type="text" label={siteData.form.nameLabel} placeholder="John Smith" required={true}/>
 
-                                    <CustomTextarea name="message" rows={3} label={siteData.form.messageLabel} placeholder="Describe your idea" />
+                                    <CustomInput name="email" type="email" label={siteData.form.emailLabel} placeholder="name@company.com" required={true}/>
+
+                                    <CustomInput name="phone" type="phone" label={siteData.form.phone} placeholder={siteData.form.phone} />
+
+                                    <CustomTextarea name="message" rows={3} label={siteData.form.messageLabel} placeholder={siteData.form.messageLabel} required={true}/>
 
                                     <div className="d-flex justify-content-between mb-3">
                                         {/* <label htmlFor="attachment" className="form-label">Attach Files</label> */}
@@ -161,7 +164,7 @@ const ContactForm = ({ siteData, sectionId }) => {
                                                 
                                                 <button
                                                     type="button"
-                                                    className="btn btn-sm text-white"
+                                                    className="btn btn-sm text-white btn-primary-contrast "
                                                     style={{ minHeight: '28px' }}
                                                     onClick={() => {
                                                         setAttachedFileName("");

@@ -1,0 +1,51 @@
+.floating-social-media {
+
+  // &.position-right {
+  //   right: 20px;
+  //   top: calc(50% - 235px);
+ 
+  // }
+
+
+  // &.position-bottom {
+  //   bottom: 10px;
+  //   left: 50%;
+   
+     
+  // }
+
+
+
+  position: fixed;
+  display: flex;
+
+  background-color: transparent;
+  gap: 5px;
+  padding: 10px;
+  z-index: 99;
+
+  >a {
+    min-height: 35px;
+    min-width: 35px;
+    padding: 5px;
+    background-color: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid;
+    border-color: gray;
+
+    svg {
+      color: var(--primary-gray-color);
+    }
+
+    &:hover {
+      background: #ddd;
+      transform: scale(1.1);
+    }
+  }
+
+}

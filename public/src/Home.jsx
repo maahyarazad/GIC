@@ -9,7 +9,7 @@ import Carousel from './Components/Carousel/Carousel';
 // import TypeWriter from './Components/TypeWriter/TypeWriter';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from './Hooks/UseInView';
-
+import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
 const Home = ({ siteData }) => {
 
     const [ref, isVisible] = UseInView();
@@ -76,7 +76,7 @@ const Home = ({ siteData }) => {
             ))}
 
 
-
+ <FloatingSocialMedia    size ={18} />
 
 
 

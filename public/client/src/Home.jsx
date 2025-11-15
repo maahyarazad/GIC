@@ -34,8 +34,13 @@ const Home = ({ siteData }) => {
     const [_ref6, _isVisible6] = UseInView({ delay: 700 });
 
     const [_ref10, _isVisible10] = UseInView();
-    const [_ref11, _isVisible11] = UseInView();
+    
 
+
+    const [_ref11, _isVisible11] = UseInView({ delay: 700 });
+    const [_ref12, _isVisible12] = UseInView({ delay: 300 });
+    const [_ref13, _isVisible13] = UseInView({ delay: 500 });
+    const [_ref14, _isVisible14] = UseInView({ delay: 700 });
 
 
     useEffect(() => { }, [siteData]);
@@ -74,10 +79,10 @@ const Home = ({ siteData }) => {
 
         let i = 5;
         const interval = setInterval(() => {
-            while (i < 101){
+            while (i < 101) {
                 setTopValue(i);
                 i++;
-break;
+                break;
             }
         }, 25);
 
@@ -210,7 +215,7 @@ break;
                 className={`position-relative slide-down ${_isVisible10 ? "visible" : ""}`}
                 style={{
                     marginTop: "10vh",
-                    
+
                     position: "relative",
                     height: "100vh",     // ❗ responsive height
                     width: "100%",       // ❗ responsive width
@@ -227,7 +232,7 @@ break;
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
                         position: "absolute",
-                        
+
                         top: 0,
                         left: 0,
                         width: "100%",
@@ -236,18 +241,18 @@ break;
                     }}
                 >
 
-                     {/* Text Column */}
-                        <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
-                            <h2
-                                
-                                className={`contrast-color`} style={{paddingTop: '20rem', fontSize: '4rem'}}>{siteData.heroSection.header}</h2>
-                            <h3
-                               
-                                className={`fs-4  text-white pt-5`} style={{fontWeight: 900}}>{siteData.heroSection.title}</h3>
-                            <h5
-                               
-                                className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
-                        </div>
+                    {/* Text Column */}
+                    <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
+                        <h2
+
+                            className={`contrast-color`} style={{ paddingTop: '20rem', fontSize: '4rem' }}>{siteData.heroSection.header}</h2>
+                        <h3
+
+                            className={`fs-4  text-white pt-5`} style={{ fontWeight: 900 }}>{siteData.heroSection.title}</h3>
+                        <h5
+
+                            className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
+                    </div>
 
                 </div>
 
@@ -269,32 +274,36 @@ break;
                 />
 
             </div>
-                      <div
+            <div
                 id="section-4"
                 ref={_ref11}
                 className={`position-relative`}
                 style={{
-                    backgroundColor:'black',
-                    
+                    backgroundColor: 'black',
+
                     marginBottom: "10vh",
                     position: "relative",
-              
+
                     width: "100%",       // ❗ responsive width
                     // maxHeight: "1080px", // optional cap for desktop
                     // overflow: "hidden",
                 }}
             >
 
-                      <div className="">
-                <ServiceGrid
-                    data={siteData.serviceCards_1}
-                    containerTitle={siteData.serviceCards_1_title}
-                    serviceKeyName={"serviceCards_1"}
-                    gridClass={"col-12 col-xl-3 px-0"} />
-                 </div>
+                <div >
+                    <ServiceGrid
+                        data={siteData.serviceCards_1}
+                        containerTitle={siteData.serviceCards_1_title}
+                        serviceKeyName={"serviceCards_1"}
+                        gridClass={"col-12 col-lg-3 px-0"} />
+                </div>
             </div>
 
 
+
+
+
+           
 
 
         </div>

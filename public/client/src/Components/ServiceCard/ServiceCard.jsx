@@ -56,7 +56,7 @@ const ServiceCard = forwardRef(({
                 <div className={`iot-card ${hoverClass} ${fixHeight ? 'fix-height' : '' }`}>
                     <div className="iot-card__title_bg s-font">{title[0]}</div>
                     <div className="iot-card__image">
-                        <img src={imageSrc} alt={imageAlt} width={300} height={300} />
+                        <img src={imageSrc} alt={imageAlt} />
                     </div>
                     <div className="iot-card__text">
                         <h4 className="iot-card__title contrast-color">{title}</h4>

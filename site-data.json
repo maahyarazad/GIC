@@ -35,7 +35,7 @@
     "serviceCards_1": [
         {
             "href": "",
-            "imageSrc": "https://svgsilh.com/svg/1639328.svg",
+            "imageSrc": "https://placehold.co/400x600",
             "imageAlt": "Healthcare icon",
             "title": "Healthcare",
             "description": "We develop services, tools, and systems to provide patients and staff with up-to-date software.",
@@ -47,10 +47,9 @@
         },
         {
             "href": "",
-            "imageSrc": "https://svgsilh.com/svg/2429310.svg",
+            "imageSrc": "https://placehold.co/400x600",
             "imageAlt": "Education icon",
             "title": "Education",
-            
             "description": "E-learning solutions that make education flexible, engaging, and highly efficient.",
             "services": [],
             "showServicesList": false,
@@ -60,7 +59,7 @@
         },
         {
             "href": "",
-            "imageSrc": "https://svgsilh.com/svg/35594.svg",
+            "imageSrc": "https://placehold.co/400x600",
             "imageAlt": "Retail and commerce icon",
             "title": "Retail",
             "description": "We build stronger connections with customers through web and mobile applications with superior shopping experience and 24/7 availability.",
@@ -72,7 +71,7 @@
         },
         {
             "href": "",
-            "imageSrc": "https://svgsilh.com/svg/2126877.svg",
+            "imageSrc": "https://placehold.co/400x600",
             "imageAlt": "Manufacturing icon",
             "title": "Manufacturing",
             "description": "Comprehensive software solutions for supply chain management, inventory management, warehouses, production monitoring, process automation, and more.",

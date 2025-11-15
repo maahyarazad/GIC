@@ -40,9 +40,9 @@ const ServiceGrid = ({ data, containerTitle, serviceKeyName, gridClass }) => {
     return (
         <div className="p-0">
             <h2 className="py-4 text-center service-grid-title">
-                <span className="highlighted-word">{containerTitle.split(" ")[0]}</span>{" "}
+                {/* <span className="highlighted-word">{containerTitle.split(" ")[0]}</span>{" "} */}
                 {/* {containerTitle.split(" ")[1]}{" "} */}
-                {containerTitle.split(" ").slice(2).join(" ")}
+                {/* {containerTitle.split(" ").slice(2).join(" ")} */}
             </h2>
             <div className="row">
                 {data.map((service, index) => (
@@ -53,6 +53,8 @@ const ServiceGrid = ({ data, containerTitle, serviceKeyName, gridClass }) => {
                         />
                     </div>
                 ))}
+              
+            
             </div>
         </div>
     );

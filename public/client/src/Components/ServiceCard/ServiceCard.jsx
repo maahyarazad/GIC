@@ -54,13 +54,15 @@ const ServiceCard = forwardRef(({
                 </a>
             ) : (
                 <div className={`iot-card ${hoverClass} ${fixHeight ? 'fix-height' : '' }`}>
+                    <div className="iot-card__title_bg s-font">{title[0]}</div>
                     <div className="iot-card__image">
-                        <img src={imageSrc} alt={imageAlt} width={80} height={80} />
+                        <img src={imageSrc} alt={imageAlt} width={300} height={300} />
                     </div>
-                    <h4 className="iot-card__title">{title}</h4>
                     <div className="iot-card__text">
-                        <p>{description}</p>
-                        {showServicesList && services?.length > 0 && (
+                        <h4 className="iot-card__title contrast-color">{title}</h4>
+                        <div className="divider"></div>
+                        <p className="iot-card__description">{description}</p>
+                        {/* {showServicesList && services?.length > 0 && (
                             <ul className="iot-card__list">
                                 {services.map((service, index) => (
                                     <div className="d-block flex-grow-1" key={index}>
@@ -70,7 +72,7 @@ const ServiceCard = forwardRef(({
                                     </div>
                                 ))}
                             </ul>
-                        )}
+                        )} */}
                     </div>
                     {
                         !linkText?.trim() ? (

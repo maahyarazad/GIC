@@ -50,6 +50,7 @@
             "imageSrc": "https://svgsilh.com/svg/2429310.svg",
             "imageAlt": "Education icon",
             "title": "Education",
+            
             "description": "E-learning solutions that make education flexible, engaging, and highly efficient.",
             "services": [],
             "showServicesList": false,
@@ -78,65 +79,6 @@
             "services": [],
             "showServicesList": false,
             "clickable": false,
-            "hoverEffect": true,
-            "fixHeight": true
-        },
-        {
-            "href": "",
-            "imageSrc": "https://svgsilh.com/svg/295469.svg",
-            "imageAlt": "Professional Services icon",
-            "title": "Professional Services",
-            "description": "We develop CRM, management tools, billing products, document management systems, and more. Our solutions are built for professionals by professionals.",
-            "services": [],
-            "showServicesList": false,
-            "clickable": false,
-            "hoverEffect": true,
-            "fixHeight": true
-        },
-        {
-            "href": "",
-            "imageSrc": "https://svgsilh.com/svg/1254501.svg",
-            "imageAlt": "Telecoms icon",
-            "title": "Telecoms",
-            "description": "We enhance global communication by building solutions for network management, customer experience, IoT, security, automation, and analytics.",
-            "services": [],
-            "showServicesList": false,
-            "clickable": false,
-            "hoverEffect": true,
-            "fixHeight": true
-        },
-        {
-            "href": "",
-            "imageSrc": "https://svgsilh.com/svg/152745.svg",
-            "imageAlt": "Logistics and Transportation icon",
-            "title": "Logistics & Transportation",
-            "description": "Software for freight reservation, transportation management, and streamlined supply chain operations to keep goods and business moving.",
-            "services": [],
-            "showServicesList": false,
-            "clickable": false,
-            "hoverEffect": true,
-            "fixHeight": true
-        },
-        {
-            "href": "",
-            "imageSrc": "https://svgsilh.com/svg/147296.svg",
-            "imageAlt": "Engineering and Construction icon",
-            "title": "Engineering & Construction",
-            "description": "From advanced BIM solutions and cost estimation tools to IoT integration, we lay the foundation for the construction industry.",
-            "services": [],
-            "showServicesList": false,
-            "clickable": false,
-            "hoverEffect": true,
-            "fixHeight": true
-        },
-        {
-            "href": "",
-            "imageSrc": "https://svgsilh.com/svg/644850.svg",
-            "imageAlt": "Marketing and Advertising icon",
-            "title": "Marketing & Advertising",
-            "description": "We build effective Client relationships with marketing automation tools that help optimize strategies, gather insights, and achieve brave goals.",
-            "services": [],
-            "showServicesList": false,
             "hoverEffect": true,
             "fixHeight": true
         }
@@ -395,6 +337,11 @@
         "header": "Lorem ipsum",
         "title": "Lorem ipsum dolor sit amet.",
         "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos"
+    },
+    "heroSection": {
+        "header": "Lorem ipsum",
+        "title": "Lorem ipsum dolor sit amet.",
+        "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat."
     },
     "footer": {
         "companyName": "PalmX",

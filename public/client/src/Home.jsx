@@ -10,8 +10,8 @@ import Carousel from './Components/Carousel/Carousel';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from './Hooks/UseInView';
 import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
-import SlidingDownImage from './Assets/emir-new-img-top-extra-small-v01-bg.jpg';
-import SlidingDownImageInvert from './Assets/ChatGPT Image Nov 14, 2025, 05_09_22 PM.png';
+import SlidingDownImage from './Assets/back.png';
+import SlidingDownImageInvert from './Assets/front.png';
 
 import HeroSection from './Components/Sample';
 import EmirStyleHero from './Components/Sample';
@@ -34,6 +34,7 @@ const Home = ({ siteData }) => {
     const [_ref6, _isVisible6] = UseInView({ delay: 700 });
 
     const [_ref10, _isVisible10] = UseInView();
+    const [_ref11, _isVisible11] = UseInView();
 
 
 
@@ -73,8 +74,11 @@ const Home = ({ siteData }) => {
 
         let i = 5;
         const interval = setInterval(() => {
-            setTopValue(i);
-            i++;
+            while (i < 101){
+                setTopValue(i);
+                i++;
+break;
+            }
         }, 25);
 
         return () => clearInterval(interval);
@@ -200,46 +204,94 @@ const Home = ({ siteData }) => {
 
 
 
-            <div id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh', position: 'relative', height: '100vh', width: '100vh', overflow: 'hidden' }}
+            <div
+                id="section-4"
                 ref={_ref10}
-                className={`container mx-auto px-4 py-6 my-6 position-relative slide-down ${_isVisible10 ? "visible" : ""}`}>
+                className={`position-relative slide-down ${_isVisible10 ? "visible" : ""}`}
+                style={{
+                    marginTop: "10vh",
+                    
+                    position: "relative",
+                    height: "100vh",     // ❗ responsive height
+                    width: "100%",       // ❗ responsive width
+                    maxHeight: "1080px", // optional cap for desktop
+                    overflow: "hidden",
+                }}
+            >
 
-
-
-                <div
+                {/* BACKGROUND IMAGE */}
+                <div className='d-flex justify-content-center align-items-center'
                     style={{
                         backgroundImage: `url(${SlidingDownImage})`,
-
+                        backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
-                        position: "absolute", // changed from fixed to absolute for section behavior
+                        backgroundRepeat: "no-repeat",
+                        position: "absolute",
+                        
                         top: 0,
                         left: 0,
-                        width: "100%",
-                        height: "100%",
-                        zIndex: 1,
-
-                    }}
-                />
-
-                {/* White sliding panel */}
-                <div
-                    style={{
-                        backgroundImage: `url(${SlidingDownImage})`,
-                        filter:'filter: grayscale(100%)',
-                        position: "absolute",
-                        top: `${topValue}%`,
-                        left: 0,
-
                         width: "100%",
                         height: "100%",
                         zIndex: 1,
                     }}
                 >
 
+                     {/* Text Column */}
+                        <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
+                            <h2
+                                
+                                className={`contrast-color`} style={{paddingTop: '20rem', fontSize: '4rem'}}>{siteData.heroSection.header}</h2>
+                            <h3
+                               
+                                className={`fs-4  text-white pt-5`} style={{fontWeight: 900}}>{siteData.heroSection.title}</h3>
+                            <h5
+                               
+                                className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
+                        </div>
+
                 </div>
 
+                {/* SLIDING IMAGE */}
+                <div
+                    style={{
+                        backgroundImage: `url(${SlidingDownImageInvert})`,
+                        backgroundSize: "cover",    // important for mobile
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        position: "absolute",
+                        top: `${topValue}%`,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 2,                  // should be above background
+                        transition: "top 0.4s linear",
+                    }}
+                />
 
+            </div>
+                      <div
+                id="section-4"
+                ref={_ref11}
+                className={`position-relative`}
+                style={{
+                    backgroundColor:'black',
+                    
+                    marginBottom: "10vh",
+                    position: "relative",
+              
+                    width: "100%",       // ❗ responsive width
+                    // maxHeight: "1080px", // optional cap for desktop
+                    // overflow: "hidden",
+                }}
+            >
 
+                      <div className="">
+                <ServiceGrid
+                    data={siteData.serviceCards_1}
+                    containerTitle={siteData.serviceCards_1_title}
+                    serviceKeyName={"serviceCards_1"}
+                    gridClass={"col-12 col-xl-3 px-0"} />
+                 </div>
             </div>
 
 

@@ -8,12 +8,19 @@
 }
 :root {
   --primary-color: #ffffff;
+  --primary-color-rgb: 255, 255, 255;
   --primary-gray-color: #090201;
+  --primary-gray-color-rgb: 9, 2, 1;
   --primary-contrast-color: #fa5007;
+  --primary-contrast-color-rgb: 250, 80, 7;
   --primary-contrast-color-1: #DEAD26;
+  --primary-contrast-color-1-rgb: 222, 173, 38;
   --logo-secondary-collor: #5B2330;
+  --logo-secondary-collor-rgb: 91, 35, 48;
   --secondary-contracts-color: #06D6A0;
+  --secondary-contracts-color-rgb: 6, 214, 160;
   --third-contracts-color: #fa5007;
+  --third-contracts-color-rgb: 250, 80, 7;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

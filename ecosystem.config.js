@@ -1,0 +1,22 @@
+module.exports = {
+  apps: [
+    {
+      name: "gic",
+      script: "./dist/server.js",     
+      watch: false,                   
+      log_file: "logs/my-app.log",
+      error_file: "logs/my-app-error.log",
+      restart_delay: 1000,
+      max_memory_restart: "200M",
+
+      env: {
+        NODE_ENV: "development",
+        DB_CONNECTION_STRING: "your_connection_string"
+      },
+      env_production: {
+        NODE_ENV: "production",
+        DB_CONNECTION_STRING: "your_production_connection_string"
+      }
+    }
+  ]
+};

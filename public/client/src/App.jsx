@@ -11,12 +11,12 @@ import Services from './Pages/Services';
 import Footer from './Components/Footer/Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ParticleJsContainer from './Components/ParticleJsContainer/ParticleJsContainer';
+
 import './App.css';
 import ContactUs from './Pages/ContactUs';
 import MainLoader from './Components/MainLoader';
 import Layout from './Components/Layout/Layout';
-
+import axiosInstance from './api/axiosInstance'
 
 
 const App = () => {
@@ -32,10 +32,11 @@ const App = () => {
     const fetchSiteData = useCallback(async () => {
         try {
             
-        const response = await axios.get(`${server_endpoint}/api/site-data?lang=${language}`);
-        setSiteData(response.data);
+        const response = await axiosInstance.get(`${server_endpoint}/client`);
+        debugger;
+            setSiteData(response.data);
         } catch (error) {
-        console.error('Error fetching footer data:', error);
+            console.error('Error fetching footer data:', error);
         }
     }, [server_endpoint, language]);
 

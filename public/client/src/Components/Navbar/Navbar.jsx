@@ -24,6 +24,25 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
+        function isLinkActive(_linkPath) {
+        // Normalize by removing leading and trailing slashes
+        const normalizePath = (path) => path.replace(/^\/+|\/+$/g, '');
+
+        const currentPathRaw = location.pathname;
+
+        const currentPath = normalizePath(currentPathRaw);
+        const linkPath = normalizePath(_linkPath);
+
+        const isHome = linkPath === '';
+        const isOnHomePage = currentPathRaw === '/'; // exact match to root path
+
+        if (isHome) {
+            return isOnHomePage; // home active only if current path is exactly "/"
+        } else {
+            // active if current path equals link path or starts with link path + '/'
+            return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
+        }
+    }
     const [showNavbar, setShowNavbar] = useState(false);
 
 
@@ -122,25 +141,8 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
     useEffect(() => { }, [companyName, navbarLinks]);
 
-    function isLinkActive(_linkPath) {
-        // Normalize by removing leading and trailing slashes
-        const normalizePath = (path) => path.replace(/^\/+|\/+$/g, '');
+   
 
-        const currentPathRaw = location.pathname;
-
-        const currentPath = normalizePath(currentPathRaw);
-        const linkPath = normalizePath(_linkPath);
-
-        const isHome = linkPath === '';
-        const isOnHomePage = currentPathRaw === '/'; // exact match to root path
-
-        if (isHome) {
-            return isOnHomePage; // home active only if current path is exactly "/"
-        } else {
-            // active if current path equals link path or starts with link path + '/'
-            return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
-        }
-    }
 
 
     useEffect(() => {

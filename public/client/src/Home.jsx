@@ -28,13 +28,13 @@ const Home = ({ siteData }) => {
     const [_ref3, _isVisible3] = UseInView({ delay: 700 });
 
 
-    const [_ref7, _isVisible7] = UseInView({ delay: 700 });
+    const [_ref7, _isVisible7] = UseInView({});
     const [_ref4, _isVisible4] = UseInView({ delay: 300 });
     const [_ref5, _isVisible5] = UseInView({ delay: 500 });
     const [_ref6, _isVisible6] = UseInView({ delay: 700 });
 
     const [_ref10, _isVisible10] = UseInView();
-    
+
 
 
     const [_ref11, _isVisible11] = UseInView({ delay: 700 });
@@ -175,40 +175,6 @@ const Home = ({ siteData }) => {
 
 
 
-
-            <div className="container mx-auto px-4 py-6 my-6" id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
-                <div
-                    ref={_ref7}
-                    className={`slide-down ${_isVisible7 ? "visible" : ""}`}
-                >
-                    <div className="row align-items-center">
-                        {/* Image Column */}
-                        <div className="col-12 col-md-6 d-flex justify-content-center">
-                            <img
-                                src="https://placehold.co/500x500"
-                                alt={siteData.aboutUs.header}
-                                className="img-fluid rounded shadow"
-                            />
-                        </div>
-                        {/* Text Column */}
-                        <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
-                            <h2
-                                ref={_ref4}
-                                className={`fs-1 pb-3 slide-down ${_isVisible4 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
-                            <h3
-                                ref={_ref5}
-                                className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible5 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
-                            <h5
-                                ref={_ref6}
-                                className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-
-
             <div
                 id="section-4"
                 ref={_ref10}
@@ -281,10 +247,10 @@ const Home = ({ siteData }) => {
                 style={{
                     backgroundColor: 'black',
 
-                    marginBottom: "10vh",
+                    // marginBottom: "10vh",
                     position: "relative",
 
-                    width: "100%",       // ❗ responsive width
+                    // width: "100%",       // ❗ responsive width
                     // maxHeight: "1080px", // optional cap for desktop
                     // overflow: "hidden",
                 }}
@@ -303,9 +269,51 @@ const Home = ({ siteData }) => {
 
 
 
-           
+            <div className="container mx-auto px-4 py-6 my-6" id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
+                <div
+                    ref={_ref7}
+                    className={`slide-down ${_isVisible7 ? "visible" : ""}`}
+                >
+                    <div className="row align-items-center">
 
+                        {/* Image Column */}
+                        <div className="col-12 col-md-6 d-flex justify-content-center order-2 order-md-1">
+                            <img
+                                src="https://placehold.co/500x500"
+                                alt={siteData.aboutUs.header}
+                                className="img-fluid rounded shadow"
+                            />
+                        </div>
 
+                        {/* Text Column */}
+                        <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 mt-lg-0 mt-5 order-1 order-md-2">
+                            <h2
+                                ref={_ref4}
+                                className={`fs-1 pb-3 slide-down ${_isVisible4 ? "visible" : ""}`}
+                            >
+                                {siteData.aboutUs.header}
+                            </h2>
+
+                            <h3
+                                ref={_ref5}
+                                className={`fs-4 pb-3 slide-down contrast-color ${_isVisible5 ? "visible" : ""}`}
+                            >
+                                {siteData.aboutUs.title}
+                            </h3>
+
+                            <h5
+                                ref={_ref6}
+                                className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`}
+                                style={{ lineHeight: 2 }}
+                            >
+                                {siteData.aboutUs.description}
+                            </h5>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
         </div>
     );
 };

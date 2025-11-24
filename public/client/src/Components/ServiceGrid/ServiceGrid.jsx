@@ -38,13 +38,13 @@ const ServiceGrid = ({ data, containerTitle, serviceKeyName, gridClass }) => {
 
 
     return (
-        <div className="p-0">
+        <div className="">
             <h2 className="py-4 text-center service-grid-title">
                 {/* <span className="highlighted-word">{containerTitle.split(" ")[0]}</span>{" "} */}
                 {/* {containerTitle.split(" ")[1]}{" "} */}
                 {/* {containerTitle.split(" ").slice(2).join(" ")} */}
             </h2>
-            <div className="row">
+            <div className="row m-0">
                 {data.map((service, index) => (
                     <div className={gridClass} key={index}>
                         <ServiceCard {...service} fixHeight={true}

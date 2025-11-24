@@ -1,0 +1,254 @@
+import React, { useEffect } from "react";
+import { ObjectId } from "mongodb";
+import './GenericDataGrid.css';
+export interface Column<T> {
+    field?: keyof T;
+    headerName: string;
+    width?: number | string;
+    renderCell?: (row: T) => React.ReactNode;
+    sortable?: boolean;
+    filterable?: boolean;
+}
+
+export interface PaginationModel {
+    page: number;       // current page (1-based)
+    pageSize: number;   // items per page
+}
+
+export interface SortModel<T> {
+    field: keyof T;
+    sort: "asc" | "desc";
+}
+
+export interface FilterModel<T> {
+    field: keyof T;
+    operator: "contains" | "equals" | "startsWith" | "endsWith"; // extend as needed
+    value: string | number;
+}
+
+interface DataGridProps<T> {
+    rows: T[];
+    columns: Column<T>[];
+    rowCount: number;
+
+    paginationModel: PaginationModel;
+    onPaginationModelChange: (model: PaginationModel) => void;
+
+    sortModel?: SortModel<T> | null;
+    onSortModelChange?: (model: SortModel<T> | null) => void;
+
+    filterModel?: FilterModel<T>[] | null;
+    onFilterModelChange?: (model: FilterModel<T>[] | null) => void;
+
+    rowsPerPageOptions?: number[];
+    loading?: boolean;
+
+    // New prop: function to get unique id from row
+    getRowId: (row: T) => string | number;
+}
+
+
+export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>({
+    rows,
+    columns,
+    rowCount,
+
+    paginationModel,
+    onPaginationModelChange,
+
+    sortModel,
+    onSortModelChange,
+
+    filterModel,
+    onFilterModelChange,
+
+    rowsPerPageOptions = [5, 10, 25],
+    loading = false,
+}: DataGridProps<T>) {
+    // Handlers
+    const handlePageChange = (newPage: number) => {
+        if (newPage < 1) newPage = 1;
+        const totalPages = Math.ceil(rowCount / paginationModel.pageSize);
+        if (newPage > totalPages) newPage = totalPages;
+
+        onPaginationModelChange({ ...paginationModel, page: newPage });
+    };
+
+    const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        onPaginationModelChange({ page: 1, pageSize: parseInt(e.target.value, 10) });
+    };
+
+    const handleSort = (field: keyof T) => {
+        if (!onSortModelChange) return;
+        if (!sortModel || sortModel.field !== field) {
+            onSortModelChange({ field, sort: "asc" });
+        } else if (sortModel.sort === "asc") {
+            onSortModelChange({ field, sort: "desc" });
+        } else {
+            onSortModelChange(null); // remove sorting
+        }
+    };
+
+    const handleFilterChange = (field: keyof T, value: string) => {
+        if (!onFilterModelChange) return;
+
+        let newFilters: FilterModel<T>[] = [];
+
+        if (Array.isArray(filterModel)) {
+            // Copy existing filters except the one being updated
+            newFilters = filterModel.filter((f) => f.field !== field);
+        }
+
+        if (value) {
+            // Add or update the filter for this field
+            newFilters.push({
+                field,
+                operator: "contains",
+                value,
+            });
+        }
+
+        // If no filters left, send null
+        onFilterModelChange(newFilters.length > 0 ? newFilters : null);
+    };
+
+
+    const totalPages = Math.ceil(rowCount / paginationModel.pageSize);
+
+    return (
+        <div className="table-wrapper">
+            <table className="my-table">
+                <thead>
+                    <tr>
+                        {columns.map((col) => (
+                            <th
+                                key={String(col.field ?? col.headerName)}
+                                style={{
+                                    borderBottom: "1px solid #ccc",
+                                    padding: 8,
+                                    cursor: col.sortable ? "pointer" : "default",
+                                    userSelect: "none",
+                                    width: col.width,
+                                }}
+                                onClick={() => {
+                                    if (col.sortable && col.field) {
+                                        handleSort(col.field);
+                                    }
+                                }}
+                            >
+                                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                                    <span>{col.headerName}</span>
+                                    {sortModel?.field === col.field && (
+                                        <span>{sortModel?.sort === "asc" ? "▲" : "▼"}</span>
+                                    )}
+                                </div>
+
+                                {col.filterable && col.field && (
+                                    <input
+                                        onClick={(e) => e.stopPropagation()}
+                                        type="text"
+                                        value={
+                                            Array.isArray(filterModel)
+                                                ? filterModel.find((f) => f.field === col.field)?.value ?? ""
+                                                : ""
+                                        }
+                                        onChange={(e) => {
+                                            if (col.field) {
+
+                                                handleFilterChange(col.field!, e.target.value);
+                                            }
+                                        }}
+                                        placeholder="Filter..."
+                                        style={{ marginTop: 4, width: "90%" }}
+                                    />
+                                )}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {loading ? (
+                        <tr>
+                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }}>
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : rows.length === 0 ? (
+                        <tr>
+                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }}>
+                                No data found.
+                            </td>
+                        </tr>
+                    ) : (
+                        rows.map((row) => (
+                            <tr key={row._id?.toString()}>
+                                {columns.map((col, idx) => (
+                                    <td
+                                        key={String(col.field ?? idx)}
+                                        data-label={col.headerName}
+                                        style={{ padding: 8, borderBottom: "1px solid #eee" }}
+                                    >
+                                        {col.renderCell
+                                            ? col.renderCell(row)
+                                            : col.field
+                                                ? String(row[col.field])
+                                                : null}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+
+
+            </table>
+
+            {/* Pagination Controls */}
+            <div
+                style={{
+                    marginTop: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                <div>
+                    Page {paginationModel.page} of {totalPages} ({rowCount} items)
+                </div>
+
+                <div>
+                    <button
+                        onClick={() => handlePageChange(paginationModel.page - 1)}
+                        disabled={paginationModel.page <= 1}
+                        style={{ marginRight: 10 }}
+                    >
+                        Previous
+                    </button>
+
+                    <button
+                        onClick={() => handlePageChange(paginationModel.page + 1)}
+                        disabled={paginationModel.page >= totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+
+                <div>
+                    <label htmlFor="pageSizeSelect">Items per page: </label>
+                    <select
+                        id="pageSizeSelect"
+                        value={paginationModel.pageSize}
+                        onChange={handlePageSizeChange}
+                    >
+                        {rowsPerPageOptions.map((size) => (
+                            <option key={size} value={size}>
+                                {size}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+        </div>
+    );
+}

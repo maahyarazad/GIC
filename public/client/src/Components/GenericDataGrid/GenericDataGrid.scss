@@ -1,0 +1,77 @@
+.table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+      white-space: nowrap;  // for desktop
+      text-align: left;
+    }
+
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    input[type='text'] {
+      width: 90%;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+
+    /* MOBILE STYLES */
+    @media (max-width: 600px) {
+      display: block;
+
+      thead {
+        display: none; /* hide header row */
+      }
+
+      tbody {
+        display: block;
+      }
+
+      tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 12px 10px;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      td {
+        display: flex;
+        flex-wrap: wrap; /* allow wrapping */
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 6px 0;
+        border: none;
+        white-space: normal !important;  /* override nowrap */
+        text-align: left;
+        position: relative;
+        padding-left: 0;
+
+        &::before {
+          content: attr(data-label);
+          font-weight: 600;
+          flex-basis: 40%;
+          color: #444;
+        }
+      }
+
+      input[type='text'] {
+        width: 100%;
+        margin-top: 4px;
+      }
+    }
+  }
+}

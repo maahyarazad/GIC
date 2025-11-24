@@ -1,0 +1,70 @@
+.table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  /* MOBILE STYLES */
+}
+.table-wrapper table th,
+.table-wrapper table td {
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  white-space: nowrap;
+  text-align: left;
+}
+.table-wrapper table th.sortable {
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.table-wrapper table input[type=text] {
+  width: 90%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .table-wrapper table {
+    display: block;
+  }
+  .table-wrapper table thead {
+    display: none; /* hide header row */
+  }
+  .table-wrapper table tbody {
+    display: block;
+  }
+  .table-wrapper table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px 10px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .table-wrapper table td {
+    display: flex;
+    flex-wrap: wrap; /* allow wrapping */
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border: none;
+    white-space: normal !important; /* override nowrap */
+    text-align: left;
+    position: relative;
+    padding-left: 0;
+  }
+  .table-wrapper table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    flex-basis: 40%;
+    color: #444;
+  }
+  .table-wrapper table input[type=text] {
+    width: 100%;
+    margin-top: 4px;
+  }
+}/*# sourceMappingURL=GenericDataGrid.css.map */

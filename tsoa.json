@@ -1,0 +1,12 @@
+{
+  "entryFile": "src/server.ts",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "outputDirectory": "dist",
+    "specVersion": 3,
+    "specFileBaseName": "openapi"
+  },
+  "routes": {
+    "routesDir": "src/routes"
+  }
+}

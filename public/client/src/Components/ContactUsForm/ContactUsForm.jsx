@@ -150,7 +150,7 @@ const ContactForm = ({ siteData, sectionId }) => {
 
                                         <ErrorMessage name="attachment" component="span" className="text-danger d-block mt-1" />
 
-                                        <button type="submit" className="btn btn-primary-contrast" style={{ backgroundColor: 'var(--primary-color)' }} disabled={isSubmitting}>
+                                        <button type="submit" className="btn btn-primary-contrast" disabled={isSubmitting}>
                                             {isSubmitting ? "Sending..." : siteData.sendYourRequest}
                                         </button>
                                     </div>

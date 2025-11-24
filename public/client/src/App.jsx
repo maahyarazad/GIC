@@ -17,6 +17,10 @@ import ContactUs from './Pages/ContactUs';
 import MainLoader from './Components/MainLoader';
 import Layout from './Components/Layout/Layout';
 import axiosInstance from './api/axiosInstance'
+import ProtectedRoute from './Pages/ProtectedRoutes';
+import Login from './Pages/Login/Login';
+import {Dashboard} from './Pages/Dashboard/Dashboard'
+import Register from './Pages/Register/Register';
 
 
 const App = () => {
@@ -33,7 +37,7 @@ const App = () => {
         try {
             
         const response = await axiosInstance.get(`${server_endpoint}/client`);
-        debugger;
+        
             setSiteData(response.data);
         } catch (error) {
             console.error('Error fetching footer data:', error);
@@ -125,7 +129,9 @@ const location = useLocation();
                 <Route path="/services" element={<Services />} />
                            
                 <Route path="/contact-us" element={ <ContactUs siteData={siteData}/>} />
-
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={ <ProtectedRoute><Dashboard /></ProtectedRoute>} />
             </Routes>
             <Footer footerData={siteData.footer} />
             <BackToTop />

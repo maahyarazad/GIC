@@ -1,4 +1,5 @@
 import "dotenv/config";
+
 import express, { Request, Response } from "express";
 import cors from "cors";
 import multer from "multer";
@@ -8,23 +9,48 @@ import fsReg from "fs";
 import nodemailer from "nodemailer";
 import { authMiddleware } from "./middleware/auth.middleware";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+
 
 
 
 import { RegisterRoutes } from "./routes/routes";
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
-import * as swaggerDocument from "../dist/openapi.json";
+import * as swaggerDocument from "./swagger/swagger.json";
 const app = express();
-const PORT = process.env.PORT || 5500;
+const PORT = process.env.PORT;
 import { verifyRequirements } from "./db";
+const allowedOrigins = [
+  process.env.CLIENT_ORIGIN_DEV ,
+  process.env.CLIENT_ORIGIN_PROD
+];
+
+
 app.use(
   cors({
-    origin: "http://localhost:5174",
-    credentials: true,
+
+    origin: true, // allow all origins dynamically
+    credentials: true, // allow cookies
   })
 );
+
+
 app.use(cookieParser());
+app.use(
+  session({
+    name: "sid", // session cookie name
+    secret: process.env.SESSION_SECRET || "your-secret-key",
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // only save sessions when initialized
+    cookie: {
+      httpOnly: true, // client-side JS cannot access the cookie
+      secure: process.env.NODE_ENV === "production", // only over HTTPS in production
+      maxAge: 15 * 60 * 1000, // session expires after 5 minutes
+    //   sameSite: "lax",
+    },
+  })
+);
 app.use(express.json());
 
 // User routes

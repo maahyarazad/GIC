@@ -8,6 +8,8 @@ import { UserController } from './../controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ProductConroller } from './../controllers/product.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { OtpController } from './../controllers/otp.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ClientController } from './../controllers/client.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/auth.controller';
@@ -167,6 +169,34 @@ const models: TsoaRoute.Models = {
             "children": {"dataType":"array","array":{"dataType":"string"}},
             "recommended": {"dataType":"array","array":{"dataType":"string"}},
             "updatedAt": {"dataType":"datetime"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SendOtpBody": {
+        "dataType": "refObject",
+        "properties": {
+            "email": {"dataType":"string"},
+            "mobile_number": {"dataType":"string"},
+            "origin": {"dataType":"string"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OtpCheckBody": {
+        "dataType": "refObject",
+        "properties": {
+            "otp": {"dataType":"string","required":true},
+            "registration_code": {"dataType":"string"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OtpCheckMobileBody": {
+        "dataType": "refObject",
+        "properties": {
+            "otp": {"dataType":"string","required":true},
+            "otp_data": {"dataType":"any","required":true},
         },
         "additionalProperties": true,
     },
@@ -476,6 +506,128 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsOtpController_sendOtpEmail: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"SendOtpBody"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/otp/send-email',
+            ...(fetchMiddlewares<RequestHandler>(OtpController)),
+            ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.sendOtpEmail)),
+
+            async function OtpController_sendOtpEmail(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsOtpController_sendOtpEmail, request, response });
+
+                const controller = new OtpController();
+
+              await templateService.apiHandler({
+                methodName: 'sendOtpEmail',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsOtpController_sendOtpMobile: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"SendOtpBody"},
+        };
+        app.post('/otp/send-mobile',
+            ...(fetchMiddlewares<RequestHandler>(OtpController)),
+            ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.sendOtpMobile)),
+
+            async function OtpController_sendOtpMobile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsOtpController_sendOtpMobile, request, response });
+
+                const controller = new OtpController();
+
+              await templateService.apiHandler({
+                methodName: 'sendOtpMobile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsOtpController_checkOtpEmail: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"OtpCheckBody"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/otp/check-email',
+            ...(fetchMiddlewares<RequestHandler>(OtpController)),
+            ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.checkOtpEmail)),
+
+            async function OtpController_checkOtpEmail(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsOtpController_checkOtpEmail, request, response });
+
+                const controller = new OtpController();
+
+              await templateService.apiHandler({
+                methodName: 'checkOtpEmail',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsOtpController_checkOtpMobile: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"OtpCheckMobileBody"},
+        };
+        app.post('/otp/check-mobile',
+            ...(fetchMiddlewares<RequestHandler>(OtpController)),
+            ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.checkOtpMobile)),
+
+            async function OtpController_checkOtpMobile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsOtpController_checkOtpMobile, request, response });
+
+                const controller = new OtpController();
+
+              await templateService.apiHandler({
+                methodName: 'checkOtpMobile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

@@ -1,0 +1,81 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+.dashboard nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.dashboard nav ul li {
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 0.5px solid transparent;
+  text-decoration: none;
+}
+.dashboard nav ul li.active {
+  border: 0.5px solid white;
+  font-weight: 900;
+  background-color: #888888;
+}
+
+/* Sidebar styles */
+.sidebar {
+  background: #222;
+  color: white;
+  width: 12%;
+  min-width: 12%;
+  padding: 1rem;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Desktop: sidebar always visible */
+@media (min-width: 768px) {
+  .sidebar {
+    position: relative;
+    transform: translateX(0);
+  }
+  .close-btn,
+  .open-sidebar-btn {
+    display: none;
+  }
+}
+/* Mobile/tablet: sidebar is hidden by default, slides in */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  .open-sidebar-btn {
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin: 1rem;
+  }
+}
+/* Main content takes rest space */
+.main-content {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}/*# sourceMappingURL=Dashboard.css.map */

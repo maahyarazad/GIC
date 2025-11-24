@@ -1,0 +1,1666 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"UserSortKey": {
+				"type": "string",
+				"enum": [
+					"name",
+					"email",
+					"createdAt",
+					"role"
+				]
+			},
+			"ObjectId": {
+				"type": "string",
+				"description": "A class representation of the BSON ObjectId type."
+			},
+			"Pick_User.Exclude_keyofUser.password__": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"admin",
+							"superadmin"
+						]
+					},
+					"orders": {
+						"items": {
+							"$ref": "#/components/schemas/ObjectId"
+						},
+						"type": "array"
+					},
+					"addresses": {
+						"items": {
+							"$ref": "#/components/schemas/ObjectId"
+						},
+						"type": "array"
+					},
+					"googleId": {
+						"type": "string"
+					},
+					"facebookId": {
+						"type": "string"
+					},
+					"avatar": {
+						"type": "string"
+					},
+					"_id": {
+						"$ref": "#/components/schemas/ObjectId"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"email"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_User.password_": {
+				"$ref": "#/components/schemas/Pick_User.Exclude_keyofUser.password__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"CreateUserRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"admin"
+						]
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateUserRequest": {
+				"properties": {
+					"_id": {
+						"$ref": "#/components/schemas/ObjectId"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"role": {
+						"type": "string",
+						"enum": [
+							"user",
+							"admin",
+							"superadmin"
+						]
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ProductContent": {
+				"properties": {
+					"description": {
+						"type": "string"
+					},
+					"feature": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"care": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"description",
+					"feature",
+					"care"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ProductVariant": {
+				"properties": {
+					"color": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"size": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"color",
+					"size"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ProductMedia": {
+				"properties": {
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"video": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"images",
+					"video"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CreateProductRequest": {
+				"properties": {
+					"sku": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"product_type": {
+						"type": "string"
+					},
+					"partner": {
+						"type": "string",
+						"nullable": true
+					},
+					"set": {
+						"type": "string",
+						"nullable": true
+					},
+					"content": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductContent"
+							}
+						],
+						"nullable": true
+					},
+					"variant": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductVariant"
+							}
+						],
+						"nullable": true
+					},
+					"media": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductMedia"
+							}
+						],
+						"nullable": true
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"sale_price": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						],
+						"nullable": true
+					},
+					"sale_period": {
+						"type": "string",
+						"nullable": true
+					},
+					"parent": {
+						"items": {
+							"type": "string",
+							"nullable": true
+						},
+						"type": "array"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"recommended": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					}
+				},
+				"required": [
+					"sku",
+					"name",
+					"price",
+					"product_type",
+					"partner",
+					"set",
+					"content",
+					"variant",
+					"media",
+					"tags",
+					"sale_price",
+					"sale_period",
+					"parent",
+					"children",
+					"recommended"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Product": {
+				"properties": {
+					"_id": {
+						"$ref": "#/components/schemas/ObjectId"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"sku": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"product_type": {
+						"type": "string"
+					},
+					"partner": {
+						"type": "string",
+						"nullable": true
+					},
+					"set": {
+						"type": "string",
+						"nullable": true
+					},
+					"content": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductContent"
+							}
+						],
+						"nullable": true
+					},
+					"variant": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductVariant"
+							}
+						],
+						"nullable": true
+					},
+					"media": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductMedia"
+							}
+						],
+						"nullable": true
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"sale_price": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						],
+						"nullable": true
+					},
+					"sale_period": {
+						"type": "string",
+						"nullable": true
+					},
+					"parent": {
+						"items": {
+							"type": "string",
+							"nullable": true
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"recommended": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					}
+				},
+				"required": [
+					"sku",
+					"name",
+					"price",
+					"product_type",
+					"partner",
+					"set",
+					"content",
+					"variant",
+					"media",
+					"tags",
+					"sale_price",
+					"sale_period",
+					"parent",
+					"children",
+					"recommended"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ProductSortKey": {
+				"type": "string",
+				"enum": [
+					"sku",
+					"name",
+					"price",
+					"product_type",
+					"partner",
+					"set",
+					"sale_price",
+					"sale_period",
+					"createdAt",
+					"updatedAt"
+				]
+			},
+			"SortOrder": {
+				"type": "string",
+				"enum": [
+					"asc",
+					"desc"
+				]
+			},
+			"UpdateProductRequest": {
+				"properties": {
+					"sku": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"product_type": {
+						"type": "string"
+					},
+					"partner": {
+						"type": "string"
+					},
+					"set": {
+						"type": "string"
+					},
+					"content": {
+						"$ref": "#/components/schemas/ProductContent"
+					},
+					"variant": {
+						"$ref": "#/components/schemas/ProductVariant"
+					},
+					"media": {
+						"$ref": "#/components/schemas/ProductMedia"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"sale_price": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "number",
+								"format": "double"
+							}
+						]
+					},
+					"sale_period": {
+						"type": "string"
+					},
+					"parent": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"recommended": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SendOtpBody": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"mobile_number": {
+						"type": "string"
+					},
+					"origin": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"OtpCheckBody": {
+				"properties": {
+					"otp": {
+						"type": "string"
+					},
+					"registration_code": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"otp"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"OtpCheckMobileBody": {
+				"properties": {
+					"otp": {
+						"type": "string"
+					},
+					"otp_data": {}
+				},
+				"required": [
+					"otp",
+					"otp_data"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"LoginModel": {
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"userEmail": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"userName",
+					"userEmail",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "app",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "GetAllUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/UserSortKey"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"default": "asc",
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"token": {
+											"type": "string"
+										},
+										"user": {
+											"$ref": "#/components/schemas/Omit_User.password_"
+										}
+									},
+									"required": [
+										"token",
+										"user"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Omit_User.password_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/products": {
+			"post": {
+				"operationId": "CreateProduct",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateProductRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllProducts",
+				"responses": {
+					"200": {
+						"description": "Products fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"skip": {
+											"type": "number",
+											"format": "double"
+										},
+										"limit": {
+											"type": "number",
+											"format": "double"
+										},
+										"total": {
+											"type": "number",
+											"format": "double"
+										},
+										"products": {
+											"items": {
+												"$ref": "#/components/schemas/Product"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"skip",
+										"limit",
+										"total",
+										"products"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ProductSortKey"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/SortOrder"
+						}
+					},
+					{
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPrice",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "product_type",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "tags",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/products/{id}": {
+			"get": {
+				"operationId": "GetProductById",
+				"responses": {
+					"200": {
+						"description": "Product fetched",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateProduct",
+				"responses": {
+					"200": {
+						"description": "Product updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateProductRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteProduct",
+				"responses": {
+					"200": {
+						"description": "Product deleted successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/otp/send-email": {
+			"post": {
+				"operationId": "SendOtpEmail",
+				"responses": {
+					"200": {
+						"description": "OTP sent successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"error": {
+													"properties": {
+														"details": {},
+														"code": {
+															"type": "string"
+														},
+														"message": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"details",
+														"code",
+														"message"
+													],
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"timestamp",
+												"error",
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"data": {
+													"properties": {
+														"otpSent": {
+															"type": "boolean"
+														}
+													},
+													"required": [
+														"otpSent"
+													],
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												},
+												"pagination": {}
+											},
+											"required": [
+												"timestamp",
+												"data",
+												"message",
+												"success"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SendOtpBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/otp/send-mobile": {
+			"post": {
+				"operationId": "SendOtpMobile",
+				"responses": {
+					"200": {
+						"description": "OTP sent successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"error": {
+													"properties": {
+														"details": {},
+														"code": {
+															"type": "string"
+														},
+														"message": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"details",
+														"code",
+														"message"
+													],
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"timestamp",
+												"error",
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"data": {},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												},
+												"pagination": {}
+											},
+											"required": [
+												"timestamp",
+												"data",
+												"message",
+												"success"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SendOtpBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/otp/check-email": {
+			"post": {
+				"operationId": "CheckOtpEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"error": {
+													"properties": {
+														"details": {},
+														"code": {
+															"type": "string"
+														},
+														"message": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"details",
+														"code",
+														"message"
+													],
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"timestamp",
+												"error",
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"data": {
+													"properties": {},
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												},
+												"pagination": {}
+											},
+											"required": [
+												"timestamp",
+												"data",
+												"message",
+												"success"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OtpCheckBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/otp/check-mobile": {
+			"post": {
+				"operationId": "CheckOtpMobile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"error": {
+													"properties": {
+														"details": {},
+														"code": {
+															"type": "string"
+														},
+														"message": {
+															"type": "string"
+														}
+													},
+													"required": [
+														"details",
+														"code",
+														"message"
+													],
+													"type": "object"
+												},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												}
+											},
+											"required": [
+												"timestamp",
+												"error",
+												"message",
+												"success"
+											],
+											"type": "object"
+										},
+										{
+											"properties": {
+												"timestamp": {
+													"type": "string"
+												},
+												"data": {},
+												"message": {
+													"type": "string"
+												},
+												"success": {
+													"type": "boolean"
+												},
+												"pagination": {}
+											},
+											"required": [
+												"timestamp",
+												"data",
+												"message",
+												"success"
+											],
+											"type": "object"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OtpCheckMobileBody"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/client": {
+			"get": {
+				"operationId": "GetLargeJson",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"client"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/google/url": {
+			"get": {
+				"operationId": "GetGoogleAuthUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"url": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"url"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/google/callback": {
+			"get": {
+				"operationId": "GoogleCallback",
+				"responses": {
+					"302": {
+						"description": "Redirecting"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "code",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/facebook/url": {
+			"get": {
+				"operationId": "GetFacebookAuthUrl",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"url": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"url"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/facebook/callback": {
+			"get": {
+				"operationId": "FacebookCallback",
+				"responses": {
+					"302": {
+						"description": "Redirecting"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "code",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/profile": {
+			"get": {
+				"operationId": "GetProfile",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/verify-token": {
+			"get": {
+				"operationId": "VerifyToken",
+				"responses": {
+					"200": {
+						"description": "Token is valid",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "LoginUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"$ref": "#/components/schemas/Omit_User.password_"
+										},
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"user",
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginModel"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "LogoutUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"success": {
+											"type": "boolean"
+										}
+									},
+									"required": [
+										"success"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

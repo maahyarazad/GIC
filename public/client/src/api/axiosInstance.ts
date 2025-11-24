@@ -47,7 +47,7 @@ function normalizeApiError(error: unknown): ApiError {
 // 📌 Create Axios Instance
 // --------------------------
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVERURL || "http://localhost:5000",
+  baseURL: import.meta.env.VITE_SERVER_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

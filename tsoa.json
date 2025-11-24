@@ -1,12 +1,17 @@
 {
   "entryFile": "src/server.ts",
-  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "controllerPathGlobs": [
+    "src/controllers/*.ts"
+  ],
+  "noImplicitAdditionalProperties": "throw",
   "spec": {
-    "outputDirectory": "dist",
-    "specVersion": 3,
-    "specFileBaseName": "openapi"
+    "outputDirectory": "src/swagger",
+    "specVersion": 3
   },
   "routes": {
     "routesDir": "src/routes"
+  },
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./src/@types"]
   }
 }

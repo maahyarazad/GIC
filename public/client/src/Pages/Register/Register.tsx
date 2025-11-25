@@ -142,7 +142,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         // Check if the number is valid internationally
         if (!phone.isValid()) {
-            setError("Enter your phone number including the country code.");
+            setError("Missing country code. Please start with +<country code>");
             return false;
         }
 
@@ -327,7 +327,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     return (
         <>
             <div className="login-container">
-                <div className={`login-card ${registrationProcess?.currentStep > 0 ? "slide-out-left" : ""}`}>
+                <div className={`login-card ${registrationProcess?.currentStep === 0 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Create an Account</h2>
 
                     {error && <div className="login-error">{error}</div>}
@@ -392,7 +392,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     </p>
                 </div>
 
-                <div className={`login-card otp-card ${registrationProcess?.currentStep === 1 ? "show slide-in-right" : "hide"}`}>
+                <div className={`login-card otp-card ${registrationProcess?.currentStep === 1 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Email and Proceed</h2>
                     {error && <div className="login-error">{error}</div>}
 
@@ -460,7 +460,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
 
-                <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "show slide-in-right" : "hide"}`}>
+                <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Phone and Finish Registration</h2>
                     {error && <div className="login-error">{error}</div>}
 

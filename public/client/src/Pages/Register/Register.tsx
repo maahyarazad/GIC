@@ -28,6 +28,7 @@ interface RegisterModel {
     email: string;
     password: string;
     phone: string;
+    authorize: boolean;
 }
 
 
@@ -163,7 +164,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             const response = await axiosInstance.post("/otp/send-mobile", payload);
             if (response.status === 200) {
-                debugger;
+                
                 setOtpResonseData(response.data.data)
                 setValidOtpPhone(true);
                 otpRefPhone.current?.clear();
@@ -194,7 +195,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (response.status === 200) {
 
                 if (response.data.success) {
-                    debugger;
+                    
                     setRegistrationProcess({ currentStep: 2 });
                     setValidOtpEmail(true);
                     setEmailVerified(true);
@@ -224,6 +225,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             };
 
             const response = await axiosInstance.post("/otp/check-mobile", payload);
+            debugger;
             if (response.status === 200) {
 
                 if (response.data.success) {
@@ -259,6 +261,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 email: form.email,
                 password: form.password,
                 phone: form.phone,
+                authorize: false
             };
 
             const response = await axiosInstance.post("/users/", payload);

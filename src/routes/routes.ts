@@ -32,7 +32,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_User.Exclude_keyofUser.password__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["superadmin"]}]},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ObjectId"}},"addresses":{"dataType":"array","array":{"dataType":"refAlias","ref":"ObjectId"}},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"_id":{"ref":"ObjectId"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["superadmin"]}]},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ObjectId"}},"addresses":{"dataType":"array","array":{"dataType":"refAlias","ref":"ObjectId"}},"authorize":{"dataType":"boolean","required":true},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"_id":{"ref":"ObjectId"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Omit_User.password_": {
@@ -48,6 +48,7 @@ const models: TsoaRoute.Models = {
             "password": {"dataType":"string","required":true},
             "phone": {"dataType":"string","required":true},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]}]},
+            "authorize": {"dataType":"boolean","required":true},
         },
         "additionalProperties": true,
     },
@@ -61,8 +62,9 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string"},
             "email": {"dataType":"string"},
             "password": {"dataType":"string"},
-            "phone": {"dataType":"string","required":true},
+            "phone": {"dataType":"string"},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["superadmin"]}]},
+            "authorize": {"dataType":"boolean","required":true},
         },
         "additionalProperties": true,
     },

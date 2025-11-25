@@ -55,6 +55,9 @@
 						},
 						"type": "array"
 					},
+					"authorize": {
+						"type": "boolean"
+					},
 					"googleId": {
 						"type": "string"
 					},
@@ -74,7 +77,8 @@
 				},
 				"required": [
 					"name",
-					"email"
+					"email",
+					"authorize"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
@@ -103,13 +107,17 @@
 							"user",
 							"admin"
 						]
+					},
+					"authorize": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"name",
 					"email",
 					"password",
-					"phone"
+					"phone",
+					"authorize"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -146,10 +154,13 @@
 							"admin",
 							"superadmin"
 						]
+					},
+					"authorize": {
+						"type": "boolean"
 					}
 				},
 				"required": [
-					"phone"
+					"authorize"
 				],
 				"type": "object",
 				"additionalProperties": true

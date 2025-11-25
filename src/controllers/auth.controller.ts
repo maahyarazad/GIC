@@ -84,6 +84,7 @@ export class AuthController extends Controller {
         avatar: profile.picture,
         createdAt: new Date(),
         role: "user",
+        authorize: false
       };
 
       const insert = await users.insertOne(newUser);
@@ -174,6 +175,7 @@ export class AuthController extends Controller {
         avatar: profile.picture?.data?.url,
         createdAt: new Date(),
         role: "user",
+        authorize: false
       };
 
       const insert = await users.insertOne(newUser);

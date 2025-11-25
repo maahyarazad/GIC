@@ -14,7 +14,7 @@ export interface User extends BaseModel {
   role?: "user" | "admin" | "superadmin";
   orders?: ObjectId[];    
   addresses?: ObjectId[]; 
-
+  authorize: boolean;
   // Social login fields
   googleId?: string;
   facebookId?: string;
@@ -31,14 +31,16 @@ export interface CreateUserRequest {
   password: string;
   phone: string;
   role?: "user" | "admin";
+    authorize: boolean;
 }
 
 export interface UpdateUserRequest extends BaseModel{
   name?: string;
   email?: string;
   password?: string;
-    phone: string;
-  role?: "user" | "admin" | "superadmin";
+    phone?: string;
+    role?: "user" | "admin" | "superadmin";
+    authorize: boolean;
 }
 
 /* Auth Returned User */

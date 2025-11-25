@@ -200,6 +200,7 @@ public async createUser(
       password: hashedPassword,
       role: userData.role || "user",
       createdAt: new Date(),
+      authorize: false
     };
 
     // Insert user

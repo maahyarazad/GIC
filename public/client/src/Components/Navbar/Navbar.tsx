@@ -227,6 +227,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                                 }
                             </li>
                         ))}
+                         {user && (
+                                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                                <Link to="/dashboard">Dashboard</Link>
+                                </li>
+                            )}
                     </ul>
 
                 </div>
@@ -258,11 +263,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                             </li>
                         ))}
                           {user && (
-        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-          <Link to="/dashboard">Dashboard</Link>
-        </li>
-      )}
-                    </ul>
+                                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                                <Link to="/dashboard">Dashboard</Link>
+                                </li>
+                            )}
+                    </ul>   
                 </div>
 
 

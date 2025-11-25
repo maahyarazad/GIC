@@ -58,8 +58,9 @@ const columns: Column<User>[] = [
     width: 150,
     renderCell: (row) => (
       <>
-        <button onClick={() => onEdit(row._id)}>Edit</button>
-        <button onClick={() => onDelete(row._id)}>Delete</button>
+        <button className="btn btn-sm dashbaord-btn" onClick={() => onEdit(row._id)}>Authorize</button>
+        <button className="btn btn-sm dashbaord-btn" onClick={() => onDelete(row._id)}>Unauthorize</button>
+        <button className="btn btn-sm dashbaord-btn" onClick={() => onDelete(row._id)}>Send Reset Password Link</button>
       </>
     ),
     sortable: false,

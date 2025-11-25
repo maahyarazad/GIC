@@ -22,7 +22,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const show = useCallback((options: ToastOptions) => {
-    debugger;
+    
     const id = Date.now();
     const newToast: ToastItem = {
       id,

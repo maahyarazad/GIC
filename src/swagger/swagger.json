@@ -40,6 +40,9 @@
 							"superadmin"
 						]
 					},
+					"phone": {
+						"type": "string"
+					},
 					"orders": {
 						"items": {
 							"$ref": "#/components/schemas/ObjectId"
@@ -91,6 +94,9 @@
 					"password": {
 						"type": "string"
 					},
+					"phone": {
+						"type": "string"
+					},
 					"role": {
 						"type": "string",
 						"enum": [
@@ -102,7 +108,8 @@
 				"required": [
 					"name",
 					"email",
-					"password"
+					"password",
+					"phone"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -129,6 +136,9 @@
 					"password": {
 						"type": "string"
 					},
+					"phone": {
+						"type": "string"
+					},
 					"role": {
 						"type": "string",
 						"enum": [
@@ -138,6 +148,9 @@
 						]
 					}
 				},
+				"required": [
+					"phone"
+				],
 				"type": "object",
 				"additionalProperties": true
 			},
@@ -577,11 +590,10 @@
 					"otp": {
 						"type": "string"
 					},
-					"otp_data": {}
+					"requestId": {}
 				},
 				"required": [
-					"otp",
-					"otp_data"
+					"otp"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -696,6 +708,7 @@
 							"application/json": {
 								"schema": {
 									"properties": {
+										"error": {},
 										"token": {
 											"type": "string"
 										},
@@ -703,10 +716,6 @@
 											"$ref": "#/components/schemas/Omit_User.password_"
 										}
 									},
-									"required": [
-										"token",
-										"user"
-									],
 									"type": "object"
 								}
 							}

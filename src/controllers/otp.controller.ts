@@ -8,10 +8,14 @@ import smsglobal from "smsglobal";
 import dotenv from "dotenv";
 import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
 import { Session, SessionData } from "express-session";
-
-// no need to import anything else for types
+import { getCollection } from "../db";
+import { User } from "../types/user.types";
 
 dotenv.config();
+const smsglobal = require("smsglobal")(
+          process.env.SMSGLOBAL_KEY,
+          process.env.SMSGLOBAL_SECRET
+        );
 
 interface SendOtpBody {
   email?: string;
@@ -26,7 +30,7 @@ interface OtpCheckBody {
 
 interface OtpCheckMobileBody {
   otp: string;
-  otp_data: any;
+  requestId?: any;
 }
 
 const otpRequestMap = new Map<string, number>();
@@ -87,18 +91,30 @@ export class OtpController extends Controller {
     @Body() body: SendOtpBody,
     @Request() req: Express.Request
   ) {
-    if (!body.email) return createErrorResponse("Email is required");
+    // if (!body.email) return createErrorResponse("Email is required");
 
-    // ---- RATE LIMIT CHECK ----
-    const limit = this.checkLimiter(body);
-    if (!limit.allowed) {
-      this.setStatus(429);
+    // // ---- RATE LIMIT CHECK ----
+    // const limit = this.checkLimiter(body);
+    // if (!limit.allowed) {
+    //   this.setStatus(429);
+    //   return createErrorResponse(
+    //     `Please wait ${limit.remaining}s before requesting another OTP`
+    //   );
+    // }
+
+    // this.setLimiterMap(body);
+
+    const usersCollection = getCollection<User>("users");
+
+    // Check existing user
+    const existing = await usersCollection.findOne({ email: body.email });
+    if (existing) {
+      this.setStatus(400);
       return createErrorResponse(
-        `Please wait ${limit.remaining}s before requesting another OTP`
+        "The email you entered is already registered. Please use a different email to register.",
+        "EMAIL_EXISTS"
       );
     }
-
-    this.setLimiterMap(body);
 
     const session = req.session as SessionData & {
       otp?: string;
@@ -114,7 +130,7 @@ export class OtpController extends Controller {
     session.otpExpires = Date.now() + 5 * 60 * 1000;
 
     try {
-      if (process.env.ENVIRONMENT === "PRODUCTION") {
+      if (process.env.NODE_ENV === "PRODUCTION") {
         const params: EmailOtpRequest = {
           email: body.email,
           otp,
@@ -151,6 +167,7 @@ export class OtpController extends Controller {
 
     const limit = this.checkLimiter(body);
     if (!limit.allowed) {
+      this.setStatus(429);
       return createErrorResponse(
         `Please wait ${limit.remaining}s before requesting another OTP`
       );
@@ -158,20 +175,28 @@ export class OtpController extends Controller {
 
     this.setLimiterMap(body);
 
+    const destination = body.mobile_number.replace(/\D/g, "");
     const payload = {
-      origin: body.origin,
+        origin: 'B P',
       message: `{*code*} is your ${body.origin} verification code.`,
-      destination: `+${body.mobile_number.replace(/\D/g, "")}`,
+      destination: `+${destination}`,
       length: 5,
       codeExpiry: 300,
     };
 
     try {
-      if (process.env.ENVIRONMENT === "PRODUCTION") {
+      if (process.env.NODE_ENV === "PRODUCTION") {
+        
         const response = await smsglobal.otp.send(payload);
-        return createSuccessResponse(response, "OTP sent successfully");
+        return createSuccessResponse(
+          response.data,
+          `OTP sent successfully to +${destination}`
+        );
       }
-      return createSuccessResponse({}, "OTP sent successfully");
+      return createSuccessResponse(
+        {},
+        `OTP sent successfully to +${destination}`
+      );
     } catch (err: any) {
       console.error("Failed to send OTP:", err);
       return createErrorResponse("Failed to send OTP", undefined, err.message);
@@ -212,22 +237,26 @@ export class OtpController extends Controller {
   @Post("check-mobile")
   public async checkOtpMobile(@Body() body: OtpCheckMobileBody) {
     try {
-      const verifyOtp = () =>
-        new Promise((resolve, reject) => {
-          smsglobal.otp.verifyByRequestId(
-            body.otp_data.data.requestId,
-            body.otp,
-            (error: any, response: any) => {
-              if (response && response.statusCode === 200)
-                return resolve(response);
-              if (error) return reject(error);
-              return reject(new Error(response?.status || "Unknown error"));
-            }
-          );
-        });
+      if (process.env.NODE_ENV === "PRODUCTION") {
+        const verifyOtp = () =>
+          new Promise((resolve, reject) => {
+            smsglobal.otp.verifyByRequestId(
+              body.requestId,
+              body.otp,
+              (error: any, response: any) => {
+                if (response && response.statusCode === 200)
+                  return resolve(response);
+                if (error) return reject(error);
+                return reject(new Error(response?.status || "Unknown error"));
+              }
+            );
+          });
 
-      const result = await verifyOtp();
-      return createSuccessResponse(result, "Verification successful");
+        const result = await verifyOtp();
+        return createSuccessResponse(result, "Verification successful");
+      } else {
+        return createSuccessResponse({}, "Verification successful");
+      }
     } catch (err: any) {
       console.error("OTP verification failed:", err);
       return createErrorResponse(

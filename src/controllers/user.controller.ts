@@ -173,60 +173,65 @@ export class UserController extends Controller {
   }
 
   @SuccessResponse("201", "Created")
-  @Post("/")
-  public async createUser(
-    @Body() userData: CreateUserRequest
-  ): Promise<{ user: Omit<User, "password">; token: string }> {
-    try {
-      const usersCollection = getCollection<User>("users");
+@Post("/")
+public async createUser(
+  @Body() userData: CreateUserRequest
+): Promise<{ user?: Omit<User, "password">; token?: string; error?: any }> {
+  try {
+    const usersCollection = getCollection<User>("users");
 
-      // Check existing user
-      const existing = await usersCollection.findOne({ email: userData.email });
-      if (existing) {
-        this.setStatus(400);
-        throw new Error("Email already registered");
-      }
-
-      // Hash password
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-
-      const newUser: User = {
-        name: userData.name,
-        email: userData.email,
-        password: hashedPassword,
-        role: userData.role || "user",
-        createdAt: new Date(),
-      };
-
-      // Insert user
-      const result = await usersCollection.insertOne(newUser);
-
-      // Fetch created user without password
-      const createdUser = await usersCollection.findOne(
-        { _id: result.insertedId },
-        { projection: { password: 0 } }
-      );
-
-      if (!createdUser) {
-        this.setStatus(500);
-        throw new Error("Failed to fetch created user");
-      }
-
-      // Generate JWT
-      const token = jwt.sign(
-        { userId: result.insertedId, email: newUser.email },
-        JWT_SECRET,
-        { expiresIn: "7d" }
-      );
-
-      this.setStatus(201);
-      return { user: createdUser as Omit<User, "password">, token };
-    } catch (error: any) {
-      console.error(error);
-      this.setStatus(500);
-      throw new Error(error.message || "Failed to create user");
+    // Check existing user
+    const existing = await usersCollection.findOne({ email: userData.email });
+    if (existing) {
+      this.setStatus(400);
+      return createErrorResponse(
+            "The email you entered is already registered. Please use a different email to register.",
+            "EMAIL_EXISTS"
+            );
     }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    const newUser: User = {
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone,
+      password: hashedPassword,
+      role: userData.role || "user",
+      createdAt: new Date(),
+    };
+
+    // Insert user
+    const result = await usersCollection.insertOne(newUser);
+
+    // Fetch created user without password
+    const createdUser = await usersCollection.findOne(
+      { _id: result.insertedId },
+      { projection: { password: 0 } }
+    );
+
+    if (!createdUser) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch created user", "FETCH_FAILED");
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: result.insertedId, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    this.setStatus(201);
+    return { user: createdUser as Omit<User, "password">, token };
+  } catch (error: any) {
+    console.error(error);
+    this.setStatus(500);
+    return createErrorResponse(error.message || "Failed to create user", "INTERNAL_ERROR");
   }
+}
+
 
   @Put("/{id}")
   public async updateUser(

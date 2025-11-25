@@ -4,7 +4,7 @@ import axiosInstance from "../../api/axiosInstance";
 import { useToast } from "../../providers/ToastContext";
 import OtpTimer from "./../../Components/OTP/OtpTimer";
 import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
-
+import { useNavigate } from "react-router-dom";
 
 interface SendOtpBody {
     email?: string;
@@ -12,31 +12,44 @@ interface SendOtpBody {
     origin?: string;
 }
 
+interface PhoneOtpResponse {
+    createdTimestamp: Date;
+    destination: string ;
+    lastEventTimestamp: Date;
+    requestId: string;
+    status: string;
+    validUnitlTimestamp: string;
+}
+
 interface RegisterModel {
     name: string;
     email: string;
     password: string;
+    phone: string;
 }
 
 
 interface OtpCheckBody {
     otp: string;
-    registration_code?: string;
+    requestId?: string;
 }
 
 
 const Register: React.FC = () => {
+    const navigate = useNavigate();
     const { show } = useToast();
     const [showOtpInput, setShowOtpInput] = useState(false);
-    const [validOtp, setValidOtp] = useState(false);
+    const [validOtpPhone, setValidOtpPhone] = useState(false);
+    const [validOtpEmail, setValidOtpEmail] = useState(false);
 
     const [emailVerified, setEmailVerified] = useState(false);
-    const otpRefEmail = useRef<OtpInputRef>(null);
-    const otpRefPhone = useRef<OtpInputRef>(null);
+    const [phoneVerified, setPhoneVerified] = useState(false);
+    const [otpResonseData, setOtpResonseData] = useState<PhoneOtpResponse>();
+    const otpRefEmail = useRef<OtpInputRef | null>(null);
+    const otpRefPhone = useRef<OtpInputRef | null>(null);
     const statusRefEmail = useRef<HTMLDivElement>(null);
     const statusRefPhone = useRef<HTMLDivElement>(null);
-    const [emailTimer, setEmailTimer] = useState<number>(300);
-    const [phoneTimer, setPhoneTimer] = useState<number>(300);
+
 
 
 
@@ -63,7 +76,8 @@ const Register: React.FC = () => {
 
 
     const handleExpiredChange = (val) => {
-        setValidOtp(false);
+        setValidOtpEmail(false);
+        setValidOtpPhone(false);
     };
 
 
@@ -78,14 +92,12 @@ const Register: React.FC = () => {
 
             const response = await axiosInstance.post("/otp/send-email", payload);
             if (response.status === 200) {
-                setValidOtp(true);
+                setValidOtpEmail(true);
                 otpRefEmail.current?.clear();
-                setEmailTimer(300);
-
-                setCurrentResponseStatusEmail(response.data.message);
-                statusRefEmail.current!.innerHTML = response.data.message
+                
             }
-
+            
+            setCurrentResponseStatusEmail(response.data.message);
 
         } catch (err: any) {
 
@@ -102,19 +114,23 @@ const Register: React.FC = () => {
 
         try {
             const payload: SendOtpBody = {
-                email: form.email,
+                mobile_number: form.phone,
                 origin: "GIC"
             };
 
             const response = await axiosInstance.post("/otp/send-mobile", payload);
             if (response.status === 200) {
-                setCurrentResponseStatusPhone(response.data.message);
-                statusRefPhone.current!.innerHTML = response.data.message
+                debugger;
+                setOtpResonseData(response.data.data)
+                setValidOtpPhone(true);
+                otpRefPhone.current?.clear();
             }
-
+            
+            setCurrentResponseStatusPhone(response.data.message);
 
         } catch (err: any) {
-            setError(err.response?.data?.message || "Registration failed");
+
+            show({ type: "error", message: err!.message })
         } finally {
             setLoading(false);
         }
@@ -137,13 +153,12 @@ const Register: React.FC = () => {
                 if (response.data.success) {
                     debugger;
                     setRegistrationProcess({ currentStep: 2 });
-                    setValidOtp(true);
+                    setValidOtpEmail(true);
                     setEmailVerified(true);
-                    setCurrentResponseStatusEmail(response.data.message);
-                    statusRefEmail.current!.innerHTML = response.data.message
-                } else {
-                    statusRefEmail.current!.innerHTML = response.data.message
-                }
+                    
+                } 
+
+                setCurrentResponseStatusEmail(response.data.message);
 
             }
 
@@ -162,57 +177,37 @@ const Register: React.FC = () => {
         try {
             const payload: OtpCheckBody = {
                 otp: val,
-
+                requestId: otpResonseData?.requestId
             };
 
             const response = await axiosInstance.post("/otp/check-mobile", payload);
             if (response.status === 200) {
-                debugger;
-                setValidOtp(true);
-                setCurrentResponseStatusPhone(response.data.message);
-                statusRefPhone.current!.innerHTML = response.data.message
+                
+                if (response.data.success) {
+                    
+                    setValidOtpPhone(true);
+                    registerUser();
+
+                }
             }
 
+            
+            setCurrentResponseStatusPhone(response.data.message);
 
         } catch (err: any) {
-            setError(err.response?.data?.message || "Registration failed");
+              show({ type: "error", message: err!.message })
+            
         } finally {
             setLoading(false);
         }
 
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
 
+    const registerUser = async () => {
 
-
-        e.preventDefault();
-        setError("");
-
-        if (form.password !== form.confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
-
+          
         debugger;
-        switch (registrationProcess?.currentStep) {
-            case 0:
-                setRegistrationProcess({ currentStep: 1 });
-
-                return;
-
-
-            case 1:
-                setRegistrationProcess({ currentStep: 2 });
-
-                return;
-            case 2:
-                break;
-
-
-
-
-        }
         setLoading(true);
 
         try {
@@ -220,24 +215,67 @@ const Register: React.FC = () => {
                 name: form.name,
                 email: form.email,
                 password: form.password,
+                phone: form.phone,
             };
 
-            const response = await axiosInstance.post("/user/", payload);
-
+            const response = await axiosInstance.post("/users/", payload);
+            
             show({
                 type: "success",
-                message: "Account created successfully",
+                message: import.meta.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
             });
 
-            // redirect user after success
-            window.location.href = "/login";
+            
+            navigate("/login");
 
         } catch (err: any) {
-            setError(err.response?.data?.message || "Registration failed");
+            show({ type: "error", message: err!.message })
+            
         } finally {
             setLoading(false);
         }
-    };
+    }
+
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    // -----------------------
+    // Password match check
+    // -----------------------
+    if (form.password !== form.confirmPassword) {
+        setError("Passwords do not match");
+        return;
+    }
+
+    // -----------------------
+    // Strong password validation
+    // -----------------------
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
+    if (!strongPasswordRegex.test(form.password)) {
+        setError(
+            "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+        );
+        return;
+    }
+
+    // -----------------------
+    // Registration steps
+    // -----------------------
+    switch (registrationProcess?.currentStep) {
+        case 0:
+            setRegistrationProcess({ currentStep: 1 });
+            return;
+        case 1:
+            setRegistrationProcess({ currentStep: 2 });
+            return;
+        case 2:
+            break;
+    }
+
+    
+};
+
 
     const isValidEmail = (email) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -246,14 +284,14 @@ const Register: React.FC = () => {
     return (
         <>
             <div className="login-container">
-                <div className={`login-card ${registrationProcess?.currentStep > 0 ? "hide slide-out-left" : ""}`}>
+                <div className={`login-card ${registrationProcess?.currentStep > 0 ? "slide-out-left" : ""}`}>
                     <h2 className="login-title">Create an Account</h2>
 
                     {error && <div className="login-error">{error}</div>}
 
                     <form onSubmit={handleSubmit} className="login-form">
                         <div className="form-group">
-                            <label>Name</label>
+                            <label>Full Name</label>
                             <input
                                 name="name"
                                 type="text"
@@ -263,18 +301,6 @@ const Register: React.FC = () => {
                             />
                         </div>
 
-
-
-                        <div className="form-group">
-                            <label>Phone Number</label>
-                            <input
-                                name="phone"
-                                type="phone"
-                                required
-                                value={form.phone}
-                                onChange={handleChange}
-                            />
-                        </div>
 
                         <div className="form-group">
                             <label>Password</label>
@@ -324,7 +350,7 @@ const Register: React.FC = () => {
                 </div>
 
                 <div className={`login-card otp-card ${registrationProcess?.currentStep === 1 ? "show slide-in-right" : "hide"}`}>
-                    <h2 className="login-title">Enter OTP</h2>
+                    <h2 className="login-title">Verify Email and Proceed</h2>
                     {error && <div className="login-error">{error}</div>}
 
                     <form onSubmit={handleSubmit} className="login-form">
@@ -343,10 +369,10 @@ const Register: React.FC = () => {
                         </div>
 
                         <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
-                            <div className="py-1" ref={statusRefEmail}></div>
+                            <div className="py-1" ref={statusRefEmail}>{currentResponseStatusEmail}</div>
 
-                            {currentResponseStatusEmail && (
-                                <>
+                            
+                                <div className={`${currentResponseStatusEmail === null? "d-none" : ""}`}>
 
 
                                     <div className={`${emailVerified ? "d-none" : ""}`}>
@@ -359,17 +385,17 @@ const Register: React.FC = () => {
                                         />
 
 
-                                        {validOtp && (
+                                        {validOtpEmail && (
                                             <OtpTimer
-                                                initialSeconds={emailTimer}
+                                                initialSeconds={300}
                                                 onResend={sendOTP_email}
                                                 loginResponseData={currentResponseStatusEmail}
                                                 onExpiredChange={handleExpiredChange}
                                             />
                                         )}
                                     </div>
-                                </>
-                            )}
+                                </div>
+                            
                         </div>
 
 
@@ -381,7 +407,7 @@ const Register: React.FC = () => {
                                 ? setRegistrationProcess({ currentStep: 2 })
                                 : sendOTP_email();
                         }} >
-                            {`${emailVerified ? "Next" : "Verify Email and Proceed"}`}
+                            {`${emailVerified ? "Next" : "Send OTP"}`}
                         </button>
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 0 })}>
                             Back
@@ -392,37 +418,62 @@ const Register: React.FC = () => {
 
 
                 <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "show slide-in-right" : "hide"}`}>
-                    <h2 className="login-title">Enter OTP</h2>
+                    <h2 className="login-title">Verify Phone and Finish Registration</h2>
                     {error && <div className="login-error">{error}</div>}
 
-                    <form onSubmit={handleSubmit} className="login-form">
+                      <form onSubmit={handleSubmit} className="login-form">
 
-                        <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
-                            <div className="py-1" ref={statusRefPhone}></div>
 
-                            {currentResponseStatusPhone && (
-                                <>
-                                    <OtpInput
-                                        ref={otpRefPhone}
-                                        onComplete={(val) => {
-                                            handlePostOTP_phone(val);
-                                        }}
-                                    />
-
-                                    {validOtp && (
-                                        <OtpTimer
-                                            onResend={sendOTP_phone}
-                                            initialSeconds={300}
-                                            loginResponseData={currentResponseStatusPhone}
-                                            onExpiredChange={handleExpiredChange}
-                                        />
-                                    )}
-                                </>
-                            )}
+                        <div className="form-group">
+                            <label>Phone Number</label>
+                            <input
+                                disabled={phoneVerified}
+                                name="phone"
+                                type="phone"
+                                required
+                                value={form.phone}
+                                onChange={handleChange}
+                            />
                         </div>
 
-                        <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={sendOTP_phone}>
-                            Verify Your Phone and Complete
+                        <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
+                            <div className="py-1" ref={statusRefPhone}>{currentResponseStatusPhone}</div>
+
+                              <div className={`${currentResponseStatusPhone === null? "d-none" : ""}`}>
+
+
+                                    <div className={`${phoneVerified ? "d-none" : ""}`}>
+
+                                        <OtpInput
+                                            ref={otpRefPhone}
+                                            onComplete={(val) => {
+                                                handlePostOTP_phone(val);
+                                            }}
+                                        />
+
+
+                                        {validOtpPhone && (
+                                            <OtpTimer
+                                                initialSeconds={300}
+                                                onResend={sendOTP_phone}
+                                                loginResponseData={currentResponseStatusPhone}
+                                                onExpiredChange={handleExpiredChange}
+                                            />
+                                        )}
+                                    </div>
+                             </div>
+                        </div>
+
+
+
+
+                        <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
+
+                            phoneVerified
+                                ? setRegistrationProcess({ currentStep: 2 })
+                                : sendOTP_phone();
+                        }} >
+                            {`${phoneVerified ? "Next" : "Send OTP"}`}
                         </button>
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 1 })}>
                             Back

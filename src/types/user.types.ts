@@ -10,6 +10,7 @@ export interface User extends BaseModel {
   name: string;
   email: string;
   password?: string; 
+  phone?: string;
   role?: "user" | "admin" | "superadmin";
   orders?: ObjectId[];    
   addresses?: ObjectId[]; 
@@ -28,6 +29,7 @@ export interface CreateUserRequest {
   name: string;
   email: string;
   password: string;
+  phone: string;
   role?: "user" | "admin";
 }
 
@@ -35,6 +37,7 @@ export interface UpdateUserRequest extends BaseModel{
   name?: string;
   email?: string;
   password?: string;
+    phone: string;
   role?: "user" | "admin" | "superadmin";
 }
 

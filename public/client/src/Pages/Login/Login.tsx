@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {loginUser, LoginModel} from "../../api/auth";
+import { loginUser, LoginModel } from "../../api/auth";
 import "./Login.css";
 import { useSelector, useDispatch } from "react-redux";
 import { useToast } from "../../providers/ToastContext";
@@ -13,32 +13,32 @@ const Login: React.FC = () => {
 
 
 
-   const dispatch = useDispatch();
-    const { show } = useToast();
-    const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-const user = useSelector((state: RootState) => state.auth.user);
-const loading = useSelector((state: RootState) => state.auth.loading);
+  const dispatch = useDispatch();
+  const { show } = useToast();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loading = useSelector((state: RootState) => state.auth.loading);
 
 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!loading && user) {
       // If user is authenticated, redirect away from login page if currently there
       if (location.pathname === "/login") {
-        
+
         navigate("/"); // or wherever main page is
       }
     }
   }, [loading, user, navigate, location.pathname]);
 
 
-    const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = searchParams.get("redirect") || "/";
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,35 +46,35 @@ const loading = useSelector((state: RootState) => state.auth.loading);
     setError("");
     dispatch(setLoadingTrue());
     try {
-       const payload: LoginModel = {
-                userName: email,
-                userEmail: email,
-                password: password,
-            };
+      const payload: LoginModel = {
+        userName: email,
+        userEmail: email,
+        password: password,
+      };
 
 
       const response = await loginUser(payload);
 
-        if (response.success) {
+      if (response.success) {
+        
+        dispatch(login(response.user));
+        show({
+          type: "success",
 
-                 dispatch(login(response.user)); 
-                show({
-                    type: "success",
+          message: "Logged in successfully",
 
-                    message: "Logged in successfully",
+        });
+        if (redirectTo) {
+          navigate(redirectTo, { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
 
-                });
-                if (redirectTo) {
-                    navigate(redirectTo, { replace: true });
-                } else {
-                    navigate("/", { replace: true });
-                }
-
-            }
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
-       dispatch(setLoadingFalse());
+      dispatch(setLoadingFalse());
     }
   };
 

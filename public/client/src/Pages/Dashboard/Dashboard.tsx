@@ -9,39 +9,26 @@ const MenuItemSample = () => <div>Content for Menu Sample</div>;
 // Define all your menu items consistently:
 type MenuItem =
   | "users"
-  | "orders"
-  | "manage_profile"
-  | "item5"
-  | "item6"
-  | "item7"
-  | "item8"
-  | "item9"
-  | "item10";
+  // | "orders"
+  // | "manage_profile"
+  // | "item5"
+  // | "item6"
+  // | "item7"
+  // | "item8"
+  // | "item9"
+  // | "item10";
 
 // Access control map — ensure keys match MenuItem exactly:
 const accessControl: Record<MenuItem, string[]> = {
   users: ["admin"],        // only admin can see (adjust if needed)
-  orders: ["admin", "user"],
-  manage_profile: ["admin", "user"],
-  item5: ["admin"],
-  item6: ["admin"],
-  item7: ["admin"],
-  item8: ["admin"],
-  item9: ["admin"],
-  item10: ["admin"],
+  // orders: ["admin", "user"],
+ 
 };
 
 // Map menu items to React nodes:
 const componentMap: Record<MenuItem, React.ReactNode> = {
   users: <UserProfilesDataGrid />,
-  item3: <MenuItemSample />,
-  item4: <div>Content for Item 4</div>,
-  item5: <div>Content for Item 5</div>,
-  item6: <div>Content for Item 6</div>,
-  item7: <div>Content for Item 7</div>,
-  item8: <div>Content for Item 8</div>,
-  item9: <div>Content for Item 9</div>,
-  item10: <div>Content for Item 10</div>,
+  
 };
 
 export const Dashboard: React.FC = () => {

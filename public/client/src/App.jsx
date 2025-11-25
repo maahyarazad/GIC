@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Home from './Home';
 import About from './Pages/About';
 import { v4 as uuidv4 } from 'uuid';
-import Navbar from './Components/Navbar/Navbar';
+
 import BackToTop from './Components/BackToTop/BackToTop';
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
@@ -19,7 +19,8 @@ import ProtectedRoute from './Pages/ProtectedRoutes';
 import Login from './Pages/Login/Login';
 import {Dashboard} from './Pages/Dashboard/Dashboard'
 import Register from './Pages/Register/Register';
-
+import NotFound from './Pages/NotFound/NotFound'
+import Navbar from './Components/Navbar/Navbar';
 
 const App = () => {
     const [siteData, setSiteData] = useState(null);
@@ -115,7 +116,8 @@ const location = useLocation();
                 <Route path="/contact-us" element={ <ContactUs siteData={siteData}/>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/dashboard" element={ <ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer footerData={siteData.footer} />
             <BackToTop />

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import { useSelector, UseSelector } from 'react-redux';
 import './Navbar.css';
+import type { RootState } from "../../store";
 
-// React Component
 import Burger from '@animated-burgers/burger-rotate'
-// don't forget the styles
+
 import '@animated-burgers/burger-rotate/dist/styles.css'
-// import logo from '../../Assets/palmx-logo.jpeg'
+
 import MobileBackGround from '../../Assets/pexels-pixabay-262347.jpg'
 
 
@@ -22,8 +22,8 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     const [shouldScroll, setShouldScroll] = useState(false);
     const [pendingScrollKey, setPendingScrollKey] = useState(null);
 
-
-
+        
+        const user = useSelector((state: RootState)=> state.auth.user);
         function isLinkActive(_linkPath) {
         // Normalize by removing leading and trailing slashes
         const normalizePath = (path) => path.replace(/^\/+|\/+$/g, '');
@@ -257,6 +257,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                                 }
                             </li>
                         ))}
+                          {user && (
+        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+          <Link to="/dashboard">Dashboard</Link>
+        </li>
+      )}
                     </ul>
                 </div>
 
@@ -284,6 +289,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                             <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         </li>
                     ))}
+                      {user && (
+        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+          <Link to="/dashboard">Dashboard</Link>
+        </li>
+      )}
                 </ul>
                 {/* <div className="mobile-lang-switch">
                     <label className="switch">

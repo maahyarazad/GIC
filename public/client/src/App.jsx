@@ -9,8 +9,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Services from './Pages/Services';
 import Footer from './Components/Footer/Footer';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import './App.css';
 import ContactUs from './Pages/ContactUs';
@@ -103,20 +101,6 @@ const location = useLocation();
 
     return (
         <BrowserRouter>
-
-            <ToastContainer
-                position="top-center"
-                autoClose={5000}
-                hideProgressBar={true}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
-
             <Navbar onLanguageChange={handleLanguageChange} 
                             navbarLinks={siteData.navLinks}
                             siteData={siteData.getStarted}

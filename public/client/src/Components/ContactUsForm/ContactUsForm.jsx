@@ -6,14 +6,14 @@ import CustomInput from "../CustomInputs/CustomInput";
 import CustomTextarea from "../CustomInputs/CustomTextArea";
 import './ContactUsForm.css';
 import { Paperclip } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { useToast } from '../../Providers/ToastContext';
 import { IoMdClose } from "react-icons/io";
 
 
 const server_endpoint = import.meta.env.VITE_SERVER_API_URL;
 const ContactForm = ({ siteData, sectionId }) => {
 
-
+    const {show} = useToast();
     const fileInputRef = useRef(null);
     const [attachedFileName, setAttachedFileName] = useState("");
     const initialValues = {
@@ -64,7 +64,7 @@ const ContactForm = ({ siteData, sectionId }) => {
                 },
             });
 
-            toast.success(response.data.message);
+            show({type:"success", message: response.data.message});
             setAttachedFileName("");;
             resetForm();
         } catch (error) {
@@ -77,7 +77,8 @@ const ContactForm = ({ siteData, sectionId }) => {
                 error?.message ||
                 "Something went wrong. Please try again.";
 
-            toast.error(errorMessage);
+                show({type:"error", message: errorMessage});
+            
         } finally {
             setSubmitting(false);
         }

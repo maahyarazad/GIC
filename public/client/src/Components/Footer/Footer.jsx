@@ -2,14 +2,14 @@ import React, { useState, useRef } from 'react';
 import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { FaArrowRight } from "react-icons/fa";
-import { toast } from 'react-toastify';
+import { useToast } from '../../providers/ToastContext';
 
 const Footer = ({ footerData }) => {
     if (!footerData) return null;
     const [email, setEmail] = useState('');
     const inputRef = useRef(null);
     const validationMessageRef = useRef(null);
-
+    const {show} = useToast();
 
     const getSocialIcon = (platform) => {
         switch (platform.toLowerCase()) {
@@ -41,7 +41,7 @@ const Footer = ({ footerData }) => {
         validationMessageRef.current.innerHTML = '';
         inputRef.current.value = '';
         setEmail('');
-        toast.success("You're now subscribed to our newsletter! You can unsubscribe anytime using the link at the bottom of our emails.");
+        show({type: "success", message: "You're now subscribed to our newsletter! You can unsubscribe anytime using the link at the bottom of our emails."});
         return;
 
         ref.current.classList.remove('invalid');
@@ -54,7 +54,8 @@ const Footer = ({ footerData }) => {
                 },
             });
 
-            toast.success(response.data.message);
+            // show({type: "success", message: "You're now subscribed to our newsletter! You can unsubscribe anytime using the link at the bottom of our emails."});
+            // toast.success(response.data.message);
             setAttachedFileName("");;
             resetForm();
         } catch (error) {
@@ -67,7 +68,7 @@ const Footer = ({ footerData }) => {
                 error?.message ||
                 "Something went wrong. Please try again.";
 
-            toast.error(errorMessage);
+            // toast.error(errorMessage);
         } finally {
             setSubmitting(false);
         }

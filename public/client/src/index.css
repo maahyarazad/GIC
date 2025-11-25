@@ -85,6 +85,32 @@ h6 {
   color: var(--primary-gray-color);
 }
 
+.btn-primary-contrast-inverse {
+  position: relative;
+  overflow: hidden;
+  /* INVERSE: Default = OUTLINED */
+  background-color: transparent;
+  color: var(--primary-gray-color);
+  border: 1px solid var(--primary-gray-color);
+  border-radius: 0;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+  /* INVERSE HOVER = Filled */
+}
+.btn-primary-contrast-inverse span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease-in-out;
+}
+.btn-primary-contrast-inverse:hover {
+  background-color: var(--primary-gray-color);
+  color: white;
+}
+.btn-primary-contrast-inverse:hover span {
+  color: white;
+}
+
 .loader-container {
   position: fixed;
   top: 0;
@@ -155,4 +181,57 @@ h6 {
 .slide-up.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.app-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-toast {
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease forwards 2.7s;
+  min-width: 220px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-toast-success {
+  background: #22c55e;
+}
+
+.app-toast-error {
+  background: #ef4444;
+}
+
+.app-toast-info {
+  background: #3b82f6;
+}
+
+.app-toast-warning {
+  background: #f59e0b;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
 }/*# sourceMappingURL=index.css.map */

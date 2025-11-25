@@ -22,12 +22,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const show = useCallback((options: ToastOptions) => {
+    debugger;
     const id = Date.now();
     const newToast: ToastItem = {
       id,
       type: options.type || "info",
       message: options.message,
-      duration: options.duration || 3000,
+      duration: options.duration || 5000,
     };
 
     setToasts(prev => [...prev, newToast]);
@@ -41,9 +42,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ToastContext.Provider value={{ show }}>
       {children}
 
-      <div className="toast-container">
+      <div className="app-toast-container">
         {toasts.map(toast => (
-          <div key={toast.id} className={`toast toast-${toast.type}`}>
+          <div key={toast.id} className={`app-toast app-toast-${toast.type}`}>
             {toast.message}
           </div>
         ))}

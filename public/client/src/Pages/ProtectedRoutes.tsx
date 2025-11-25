@@ -8,13 +8,13 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const user = useSelector((state: RootState) => state.auth.user);
-  const authLoading = useSelector((state: RootState) => state.auth.loading); 
+  // const authLoading = useSelector((state: RootState) => state.auth.loading); 
   const location = useLocation();
-  debugger;
-  if (authLoading) {
-    // or show a spinner
-    return null;
-  }
+  
+  // if (authLoading) {
+    
+  //   return null;
+  // }
 
   if (!user) {
     return (

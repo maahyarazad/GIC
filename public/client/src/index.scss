@@ -227,8 +227,10 @@ h1, h2, h3, h4, h5, h6,
   color: white;
   font-size: 14px;
   min-width: 220px;
-  animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease forwards 2.7s;
+  animation: slideIn 0.3s ease forwards, fadeOut 0.5s ease forwards 4.7s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+   /* Smooth stacking transition */
+  transition: transform 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
 }
 
 .app-toast-success { background: #22c55e; }
@@ -242,4 +244,20 @@ h1, h2, h3, h4, h5, h6,
 }
 @keyframes fadeOut {
   to { opacity: 0; transform: translateX(40px); }
+}
+
+
+@media (max-width: 600px) {
+  .app-toast-container {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90%;
+    align-items: center; /* ensure full centering */
+  }
+
+  .app-toast {
+    width: 100%; /* make the toast full width on mobile */
+    text-align: center;
+  }
 }

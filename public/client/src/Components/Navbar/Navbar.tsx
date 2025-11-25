@@ -22,9 +22,9 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     const [shouldScroll, setShouldScroll] = useState(false);
     const [pendingScrollKey, setPendingScrollKey] = useState(null);
 
-        
-        const user = useSelector((state: RootState)=> state.auth.user);
-        function isLinkActive(_linkPath) {
+
+    const user = useSelector((state: RootState) => state.auth.user);
+    function isLinkActive(_linkPath) {
         // Normalize by removing leading and trailing slashes
         const normalizePath = (path) => path.replace(/^\/+|\/+$/g, '');
 
@@ -141,7 +141,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
     useEffect(() => { }, [companyName, navbarLinks]);
 
-   
+
 
 
 
@@ -185,11 +185,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     return (
         <nav
             className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`}
-          style={{
-  backgroundColor: scrolled 
-    ? 'var(--primary-gray-color)' 
-    : (location.pathname === '/' ? 'transparent' : 'black')
-}}
+            style={{
+                backgroundColor: scrolled
+                    ? 'var(--primary-gray-color)'
+                    : (location.pathname === '/' ? 'transparent' : 'black')
+            }}
         >
 
 
@@ -214,7 +214,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
-                    <a href='/' className='s-font position-absolute gic-logo' style={{fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'}}>GIC</a>
+                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
                     <ul className="navbar-links desktop-only">
 
                         {navbarLinks?.map((link) => (
@@ -223,15 +223,15 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                                     link.type === 'link' && <a href={link.path}>{link.label}</a>
                                 }
                                 {
-                                    link.type === 'button' && <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                                 }
                             </li>
                         ))}
-                         {user && (
-                                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                        {user && (
+                            <li className={isLinkActive('/dashboard') ? 'active' : ''}>
                                 <Link to="/dashboard">Dashboard</Link>
-                                </li>
-                            )}
+                            </li>
+                        )}
                     </ul>
 
                 </div>
@@ -248,26 +248,26 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                 >
 
 
-                      <a href='/' className='s-font position-absolute gic-logo' style={{fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'}}>GIC</a>
+                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
                     {/* Desktop Nav Links */}
                     <ul className="navbar-links desktop-only">
-                        
+
                         {navbarLinks?.map((link) => (
                             <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                                 {
                                     link.type === 'link' && <a href={link.path}>{link.label}</a>
                                 }
                                 {
-                                    link.type === 'button' && <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                                 }
                             </li>
                         ))}
-                          {user && (
-                                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-                                <Link to="/dashboard">Dashboard</Link>
-                                </li>
-                            )}
-                    </ul>   
+                        {user && (
+                            <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                                <Link to="/dashboard" onClick={()=> setMenuOpen(false)}>Dashboard</Link>
+                            </li>
+                        )}
+                    </ul>
                 </div>
 
 
@@ -277,28 +277,28 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
             {/* Slide-out Mobile Menu */}
             <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
                 style={{
-  backgroundImage: `
-    linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
-    url(${MobileBackGround})
-  `,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat'
-}}
+                    backgroundImage: `
+                        linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
+                        url(${MobileBackGround})
+                    `,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}
 
             >
                 <ul className="mobile-links">
-                    <a href='/' className='s-font absolute gic-logo contrast-color' style={{fontSize: '4.5em', textDecoration: 'none'}}>GIC</a>
+                    <a href='/' className='s-font absolute gic-logo contrast-color' style={{ fontSize: '4.5em', textDecoration: 'none' }}>GIC</a>
                     {navbarLinks?.map((link) => (
                         <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                            <Link onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                            <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         </li>
                     ))}
-                      {user && (
-        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-          <Link to="/dashboard">Dashboard</Link>
-        </li>
-      )}
+                    {user && (
+                        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                            <Link onClick={()=> setMenuOpen(false)} to="/dashboard">Dashboard</Link>
+                        </li>
+                    )}
                 </ul>
                 {/* <div className="mobile-lang-switch">
                     <label className="switch">

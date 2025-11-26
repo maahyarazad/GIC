@@ -60,6 +60,7 @@ export default function FileManager() {
   };
 
   return (
+    <>
     <div className="file-manager">
       <h3 className="mb-3">File Manager</h3>
 
@@ -94,5 +95,6 @@ export default function FileManager() {
         ))}
       </div>
     </div>
+    </>
   );
 }

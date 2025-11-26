@@ -145,7 +145,8 @@ const EmailTemplatesDataGrid = () => {
     const [headerTitle, setHeaderTitle] = useState("Add New Email Template");
 
     return (
-        <div>
+        <>
+                  <h3 className="mb-3">Email Template</h3>
             <SlideMenu
                 isOpen={open}
                 onClose={() => setOpen(false)}
@@ -218,7 +219,7 @@ const EmailTemplatesDataGrid = () => {
                 onFilterModelChange={setFilterModel}
                 getRowId={(row) => row._id!}
             />
-        </div>
+        </>
     );
 };
 

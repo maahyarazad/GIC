@@ -79,5 +79,6 @@
 .main-content {
   flex-grow: 1;
   padding: 1rem;
-  overflow-y: auto;
+  height: 92vh;
+  overflow-y: scroll;
 }/*# sourceMappingURL=Dashboard.css.map */

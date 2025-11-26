@@ -167,17 +167,20 @@ export const UserProfilesDataGrid = () => {
 
 
   return (
-    <GenericDataGrid<User>
-      rows={rows}
-      columns={columns}
-      rowCount={rowCount}
-      paginationModel={paginationModel}
-      onPaginationModelChange={setPaginationModel}
-      sortModel={sortModel}
-      onSortModelChange={setSortModel}
-      filterModel={filterModel}
-      onFilterModelChange={setFilterModel}
-      getRowId={(row) => row._id!.toString()}
-    />
+    <>
+      <h3 className="mb-3">User Profiles</h3>
+      <GenericDataGrid<User>
+        rows={rows}
+        columns={columns}
+        rowCount={rowCount}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        sortModel={sortModel}
+        onSortModelChange={setSortModel}
+        filterModel={filterModel}
+        onFilterModelChange={setFilterModel}
+        getRowId={(row) => row._id!.toString()}
+      />
+    </>
   );
 };

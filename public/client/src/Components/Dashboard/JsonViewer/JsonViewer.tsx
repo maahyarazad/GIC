@@ -62,6 +62,7 @@ const handleChange = (updatedJson: JsonData) => {
 
   return (
     <>
+    <h3 className="mb-3">Email Template</h3>
       <button className="btn dashboard-btn mb-2" onClick={updateClient}>
         Update Sitedata
       </button>

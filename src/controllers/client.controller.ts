@@ -9,7 +9,7 @@ import {adminAuthMiddleware} from '../middleware/adminauth.middleware';
 @Tags("client")
 export class ClientController extends Controller {
   @Get("/")
-  @Middlewares(adminAuthMiddleware)
+  
   public async getLargeJson(): Promise<any> {
     try {
       const collection = getCollection("client_blueprint");

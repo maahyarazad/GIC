@@ -6,6 +6,8 @@ import OtpTimer from "./../../Components/OTP/OtpTimer";
 import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
+import Button  from "./../../Components/Button/Button";
+
 
 
 interface SendOtpBody {
@@ -54,8 +56,8 @@ const Register: React.FC = () => {
     const statusRefPhone = useRef<HTMLDivElement>(null);
 
 
-
-
+    
+    
 
     const [currentResponseStatusEmail, setCurrentResponseStatusEmail] = useState(null);
     const [currentResponseStatusPhone, setCurrentResponseStatusPhone] = useState(null);
@@ -89,7 +91,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
 
-    const handleExpiredChange = (val) => {
+    const handleExpiredChange = () => {
         setValidOtpEmail(false);
         setValidOtpPhone(false);
     };
@@ -99,12 +101,15 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const sendOTP_email = async () => {
 
         try {
+            setLoading(true);
+            
             const payload: SendOtpBody = {
                 email: form.email,
                 origin: "GIC"
             };
 
             const response = await axiosInstance.post("/otp/send-email", payload);
+            debugger;
             if (response.status === 200) {
                 setValidOtpEmail(true);
                 otpRefEmail.current?.clear();
@@ -154,9 +159,10 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const sendOTP_phone = async () => {
 
+
         try {
             if (!validatePhone(form.phone)) return;
-
+            setLoading(true);
             const payload: SendOtpBody = {
                 mobile_number: form.phone,
                 origin: "GIC"
@@ -181,10 +187,10 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     };
 
-    const handlePostOTP_email = async (val) => {
+    const handlePostOTP_email = async (val: any) => {
 
         try {
-
+            setLoading(true);
             const payload: OtpCheckBody = {
                 otp: val,
 
@@ -216,9 +222,10 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     };
 
-    const handlePostOTP_phone = async (val) => {
+    const handlePostOTP_phone = async (val: any) => {
 
         try {
+            setLoading(true);
             const payload: OtpCheckBody = {
                 otp: val,
                 requestId: otpResonseData?.requestId
@@ -323,7 +330,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     };
 
 
-    const isValidEmail = (email) => {
+    const isValidEmail = (email: any) => {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     };
 
@@ -446,22 +453,30 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
 
-
-                        <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
+                                <Button loading={loading}
+                                    type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
 
                             emailVerified
                                 ? setRegistrationProcess({ currentStep: 2 })
                                 : sendOTP_email();
                         }} >
                             {`${emailVerified ? "Next" : "Send OTP"}`}
-                        </button>
+                        </Button>
+                        {/* <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
+
+                            emailVerified
+                                ? setRegistrationProcess({ currentStep: 2 })
+                                : sendOTP_email();
+                        }} >
+                            {`${emailVerified ? "Next" : "Send OTP"}`}
+                        </button> */}
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 0 })}>
                             Back
                         </button>
                     </form>
                 </div>
 
-
+                        
 
                 <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Phone and Finish Registration</h2>

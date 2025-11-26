@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
 import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
+import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
 import { useSelector } from 'react-redux';
 import './Dashboard.css'
 
@@ -10,6 +11,7 @@ const MenuItemSample = () => <div>Content for Menu Sample</div>;
 type MenuItem =
   | "users"
   | "sitedata"
+  | "file_management"
   // | "manage_profile"
   // | "item5"
   // | "item6"
@@ -20,8 +22,9 @@ type MenuItem =
 
 // Access control map — ensure keys match MenuItem exactly:
 const accessControl: Record<MenuItem, string[]> = {
-  users: ["admin"],        // only admin can see (adjust if needed)
-  sitedata: ["admin", "user"],
+  users: ["admin"],       
+  sitedata: ["admin"],
+  file_management: ["admin"],
  
 };
 
@@ -29,8 +32,17 @@ const accessControl: Record<MenuItem, string[]> = {
 const componentMap: Record<MenuItem, React.ReactNode> = {
   users: <UserProfilesDataGrid />,
   sitedata: <JsonViewer />,
+  file_management: <FileManagement />,
   
 };
+
+
+const menuTitles: Record<MenuItem, string> = {
+  users: "User Profiles",
+  sitedata: "Website Data",
+  file_management: "File Management",
+};
+
 
 export const Dashboard: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -83,7 +95,7 @@ export const Dashboard: React.FC = () => {
                 onClick={() => handleMenuClick(item)}
                 style={{ cursor: "pointer" }}
               >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+                 {menuTitles[item]}
               </li>
             ))}
           </ul>

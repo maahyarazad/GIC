@@ -156,7 +156,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
             } else {
                 // always show on mobile
                 setShowNavbar(true);
-                setMobileView(true)
+                setMobileView(true);
             }
         };
 
@@ -187,11 +187,11 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     <>
         {user !== null ? (
         <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/#" onClick={(e) => handleScroll(e, "dashboard", "link", "/dashboard")}>Dashboard</Link>
         </li>
         ) : (
         <li className={isLinkActive('/login') ? 'active' : ''}>
-            <Link to="/login">Sign-in</Link>
+            <Link to="/#" onClick={(e) => handleScroll(e, "login", "link", "/login")}>Sign-in</Link>
         </li>
         )}
     </>

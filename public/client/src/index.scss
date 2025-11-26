@@ -128,7 +128,7 @@ h1, h2, h3, h4, h5, h6,
    BUTTONS
 ------------------------------------------- */
 
-.dashbaord-btn {
+.dashboard-btn {
   @include button-style(
     var(--primary-gray-color),
     white,

@@ -72,13 +72,13 @@ export const UserProfilesDataGrid = () => {
       renderCell: (row) => (
         <>
           <div className="btn-group" role="group" aria-label="Basic example">
-            <button className={`btn btn-sm dashbaord-btn`}
+            <button className={`btn btn-sm dashboard-btn`}
               disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
-            <button className={`btn btn-sm dashbaord-btn`}
+            <button className={`btn btn-sm dashboard-btn`}
               disabled={!row.authorize} onClick={() => toggleAuthorization(row)}>Unauthorize</button>
           </div>
 
-          <button className="btn btn-sm dashbaord-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button>
+          <button className="btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button>
 
         </>
       ),

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import {UserProfilesDataGrid} from '../../Components/Dashbaord/User/Profile'
-
+import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
+import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
 import { useSelector } from 'react-redux';
 import './Dashboard.css'
 
@@ -9,7 +9,7 @@ const MenuItemSample = () => <div>Content for Menu Sample</div>;
 // Define all your menu items consistently:
 type MenuItem =
   | "users"
-  // | "orders"
+  | "sitedata"
   // | "manage_profile"
   // | "item5"
   // | "item6"
@@ -21,13 +21,14 @@ type MenuItem =
 // Access control map — ensure keys match MenuItem exactly:
 const accessControl: Record<MenuItem, string[]> = {
   users: ["admin"],        // only admin can see (adjust if needed)
-  // orders: ["admin", "user"],
+  sitedata: ["admin", "user"],
  
 };
 
 // Map menu items to React nodes:
 const componentMap: Record<MenuItem, React.ReactNode> = {
   users: <UserProfilesDataGrid />,
+  sitedata: <JsonViewer />,
   
 };
 

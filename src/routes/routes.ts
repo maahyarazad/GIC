@@ -667,6 +667,37 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsClientController_updateJsonById: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                updatedJson: {"in":"body","name":"updatedJson","required":true,"dataType":"any"},
+        };
+        app.put('/client/:id',
+            ...(fetchMiddlewares<RequestHandler>(ClientController)),
+            ...(fetchMiddlewares<RequestHandler>(ClientController.prototype.updateJsonById)),
+
+            async function ClientController_updateJsonById(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsClientController_updateJsonById, request, response });
+
+                const controller = new ClientController();
+
+              await templateService.apiHandler({
+                methodName: 'updateJsonById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_getGoogleAuthUrl: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/auth/google/url',

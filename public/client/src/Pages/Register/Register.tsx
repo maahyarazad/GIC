@@ -225,7 +225,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             };
 
             const response = await axiosInstance.post("/otp/check-mobile", payload);
-            debugger;
+            
             if (response.status === 200) {
 
                 if (response.data.success) {
@@ -252,7 +252,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const registerUser = async () => {
 
 
-        debugger;
+        
         setLoading(true);
 
         try {

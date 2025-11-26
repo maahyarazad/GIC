@@ -4,6 +4,7 @@ import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
 import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
 import EmailTemplatesDataGrid from '../../Components/Dashboard/EmailTemplate/EmailTemplate'
 import { useSelector } from 'react-redux';
+import LogoutComponent from "./Logout";
 import './Dashboard.css'
 
 const MenuItemSample = () => <div>Content for Menu Sample</div>;
@@ -14,13 +15,8 @@ type MenuItem =
   | "sitedata"
   | "file_management"
   | "email_management"
-  // | "manage_profile"
-  // | "item5"
-  // | "item6"
-  // | "item7"
-  // | "item8"
-  // | "item9"
-  // | "item10";
+  | "logout"
+
 
 // Access control map — ensure keys match MenuItem exactly:
 const accessControl: Record<MenuItem, string[]> = {
@@ -28,6 +24,7 @@ const accessControl: Record<MenuItem, string[]> = {
   sitedata: ["admin"],
   file_management: ["admin"],
   email_management: ["admin"],
+  logout: ["admin", "user"],
  
 };
 
@@ -37,6 +34,7 @@ const componentMap: Record<MenuItem, React.ReactNode> = {
   sitedata: <JsonViewer />,
   file_management: <FileManagement />,
   email_management: <EmailTemplatesDataGrid />,
+  logout: <LogoutComponent />
   
 };
 
@@ -46,6 +44,7 @@ const menuTitles: Record<MenuItem, string> = {
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
+  logout: "Logout",
 };
 
 

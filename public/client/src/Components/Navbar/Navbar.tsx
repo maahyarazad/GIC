@@ -182,6 +182,23 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
     if (!navbarLinks || !companyName) return null
 
+
+    const User : React.ReactNode = (
+    <>
+        {user !== null ? (
+        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+            <Link to="/dashboard">Dashboard</Link>
+        </li>
+        ) : (
+        <li className={isLinkActive('/login') ? 'active' : ''}>
+            <Link to="/login">Sign-in</Link>
+        </li>
+        )}
+    </>
+    );
+
+
+
     return (
         <nav
             className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`}
@@ -227,11 +244,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                                 }
                             </li>
                         ))}
-                        {user && (
-                            <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-                                <Link to="/dashboard">Dashboard</Link>
-                            </li>
-                        )}
+                        {User}
                     </ul>
 
                 </div>
@@ -262,11 +275,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                                 }
                             </li>
                         ))}
-                        {user && (
-                            <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-                                <Link to="/dashboard" onClick={()=> setMenuOpen(false)}>Dashboard</Link>
-                            </li>
-                        )}
+                        {User}
                     </ul>
                 </div>
 
@@ -294,11 +303,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                             <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         </li>
                     ))}
-                    {user && (
-                        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-                            <Link onClick={()=> setMenuOpen(false)} to="/dashboard">Dashboard</Link>
-                        </li>
-                    )}
+                   {User}
                 </ul>
                 {/* <div className="mobile-lang-switch">
                     <label className="switch">

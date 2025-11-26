@@ -229,7 +229,7 @@
     margin-right: 1em;
   }
 }
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 1499px) {
   .navbar .navbar-section-middle {
     position: relative;
     width: auto;

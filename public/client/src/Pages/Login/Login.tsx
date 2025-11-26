@@ -6,7 +6,7 @@ import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
-
+import Button  from "../../Components/Button/Button";
 
 
 const Login: React.FC = () => {
@@ -38,7 +38,7 @@ const Login: React.FC = () => {
   }, [loading, user, navigate, location.pathname]);
 
 
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,11 +64,8 @@ const Login: React.FC = () => {
           message: "Logged in successfully",
 
         });
-        if (redirectTo) {
-          navigate(redirectTo, { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+        
+        navigate(redirectTo, { replace: true });
 
       }
     } catch (err: any) {
@@ -107,10 +104,10 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-
-          <button type="submit" disabled={loading} className="btn btn-primary-contrast">
-            {loading ? "Logging in..." : "Login"}
-          </button>
+    <Button type="submit" disabled={loading} className="btn btn-primary-contrast" loading={loading}>
+       Login
+    </Button>
+          
         </form>
 
         <p className="signup-text">

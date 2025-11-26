@@ -20,12 +20,12 @@ import MainLoader from './Components/MainLoader';
 import axiosInstance from './api/axiosInstance';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
-
+import {useScrollRestoration} from './useScrollRestoration';
 import './App.css';
 
 const AppContainer = ({ children }) => {
     const location = useLocation();
-
+useScrollRestoration();
     useEffect(() => {
         const segments = location.pathname.split("/").filter(Boolean);
         const capitalizedSegments = segments.map(

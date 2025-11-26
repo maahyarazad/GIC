@@ -1,6 +1,6 @@
 import { Controller, Post, Route, Body, SuccessResponse, Request } from "tsoa";
 import {
-  SendEmailParams,
+  
   EmailOtpRequest,
   emailOtp,
 } from "../services/emailService";
@@ -130,7 +130,7 @@ export class OtpController extends Controller {
     session.otpExpires = Date.now() + 5 * 60 * 1000;
 
     try {
-      if (process.env.NODE_ENV === "PRODUCTION") {
+      if (process.env.NODE_ENV === "DEVELOPMENT") {
         const params: EmailOtpRequest = {
           email: body.email,
           otp,

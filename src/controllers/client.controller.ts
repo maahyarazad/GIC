@@ -2,7 +2,9 @@ import { Controller, Get, Route, Tags, Put, Body, Path , Middlewares} from "tsoa
 import { ObjectId } from "mongodb";
 import { getCollection } from "../db";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
-import {adminAuthMiddleware} from '../middleware/adminauth.middleware'
+import {adminAuthMiddleware} from '../middleware/adminauth.middleware';
+
+
 @Route("client")
 @Tags("client")
 export class ClientController extends Controller {

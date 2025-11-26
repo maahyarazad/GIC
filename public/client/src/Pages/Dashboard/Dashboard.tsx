@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
 import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
 import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
+import EmailTemplatesDataGrid from '../../Components/Dashboard/EmailTemplate/EmailTemplate'
 import { useSelector } from 'react-redux';
 import './Dashboard.css'
 
@@ -12,6 +13,7 @@ type MenuItem =
   | "users"
   | "sitedata"
   | "file_management"
+  | "email_management"
   // | "manage_profile"
   // | "item5"
   // | "item6"
@@ -25,6 +27,7 @@ const accessControl: Record<MenuItem, string[]> = {
   users: ["admin"],       
   sitedata: ["admin"],
   file_management: ["admin"],
+  email_management: ["admin"],
  
 };
 
@@ -33,6 +36,7 @@ const componentMap: Record<MenuItem, React.ReactNode> = {
   users: <UserProfilesDataGrid />,
   sitedata: <JsonViewer />,
   file_management: <FileManagement />,
+  email_management: <EmailTemplatesDataGrid />,
   
 };
 
@@ -41,6 +45,7 @@ const menuTitles: Record<MenuItem, string> = {
   users: "User Profiles",
   sitedata: "Website Data",
   file_management: "File Management",
+  email_management: "Email Templates",
 };
 
 

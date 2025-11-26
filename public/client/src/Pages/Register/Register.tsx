@@ -540,14 +540,7 @@ const Register: React.FC = () => {
                               {`${phoneVerified ? "Next" : "Send OTP"}`}
                         </Button>
 
-                        <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
-
-                            phoneVerified
-                                ? setRegistrationProcess({ currentStep: 2 })
-                                : sendOTP_phone();
-                        }} >
-                            
-                        </button>
+                       
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 1 })}>
                             Back
                         </button>

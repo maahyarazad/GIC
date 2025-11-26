@@ -32,7 +32,7 @@ setData(response?.data?.data);
   try {
     
         const response = await updateClientById(data._id, data);
-        debugger;
+        
         if (response.success) {
           setData(response.data); 
           show({

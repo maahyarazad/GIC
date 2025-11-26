@@ -17,7 +17,7 @@ export default function Button({
 
 
     useEffect(()=>{
-        debugger;
+        
     }, [loading])
 
   return (

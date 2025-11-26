@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,forwardRef , useImperativeHandle} from "react";
 
 // ----------------------------
 // Props types
 // ----------------------------
 interface OtpTimerProps {
-  initialSeconds?: number;
+  initialSeconds: number;
   loginResponseData?: any; // You can replace `any` with your actual response type
   onResend?: (data: any) => void;
   onExpiredChange?: (expired: boolean) => void;
 }
 
-const OtpTimer: React.FC<OtpTimerProps> = ({
-  initialSeconds = 59,
-  loginResponseData = {},
-  onResend,
-  onExpiredChange,
-}) => {
-  const [secondsLeft, setSecondsLeft] = useState<number>(initialSeconds);
+
+export interface OtpTimerRef {
+  resetTimer: () => void;
+}
+
+
+const OtpTimer = forwardRef<OtpTimerRef, OtpTimerProps>((props, ref) => {
+  const [secondsLeft, setSecondsLeft] = useState(props.initialSeconds || 300);
   const [expired, setExpired] = useState<boolean>(false);
 
   // ----------------------------
@@ -25,7 +26,7 @@ const OtpTimer: React.FC<OtpTimerProps> = ({
   useEffect(() => {
     if (secondsLeft === 0) {
       setExpired(true);
-      onExpiredChange?.(true);
+      props.onExpiredChange?.(true);
       return;
     }
 
@@ -34,15 +35,15 @@ const OtpTimer: React.FC<OtpTimerProps> = ({
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [secondsLeft, onExpiredChange]);
+  }, [secondsLeft, props.onExpiredChange]);
 
   // ----------------------------
   // Handle resend
   // ----------------------------
   const handleResend = () => {
-    setSecondsLeft(initialSeconds);
+    setSecondsLeft(props.initialSeconds);
     setExpired(false);
-    onResend?.(loginResponseData);
+    props.onResend?.(props.loginResponseData);
   };
 
   // ----------------------------
@@ -54,10 +55,19 @@ const OtpTimer: React.FC<OtpTimerProps> = ({
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+
+   useImperativeHandle(ref, () => ({
+    resetTimer: () => {
+      setSecondsLeft(props.initialSeconds || 300);
+      setExpired(false);
+    },
+  }));
+
+
   return (
     <div className="mt-2">
       {!expired ? (
-        <span>OTP expires in: {formatTime(secondsLeft)} minutes</span>
+        <span >OTP expires in: <strong className="text-contrast">{formatTime(secondsLeft)}</strong> minutes</span>
       ) : (
         <button
           type="button"
@@ -69,6 +79,6 @@ const OtpTimer: React.FC<OtpTimerProps> = ({
       )}
     </div>
   );
-};
+});
 
 export default OtpTimer;

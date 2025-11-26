@@ -36,7 +36,7 @@ const App = () => {
         try {
             
         const response = await axiosInstance.get(`${server_endpoint}/client`);
-            debugger;
+            
             setSiteData(response.data.data);
         } catch (error) {
             console.error('Error fetching footer data:', error);

@@ -2,11 +2,11 @@ import React, { useState, Suspense, useRef } from "react";
 import "./Register.css";
 import axiosInstance from "../../api/axiosInstance";
 import { useToast } from "../../providers/ToastContext";
-import OtpTimer from "./../../Components/OTP/OtpTimer";
+import OtpTimer, {OtpTimerRef} from "./../../Components/OTP/OtpTimer";
 import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
-import Button  from "./../../Components/Button/Button";
+import Button from "./../../Components/Button/Button";
 
 
 
@@ -56,8 +56,13 @@ const Register: React.FC = () => {
     const statusRefPhone = useRef<HTMLDivElement>(null);
 
 
-    
-    
+        const timerRefEmail = useRef<OtpTimerRef>(null);
+        const timerRefPhone = useRef<OtpTimerRef>(null);
+
+        const ResetOTPTimerEmail = () => {timerRefEmail.current?.resetTimer()};
+        const ResetOTPTimerPhone = () => {timerRefPhone.current?.resetTimer()};
+
+
 
     const [currentResponseStatusEmail, setCurrentResponseStatusEmail] = useState(null);
     const [currentResponseStatusPhone, setCurrentResponseStatusPhone] = useState(null);
@@ -78,16 +83,16 @@ const Register: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let { name, value } = e.target;
 
-    // Only apply for phone field
-    if (name === "phone" && value && value[0] !== "+") {
-        value = "+" + value;
-    }
+        // Only apply for phone field
+        if (name === "phone" && value && value[0] !== "+") {
+            value = "+" + value;
+        }
 
-    setForm({ ...form, [name]: value });
-};
+        setForm({ ...form, [name]: value });
+    };
 
 
 
@@ -102,18 +107,19 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         try {
             setLoading(true);
-            
+
             const payload: SendOtpBody = {
                 email: form.email,
                 origin: "GIC"
             };
 
             const response = await axiosInstance.post("/otp/send-email", payload);
-            debugger;
+            
             if (response.status === 200) {
+
                 setValidOtpEmail(true);
                 otpRefEmail.current?.clear();
-
+                ResetOTPTimerEmail();
             }
 
             setCurrentResponseStatusEmail(response.data.message);
@@ -131,16 +137,16 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const validatePhone = (value: string) => {
         setError(""); // reset error first
-        
+
         if (!value) {
             setError("Phone number is required");
             return false;
         }
 
-        
+
         const phone = parsePhoneNumberFromString(value);
 
-        
+
         if (!phone) {
             setError("Invalid or missing country code");
             return false;
@@ -152,8 +158,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             return false;
         }
 
-        
-        setForm({ ...form, phone: phone.number }); 
+
+        setForm({ ...form, phone: phone.number });
         return true;
     };
 
@@ -170,10 +176,11 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             const response = await axiosInstance.post("/otp/send-mobile", payload);
             if (response.status === 200) {
-                
+
                 setOtpResonseData(response.data.data)
                 setValidOtpPhone(true);
                 otpRefPhone.current?.clear();
+                ResetOTPTimerPhone();
             }
 
             setCurrentResponseStatusPhone(response.data.message);
@@ -201,7 +208,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (response.status === 200) {
 
                 if (response.data.success) {
-                    
+
                     setRegistrationProcess({ currentStep: 2 });
                     setValidOtpEmail(true);
                     setEmailVerified(true);
@@ -232,7 +239,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             };
 
             const response = await axiosInstance.post("/otp/check-mobile", payload);
-            
+
             if (response.status === 200) {
 
                 if (response.data.success) {
@@ -259,7 +266,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const registerUser = async () => {
 
 
-        
+
         setLoading(true);
 
         try {
@@ -440,6 +447,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
                                     {validOtpEmail && (
                                         <OtpTimer
+                                            ref={timerRefEmail}
                                             initialSeconds={300}
                                             onResend={sendOTP_email}
                                             loginResponseData={currentResponseStatusEmail}
@@ -453,30 +461,23 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 
 
-                                <Button loading={loading}
-                                    type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
+                        <Button loading={loading}
+                            type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
 
-                            emailVerified
-                                ? setRegistrationProcess({ currentStep: 2 })
-                                : sendOTP_email();
-                        }} >
+                                emailVerified
+                                    ? setRegistrationProcess({ currentStep: 2 })
+                                    : sendOTP_email();
+                            }} >
                             {`${emailVerified ? "Next" : "Send OTP"}`}
                         </Button>
-                        {/* <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
 
-                            emailVerified
-                                ? setRegistrationProcess({ currentStep: 2 })
-                                : sendOTP_email();
-                        }} >
-                            {`${emailVerified ? "Next" : "Send OTP"}`}
-                        </button> */}
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 0 })}>
                             Back
                         </button>
                     </form>
                 </div>
 
-                        
+
 
                 <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Phone and Finish Registration</h2>
@@ -496,7 +497,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                                 value={form.phone}
                                 onChange={handleChange}
                             />
-                            
+
                         </div>
 
                         <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
@@ -517,6 +518,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
                                     {validOtpPhone && (
                                         <OtpTimer
+                                            ref={timerRefPhone}
                                             initialSeconds={300}
                                             onResend={sendOTP_phone}
                                             loginResponseData={currentResponseStatusPhone}
@@ -528,7 +530,15 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                         </div>
 
 
+                        <Button loading={loading}
+                           type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
 
+                            phoneVerified
+                                ? setRegistrationProcess({ currentStep: 2 })
+                                : sendOTP_phone();
+                        }} >
+                              {`${phoneVerified ? "Next" : "Send OTP"}`}
+                        </Button>
 
                         <button type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
 
@@ -536,7 +546,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                                 ? setRegistrationProcess({ currentStep: 2 })
                                 : sendOTP_phone();
                         }} >
-                            {`${phoneVerified ? "Next" : "Send OTP"}`}
+                            
                         </button>
                         <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 1 })}>
                             Back

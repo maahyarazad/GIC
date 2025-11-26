@@ -5,19 +5,23 @@ import UseInView from '../../Hooks/UseInView';
 import { useState, useEffect, useRef } from "react";
 
 
-const DEFAULT_ICONS = [
-    { name: "facebook", icon: FaFacebook, link: "https://facebook.com" },
-    { name: "instagram", icon: FaInstagram, link: "https://instagram.com" },
-    { name: "linkedin", icon: FaLinkedin, link: "https://linkedin.com" },
-    { name: "youtube", icon: FaYoutube, link: "https://youtube.com" },
-    { name: "x", icon: FaXTwitter, link: "https://x.com" },
-];
+const ICON_MAP = {
+    FaFacebook: FaFacebook,
+    FaInstagram: FaInstagram,
+    FaLinkedin: FaLinkedin,
+    FaYoutube: FaYoutube,
+    FaXTwitter: FaXTwitter,
+};
 
 export default function FloatingSocialMedia({
     size = 24,
     gap = 10,
-    icons = DEFAULT_ICONS, // allow override
+    icons,
+    disable
 }) {
+
+
+
 
     const containerRef = useRef(null);
     const [showSidebar, setShowSidebar] = useState(false);
@@ -25,45 +29,48 @@ export default function FloatingSocialMedia({
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [coords, setCoords] = useState({ top: '50%', left: 'auto' });
-const scrollTimeout = useRef(null);
+    const scrollTimeout = useRef(null);
 
-   useEffect(() => {
-    const handleScroll = () => {
-      // Hide sidebar immediately on scroll
-      setShowSidebar(false);
+    useEffect(() => {
 
-      // Detect screen width and set position
-      const width = window.innerWidth;
-      if (width < 576) {
-        setPosition("bottom");
-      } else {
-        setPosition("right");
-      }
+        const handleScroll = () => {
+            // Hide sidebar immediately on scroll
+            setShowSidebar(false);
 
-      // Clear any existing timer
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+            // Detect screen width and set position
+            const width = window.innerWidth;
+            if (width < 576) {
+                setPosition("bottom");
+            } else {
+                setPosition("right");
+            }
 
-      // After 300ms of no scroll, show sidebar again
-      scrollTimeout.current = setTimeout(() => {
-        setShowSidebar(true);
-      }, 300);
-    };
+            // Clear any existing timer
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
 
-    window.addEventListener("scroll", handleScroll);
+            // After 300ms of no scroll, show sidebar again
+            scrollTimeout.current = setTimeout(() => {
+                setShowSidebar(true);
+            }, 300);
+        };
 
-    // Cleanup
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
-    };
-  }, []);
+        window.addEventListener("scroll", handleScroll);
+
+        // Cleanup
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        };
+    }, []);
 
     function getFloatingSocialMediaClass(position, showSidebar) {
+        
+        const visible = disable ? "d-none" : ""; 
         const flex = position === 'right' ? 'flex-column' : 'flex-row';
         const baseClass = `floating-social-media position-${position} ${flex}`;
         const animationClass = position === 'right' ? 'slide-left' : 'slide-up';
         const visibleClass = showSidebar ? 'visible' : '';
-        return `${baseClass} ${animationClass} ${visibleClass}`.trim();
+        return `${baseClass} ${animationClass} ${visibleClass} ${visible}`.trim();
     }
 
 
@@ -109,17 +116,16 @@ const scrollTimeout = useRef(null);
                 bottom: coords.bottom,
                 position: 'fixed'
             }}>
-            {icons.map(({ name, icon: Icon, link }) => (
-                <a
-                    key={name}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <Icon size={size}  />
-
-                </a>
-            ))}
+            {icons.map(({ name, icon: iconName, link }) => {
+                
+                const IconComponent = ICON_MAP[iconName]; // map string -> React component
+                if (!IconComponent) return null; // skip if no match
+                return (
+                    <a key={name} href={link} target="_blank" rel="noopener noreferrer">
+                        <IconComponent size={size} />
+                    </a>
+                );
+            })}
         </div>
     );
 }

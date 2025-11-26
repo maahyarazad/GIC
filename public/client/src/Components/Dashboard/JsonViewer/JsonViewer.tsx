@@ -65,11 +65,14 @@ const handleChange = (updatedJson: JsonData) => {
       <button className="btn dashboard-btn mb-2" onClick={updateClient}>
         Update Sitedata
       </button>
-    <JsonEditor
-      data={data}
-    
-      setData={handleChange}
-    />
+      <div className="application-json-editor-continer">
+
+          <JsonEditor
+            data={data}
+          
+            setData={handleChange}
+          />
+      </div>
     </>
   );
 }

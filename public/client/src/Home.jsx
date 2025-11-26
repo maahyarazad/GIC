@@ -18,7 +18,7 @@ import EmirStyleHero from './Components/Sample';
 
 
 const Home = ({ siteData }) => {
-
+    
     const [ref, isVisible] = UseInView();
     const [_ref, _isVisible] = UseInView();
 
@@ -109,7 +109,7 @@ const Home = ({ siteData }) => {
             ))}
 
 
-            <FloatingSocialMedia size={18} />
+            <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.viewSocialLinks}/>
 
 
 

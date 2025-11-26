@@ -40,34 +40,30 @@ export interface VoyageAIResponse {
 
 
 export function createSuccessResponse<T>(
-    data: T,
-    message?: string,
-    pagination?: any
-) {
-    return {
-        success: true,
-        message,
-        data,
-        timestamp: new Date().toISOString(),
-        ...(pagination ? { pagination } : {}),
-    };
+  data: T,
+  message?: string,
+  pagination?: any
+): SuccessResponse<T> {
+  return {
+    success: true,
+    message,
+    data,
+    timestamp: new Date().toISOString(),
+    ...(pagination ? { pagination } : {}),
+  };
 }
 
 export function createErrorResponse(
-    message: string,
-    code?: string,
-    details?: any
-) {
-    return {
-        success: false,
-        message,
-        error: {
-            message,
-            code,
-            details,
-        },
-        timestamp: new Date().toISOString(),
-    };
+  message: string,
+  code?: string,
+  details?: any
+): ErrorResponse {
+  return {
+    success: false,
+    message,
+    error: { message, code, details },
+    timestamp: new Date().toISOString(),
+  };
 }
 
 // Utility for required fields

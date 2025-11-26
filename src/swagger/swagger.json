@@ -566,6 +566,106 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ErrorResponse": {
+				"properties": {
+					"timestamp": {
+						"type": "string"
+					},
+					"error": {
+						"properties": {
+							"details": {},
+							"code": {
+								"type": "string"
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"error",
+					"message",
+					"success"
+				],
+				"type": "object"
+			},
+			"SuccessResponse__otpSent-boolean__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"otpSent": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"otpSent"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
+			},
 			"SendOtpBody": {
 				"properties": {
 					"email": {
@@ -580,6 +680,111 @@
 				},
 				"type": "object",
 				"additionalProperties": true
+			},
+			"SuccessResponse_any_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
+			},
+			"SuccessResponse____": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {},
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
 			},
 			"OtpCheckBody": {
 				"properties": {
@@ -596,6 +801,57 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"SuccessResponse_unknown_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
+			},
 			"OtpCheckMobileBody": {
 				"properties": {
 					"otp": {
@@ -608,6 +864,169 @@
 				],
 				"type": "object",
 				"additionalProperties": true
+			},
+			"UploadedFileDoc": {
+				"properties": {
+					"filename": {
+						"type": "string"
+					},
+					"mimetype": {
+						"type": "string"
+					},
+					"path": {
+						"type": "string"
+					},
+					"size": {
+						"type": "number",
+						"format": "double"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"filename",
+					"mimetype",
+					"path",
+					"size",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_UploadedFileDoc-Array_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/UploadedFileDoc"
+						},
+						"type": "array"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_UploadedFileDoc-Array_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_UploadedFileDoc-Array_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"SuccessResponse_null_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"data",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_null_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_null_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
 			},
 			"LoginModel": {
 				"properties": {
@@ -1077,73 +1496,10 @@
 								"schema": {
 									"anyOf": [
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"error": {
-													"properties": {
-														"details": {},
-														"code": {
-															"type": "string"
-														},
-														"message": {
-															"type": "string"
-														}
-													},
-													"required": [
-														"details",
-														"code",
-														"message"
-													],
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												}
-											},
-											"required": [
-												"timestamp",
-												"error",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/ErrorResponse"
 										},
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"data": {
-													"properties": {
-														"otpSent": {
-															"type": "boolean"
-														}
-													},
-													"required": [
-														"otpSent"
-													],
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												},
-												"pagination": {}
-											},
-											"required": [
-												"timestamp",
-												"data",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/SuccessResponse__otpSent-boolean__"
 										}
 									]
 								}
@@ -1176,63 +1532,10 @@
 								"schema": {
 									"anyOf": [
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"error": {
-													"properties": {
-														"details": {},
-														"code": {
-															"type": "string"
-														},
-														"message": {
-															"type": "string"
-														}
-													},
-													"required": [
-														"details",
-														"code",
-														"message"
-													],
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												}
-											},
-											"required": [
-												"timestamp",
-												"error",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/ErrorResponse"
 										},
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"data": {},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												},
-												"pagination": {}
-											},
-											"required": [
-												"timestamp",
-												"data",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/SuccessResponse_any_"
 										}
 									]
 								}
@@ -1265,66 +1568,10 @@
 								"schema": {
 									"anyOf": [
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"error": {
-													"properties": {
-														"details": {},
-														"code": {
-															"type": "string"
-														},
-														"message": {
-															"type": "string"
-														}
-													},
-													"required": [
-														"details",
-														"code",
-														"message"
-													],
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												}
-											},
-											"required": [
-												"timestamp",
-												"error",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/ErrorResponse"
 										},
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"data": {
-													"properties": {},
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												},
-												"pagination": {}
-											},
-											"required": [
-												"timestamp",
-												"data",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/SuccessResponse____"
 										}
 									]
 								}
@@ -1357,63 +1604,10 @@
 								"schema": {
 									"anyOf": [
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"error": {
-													"properties": {
-														"details": {},
-														"code": {
-															"type": "string"
-														},
-														"message": {
-															"type": "string"
-														}
-													},
-													"required": [
-														"details",
-														"code",
-														"message"
-													],
-													"type": "object"
-												},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												}
-											},
-											"required": [
-												"timestamp",
-												"error",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/ErrorResponse"
 										},
 										{
-											"properties": {
-												"timestamp": {
-													"type": "string"
-												},
-												"data": {},
-												"message": {
-													"type": "string"
-												},
-												"success": {
-													"type": "boolean"
-												},
-												"pagination": {}
-											},
-											"required": [
-												"timestamp",
-												"data",
-												"message",
-												"success"
-											],
-											"type": "object"
+											"$ref": "#/components/schemas/SuccessResponse_unknown_"
 										}
 									]
 								}
@@ -1433,6 +1627,104 @@
 						}
 					}
 				}
+			}
+		},
+		"/files": {
+			"post": {
+				"operationId": "UploadFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"error": {},
+										"doc": {
+											"$ref": "#/components/schemas/UploadedFileDoc"
+										}
+									},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"files"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetFiles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_UploadedFileDoc-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"files"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/files/{id}": {
+			"delete": {
+				"operationId": "DeleteFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"files"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/client": {

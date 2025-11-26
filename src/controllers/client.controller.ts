@@ -1,12 +1,13 @@
-import { Controller, Get, Route, Tags, Put, Body, Path } from "tsoa";
+import { Controller, Get, Route, Tags, Put, Body, Path , Middlewares} from "tsoa";
 import { ObjectId } from "mongodb";
 import { getCollection } from "../db";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
-
+import {adminAuthMiddleware} from '../middleware/adminauth.middleware'
 @Route("client")
 @Tags("client")
 export class ClientController extends Controller {
   @Get("/")
+  @Middlewares(adminAuthMiddleware)
   public async getLargeJson(): Promise<any> {
     try {
       const collection = getCollection("client_blueprint");
@@ -27,6 +28,7 @@ export class ClientController extends Controller {
   }
 
   @Put("/{id}")
+  @Middlewares(adminAuthMiddleware)
   public async updateJsonById(@Path() id: string, @Body() updatedJson: any): Promise<any> {
     try {
       if (!ObjectId.isValid(id)) {

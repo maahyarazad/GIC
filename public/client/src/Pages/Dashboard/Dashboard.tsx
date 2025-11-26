@@ -44,7 +44,7 @@ const menuTitles: Record<MenuItem, string> = {
 };
 
 
-export const Dashboard: React.FC = () => {
+ const Dashboard: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<MenuItem>("users");
   const userProfile = useSelector((state: any) => state.auth?.user);
@@ -116,3 +116,6 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
+
+
+export default Dashboard;

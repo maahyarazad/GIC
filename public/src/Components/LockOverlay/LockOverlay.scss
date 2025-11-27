@@ -1,0 +1,44 @@
+.padlock-icon {
+  width: 80px;
+  height: 80px;
+  fill: rgb(242, 241, 241); /* change color */
+}
+
+.lock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+  // Animation base
+  transform: translateY(0);
+  transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+
+  &.hide {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  h1{
+    font-size: 4rem;
+  }
+  h2{
+    font-size: 3rem;
+  }
+  .logo{
+     font-size: 6rem;
+     font-weight: 900 !important;
+  }
+}

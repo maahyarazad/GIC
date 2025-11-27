@@ -12,9 +12,6 @@ import UseInView from './Hooks/UseInView';
 import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
 
 
-import HeroSection from './Components/Sample';
-import EmirStyleHero from './Components/Sample';
-
 
 const Home = ({ siteData }) => {
     

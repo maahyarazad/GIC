@@ -7,8 +7,8 @@ import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice
 import { useSearchParams, useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
-
-
+import LockOverlay from '../../Components/LockOverlay/LockOverlay'
+import './Boardroom.css'
 const Boardroom: React.FC = () => {
 
 
@@ -37,10 +37,11 @@ const Boardroom: React.FC = () => {
 
 
   return (
+    <div className="boardroom">
+        <LockOverlay/>
     <div className="login-container">
 
       <div className="login-card">
-
         <h2 className="login-title">Welcome Back</h2>
 
         
@@ -53,6 +54,7 @@ const Boardroom: React.FC = () => {
         </p>
 
       </div>
+    </div>
     </div>
   );
 };

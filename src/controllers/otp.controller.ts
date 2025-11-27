@@ -88,18 +88,18 @@ export class OtpController extends Controller {
     @Body() body: SendOtpBody,
     @Request() req: Express.Request
   ) {
-    // if (!body.email) return createErrorResponse("Email is required");
+    if (!body.email) return createErrorResponse("Email is required");
 
-    // // ---- RATE LIMIT CHECK ----
-    // const limit = this.checkLimiter(body);
-    // if (!limit.allowed) {
-    //   this.setStatus(429);
-    //   return createErrorResponse(
-    //     `Please wait ${limit.remaining}s before requesting another OTP`
-    //   );
-    // }
+    // ---- RATE LIMIT CHECK ----
+    const limit = this.checkLimiter(body);
+    if (!limit.allowed) {
+      this.setStatus(429);
+      return createErrorResponse(
+        `Please wait ${limit.remaining}s before requesting another OTP`
+      );
+    }
 
-    // this.setLimiterMap(body);
+    this.setLimiterMap(body);
 
     const usersCollection = getCollection<User>("users");
 
@@ -127,7 +127,7 @@ export class OtpController extends Controller {
     session.otpExpires = Date.now() + 5 * 60 * 1000;
 
     try {
-      if (process.env.NODE_ENV === "DEVELOPMENT") {
+      if (process.env.NODE_ENV === "PRODUCTION") {
         const params: Record<string, any> = {
           email: body.email,
           OTP: otp,

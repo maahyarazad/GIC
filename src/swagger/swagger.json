@@ -861,12 +861,25 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ApiResponse_any_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_any_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
 			"UploadedFileDoc": {
 				"properties": {
 					"filename": {
 						"type": "string"
 					},
 					"mimetype": {
+						"type": "string"
+					},
+					"extension": {
 						"type": "string"
 					},
 					"path": {
@@ -884,6 +897,7 @@
 				"required": [
 					"filename",
 					"mimetype",
+					"extension",
 					"path",
 					"size",
 					"createdAt"
@@ -891,7 +905,7 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"SuccessResponse_UploadedFileDoc-Array_": {
+			"SuccessResponse__files-UploadedFileDoc-Array--total-number__": {
 				"properties": {
 					"pagination": {
 						"properties": {
@@ -924,10 +938,23 @@
 						"type": "string"
 					},
 					"data": {
-						"items": {
-							"$ref": "#/components/schemas/UploadedFileDoc"
+						"properties": {
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"files": {
+								"items": {
+									"$ref": "#/components/schemas/UploadedFileDoc"
+								},
+								"type": "array"
+							}
 						},
-						"type": "array"
+						"required": [
+							"total",
+							"files"
+						],
+						"type": "object"
 					},
 					"message": {
 						"type": "string"
@@ -946,10 +973,10 @@
 				],
 				"type": "object"
 			},
-			"ApiResponse_UploadedFileDoc-Array_": {
+			"ApiResponse__files-UploadedFileDoc-Array--total-number__": {
 				"anyOf": [
 					{
-						"$ref": "#/components/schemas/SuccessResponse_UploadedFileDoc-Array_"
+						"$ref": "#/components/schemas/SuccessResponse__files-UploadedFileDoc-Array--total-number__"
 					},
 					{
 						"$ref": "#/components/schemas/ErrorResponse"
@@ -1890,13 +1917,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"error": {},
-										"doc": {
-											"$ref": "#/components/schemas/UploadedFileDoc"
-										}
-									},
-									"type": "object"
+									"$ref": "#/components/schemas/ApiResponse_any_"
 								}
 							}
 						}
@@ -1935,7 +1956,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_UploadedFileDoc-Array_"
+									"$ref": "#/components/schemas/ApiResponse__files-UploadedFileDoc-Array--total-number__"
 								}
 							}
 						}
@@ -1945,7 +1966,64 @@
 					"files"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"createdAt",
+								"filename",
+								"mimetype",
+								"extension",
+								"path",
+								"size"
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					},
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/files/{id}": {

@@ -236,11 +236,17 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_any_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_any_"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadedFileDoc": {
         "dataType": "refObject",
         "properties": {
             "filename": {"dataType":"string","required":true},
             "mimetype": {"dataType":"string","required":true},
+            "extension": {"dataType":"string","required":true},
             "path": {"dataType":"string","required":true},
             "size": {"dataType":"double","required":true},
             "createdAt": {"dataType":"datetime","required":true},
@@ -248,14 +254,14 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_UploadedFileDoc-Array_": {
+    "SuccessResponse__files-UploadedFileDoc-Array--total-number__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"dataType":"array","array":{"dataType":"refObject","ref":"UploadedFileDoc"}},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"dataType":"nestedObjectLiteral","nestedProperties":{"total":{"dataType":"double","required":true},"files":{"dataType":"array","array":{"dataType":"refObject","ref":"UploadedFileDoc"},"required":true}}},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ApiResponse_UploadedFileDoc-Array_": {
+    "ApiResponse__files-UploadedFileDoc-Array--total-number__": {
         "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_UploadedFileDoc-Array_"},{"ref":"ErrorResponse"}],"validators":{}},
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse__files-UploadedFileDoc-Array--total-number__"},{"ref":"ErrorResponse"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SuccessResponse_null_": {
@@ -788,6 +794,11 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsFileController_getFiles: Record<string, TsoaRoute.ParameterSchema> = {
+                limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
+                skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
+                sortBy: {"in":"query","name":"sortBy","dataType":"enum","enums":["createdAt","filename","mimetype","extension","path","size"]},
+                sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+                filters: {"in":"query","name":"filters","dataType":"string"},
         };
         app.get('/files',
             ...(fetchMiddlewares<RequestHandler>(FileController)),

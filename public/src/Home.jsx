@@ -2,16 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import HomeSlider from './Components/HomeSlider/HomeSlider';
 import ServiceGrid from './Components/ServiceGrid/ServiceGrid';
 import TestimonialCarousel from './Components/TestemonialCarousel/TestemonialCarousel';
-import ContactUsForm from './Components/ContactUsForm/ContactUsForm'
-import ParticleJsContainer from './Components/ParticleJsContainer/ParticleJsContainer';
+
+import HomeBackground from './Components/HomeBackground/HomeBackground';
 import ImageSlider from './Components/Carousel/Carousel';
 import Carousel from './Components/Carousel/Carousel';
 // import TypeWriter from './Components/TypeWriter/TypeWriter';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from './Hooks/UseInView';
 import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
-import SlidingDownImage from './Assets/back.png';
-import SlidingDownImageInvert from './Assets/front.png';
+
 
 import HeroSection from './Components/Sample';
 import EmirStyleHero from './Components/Sample';
@@ -94,7 +93,7 @@ const Home = ({ siteData }) => {
 
     return (
         <div>
-            <ParticleJsContainer />
+            <HomeBackground />
             {siteData.homeSliders.map((slider, index) => (
                 <HomeSlider
                     key={slider.id}
@@ -193,7 +192,7 @@ const Home = ({ siteData }) => {
                 {/* BACKGROUND IMAGE */}
                 <div className='d-flex justify-content-center align-items-center'
                     style={{
-                        backgroundImage: `url(${SlidingDownImage})`,
+                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.sliding_down_image})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
@@ -225,7 +224,7 @@ const Home = ({ siteData }) => {
                 {/* SLIDING IMAGE */}
                 <div
                     style={{
-                        backgroundImage: `url(${SlidingDownImageInvert})`,
+                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.sliding_down_image_invert})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",

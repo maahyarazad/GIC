@@ -8,7 +8,7 @@ import Burger from '@animated-burgers/burger-rotate'
 
 import '@animated-burgers/burger-rotate/dist/styles.css'
 
-import MobileBackGround from '../../Assets/pexels-pixabay-262347.jpg'
+
 
 
 const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }) => {
@@ -286,10 +286,10 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
             {/* Slide-out Mobile Menu */}
             <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
                 style={{
-                    backgroundImage: `
-                        linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
-                        url(${MobileBackGround})
-                    `,
+                    // backgroundImage: `
+                    //     linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
+                    //     url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.mobile_background!}),
+                    // `,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat'

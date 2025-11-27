@@ -93,7 +93,7 @@ const App = () => {
                 <Navbar
                     onLanguageChange={handleLanguageChange}
                     navbarLinks={siteData.navLinks}
-                    siteData={siteData.getStarted}
+                    siteData={siteData}
                     currentlanguage={language}
                     companyName={siteData.companyName}
                 />

@@ -14,7 +14,7 @@ const ContactUs = ({ siteData }) => {
   return (
     <div
       style={{
-        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.contact_us_background})`,
+        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.contact_us_background})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

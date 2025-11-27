@@ -1,11 +1,4 @@
-
-
-
-
-const HomeBackground = () => {
-
-
-   
+const HomeBackground = ({background}) => {
 
     return (
       <div>
@@ -23,7 +16,7 @@ const HomeBackground = () => {
             left: 0,
             }}
         >
-            <source src={background} type="video/mp4" />
+            <source src={`${import.meta.env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" />
             Your browser does not support the video tag.
         </video>
         </div>

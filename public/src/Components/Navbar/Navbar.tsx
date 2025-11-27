@@ -183,18 +183,18 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     if (!navbarLinks || !companyName) return null
 
 
-    const User : React.ReactNode = (
-    <>
-        {user !== null ? (
-        <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-            <Link to="/#" onClick={(e) => handleScroll(e, "dashboard", "link", "/dashboard")}>Dashboard</Link>
-        </li>
-        ) : (
-        <li className={isLinkActive('/login') ? 'active' : ''}>
-            <Link to="/#" onClick={(e) => handleScroll(e, "login", "link", "/login")}>Sign-in</Link>
-        </li>
-        )}
-    </>
+    const User: React.ReactNode = (
+        <>
+            {user !== null ? (
+                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
+                    <Link to="/#" onClick={(e) => handleScroll(e, "dashboard", "link", "/dashboard")}>Dashboard</Link>
+                </li>
+            ) : (
+                <li className={isLinkActive('/login') ? 'active' : ''}>
+                    <Link to="/#" onClick={(e) => handleScroll(e, "login", "link", "/login")}>Sign-in</Link>
+                </li>
+            )}
+        </>
     );
 
 
@@ -286,13 +286,13 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
             {/* Slide-out Mobile Menu */}
             <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
                 style={{
-                    // backgroundImage: `
-                    //     linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
-                    //     url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.mobile_background!}),
-                    // `,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
+                    backgroundImage: `
+                        linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
+                        url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.mobile_background})
+                    `,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
                 }}
 
             >
@@ -303,7 +303,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                             <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         </li>
                     ))}
-                   {User}
+                    {User}
                 </ul>
                 {/* <div className="mobile-lang-switch">
                     <label className="switch">

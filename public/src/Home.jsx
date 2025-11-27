@@ -42,7 +42,7 @@ const Home = ({ siteData }) => {
     const [_ref14, _isVisible14] = UseInView({ delay: 700 });
 
 
-    useEffect(() => { }, [siteData]);
+    
     const silderRefs = useRef([]);
     const [visibleSliders, setVisibleSliders] = useState([]);
     useEffect(() => {
@@ -93,7 +93,7 @@ const Home = ({ siteData }) => {
 
     return (
         <div>
-            <HomeBackground />
+            <HomeBackground background={siteData.media.home_background}/>
             {siteData.homeSliders.map((slider, index) => (
                 <HomeSlider
                     key={slider.id}
@@ -192,7 +192,7 @@ const Home = ({ siteData }) => {
                 {/* BACKGROUND IMAGE */}
                 <div className='d-flex justify-content-center align-items-center'
                     style={{
-                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.sliding_down_image})`,
+                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
@@ -224,7 +224,7 @@ const Home = ({ siteData }) => {
                 {/* SLIDING IMAGE */}
                 <div
                     style={{
-                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/file_storage/${siteData.media.sliding_down_image_invert})`,
+                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image_invert})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",

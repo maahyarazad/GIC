@@ -11,24 +11,27 @@ import {
   Response,
   Res,
 } from "tsoa";
-
 import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
 import { LoginModel, User } from "../types/user.types";
 import { ObjectId } from "mongodb";
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  ApiResponse,
+} from "../utils/helpers";
+import { sendDynamicEmail } from "../services/emailService";
+import * as cookie from "cookie";
+import bcrypt from "bcryptjs";
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
-import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
-import { response } from "express";
+
 const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET!;
 const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
-import * as cookie from "cookie"; // npm install cookie
-
 @Route("auth")
 @Tags("Auth")
 export class AuthController extends Controller {
-
   @Get("google/url")
   public async getGoogleAuthUrl(): Promise<{ url: string }> {
     const redirectUri = process.env.GOOGLE_CALLBACK_URL!;
@@ -43,7 +46,6 @@ export class AuthController extends Controller {
 
     return { url };
   }
-
 
   @Get("google/callback")
   @SuccessResponse("302", "Redirecting")
@@ -84,7 +86,7 @@ export class AuthController extends Controller {
         avatar: profile.picture,
         createdAt: new Date(),
         role: "user",
-        authorize: false
+        authorize: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -92,7 +94,7 @@ export class AuthController extends Controller {
     }
 
     // 4. Sign JWT
-    const token = jwt.sign({ userId: user._id, role: "user"}, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, role: "user" }, JWT_SECRET, {
       expiresIn: "30d",
     });
 
@@ -116,27 +118,24 @@ export class AuthController extends Controller {
     this.setHeader("Location", `${process.env.FRONTEND_URL}/auth/success`);
   }
 
+  @Get("facebook/url")
+  public async getFacebookAuthUrl(): Promise<{ url: string }> {
+    const redirectUri = process.env.FACEBOOK_CALLBACK_URL!;
+    const clientId = process.env.FACEBOOK_APP_ID!;
 
-      @Get("facebook/url")
-      public async getFacebookAuthUrl(): Promise<{ url: string }> {
-      const redirectUri = process.env.FACEBOOK_CALLBACK_URL!;
-      const clientId = process.env.FACEBOOK_APP_ID!;
+    const scope =
+      process.env.NODE_ENV !== "development"
+        ? encodeURIComponent("email public_profile")
+        : encodeURIComponent("public_profile");
 
-  const scope =
-    process.env.NODE_ENV !== "development"
-      ? encodeURIComponent("email public_profile")
-      : encodeURIComponent("public_profile");
-
-      const url =
+    const url =
       `https://www.facebook.com/v19.0/dialog/oauth` +
       `?client_id=${clientId}` +
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&scope=${scope}`;
 
-      return { url };
-      }
-
-
+    return { url };
+  }
 
   @Get("facebook/callback")
   @SuccessResponse("302", "Redirecting")
@@ -175,7 +174,7 @@ export class AuthController extends Controller {
         avatar: profile.picture?.data?.url,
         createdAt: new Date(),
         role: "user",
-        authorize: false
+        authorize: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -183,7 +182,7 @@ export class AuthController extends Controller {
     }
 
     // 4. Sign token
-    const token = jwt.sign({ userId: user._id , role: "user"}, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id, role: "user" }, JWT_SECRET, {
       expiresIn: "30d",
     });
 
@@ -271,7 +270,7 @@ export class AuthController extends Controller {
   @Post("login")
   public async loginUser(
     @Body() userData: LoginModel
-  ): Promise<{ success: boolean; user: Omit<User, "password"> }> {
+  ): Promise<ApiResponse<Omit<User, "password">>> {
     try {
       const usersCollection = getCollection<User>("users");
 
@@ -285,19 +284,29 @@ export class AuthController extends Controller {
 
       if (!user) {
         this.setStatus(404);
-        throw new Error("User not found");
+        return createErrorResponse("User not found", "USER_NOT_FOUND");
       }
 
-      // Sign token
+      const isPasswordCorrect = await bcrypt.compare(
+        userData.password,
+        user.password
+      );
+
+      if (!isPasswordCorrect) {
+        this.setStatus(401);
+        return createErrorResponse("Invalid password", "INVALID_PASSWORD");
+      }
+
+      // 🔑 Sign JWT
       const token = jwt.sign(
-        { userId: user._id.toString(),  role: user.role },
+        { userId: user._id.toString(), role: user.role },
         JWT_SECRET,
         { expiresIn: "1d" }
       );
 
       const isProd = process.env.NODE_ENV === "production";
 
-      // EXACT SAME AS EXPRESS — BUT AS A STRING
+      // 🍪 Secure cookie
       const cookie = [
         `token=${token}`,
         "HttpOnly",
@@ -309,21 +318,19 @@ export class AuthController extends Controller {
         .filter(Boolean)
         .join("; ");
 
-      // TSOA-safe cookie header
       this.setHeader("Set-Cookie", cookie);
-
       this.setStatus(200);
 
       const { password, ...safeUser } = user;
 
-      return {
-        success: true,
-        user: safeUser,
-      };
+      return createSuccessResponse(safeUser, "Login successful");
     } catch (error: any) {
       console.error(error);
-      this.setStatus(this.getStatus() ?? 500);
-      throw new Error(error.message);
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Login failed",
+        "INTERNAL_ERROR"
+      );
     }
   }
 
@@ -352,6 +359,180 @@ export class AuthController extends Controller {
       console.error(error);
       this.setStatus(this.getStatus() ?? 500);
       throw new Error(error.message);
+    }
+  }
+
+  @SuccessResponse("200", "Reset Link Sent")
+  @Post("/forgot-password")
+  public async resetPassword(
+    @Body() body: { email: string }
+  ): Promise<{ error?: any }> {
+    try {
+      const usersCollection = getCollection<User>("users");
+      const sessionCollection = getCollection("passwordResetSessions");
+
+      // 1. Check if user exists
+      const existing = await usersCollection.findOne({ email: body.email });
+
+      if (!existing) {
+        this.setStatus(400);
+        return createErrorResponse(
+          "The user does not exist. Please check the email and try again.",
+          "USER_NOT_FOUND"
+        );
+      }
+
+      // 2. Generate secure random token
+      const token = crypto.randomUUID().toString();
+
+      // 3. Save reset session (valid for 1 hour)
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await sessionCollection.insertOne({
+        userId: existing._id,
+        email: existing.email,
+        token: token,
+        expiresAt: expiresAt,
+        used: false,
+      });
+
+      let resetLink: string;
+      if (process.env.NODE_MODE === "PRODUCTION") {
+        resetLink = `${process.env.CLIENT_ORIGIN_PROD}/reset-password?token=${token}`;
+      } else {
+        resetLink = `${process.env.CLIENT_ORIGIN_DEV}/reset-password?token=${token}`;
+      }
+
+      const params: Record<string, any> = {
+        email: existing.email,
+        RESET_LINK: resetLink,
+        USER_NAME: existing.email,
+      };
+
+      await sendDynamicEmail("reset_password", params);
+
+      this.setStatus(200);
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Failed to initiate password reset",
+        "INTERNAL_ERROR"
+      );
+    }
+  }
+
+  @Get("/verify-reset-token")
+  @SuccessResponse("200", "Token Valid")
+  public async verifyResetToken(@Query() token: string): Promise<any> {
+    try {
+      if (!token) {
+        this.setStatus(400);
+        return createErrorResponse("Token is required", "MISSING_TOKEN");
+      }
+
+      const sessionCollection = getCollection("passwordResetSessions");
+
+      // Find the session by token
+      const session = await sessionCollection.findOne({ token });
+
+      if (!session) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid reset token", "INVALID_TOKEN");
+      }
+
+      // Check expiration
+      if (new Date(session.expiresAt).getTime() < Date.now()) {
+        this.setStatus(400);
+        return createErrorResponse("Token has expired", "TOKEN_EXPIRED");
+      }
+
+      // Check if already used
+      if (session.used) {
+        this.setStatus(400);
+        return createErrorResponse("Token already used", "TOKEN_ALREADY_USED");
+      }
+
+      // Token valid → return user ID so the frontend can proceed
+      this.setStatus(200);
+      return createSuccessResponse(
+        {
+          valid: true,
+          userId: session.userId,
+          email: session.email,
+        },
+        "Token is valid"
+      );
+    } catch (error: any) {
+      console.error("Token verification failed:", error);
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Failed to verify token",
+        "INTERNAL_ERROR"
+      );
+    }
+  }
+
+  @SuccessResponse("200", "Password Reset Successfully")
+  @Post("/reset-password")
+  public async setNewPassword(
+    @Body() body: { token: string; newPassword: string }
+  ): Promise<any> {
+    try {
+      const { token, newPassword } = body;
+      if (!token || !newPassword) {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Token and new password are required",
+          "VALIDATION_ERROR"
+        );
+      }
+
+      const usersCollection = getCollection<User>("users");
+      const sessionCollection = getCollection("passwordResetSessions");
+
+      // 1. Find reset session
+      const resetSession = await sessionCollection.findOne({ token: token });
+      if (!resetSession || resetSession.used) {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Invalid or already used token",
+          "INVALID_TOKEN"
+        );
+      }
+
+      // 2. Check expiration
+      if (resetSession.expiresAt < new Date()) {
+        this.setStatus(400);
+        return createErrorResponse("Token has expired", "TOKEN_EXPIRED");
+      }
+
+      // 3. Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // 4. Update user password
+      await usersCollection.updateOne(
+        { _id: resetSession.userId },
+        { $set: { password: hashedPassword } }
+      );
+
+      // 5. Mark token as used
+      await sessionCollection.updateOne(
+        { token: token },
+        { $set: { used: true } }
+      );
+
+      this.setStatus(200);
+      return createSuccessResponse(
+        undefined,
+        "Password has been reset successfully"
+      );
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Failed to reset password",
+        "INTERNAL_ERROR"
+      );
     }
   }
 }

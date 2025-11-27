@@ -5,7 +5,7 @@
 export type SuccessResponse<T> = {
     success: true;
     message?: string;
-    data: T;
+    data?: T;
     timestamp: string;
     pagination?: {
         page: number;
@@ -40,7 +40,7 @@ export interface VoyageAIResponse {
 
 
 export function createSuccessResponse<T>(
-  data: T,
+  data?: T,
   message?: string,
   pagination?: any
 ): SuccessResponse<T> {

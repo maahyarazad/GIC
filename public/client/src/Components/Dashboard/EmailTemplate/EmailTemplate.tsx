@@ -81,42 +81,59 @@ const EmailTemplatesDataGrid = () => {
 
 
 
+ const handleSaveTemplate = async (e: any) => {
+    e.preventDefault();
 
-    const saveTemplate = async (e: any) => {
-        e.preventDefault();
+    if (!templateName || !subject || !html) {
+        show({
+            type: "error",
+            message: "Please fill all required fields.",
+        });
+        return;
+    }
 
-        if (!templateName || !subject || !html) {
-            show({
-                type: "error",
-                message: "Please fill all required fields.",
-            });
-            return;
-        }
+    try {
+        const payload = {
+            name: templateName,
+            subject,
+            html,
+        };
 
-        try {
-            const payload = {
-                name: templateName,
-                subject,
-                html,
-            };
+        let res;
 
-            const res = await axiosInstance.post("/email-templates", payload);
-
+        // 👉 If id exists → UPDATE
+        if (id) {
+            res = await axiosInstance.put(`/email-templates/${id}`, payload);
+            debugger;
             if (res.data.success) {
-                show({ type: "success", message: "Template saved!" });
-                setOpen(false);
-                fetchTemplates();
+                show({ type: "success", message: res.data.message });
             }
-        } catch (err: any) {
-            show({ type: "error", message: err.message });
+        } 
+        // 👉 If no id → CREATE
+        else {
+            res = await axiosInstance.post("/email-templates", payload);
+            debugger;
+            if (res.data.success) {
+                show({ type: "success", message: res.data.message });
+            }
         }
-    };
+
+        // Close modal and reload table
+        setOpen(false);
+        fetchTemplates();
+        
+    } catch (err: any) {
+        show({ type: "error", message: err.message || "Operation failed" });
+    }
+};
+
 
 
 
     const onEdit = (row: EmailTemplate) => {
         // Open modal or navigate to template edit page
         setHeaderTitle(`Modify ${row.name}`)
+        setId(row._id!);
         setTemplateName(row.name);
         setHtml(row.html);
         setSubject(row.subject);
@@ -127,6 +144,7 @@ const EmailTemplatesDataGrid = () => {
         try {
             await axiosInstance.delete(`/email-templates/${row._id}`);
             show({ type: "success", message: "Template deleted successfully" });
+
             fetchTemplates();
         } catch (err: any) {
             show({ type: "error", message: err.message || "Failed to delete template" });
@@ -141,6 +159,7 @@ const EmailTemplatesDataGrid = () => {
 
 
     const [templateName, setTemplateName] = useState("");
+    const [id, setId] = useState(null);
     const [subject, setSubject] = useState("");
     const [headerTitle, setHeaderTitle] = useState("Add New Email Template");
 
@@ -152,7 +171,7 @@ const EmailTemplatesDataGrid = () => {
                 onClose={() => setOpen(false)}
                 headerTitle={`${headerTitle}`}
             >
-                <form onSubmit={saveTemplate} className="d-flex flex-column gap-3">
+                <form onSubmit={handleSaveTemplate} className="d-flex flex-column gap-3">
                     <button
                         type="submit"
                         className="btn dashboard-btn align-self-start"
@@ -165,6 +184,7 @@ const EmailTemplatesDataGrid = () => {
                         <div className="d-flex">
 
                             <div>
+                                <input type="hidden" value={id}></input>
                                 <label className="form-label fw-bold">Template Name *</label>
                                 <input
                                     type="text"
@@ -206,7 +226,7 @@ const EmailTemplatesDataGrid = () => {
             </SlideMenu>
 
             <button className={`btn btn-sm dashboard-btn`}
-                onClick={() => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("Add New Email Template") }}>Add New</button>
+                onClick={() => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("Add New Email Template"); setId(null) }}>Add New</button>
             <GenericDataGrid<EmailTemplate>
                 rows={rows}
                 columns={columns}

@@ -89,14 +89,11 @@ export class EmailTemplateController extends Controller {
         { returnDocument: "after" }
       );
 
-      if (!result.value) {
+      if (!result) {
         return createErrorResponse("Template not found", "NOT_FOUND");
       }
 
-      return createSuccessResponse({
-        _id: result.value._id.toHexString(),
-        ...result.value,
-      }, "Template updated successfully");
+      return createSuccessResponse(undefined,  "Template updated successfully");
     } catch (err: any) {
       return createErrorResponse("Failed to update template", "UPDATE_ERROR", err);
     }

@@ -42,6 +42,7 @@ const Login: React.FC = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
+    
     e.preventDefault();
     setError("");
     dispatch(setLoadingTrue());
@@ -54,22 +55,15 @@ const Login: React.FC = () => {
 
 
       const response = await loginUser(payload);
-
+      
       if (response.success) {
         
-        dispatch(login(response.user));
-        show({
-          type: "success",
-
-          message: "Logged in successfully",
-
-        });
-        
+        dispatch(login(response.data));
+        show({type: "success",message: "Logged in successfully"});
         navigate(redirectTo, { replace: true });
-
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.message || "Login failed");
     } finally {
       dispatch(setLoadingFalse());
     }
@@ -104,6 +98,10 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          
+      <div className="forgot-password">
+        <a href="/forgot-password">Forgot your password?</a>
+      </div>
     <Button type="submit" disabled={loading} className="btn btn-primary-contrast" loading={loading}>
        Login
     </Button>

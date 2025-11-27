@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { Controller, Route, Tags, Post, Get, Delete, UploadedFile ,SuccessResponse, Request} from "tsoa";
 import { getCollection } from "../db";
 import fs from "fs";

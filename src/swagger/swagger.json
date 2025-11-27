@@ -661,7 +661,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -727,7 +726,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -781,7 +779,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -847,7 +844,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -946,7 +942,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -1013,7 +1008,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -1113,7 +1107,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -1179,7 +1172,6 @@
 				},
 				"required": [
 					"timestamp",
-					"data",
 					"success"
 				],
 				"type": "object"
@@ -1225,6 +1217,68 @@
 				},
 				"type": "object",
 				"description": "Make all properties in T optional"
+			},
+			"SuccessResponse_Omit_User.password__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/Omit_User.password_"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_Omit_User.password__": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_Omit_User.password__"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
 			},
 			"LoginModel": {
 				"properties": {
@@ -2265,19 +2319,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"user": {
-											"$ref": "#/components/schemas/Omit_User.password_"
-										},
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"user",
-										"success"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/ApiResponse_Omit_User.password__"
 								}
 							}
 						}
@@ -2328,6 +2370,120 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/auth/forgot-password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Reset Link Sent",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"error": {}
+									},
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/verify-reset-token": {
+			"get": {
+				"operationId": "VerifyResetToken",
+				"responses": {
+					"200": {
+						"description": "Token Valid",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/reset-password": {
+			"post": {
+				"operationId": "SetNewPassword",
+				"responses": {
+					"200": {
+						"description": "Password Reset Successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"newPassword": {
+										"type": "string"
+									},
+									"token": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"newPassword",
+									"token"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

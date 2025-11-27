@@ -11,6 +11,7 @@ export interface LoginModel {
 export async function loginUser(loginData: LoginModel) {
   try {
     const response = await axiosInstance.post('/auth/login', loginData);
+    
     return response.data;
   } catch (error) {
     console.error('Login failed', error);

@@ -1,32 +1,10 @@
 import { Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import {
-  Sort,
-  createSuccessResponse,
-  createErrorResponse,
-  validateRequiredFields,
-} from "../utils/helpers";
-import {
-  Controller,
-  Get,
-  Route,
-  Post,
-  Put,
-  Path,
-  Query,
-  Body,
-  SuccessResponse,
-  Tags,
-  Delete,
-} from "tsoa";
+import { Sort, createSuccessResponse, createErrorResponse, validateRequiredFields } from "../utils/helpers";
+import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Delete } from "tsoa";
 import { getCollection } from "../db";
-import {
-  Product,
-  ProductSortKey,
-  SortOrder,
-  UpdateProductRequest,
-  CreateProductRequest,
-} from "../types/product.types";
+import { Product, ProductSortKey, SortOrder, UpdateProductRequest, CreateProductRequest } from "../types/product.types";
+
 
 @Route("products")
 @Tags("Products")

@@ -1,15 +1,12 @@
 import { Controller, Post, Route, Body, SuccessResponse, Request } from "tsoa";
-import {
-  
-  EmailOtpRequest,
-  emailOtp,
-} from "../services/emailService";
+import { sendDynamicEmail, EmailOtpRequest, emailOtp } from "../services/emailService";
 import smsglobal from "smsglobal";
 import dotenv from "dotenv";
 import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
 import { Session, SessionData } from "express-session";
 import { getCollection } from "../db";
 import { User } from "../types/user.types";
+
 
 dotenv.config();
 const smsglobal = require("smsglobal")(
@@ -131,14 +128,14 @@ export class OtpController extends Controller {
 
     try {
       if (process.env.NODE_ENV === "DEVELOPMENT") {
-        const params: EmailOtpRequest = {
+        const params: Record<string, any> = {
           email: body.email,
-          otp,
+          OTP: otp,
           event: body.origin || "Registration",
           message: `To complete your registration for`,
         };
 
-        await emailOtp(params);
+        await sendDynamicEmail("otp_verification", params);
       }
 
       return createSuccessResponse(

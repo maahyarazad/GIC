@@ -25,6 +25,7 @@ export interface SendRawEmailParams {
   text?: string;
   attachments?: EmailAttachment[];
   bcc?: string | string[];
+  
 }
 
 function slugToTitle(slug: string): string {
@@ -123,6 +124,48 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
     throw error;
   }
 }
+
+
+
+function getGlobalEmailVariables(extra: Record<string, any> = {}) {
+  return {
+    CURRENT_YEAR: new Date().getFullYear(),
+    EVENT_NAME: "GIC", 
+    ...extra
+  };
+}
+
+
+export async function sendDynamicEmail(templateName: string, data: Record<string, any>) {
+  try {
+    const templateCollection = getCollection("email_templates");
+
+    const template = await templateCollection.findOne({ name: templateName });
+    if (!template) throw new Error("Email template not found");
+
+    // Merge global variables + template-specific variables
+    const variables = {
+      ...getGlobalEmailVariables(data),
+      ...data, // data overrides global if needed
+    };
+
+    const htmlBody = replacePlaceholders(template.html, variables);
+    const textBody = replacePlaceholders(template.text || "", variables);
+    const subject = replacePlaceholders(template.subject, variables);
+
+    return await sendRawEmailWithAttachments({
+      to: data.email,
+      subject,
+      html: htmlBody,
+      text: textBody,
+    });
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
 
 // /** Send OTP email */
 // export async function emailOtp(reqBody: EmailOtpRequest) {

@@ -92,4 +92,13 @@
 .signup-text a {
   color: #4a6eff;
   font-weight: 600;
+}
+
+.forgot-password {
+  padding-bottom: 0 !important;
+  text-align: left;
+}
+.forgot-password a {
+  color: #4a6eff;
+  font-weight: 600;
 }/*# sourceMappingURL=Login.css.map */

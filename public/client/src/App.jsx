@@ -8,6 +8,9 @@ import About from './Pages/About';
 import Services from './Pages/Services';
 import ContactUs from './Pages/ContactUs';
 import Login from './Pages/Login/Login';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
+import ResetPassword from './Pages/ResetPassword/ResetPassword';
+import Boardroom from './Pages/Boardroom/Boardroom';
 import Register from './Pages/Register/Register';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import NotFound from './Pages/NotFound/NotFound';
@@ -103,6 +106,9 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="/boardroom" element={<Boardroom/>} />
+                    <Route path="/forgot-password" element={<ForgotPassword/>} />
+                    <Route path="/reset-password" element={<ResetPassword/>} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
 

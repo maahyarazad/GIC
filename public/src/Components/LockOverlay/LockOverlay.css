@@ -1,9 +1,3 @@
-.padlock-icon {
-  width: 80px;
-  height: 80px;
-  fill: rgb(242, 241, 241); /* change color */
-}
-
 .lock-overlay {
   position: fixed;
   top: 0;
@@ -28,8 +22,15 @@
   opacity: 0;
   pointer-events: none;
 }
+.lock-overlay .padlock-icon {
+  width: 100px;
+  height: 100px;
+  fill: rgb(242, 241, 241); /* change color */
+  padding-bottom: 1rem;
+}
 .lock-overlay h1 {
   font-size: 4rem;
+  padding-bottom: 1rem;
 }
 .lock-overlay h2 {
   font-size: 3rem;

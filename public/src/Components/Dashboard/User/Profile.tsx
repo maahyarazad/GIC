@@ -78,7 +78,7 @@ export const UserProfilesDataGrid = () => {
               disabled={!row.authorize} onClick={() => toggleAuthorization(row)}>Unauthorize</button>
           </div>
 
-          <button className="btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button>
+          {/* <button className="ms-2 btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button> */}
 
         </>
       ),

@@ -97,6 +97,14 @@ const Dashboard: React.FC = () => {
       ? componentMap[selectedMenu]
       : null;
 
+
+    useEffect(() => {
+      if (userRole === "user") {
+        setSelectedMenu("profile"); // must be a MenuItem string
+      }
+    }, [userRole]);
+
+
   return (
     <div className="dashboard">
       <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>

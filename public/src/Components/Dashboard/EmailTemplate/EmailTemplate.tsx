@@ -32,7 +32,7 @@ const EmailTemplatesDataGrid = () => {
             renderCell: (row) => (
                 <div className="btn-group" role="group">
                     <button className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
-                    <button className="btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Delete</button>
+                    <button className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
                     <button className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
                 </div>
             ),

@@ -128,20 +128,104 @@ h1, h2, h3, h4, h5, h6,
    BUTTONS
 ------------------------------------------- */
 
+
 .dashboard-btn {
-  @include button-style(
-    var(--primary-gray-color),
-    white,
-    var(--primary-gray-color),
-    transparent,
-    var(--primary-gray-color),
-    0,
-    1px
-  );
-  padding-left: 4px;
-  padding-right: 4px;
-  font-size: 0.8rem;
+  background: var(--primary-contrast-color);
+  color: var(--primary-color); // white text
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 3px 10px rgba(var(--primary-contrast-color-rgb), 0.4);
+  font-size: small;
+  &:hover {
+    background: rgba(var(--primary-contrast-color-rgb), 0.85);
+    box-shadow: 0 4px 12px rgba(var(--primary-contrast-color-rgb), 0.6);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
+
+
+.dashboard-btn--delete {
+  background: var(--primary-gray-color);
+  color: var(--primary-color);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid #d11a2a; // red border to indicate danger
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-size: small;
+  box-shadow: 0 3px 10px rgba(209, 26, 42, 0.35);
+
+  &:hover {
+    background: rgba(var(--primary-gray-color-rgb), 0.85);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+
+
+.dashboard-btn--delete-ghost {
+  background: transparent;
+  color: var(--primary-contrast-color);;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--primary-contrast-color);;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-size: small;
+
+  &:hover {
+    background: rgba(209, 26, 42, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+
+  // .btn.dashboard-btn {
+  //   align-self: flex-end;
+  //   padding: 10px 20px;
+  //   border: none;
+  //   background: #007bff;
+  //   color: white;
+  //   font-weight: 600;
+  //   border-radius: 6px;
+  //   cursor: pointer;
+  //   transition: 0.2s ease;
+  //   font-size: 0.8rem;
+  //   &:hover {
+  //     background: #005fcc;
+  //   }
+  // }
+
+
+// .dashboard-btn {
+//   @include button-style(
+//     var(--primary-gray-color),
+//     white,
+//     var(--primary-gray-color),
+//     transparent,
+//     var(--primary-gray-color),
+//     0,
+//     1px
+//   );
+//   padding-left: 4px;
+//   padding-right: 4px;
+//   font-size: 0.8rem;
+// }
 
 .btn-primary-contrast {
   @include button-style(

@@ -3,6 +3,7 @@ import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
 import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
 import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
 import EmailTemplatesDataGrid from '../../Components/Dashboard/EmailTemplate/EmailTemplate'
+import UserProfileForm from '../../Components/Dashboard/UserProfileForm/UserProfileForm'
 import { useSelector } from 'react-redux';
 import LogoutComponent from "./Logout";
 import './Dashboard.css'
@@ -15,8 +16,8 @@ type MenuItem =
   | "sitedata"
   | "file_management"
   | "email_management"
-  | "logout"
   | "profile"
+  | "logout"
 
 
 // Access control map — ensure keys match MenuItem exactly:
@@ -36,8 +37,8 @@ const componentMap: Record<MenuItem, React.ReactNode> = {
   sitedata: <JsonViewer />,
   file_management: <FileManagement />,
   email_management: <EmailTemplatesDataGrid />,
-  logout: <LogoutComponent />,
-  profile: <LogoutComponent />
+  profile: <UserProfileForm initialProfile={{}} onSubmit={()=> console.log()}/>,
+  logout: <LogoutComponent />
   
 };
 

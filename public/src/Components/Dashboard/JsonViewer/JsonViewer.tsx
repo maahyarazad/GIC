@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 
 import axiosInstance from "../../../api/axiosInstance";
-import {updateClientById} from "../../../api/client";
+import { updateClientById } from "../../../api/client";
 import { useToast } from "../../../providers/ToastContext";
 import { JsonData, JsonEditor } from 'json-edit-react'
 import './JsonViewer.css';
@@ -15,10 +15,10 @@ export default function JsonViewer() {
   const fetchClient = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/client");
-      
+
       if (response.status === 200) {
-        
-setData(response?.data?.data);
+
+        setData(response?.data?.data);
       }
     } catch (err: any) {
       show({
@@ -28,24 +28,24 @@ setData(response?.data?.data);
     }
   }, []);
 
-  const updateClient = async () =>{
-  try {
-    
-        const response = await updateClientById(data._id, data);
-        
-        if (response.success) {
-          setData(response.data); 
-          show({
+  const updateClient = async () => {
+    try {
+
+      const response = await updateClientById(data._id, data);
+
+      if (response.success) {
+        setData(response.data);
+        show({
           type: "success",
           message: response.message,
         });
-        }
-      } catch (err: any) {
-        show({
-          type: "error",
-          message: err.message,
-        });
       }
+    } catch (err: any) {
+      show({
+        type: "error",
+        message: err.message,
+      });
+    }
   }
 
 
@@ -53,8 +53,8 @@ setData(response?.data?.data);
     fetchClient();
   }, [fetchClient]);
 
-  
-const handleChange = (updatedJson: JsonData) => {
+
+  const handleChange = (updatedJson: JsonData) => {
     console.log("Updated:", updatedJson);
     setData(updatedJson);
   };
@@ -62,17 +62,17 @@ const handleChange = (updatedJson: JsonData) => {
 
   return (
     <>
-    <h3 className="mb-3">Email Template</h3>
+      <h3 className="mb-3">Email Template</h3>
       <button className="btn dashboard-btn mb-2" onClick={updateClient}>
         Update Sitedata
       </button>
       <div className="application-json-editor-continer">
 
-          <JsonEditor
-            data={data}
-          
-            setData={handleChange}
-          />
+        <JsonEditor
+          data={data}
+
+          setData={handleChange}
+        />
       </div>
     </>
   );

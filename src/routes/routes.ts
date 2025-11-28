@@ -10,6 +10,8 @@ import { ProductConroller } from './../controllers/product.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OtpController } from './../controllers/otp.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { NewsletterController } from './../controllers/newsletter.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FileController } from './../controllers/file.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { EmailTemplateController } from './../controllers/email.controller';
@@ -236,9 +238,51 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "NewsletterSubscriber": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"ref":"ObjectId"},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
+            "email": {"dataType":"string","required":true},
+            "active": {"dataType":"boolean"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_NewsletterSubscriber_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"ref":"NewsletterSubscriber"},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_NewsletterSubscriber_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_NewsletterSubscriber_"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_NewsletterSubscriber.email-or-active_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"active":{"dataType":"boolean"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ApiResponse_any_": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_any_"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_NewsletterSubscriber_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string"},"active":{"dataType":"boolean"},"_id":{"ref":"ObjectId"},"createdAt":{"dataType":"datetime"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_null_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"dataType":"enum","enums":[null]},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_null_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_null_"},{"ref":"ErrorResponse"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadedFileDoc": {
@@ -262,16 +306,6 @@ const models: TsoaRoute.Models = {
     "ApiResponse__files-UploadedFileDoc-Array--total-number__": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse__files-UploadedFileDoc-Array--total-number__"},{"ref":"ErrorResponse"}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SuccessResponse_null_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"dataType":"enum","enums":[null]},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ApiResponse_null_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_null_"},{"ref":"ErrorResponse"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EmailTemplateDoc": {
@@ -746,6 +780,161 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'checkOtpMobile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_createSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"Pick_NewsletterSubscriber.email-or-active_"},
+        };
+        app.post('/newsletter',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.createSubscriber)),
+
+            async function NewsletterController_createSubscriber(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_createSubscriber, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'createSubscriber',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_getSubscribers: Record<string, TsoaRoute.ParameterSchema> = {
+                limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
+                skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
+                sortBy: {"in":"query","name":"sortBy","dataType":"enum","enums":["email","createdAt","_id","updatedAt","active"]},
+                sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+                filters: {"in":"query","name":"filters","dataType":"string"},
+        };
+        app.get('/newsletter',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscribers)),
+
+            async function NewsletterController_getSubscribers(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_getSubscribers, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubscribers',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_getSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/newsletter/:id',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscriber)),
+
+            async function NewsletterController_getSubscriber(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_getSubscriber, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubscriber',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_updateSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},
+        };
+        app.put('/newsletter/:id',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.updateSubscriber)),
+
+            async function NewsletterController_updateSubscriber(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_updateSubscriber, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'updateSubscriber',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_deleteSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/newsletter/:id',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.deleteSubscriber)),
+
+            async function NewsletterController_deleteSubscriber(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_deleteSubscriber, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteSubscriber',
                 controller,
                 response,
                 next,

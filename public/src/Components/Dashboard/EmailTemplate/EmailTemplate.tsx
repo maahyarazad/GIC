@@ -159,7 +159,7 @@ const EmailTemplatesDataGrid = () => {
 
 
     const [templateName, setTemplateName] = useState("");
-    const [id, setId] = useState(null);
+    const [id, setId] = useState<string | null>(null);
     const [subject, setSubject] = useState("");
     const [headerTitle, setHeaderTitle] = useState("Add New Email Template");
 
@@ -184,7 +184,7 @@ const EmailTemplatesDataGrid = () => {
                         <div className="d-flex">
 
                             <div>
-                                <input type="hidden" value={id}></input>
+                                <input type="hidden" value={id!}></input>
                                 <label className="form-label fw-bold">Template Name *</label>
                                 <input
                                     type="text"

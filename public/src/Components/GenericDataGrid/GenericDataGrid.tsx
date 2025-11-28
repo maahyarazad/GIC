@@ -45,6 +45,9 @@ interface DataGridProps<T> {
 
     // New prop: function to get unique id from row
     getRowId: (row: T) => string | number;
+    prevButtonClassName?: string;
+  nextButtonClassName?: string;
+
 }
 
 
@@ -64,6 +67,8 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
 
     rowsPerPageOptions = [5, 10, 25],
     loading = false,
+    prevButtonClassName,
+    nextButtonClassName,
 }: DataGridProps<T>) {
     // Handlers
     const handlePageChange = (newPage: number) => {
@@ -219,6 +224,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
 
                 <div>
                     <button
+                     className={prevButtonClassName}
                         onClick={() => handlePageChange(paginationModel.page - 1)}
                         disabled={paginationModel.page <= 1}
                         style={{ marginRight: 10 }}
@@ -227,6 +233,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                     </button>
 
                     <button
+                         className={nextButtonClassName}
                         onClick={() => handlePageChange(paginationModel.page + 1)}
                         disabled={paginationModel.page >= totalPages}
                     >

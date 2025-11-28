@@ -115,6 +115,8 @@ export const NewsletterSubscribers = () => {
       <h3 className="mb-3">Newsletter Subscribers</h3>
       <GenericDataGrid<NewsletterSubscriber>
         rows={rows}
+                prevButtonClassName="dashboard-btn--ghost-minimal"
+        nextButtonClassName="dashboard-btn--ghost-minimal"
         columns={columns}
         rowCount={rowCount}
         paginationModel={paginationModel}

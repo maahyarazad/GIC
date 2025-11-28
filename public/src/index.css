@@ -119,6 +119,34 @@ h1, h2, h3, h4, h5, h6,
   transform: scale(0.97);
 }
 
+.dashboard-btn--ghost-minimal {
+  background: transparent;
+  color: var(--primary-contrast-color);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px dashed var(--primary-contrast-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  font-size: small;
+}
+.dashboard-btn--ghost-minimal:hover {
+  background-color: rgba(var(--primary-contrast-color-rgb), 0.1);
+  border-color: var(--primary-contrast-color);
+}
+.dashboard-btn--ghost-minimal:active {
+  transform: scale(0.97);
+}
+.dashboard-btn--ghost-minimal:disabled, .dashboard-btn--ghost-minimal[disabled] {
+  background-color: transparent;
+  color: rgba(var(--primary-contrast-color-rgb), 0.4);
+  border-color: rgba(var(--primary-contrast-color-rgb), 0.4);
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
 .btn-primary-contrast {
   position: relative;
   overflow: hidden;

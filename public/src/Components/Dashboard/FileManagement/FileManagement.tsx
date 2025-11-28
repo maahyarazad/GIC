@@ -150,6 +150,8 @@ const FileManagement = () => {
 
       <GenericDataGrid
         rows={files}
+                prevButtonClassName="dashboard-btn--ghost-minimal"
+        nextButtonClassName="dashboard-btn--ghost-minimal"
         columns={columns}
         rowCount={rowCount}
         paginationModel={paginationModel}

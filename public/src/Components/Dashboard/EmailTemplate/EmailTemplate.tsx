@@ -229,6 +229,8 @@ const EmailTemplatesDataGrid = () => {
                 onClick={() => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("Add New Email Template"); setId(null) }}>Add New</button>
             <GenericDataGrid<EmailTemplate>
                 rows={rows}
+                        prevButtonClassName="dashboard-btn--ghost-minimal"
+        nextButtonClassName="dashboard-btn--ghost-minimal"
                 columns={columns}
                 rowCount={rowCount}
                 paginationModel={paginationModel}

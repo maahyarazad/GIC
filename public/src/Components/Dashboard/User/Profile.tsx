@@ -189,6 +189,8 @@ export const UserProfilesDataGrid = () => {
         onSortModelChange={setSortModel}
         filterModel={filterModel}
         onFilterModelChange={setFilterModel}
+        prevButtonClassName="dashboard-btn--ghost-minimal"
+        nextButtonClassName="dashboard-btn--ghost-minimal"
         getRowId={(row) => row._id!.toString()}
       />
     </>

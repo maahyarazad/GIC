@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect, useRef} from "react";
 import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
 import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
 import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
@@ -48,24 +48,26 @@ const menuTitles: Record<MenuItem, string> = {
 };
 
 
- const Dashboard: React.FC = () => {
+const Dashboard: React.FC = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<MenuItem>("users");
-  const userProfile = useSelector((state: any) => state.auth?.user);
-  const userRole = userProfile?.role || "user"; // default to 'user' or guest
 
-  // Filter menu items based on access control and user role
+  const userProfile = useSelector((state: any) => state.auth?.user);
+  const userRole = userProfile?.role || "user";
+
+  // Filter menu items based on access control
   const filteredMenuItems = (Object.keys(componentMap) as MenuItem[]).filter(
     (item) => accessControl[item]?.includes(userRole)
   );
 
-  // If selectedMenu is not accessible, reset to null (or first allowed item if you want)
-  React.useEffect(() => {
+  // Reset selectedMenu if current menu is not accessible
+  useEffect(() => {
     if (!filteredMenuItems.includes(selectedMenu)) {
       setSelectedMenu(filteredMenuItems[0] ?? null as any);
     }
   }, [filteredMenuItems, selectedMenu]);
 
+  // Sidebar toggle
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
   const handleMenuClick = (item: MenuItem) => {
@@ -75,10 +77,25 @@ const menuTitles: Record<MenuItem, string> = {
     }
   };
 
-  // Get the component to render, or null if not accessible
-  const selectedComponent = selectedMenu && filteredMenuItems.includes(selectedMenu)
-    ? componentMap[selectedMenu]
-    : null;
+  // Sliding selector
+  const selectorRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+
+  useEffect(() => {
+    const selectedIndex = filteredMenuItems.indexOf(selectedMenu);
+    const el = itemRefs.current[selectedIndex];
+    const selector = selectorRef.current;
+
+    if (el && selector) {
+      selector.style.width = `${el.offsetWidth}px`;
+      selector.style.transform = `translateY(${el.offsetTop}px)`;
+    }
+  }, [selectedMenu, filteredMenuItems]);
+
+  const selectedComponent =
+    selectedMenu && filteredMenuItems.includes(selectedMenu)
+      ? componentMap[selectedMenu]
+      : null;
 
   return (
     <div className="dashboard">
@@ -90,16 +107,19 @@ const menuTitles: Record<MenuItem, string> = {
         >
           ×
         </button>
+
         <nav>
           <ul>
-            {filteredMenuItems.map((item) => (
+            <div className="selector" ref={selectorRef}></div>
+            {filteredMenuItems.map((item, idx) => (
               <li
                 key={item}
+                ref={(el) => (itemRefs.current[idx] = el)}
                 className={selectedMenu === item ? "active" : ""}
                 onClick={() => handleMenuClick(item)}
                 style={{ cursor: "pointer" }}
               >
-                 {menuTitles[item]}
+                {menuTitles[item]}
               </li>
             ))}
           </ul>
@@ -120,6 +140,5 @@ const menuTitles: Record<MenuItem, string> = {
     </div>
   );
 };
-
 
 export default Dashboard;

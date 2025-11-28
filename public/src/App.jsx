@@ -103,7 +103,7 @@ const App = () => {
                     
                     <Route path="/services" element={<Services />} />
                     <Route path="/contact-us" element={<ContactUs siteData={siteData} />} />
-                    <Route path="/about-us" element={<AboutUs siteData={siteData.about_us} />} />
+                    <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

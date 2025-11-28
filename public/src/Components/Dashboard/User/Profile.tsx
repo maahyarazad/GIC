@@ -4,7 +4,7 @@ import axiosInstance from "../../../api/axiosInstance";
 import { User } from '../../../../../../src/types/user.types'
 import { updateUser, UpdateUserRequest } from '../../../api/user'
 import { useToast } from "../../../providers/ToastContext";
-
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 
 export const UserProfilesDataGrid = () => {
@@ -22,13 +22,23 @@ export const UserProfilesDataGrid = () => {
       filterable: true,
       width: 150,
     },
-    {
-      field: "authorize",
-      headerName: "Authorize",
-      sortable: true,
-      filterable: false,
-      width: 150,
-    },
+{
+  field: "authorize",
+  headerName: "Authorize",
+  width: 120,
+  sortable: true,
+  filterable: false,
+  renderCell: (params) => (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      {params.authorize ? (
+        <FaCheck style={{ color: "green", fontSize: "18px" }} />
+      ) : (
+        <FaTimes style={{ color: "red", fontSize: "18px" }} />
+      )}
+    </div>
+  ),
+}
+,
     {
       field: "email",
       headerName: "Email",

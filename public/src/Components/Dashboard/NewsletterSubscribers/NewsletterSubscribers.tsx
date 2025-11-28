@@ -4,7 +4,7 @@ import axiosInstance from "../../../api/axiosInstance";
 import { NewsletterSubscriber } from '../../../../../src/types/newsletterSubscriber.types';
 
 import { useToast } from "../../../providers/ToastContext";
-
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 
 export const NewsletterSubscribers = () => {
@@ -15,6 +15,23 @@ export const NewsletterSubscribers = () => {
       headerName: "ID",
       width: 180,
     },
+{
+  field: "active",
+  headerName: "Active",
+  width: 120,
+  sortable: true,
+  filterable: true,
+  renderCell: (params) => (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      {params.active ? (
+        <FaCheck style={{ color: "green", fontSize: "18px" }} />
+      ) : (
+        <FaTimes style={{ color: "red", fontSize: "18px" }} />
+      )}
+    </div>
+  ),
+}
+,
     {
       field: "email",
       headerName: "email",

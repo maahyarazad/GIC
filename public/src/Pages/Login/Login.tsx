@@ -42,7 +42,7 @@ const Login: React.FC = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    
+     debugger;
     e.preventDefault();
     setError("");
     dispatch(setLoadingTrue());
@@ -56,8 +56,8 @@ const Login: React.FC = () => {
 
       const response = await loginUser(payload);
       
+     
       if (response.success) {
-        
         dispatch(login(response.data));
         show({type: "success",message: "Logged in successfully"});
         navigate(redirectTo, { replace: true });

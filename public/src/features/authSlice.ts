@@ -2,7 +2,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { checkAuthToken } from './authThunks';
 import {User} from '../../../src/types/user.types'
 
-
+interface UserProfile {
+  id: string;
+  googleId: string;
+  name: string;
+  email: string;
+  avatar: string;
+  createdAt: string; // or Date if the API returns a Date object
+  role: string;
+};
 interface AuthState {
   user: User | null;
   loading: boolean;
@@ -48,6 +56,7 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(checkAuthToken.rejected, (state, action) => {
+        debugger;
         state.user = null;
         state.loading = false;
         state.error = action.payload as string;

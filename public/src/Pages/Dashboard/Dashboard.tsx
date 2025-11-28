@@ -61,11 +61,11 @@ const Dashboard: React.FC = () => {
   );
 
   // Reset selectedMenu if current menu is not accessible
-  useEffect(() => {
-    if (!filteredMenuItems.includes(selectedMenu)) {
-      setSelectedMenu(filteredMenuItems[0] ?? null as any);
-    }
-  }, [filteredMenuItems, selectedMenu]);
+  // useEffect(() => {
+  //   if (!filteredMenuItems.includes(selectedMenu)) {
+  //     setSelectedMenu(filteredMenuItems[0] ?? null as any);
+  //   }
+  // }, [filteredMenuItems, selectedMenu]);
 
   // Sidebar toggle
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);

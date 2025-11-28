@@ -16,6 +16,7 @@ type MenuItem =
   | "file_management"
   | "email_management"
   | "logout"
+  | "profile"
 
 
 // Access control map — ensure keys match MenuItem exactly:
@@ -24,6 +25,7 @@ const accessControl: Record<MenuItem, string[]> = {
   sitedata: ["admin"],
   file_management: ["admin"],
   email_management: ["admin"],
+  profile: ["user"],
   logout: ["admin", "user"],
  
 };
@@ -34,7 +36,8 @@ const componentMap: Record<MenuItem, React.ReactNode> = {
   sitedata: <JsonViewer />,
   file_management: <FileManagement />,
   email_management: <EmailTemplatesDataGrid />,
-  logout: <LogoutComponent />
+  logout: <LogoutComponent />,
+  profile: <LogoutComponent />
   
 };
 
@@ -45,6 +48,7 @@ const menuTitles: Record<MenuItem, string> = {
   file_management: "File Management",
   email_management: "Email Templates",
   logout: "Logout",
+  profile: "Profile",
 };
 
 
@@ -60,12 +64,7 @@ const Dashboard: React.FC = () => {
     (item) => accessControl[item]?.includes(userRole)
   );
 
-  // Reset selectedMenu if current menu is not accessible
-  // useEffect(() => {
-  //   if (!filteredMenuItems.includes(selectedMenu)) {
-  //     setSelectedMenu(filteredMenuItems[0] ?? null as any);
-  //   }
-  // }, [filteredMenuItems, selectedMenu]);
+
 
   // Sidebar toggle
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);

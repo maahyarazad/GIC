@@ -20,6 +20,22 @@
 				"type": "string",
 				"description": "A class representation of the BSON ObjectId type."
 			},
+			"SocialLink": {
+				"properties": {
+					"platform": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"platform",
+					"url"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"Pick_User.Exclude_keyofUser.password__": {
 				"properties": {
 					"name": {
@@ -66,6 +82,26 @@
 					},
 					"avatar": {
 						"type": "string"
+					},
+					"profile": {
+						"properties": {
+							"socialLinks": {
+								"items": {
+									"$ref": "#/components/schemas/SocialLink"
+								},
+								"type": "array"
+							},
+							"description": {
+								"type": "string"
+							},
+							"title": {
+								"type": "string"
+							},
+							"photo": {
+								"type": "string"
+							}
+						},
+						"type": "object"
 					},
 					"_id": {
 						"$ref": "#/components/schemas/ObjectId"

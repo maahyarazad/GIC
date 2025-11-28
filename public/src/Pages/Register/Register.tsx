@@ -311,7 +311,8 @@ const Register: React.FC = () => {
         // -----------------------
         // Strong password validation
         // -----------------------
-        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?#&])[A-Za-z\d@$!%*?#&]{8,}$/;
+const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
         if (!strongPasswordRegex.test(form.password)) {
             setError(
                 "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."

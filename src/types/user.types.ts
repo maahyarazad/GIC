@@ -1,6 +1,10 @@
 import { ObjectId } from "mongodb";
 import { BaseModel, SortOrder, Sort } from "./base.types";
 
+export interface SocialLink {
+  platform: string; // e.g., "facebook", "linkedin", "twitter"
+  url: string;
+}
 
 export type UserSortKey = "name" | "email" | "createdAt" | "role";
 /* ============================================================
@@ -21,6 +25,12 @@ export interface User extends BaseModel {
 
   // Optional avatar
   avatar?: string;
+  profile?: {
+    photo?: string;           // profile picture URL
+    title?: string;           // professional / personal title
+    description?: string;     // bio or description
+    socialLinks?: SocialLink[]; // array of social links
+  };
 
 }
 

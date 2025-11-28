@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
 import Home from './Home';
-import About from './Pages/About';
+import AboutUs from './Pages/AboutUs/AboutUs';
 import Services from './Pages/Services';
 import ContactUs from './Pages/ContactUs';
 import Login from './Pages/Login/Login';
@@ -100,9 +100,10 @@ const App = () => {
                 
                 <Routes>
                     <Route path="/" element={<Home siteData={siteData} />} />
-                    <Route path="/about" element={<About />} />
+                    
                     <Route path="/services" element={<Services />} />
                     <Route path="/contact-us" element={<ContactUs siteData={siteData} />} />
+                    <Route path="/about-us" element={<AboutUs siteData={siteData.about_us} />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

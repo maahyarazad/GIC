@@ -56,7 +56,7 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(checkAuthToken.rejected, (state, action) => {
-        debugger;
+        
         state.user = null;
         state.loading = false;
         state.error = action.payload as string;

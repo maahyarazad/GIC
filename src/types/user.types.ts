@@ -50,7 +50,13 @@ export interface UpdateUserRequest extends BaseModel{
   password?: string;
     phone?: string;
     role?: "user" | "admin" | "superadmin";
-    authorize: boolean;
+    authorize?: boolean;
+     profile?: {
+    photo?: string;           // profile picture URL
+    title?: string;           // professional / personal title
+    description?: string;     // bio or description
+    socialLinks?: SocialLink[]; // array of social links
+  };
 }
 
 /* Auth Returned User */

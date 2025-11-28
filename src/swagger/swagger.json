@@ -193,11 +193,28 @@
 					},
 					"authorize": {
 						"type": "boolean"
+					},
+					"profile": {
+						"properties": {
+							"socialLinks": {
+								"items": {
+									"$ref": "#/components/schemas/SocialLink"
+								},
+								"type": "array"
+							},
+							"description": {
+								"type": "string"
+							},
+							"title": {
+								"type": "string"
+							},
+							"photo": {
+								"type": "string"
+							}
+						},
+						"type": "object"
 					}
 				},
-				"required": [
-					"authorize"
-				],
 				"type": "object",
 				"additionalProperties": true
 			},
@@ -1672,6 +1689,49 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/UpdateUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}/upload-photo": {
+			"post": {
+				"operationId": "UploadPhoto",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
 							}
 						}
 					}

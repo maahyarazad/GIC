@@ -21,7 +21,7 @@ type MenuItem =
 
 
 // Access control map — ensure keys match MenuItem exactly:
-const accessControl: Record<MenuItem, string[]> = {
+  const accessControl: Record<MenuItem, string[]> = {
   users: ["admin"],       
   sitedata: ["admin"],
   file_management: ["admin"],
@@ -31,16 +31,7 @@ const accessControl: Record<MenuItem, string[]> = {
  
 };
 
-// Map menu items to React nodes:
-const componentMap: Record<MenuItem, React.ReactNode> = {
-  users: <UserProfilesDataGrid />,
-  sitedata: <JsonViewer />,
-  file_management: <FileManagement />,
-  email_management: <EmailTemplatesDataGrid />,
-  profile: <UserProfileForm initialProfile={{}} onSubmit={()=> console.log()}/>,
-  logout: <LogoutComponent />
-  
-};
+
 
 
 const menuTitles: Record<MenuItem, string> = {
@@ -54,17 +45,31 @@ const menuTitles: Record<MenuItem, string> = {
 
 
 const Dashboard: React.FC = () => {
+
+
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState<MenuItem>("users");
 
   const userProfile = useSelector((state: any) => state.auth?.user);
   const userRole = userProfile?.role || "user";
 
+
+
+  // Map menu items to React nodes:
+const componentMap: Record<MenuItem, React.ReactNode> = {
+  users: <UserProfilesDataGrid />,
+  sitedata: <JsonViewer />,
+  file_management: <FileManagement />,
+  email_management: <EmailTemplatesDataGrid />,
+  profile: <UserProfileForm initialProfile={userProfile}/>,
+  logout: <LogoutComponent />
+  
+};
+
   // Filter menu items based on access control
   const filteredMenuItems = (Object.keys(componentMap) as MenuItem[]).filter(
     (item) => accessControl[item]?.includes(userRole)
   );
-
 
 
   // Sidebar toggle

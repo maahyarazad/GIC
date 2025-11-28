@@ -37,7 +37,7 @@ const FileManagement = () => {
       }
 
       const response = await axiosInstance.get("/files", { params });
-      debugger;
+      
       setFiles(response.data.data.files);
       setRowCount(response.data.data.total); // adjust if server returns total count
     } catch (err) {
@@ -58,7 +58,7 @@ const FileManagement = () => {
 
     try {
       const response = await axiosInstance.post("/files", formData, { headers: { "Content-Type": "multipart/form-data" } });
-      debugger;
+      
       const message: string = response.data.message;
       if (response.data.success) {
 

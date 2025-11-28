@@ -10,7 +10,7 @@ export const checkAuthToken = createAsyncThunk(
     try {
     
       const res = await axiosInstance.get("/auth/profile");
-          debugger;
+          
       return {
         id: res.data.data._id,
         googleId: res.data.data.googleId,
@@ -23,7 +23,7 @@ export const checkAuthToken = createAsyncThunk(
 
     } catch (err: any) {
       
-      debugger;
+      
       return rejectWithValue(err.response?.data?.message || "Invalid token");
     }
   }

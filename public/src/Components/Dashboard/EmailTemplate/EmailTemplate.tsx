@@ -104,7 +104,7 @@ const EmailTemplatesDataGrid = () => {
         // 👉 If id exists → UPDATE
         if (id) {
             res = await axiosInstance.put(`/email-templates/${id}`, payload);
-            debugger;
+            
             if (res.data.success) {
                 show({ type: "success", message: res.data.message });
             }
@@ -112,7 +112,7 @@ const EmailTemplatesDataGrid = () => {
         // 👉 If no id → CREATE
         else {
             res = await axiosInstance.post("/email-templates", payload);
-            debugger;
+            
             if (res.data.success) {
                 show({ type: "success", message: res.data.message });
             }

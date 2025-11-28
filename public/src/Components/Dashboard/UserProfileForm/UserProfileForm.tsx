@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+
 import './UserProfileForm.css';
+import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
+import {updateUser, uploadUserPhoto} from "../../../api/user";
+
 const ICON_MAP = {
   facebook: FaFacebook,
   instagram: FaInstagram,
@@ -26,14 +30,17 @@ interface UserProfileData {
 }
 
 interface UserProfileFormProps {
-  initialProfile: UserProfileData;
-  onSubmit: (values: UserProfileData) => void;
+  initialProfile: any;
+  // onSubmit: (values: UserProfileData) => void;
 }
 
-export default function UserProfileForm({ initialProfile, onSubmit }: UserProfileFormProps) {
+export default function UserProfileForm({ initialProfile }: any) {
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
   const [profile, setProfile] = useState<UserProfileData>({
     ...initialProfile,
-    photoFile: null,
+    
     socialLinks: {
       facebook: initialProfile.socialLinks?.facebook || "",
       instagram: initialProfile.socialLinks?.instagram || "",
@@ -57,19 +64,58 @@ export default function UserProfileForm({ initialProfile, onSubmit }: UserProfil
     });
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    updateField("photoFile", file);
+    setPhotoFile(file);
+
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => updateField("photo", reader.result as string);
+      
+      reader.onload = () => setPhotoPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit =  async(e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(profile);
+try {
+      
+      const socialLinksArray: SocialLink[] = Object.entries(profile.socialLinks || {})
+        .filter(([_, url]) => url.trim() !== "")
+        .map(([platform, url]) => ({
+          platform,
+          url
+        }));
+
+      // Build final payload strictly matching UpdateUserRequest
+      const payload: UpdateUserRequest = {
+        name: initialProfile.name,
+        email: initialProfile.email,
+        authorize: initialProfile.authorize,
+        
+        profile: {
+          photo: profile.photo,
+          title: profile.title,
+          description: profile.description,
+          socialLinks: socialLinksArray,
+        },
+      };
+
+      const response = await updateUser(initialProfile._id, payload);
+      if(photoFile){
+        
+        debugger;
+        const _response = await uploadUserPhoto(initialProfile._id, profile.photoFile!);
+      }
+
+      // if (response.success) {
+      //   show({ type: "success", message: response.message });
+        
+      // }
+    } catch (err: any) {
+      debugger;
+      // show({ type: "error", message: err.message });
+    }
   };
 
   return (
@@ -80,9 +126,9 @@ export default function UserProfileForm({ initialProfile, onSubmit }: UserProfil
         <label>Profile Photo</label>
         <input type="file" accept="image/*" onChange={handleFileUpload} />
 
-        {profile.photo && (
+        {photoPreview && (
           <img
-            src={profile.photo}
+            src={photoPreview}
             alt="Preview"
             className="preview-image"
           />

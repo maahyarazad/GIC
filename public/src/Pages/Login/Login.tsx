@@ -42,7 +42,7 @@ const Login: React.FC = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-     debugger;
+     
     e.preventDefault();
     setError("");
     dispatch(setLoadingTrue());

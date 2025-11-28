@@ -81,7 +81,8 @@ const models: TsoaRoute.Models = {
             "password": {"dataType":"string"},
             "phone": {"dataType":"string"},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]},{"dataType":"enum","enums":["superadmin"]}]},
-            "authorize": {"dataType":"boolean","required":true},
+            "authorize": {"dataType":"boolean"},
+            "profile": {"dataType":"nestedObjectLiteral","nestedProperties":{"socialLinks":{"dataType":"array","array":{"dataType":"refObject","ref":"SocialLink"}},"description":{"dataType":"string"},"title":{"dataType":"string"},"photo":{"dataType":"string"}}},
         },
         "additionalProperties": true,
     },
@@ -508,6 +509,43 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'updateUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_uploadPhoto: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+        };
+        app.post('/users/:id/upload-photo',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.uploadPhoto)),
+
+            async function UserController_uploadPhoto(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_uploadPhoto, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadPhoto',
                 controller,
                 response,
                 next,

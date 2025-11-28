@@ -1,14 +1,6 @@
 // src/api/auth.ts
 import axiosInstance from './axiosInstance'; // adjust path accordingly
-
-export interface UpdateUserRequest {
-  name?: string;
-  email?: string;
-  password?: string;
-  phone?: string;
-  role?: "user" | "admin"
-  authorize?: boolean;
-}
+import { UpdateUserRequest } from '../../../src/types/user.types';
 
 /**
  * Update user by ID
@@ -21,6 +13,29 @@ export async function updateUser(id: string, updateData: UpdateUserRequest) {
     return response.data;
   } catch (error) {
     console.error('Update user failed', error);
+    throw error;
+  }
+}
+
+/**
+ * Upload user profile photo
+ * @param id - User ID
+ * @param file - Photo file to upload
+ */
+export async function uploadUserPhoto(id: string, file: File) {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await axiosInstance.post(`/users/${id}/upload-photo`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload user photo failed', error);
     throw error;
   }
 }

@@ -6,7 +6,9 @@ import { Sort, createSuccessResponse, createErrorResponse, escapeRegExp, FilterM
 import { getCollection } from "../db";
 import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
-import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares } from "tsoa";
+import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares, UploadedFile, FormField } from "tsoa";
+import fs from "fs";
+
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 @Route("users")
@@ -219,6 +221,8 @@ export class UserController extends Controller {
     @Body() updateData: UpdateUserRequest
   ): Promise<any> {
     try {
+      
+
       if (!ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid user ID");
@@ -231,6 +235,9 @@ export class UserController extends Controller {
         updateData.password = await bcrypt.hash(updateData.password, 10);
       }
 
+    
+
+    
       updateData.updatedAt = new Date();
 
       const result = await usersCollection.findOneAndUpdate(
@@ -257,5 +264,14 @@ export class UserController extends Controller {
       this.setStatus(500);
       return createErrorResponse("Failed to update user", undefined, error);
     }
+  }
+
+  @Post("/{id}/upload-photo")
+  public async uploadPhoto(
+    @Path() id: string,
+    @UploadedFile("file") file: Express.Multer.File
+  ) {
+    // Validate ID, save the file, update user photo URL in DB, etc.
+    // Return success or error response
   }
 }

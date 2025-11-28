@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
-import SlideMenu from '../SlideMenu/SlideMenu';
+import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
 
 export interface EmailTemplate {
@@ -165,7 +165,7 @@ const EmailTemplatesDataGrid = () => {
 
     return (
         <>
-                  <h3 className="mb-3">Email Template</h3>
+            <h3 className="mb-3">Email Template</h3>
             <SlideMenu
                 isOpen={open}
                 onClose={() => setOpen(false)}

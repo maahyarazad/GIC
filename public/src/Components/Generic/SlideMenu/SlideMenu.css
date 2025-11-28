@@ -49,9 +49,10 @@
 .slide-menu__close-button {
   background: none;
   border: none;
-  font-size: 1rem;
+  padding: 0px;
+  margin-left: 5px;
+  font-size: 25px;
   cursor: pointer;
-  padding: 8px 12px;
   color: #333;
 }
 .slide-menu__close-button:hover {

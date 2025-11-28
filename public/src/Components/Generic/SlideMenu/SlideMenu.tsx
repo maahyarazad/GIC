@@ -17,12 +17,19 @@ const SlideMenu: React.FC<SlideMenuProps> = ({ isOpen, onClose, children, header
         onClick={onClose}
       />
 
+
+
       {/* Sliding menu */}
       <div className={`slide-menu ${isOpen ? "open" : ""}`} role="dialog" aria-modal="true">
         {/* Sticky header */}
         <div className="slide-menu__header">
-          <button className="slide-menu__close-button" onClick={onClose}>
-            Close
+
+          <button
+            className="slide-menu__close-button"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
+            ×
           </button>
 
           <h2 className="slide-menu__title">{headerTitle}</h2>

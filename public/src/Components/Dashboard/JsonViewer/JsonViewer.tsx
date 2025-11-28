@@ -9,7 +9,7 @@ import './JsonViewer.css';
 
 export default function JsonViewer() {
   const [data, setData] = useState<any>({});
-  // const [id, setID] = useState<string>();
+  const [editorKey, setEditorKey] = useState(0);
   const { show } = useToast();
 
   const fetchClient = useCallback(async () => {
@@ -34,7 +34,9 @@ export default function JsonViewer() {
       const response = await updateClientById(data._id, data);
 
       if (response.success) {
-        setData(response.data);
+        debugger;
+        setData(data);
+         setEditorKey((k) => k + 1);
         show({
           type: "success",
           message: response.message,
@@ -51,11 +53,12 @@ export default function JsonViewer() {
 
   useEffect(() => {
     fetchClient();
-  }, [fetchClient]);
+  }, [fetchClient, ]);
 
 
   const handleChange = (updatedJson: JsonData) => {
-    console.log("Updated:", updatedJson);
+    
+    
     setData(updatedJson);
   };
 
@@ -70,7 +73,7 @@ export default function JsonViewer() {
 
         <JsonEditor
           data={data}
-
+          key={editorKey}
           setData={handleChange}
         />
       </div>

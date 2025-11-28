@@ -39,14 +39,12 @@ export class ClientController extends Controller {
       }
 
       const collection = getCollection("client_blueprint");
-      const json = updatedJson;
-      delete json._id;
+      const { _id, ...json } = updatedJson;
 
       
-      const result = await collection.findOneAndUpdate(
+      const result = await collection.replaceOne(
         { _id: new ObjectId(id) },
-        { $set: json },
-        { returnDocument: "after" }
+        json
       );
 
       if (!result) {

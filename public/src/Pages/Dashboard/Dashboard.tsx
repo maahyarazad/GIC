@@ -1,9 +1,10 @@
 import React, { useState , useEffect, useRef} from "react";
-import {UserProfilesDataGrid} from '../../Components/Dashboard/User/Profile'
-import JsonViewer from '../../Components/Dashboard/JsonViewer/JsonViewer'
-import FileManagement from '../../Components/Dashboard/FileManagement/FileManagement'
-import EmailTemplatesDataGrid from '../../Components/Dashboard/EmailTemplate/EmailTemplate'
-import UserProfileForm from '../../Components/Dashboard/UserProfileForm/UserProfileForm'
+import {UserProfilesDataGrid} from '@/Components/Dashboard/User/Profile'
+import JsonViewer from '@/Components/Dashboard/JsonViewer/JsonViewer'
+import FileManagement from '@/Components/Dashboard/FileManagement/FileManagement'
+import EmailTemplatesDataGrid from '@/Components/Dashboard/EmailTemplate/EmailTemplate'
+import UserProfileForm from '@/Components/Dashboard/UserProfileForm/UserProfileForm'
+import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import { useSelector } from 'react-redux';
 import LogoutComponent from "./Logout";
 import './Dashboard.css'
@@ -16,6 +17,7 @@ type MenuItem =
   | "sitedata"
   | "file_management"
   | "email_management"
+  | "newsletter_subscribers"
   | "profile"
   | "logout"
 
@@ -26,12 +28,11 @@ type MenuItem =
   sitedata: ["admin"],
   file_management: ["admin"],
   email_management: ["admin"],
+  newsletter_subscribers: ["admin"],
   profile: ["user"],
   logout: ["admin", "user"],
  
 };
-
-
 
 
 const menuTitles: Record<MenuItem, string> = {
@@ -39,6 +40,7 @@ const menuTitles: Record<MenuItem, string> = {
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
+  newsletter_subscribers: "Email Subscribers",
   logout: "Logout",
   profile: "Profile",
 };
@@ -61,6 +63,7 @@ const componentMap: Record<MenuItem, React.ReactNode> = {
   sitedata: <JsonViewer />,
   file_management: <FileManagement />,
   email_management: <EmailTemplatesDataGrid />,
+  newsletter_subscribers: <NewsletterSubscribers />,
   profile: <UserProfileForm initialProfile={userProfile}/>,
   logout: <LogoutComponent />
   

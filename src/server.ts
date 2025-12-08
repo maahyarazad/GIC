@@ -8,6 +8,11 @@ import session from "express-session";
 import { RegisterRoutes } from "./routes/routes";
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "./swagger/swagger.json";
+
+import { fileURLToPath } from "url";
+import { render } from "../public/src/entry-server";
+import fs from "fs";``
+
 const app = express();
 const PORT = process.env.PORT;
 
@@ -63,6 +68,7 @@ startServer();
 
 
 
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, { explorer: true }));
 
 
@@ -72,10 +78,40 @@ app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
 const reactBuildPath = path.resolve(__dirname, "../public/dist");
 app.use(express.static(reactBuildPath));
 
-// SPA fallback (React)
-app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(reactBuildPath, "index.html"));
+
+
+app.get("*", async (req, res) => {
+  try {
+    // Dynamic import for ESM
+    const { render } = await import("../public/src/entry-server");
+
+    const { html, head, preloadedState } = await render(req.url);
+
+    const template = fs.readFileSync(
+      path.resolve(__dirname, "../public/index.html"),
+      "utf8"
+    );
+
+    const finalHtml = template
+      .replace(
+        '<div id="root"></div>',
+        `<div id="root">${html}</div>
+        <script>
+          window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+            /</g,
+            '\\u003c'
+          )}
+        </script>`
+      )
+      .replace("</head>", `${head}</head>`);
+
+    res.status(200).send(finalHtml);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
+
 
 
 app.listen(PORT, () => {

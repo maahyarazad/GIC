@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
  const MainLoader= ()=>{
     return (
-        <div className='loader-container'>   
+        <div suppressHydrationWarning className='loader-container'>   
             <span className="loader"></span>
         </div>
     )

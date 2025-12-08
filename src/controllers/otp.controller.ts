@@ -1,4 +1,4 @@
-import { Controller, Post, Route, Body, SuccessResponse, Request } from "tsoa";
+import { Controller, Post, Route, Body, SuccessResponse, Request, Tags } from "tsoa";
 import { sendDynamicEmail, EmailOtpRequest, emailOtp } from "../services/emailService";
 import smsglobal from "smsglobal";
 import dotenv from "dotenv";
@@ -34,6 +34,7 @@ const otpRequestMap = new Map<string, number>();
 const otpMobileRequestMap = new Map<string, number>();
 
 @Route("otp")
+@Tags("otp")
 export class OtpController extends Controller {
   private checkLimiter(body: SendOtpBody) {
     const now = Date.now();

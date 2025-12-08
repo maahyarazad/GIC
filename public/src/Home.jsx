@@ -105,7 +105,8 @@ const Home = ({ siteData }) => {
             ))}
 
 
-            <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.viewSocialLinks}/>
+
+            <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.disableSocialLinks}/>
 
 
 

@@ -50,7 +50,7 @@ const App = () => {
     const [sessionId, setSessionId] = useState(null);
 
     const server_endpoint = import.meta.env.VITE_SERVER_API_URL;
-
+    console.log(server_endpoint);
     const fetchSiteData = useCallback(async () => {
         try {
             const response = await axiosInstance.get(`${server_endpoint}/client`);

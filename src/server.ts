@@ -14,18 +14,25 @@ import { createServer as createViteServer } from "vite";
 
 import { verifyRequirements } from "./db";
 
-const isProduction = process.env.NODE_ENV === 'PRODUCTION'
+const isProduction = process.env.NODE_ENV === "PRODUCTION";
 const __dirname = path.resolve();
 
 const app = express();
 const PORT = process.env.PORT ?? 5173;
 
 /* ---------------------- Middleware ---------------------- */
-
+const allowedOrigins = [process.env.CLIENT_ORIGIN_DEV, process.env.CLIENT_ORIGIN_PROD];
 app.use(
   cors({
-    origin: true,
-    credentials: true,
+    origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow requests like curl or same-origin
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
   })
 );
 
@@ -74,39 +81,38 @@ startServer();
 /* ---------------------- SSR + Static Handling ---------------------- */
 
 async function startSSR() {
-  
-
   if (!isProduction) {
-    
-const vite = await createViteServer({
-  // root: process.cwd(),
-  root: path.resolve(__dirname, "public"), 
-  server: {
-    middlewareMode: true,
+    const vite = await createViteServer({
+      // root: process.cwd(),
+      root: path.resolve(__dirname, "public"),
+      server: {
+        middlewareMode: true,
+      },
+      appType: "custom",
+      base: process.env.CLIENT_ORIGIN_DEV,
+      resolve: {
+        alias: {
+          "@": path.resolve(__dirname, "public/src"),
+        },
+      },
+      optimizeDeps: {
+        include: [
+          "@animated-burgers/burger-rotate",
+          "react-icons/fa",
+          "@reduxjs/toolkit",
+          "react-lazy-load-image-component",
+          "react-slick",
+          "formik",
+          "yup",
+          "lucide-react",
+          "react-icons/io",
+          "json-edit-react",
+        ],
+      },
+      ssr: {
+    noExternal: ['react-router-dom'],  // Add this line to fix SSR import issues
   },
-  appType: "custom",
-  base: process.env.CLIENT_ORIGIN_DEV,
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "public/src"),
-    },
-  },
-  optimizeDeps: {
-    include: [
-      "@animated-burgers/burger-rotate",
-      "react-icons/fa",
-      "@reduxjs/toolkit",
-      "react-lazy-load-image-component",
-      "react-slick",
-      "formik",
-      "yup",
-      "lucide-react",
-      "react-icons/io",
-      "json-edit-react",
-    ],
-  },
-});
-
+    });
 
     // Serve Vite's HMR, transforms, etc.
     app.use(vite.middlewares);
@@ -117,19 +123,40 @@ const vite = await createViteServer({
         const url = req.originalUrl;
 
         // Build absolute file URL for ssrLoadModule (required for files outside root)
-      const ssrEntryPath = path.resolve(__dirname, "public", "src", "entry-server.jsx");
-      const ssrEntryFileUrl = pathToFileURL(ssrEntryPath).href;
+        const ssrEntryPath = path.resolve(
+          __dirname,
+          "public",
+          "src",
+          "entry-server.jsx"
+        );
+        const ssrEntryFileUrl = pathToFileURL(ssrEntryPath).href;
 
-        let template = fs.readFileSync(path.resolve(__dirname, "public", "index.html"), "utf-8");
-        template = await vite.transformIndexHtml(url, template)
+        let template = fs.readFileSync(
+          path.resolve(__dirname, "public", "index.html"),
+          "utf-8"
+        );
+        
+        // Define your env vars for injection
+        const envVars = {
+        VITE_SERVER_API_URL: process.env.CLIENT_ORIGIN_DEV || "http://localhost:5173",
+        // add more if needed
+        };
+
+        // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
+        template = template.replace(
+        "<!--env-->",
+        `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(/</g, '\\u003c')};</script>`
+        );
+
+        template = await vite.transformIndexHtml(url, template);
         // Load the SSR renderer
         const { render } = await vite.ssrLoadModule(ssrEntryFileUrl);
 
-        const appHtml = await render(url);
+        const appHtml = await render(url, envVars);
 
-    const html = template
-      .replace(`<!--app-head-->`, appHtml.head ?? '')
-      .replace(`<!--app-html-->`, appHtml.html ?? '')
+        const html = template
+          .replace(`<!--app-head-->`, appHtml.head ?? "")
+          .replace(`<!--app-html-->`, appHtml.html ?? "");
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e: any) {
@@ -146,30 +173,30 @@ const vite = await createViteServer({
       "./public/dist/server/entry-server.js"
     );
 
-    const compression = (await import('compression')).default;
-    app.use(compression())
+    const compression = (await import("compression")).default;
+    app.use(compression());
     // Serve static assets
     app.use(express.static(path.resolve(__dirname, "./public/dist/client")));
 
     const { render } = await import(serverPath);
 
     app.use("*", async (req: Request, res: Response) => {
-      try{
-
-
+      try {
         const url = req.originalUrl;
-    
-        const template = fs.readFileSync(path.resolve(__dirname, "./public/dist/client/index.html"), "utf-8");
-    
+
+        const template = fs.readFileSync(
+          path.resolve(__dirname, "./public/dist/client/index.html"),
+          "utf-8"
+        );
+
         const appHtml = await render(url);
-    
+
         const html = template.replace(`<!--app-html-->`, appHtml);
-    
+
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
-      }catch(e){
-        
-      console.error(e);
-      res.status(500).end(e.message);
+      } catch (e) {
+        console.error(e);
+        res.status(500).end(e.message);
       }
     });
   }

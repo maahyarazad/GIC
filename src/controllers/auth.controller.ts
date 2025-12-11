@@ -297,6 +297,16 @@ export class AuthController extends Controller {
         return createErrorResponse("Invalid password", "INVALID_PASSWORD");
       }
 
+
+    if (!user.authorize) {
+      this.setStatus(401);
+      return createErrorResponse(
+        "User has not been authorized by the administration. Please wait for the activation email.",
+        "USER_NOT_AUTHORIZED"
+      );
+    }
+
+
       // 🔑 Sign JWT
       const token = jwt.sign(
         { userId: user._id.toString(), role: user.role },

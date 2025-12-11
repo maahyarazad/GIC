@@ -16,7 +16,7 @@ export function render(url, env) {
         <StaticRouter location={url}>
           <RootProviders>
 
-          <App />
+            <App />
           </RootProviders>
         </StaticRouter>
       </EnvContext.Provider>

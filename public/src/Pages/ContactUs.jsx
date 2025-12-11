@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ContactUsForm from '../Components/ContactUsForm/ContactUsForm';
+import { useContext } from 'react';
+import { EnvContext } from '../EnvContext';
 
 
 const ContactUs = ({ siteData }) => {
+  const env = useContext(EnvContext)
   // const [bgLoaded, setBgLoaded] = useState(false);
 
   // useEffect(() => {
@@ -14,7 +17,7 @@ const ContactUs = ({ siteData }) => {
   return (
     <div
       style={{
-        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.contact_us_background})`,
+        backgroundImage: `url(${env.VITE_SERVER_API_URL}/uploads/${siteData.media.contact_us_background})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

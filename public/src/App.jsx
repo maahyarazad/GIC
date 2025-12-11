@@ -49,7 +49,7 @@ const App = () => {
     const [language, setLanguage] = useState('EN');
     const [sessionId, setSessionId] = useState(null);
 
-    const env = useContext(EnvContext);
+        const env = useContext(EnvContext);
     
     const server_endpoint = env.VITE_SERVER_API_URL;
     console.log(server_endpoint);

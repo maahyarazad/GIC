@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
-
+import {EnvContext} from '../../../../src/EnvContext.js';
 interface UploadedFileDoc {
   _id: string;
   filename: string;
@@ -21,6 +21,9 @@ const FileManagement = () => {
   const [filterModel, setFilterModel] = useState<FilterModel<UploadedFileDoc>[] | null>(null);
   const [uploading, setUploading] = useState(false);
   const { show } = useToast();
+
+  const env = useContext(EnvContext);
+
   const fetchFiles = useCallback(async () => {
     try {
       const params = new URLSearchParams();
@@ -104,7 +107,7 @@ const FileManagement = () => {
       if (row.mimetype.startsWith("image/")) {
         return (
           <img 
-            src={`${import.meta.env.VITE_SERVER_API_URL}/uploads/${row._id}.${row.extension}`} 
+            src={`${env.VITE_SERVER_API_URL}/uploads/${row._id}.${row.extension}`} 
             alt={row.filename} 
             style={{ width: 40, height: 20, objectFit: "cover" }} 
           />
@@ -119,7 +122,7 @@ const FileManagement = () => {
             style={{ width: 40, height: 20 }} 
             
           >
-            <source  src={`${import.meta.env.VITE_SERVER_API_URL}/uploads/${row._id}.${row.extension}`} type="video/mp4" />
+            <source  src={`${env.VITE_SERVER_API_URL}/uploads/${row._id}.${row.extension}`} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         );

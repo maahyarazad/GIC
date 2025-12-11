@@ -9,9 +9,9 @@ hydrateRoot(
   <StrictMode>
 
 
-  <RootProviders>
+    <RootProviders>
 
-    <App />
-  </RootProviders>
+      <App />
+    </RootProviders>
   </StrictMode>
 )

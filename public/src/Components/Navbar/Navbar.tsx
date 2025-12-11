@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, UseSelector } from 'react-redux';
 import './Navbar.css';
 import type { RootState } from "../../store";
-
+import {EnvContext} from '../../../src/EnvContext.js'
 import Burger from '@animated-burgers/burger-rotate'
 
 import '@animated-burgers/burger-rotate/dist/styles.css'
@@ -12,7 +12,8 @@ import '@animated-burgers/burger-rotate/dist/styles.css'
 
 
 const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }) => {
-
+  const env: string = useContext(EnvContext);
+  console.log(env)
     const location = useLocation();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -288,7 +289,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                 style={{
                     backgroundImage: `
                         linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
-                        url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.mobile_background})
+                        url(${env.VITE_SERVER_API_URL}/uploads/${siteData.media.mobile_background})
                     `,
                     backgroundSize: "cover",
                     backgroundPosition: "center",

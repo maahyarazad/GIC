@@ -1,5 +1,11 @@
+import { useContext } from "react";
+import {EnvContext} from '../../EnvContext';
+
 const HomeBackground = ({background}) => {
 
+    const env = useContext(EnvContext);
+    console.log(env);
+    console.log(`${env.VITE_SERVER_API_URL}/uploads/${background}`);
     return (
       <div>
         <video
@@ -16,7 +22,7 @@ const HomeBackground = ({background}) => {
             left: 0,
             }}
         >
-            <source src={`${import.meta.env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" />
+            <source src={`${env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" />
             Your browser does not support the video tag.
         </video>
         </div>

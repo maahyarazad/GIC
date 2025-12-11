@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
@@ -65,7 +65,8 @@ app.use(
 );
 
 /* ---------------------- Static uploads ---------------------- */
-app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
+
+
 
 /* ---------------------- Startup Checks ---------------------- */
 async function startServer() {
@@ -80,7 +81,10 @@ startServer();
 
 /* ---------------------- SSR + Static Handling ---------------------- */
 
+app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
+
 async function startSSR() {
+    
   if (!isProduction) {
     const vite = await createViteServer({
       // root: process.cwd(),
@@ -118,7 +122,13 @@ async function startSSR() {
     app.use(vite.middlewares);
 
     // SSR handler
-    app.use("*", async (req: Request, res: Response) => {
+    app.use("*", async (req: Request, res: Response, next: NextFunction) => {
+
+
+        if (req.path.startsWith("/uploads")) {
+    return next(); // Let express.static handle this
+  }
+
       try {
         const url = req.originalUrl;
 
@@ -200,10 +210,21 @@ async function startSSR() {
       }
     });
   }
-
-  app.listen(PORT, () =>
-    console.log(`🚀 Server running on http://localhost:${PORT}`)
-  );
+  
 }
+
+
+
+
+
+
+app.use((req, res, next) => {
+    console.log(`[${req.method}] ${req.url}`);
+    next();
+});
+
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
+);
 
 startSSR();

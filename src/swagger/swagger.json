@@ -1738,6 +1738,46 @@
 				}
 			}
 		},
+		"/sitemap.xml": {
+			"get": {
+				"operationId": "GetSitemap",
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"sitemap"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/products": {
 			"post": {
 				"operationId": "CreateProduct",

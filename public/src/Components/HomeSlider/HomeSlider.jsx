@@ -27,7 +27,7 @@ const HomeSlider = forwardRef(({ id, title, text, siteData ,image, className }, 
                 className="slider-image"
             /> */}
             <div className="slider-content">
-                <h1 className="slider-title">{title}</h1>
+                <h1 className="slider-title">{title}</h1>   
                 <h2 className="slider-text">{text}</h2>
                 <div className="d-flex justify-content-end button-wrapper">
                     {/* <button className="btn btn-lg btn-primary-contrast"

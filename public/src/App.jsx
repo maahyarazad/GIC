@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback , useContext} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
@@ -23,9 +23,9 @@ import MainLoader from './Components/MainLoader';
 import axiosInstance from './api/axiosInstance';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
-import {useScrollRestoration} from './useScrollRestoration';
+import {useScrollRestoration} from './Components/useScrollRestoration';
 import './App.css';
-
+import { EnvContext } from './EnvContext';
 const AppContainer = ({ children }) => {
     const location = useLocation();
 useScrollRestoration();
@@ -49,8 +49,10 @@ const App = () => {
     const [language, setLanguage] = useState('EN');
     const [sessionId, setSessionId] = useState(null);
 
-    const server_endpoint = import.meta.env.VITE_SERVER_API_URL;
-
+        const env = useContext(EnvContext);
+    
+    const server_endpoint = env.VITE_SERVER_API_URL;
+    console.log(server_endpoint);
     const fetchSiteData = useCallback(async () => {
         try {
             const response = await axiosInstance.get(`${server_endpoint}/client`);

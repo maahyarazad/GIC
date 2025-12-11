@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useContext } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -8,11 +8,12 @@ import './ContactUsForm.css';
 import { Paperclip } from 'lucide-react';
 import { useToast } from '../../Providers/ToastContext';
 import { IoMdClose } from "react-icons/io";
+import { EnvContext } from "../../EnvContext";
 
-
-const server_endpoint = import.meta.env.VITE_SERVER_API_URL;
 const ContactForm = ({ siteData, sectionId }) => {
-
+    
+      const env = useContext(EnvContext);
+    const server_endpoint = env.VITE_SERVER_API_URL;
     const {show} = useToast();
     const fileInputRef = useRef(null);
     const [attachedFileName, setAttachedFileName] = useState("");

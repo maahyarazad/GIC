@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import HomeSlider from './Components/HomeSlider/HomeSlider';
 import ServiceGrid from './Components/ServiceGrid/ServiceGrid';
 import TestimonialCarousel from './Components/TestemonialCarousel/TestemonialCarousel';
@@ -10,11 +10,13 @@ import Carousel from './Components/Carousel/Carousel';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from './Hooks/UseInView';
 import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
-
+import { EnvContext } from './EnvContext';
 
 
 const Home = ({ siteData }) => {
     
+    const env = useContext(EnvContext);
+
     const [ref, isVisible] = UseInView();
     const [_ref, _isVisible] = UseInView();
 
@@ -190,7 +192,7 @@ const Home = ({ siteData }) => {
                 {/* BACKGROUND IMAGE */}
                 <div className='d-flex justify-content-center align-items-center'
                     style={{
-                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image})`,
+                        backgroundImage: `url(${env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
@@ -222,7 +224,7 @@ const Home = ({ siteData }) => {
                 {/* SLIDING IMAGE */}
                 <div
                     style={{
-                        backgroundImage: `url(${import.meta.env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image_invert})`,
+                        backgroundImage: `url(${env.VITE_SERVER_API_URL}/uploads/${siteData.media.sliding_down_image_invert})`,
                         backgroundSize: "cover",    // important for mobile
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",

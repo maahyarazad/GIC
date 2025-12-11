@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useRef } from "react";
+import React, { useState, Suspense, useRef, useContext } from "react";
 import "./Register.css";
 import axiosInstance from "../../api/axiosInstance";
 import { useToast } from "../../providers/ToastContext";
@@ -7,7 +7,7 @@ import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
 import Button from "./../../Components/Button/Button";
-
+import {EnvContext} from '../../../src/EnvContext.js';
 
 
 interface SendOtpBody {
@@ -41,6 +41,8 @@ interface OtpCheckBody {
 
 
 const Register: React.FC = () => {
+
+    const env = useContext(EnvContext);
     const navigate = useNavigate();
     const { show } = useToast();
     const [showOtpInput, setShowOtpInput] = useState(false);
@@ -282,7 +284,7 @@ const Register: React.FC = () => {
 
             show({
                 type: "success",
-                message: import.meta.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
+                message: env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
             });
 
 

@@ -9,4 +9,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // IMPORTANT
     },
   },
+build: {
+    rollupOptions: {
+      input: "index.html",
+    },
+    outDir: "dist/client",
+  },
+  ssr: {
+    noExternal: [],
+  },
 });

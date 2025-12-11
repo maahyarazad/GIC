@@ -42,7 +42,7 @@ interface OtpCheckBody {
 
 const Register: React.FC = () => {
 
-    const env = useContext(EnvContext);
+    const env: object = useContext(EnvContext);
     const navigate = useNavigate();
     const { show } = useToast();
     const [showOtpInput, setShowOtpInput] = useState(false);

@@ -15,7 +15,6 @@ import { createServer as createViteServer } from "vite";
 import { verifyRequirements } from "./db";
 
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
-const __dirname = path.resolve();
 
 const app = express();
 const PORT = process.env.PORT ?? 5173;
@@ -81,11 +80,19 @@ startServer();
 
 /* ---------------------- SSR + Static Handling ---------------------- */
 
-app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
+
+
+
+        const envVars = {
+            VITE_SERVER_API_URL: process.env.CLIENT_ORIGIN_DEV ,
+            VITE_SERVER_ACCOUNT_REGISTER_SUCCESS: process.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS 
+        };
 
 async function startSSR() {
     
   if (!isProduction) {
+    app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
+
     const vite = await createViteServer({
       // root: process.cwd(),
       root: path.resolve(__dirname, "public"),
@@ -147,10 +154,6 @@ async function startSSR() {
         );
         
         // Define your env vars for injection
-        const envVars = {
-        VITE_SERVER_API_URL: process.env.CLIENT_ORIGIN_DEV || "http://localhost:5173",
-        // add more if needed
-        };
 
         // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
         template = template.replace(
@@ -176,17 +179,18 @@ async function startSSR() {
       }
     });
   } else {
-    /* 🏭 PRODUCTION — serve built client and SSR entry */
-    const distPath = path.resolve(__dirname, "./public/dist/client");
+    /*  PRODUCTION — serve built client and SSR entry */
+    app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
+    
     const serverPath = path.resolve(
       __dirname,
-      "./public/dist/server/entry-server.js"
+      "../public/dist/server/entry-server.js"
     );
 
     const compression = (await import("compression")).default;
     app.use(compression());
     // Serve static assets
-    app.use(express.static(path.resolve(__dirname, "./public/dist/client")));
+    app.use(express.static(path.resolve(__dirname, "../public/dist/client")));
 
     const { render } = await import(serverPath);
 
@@ -194,12 +198,19 @@ async function startSSR() {
       try {
         const url = req.originalUrl;
 
-        const template = fs.readFileSync(
-          path.resolve(__dirname, "./public/dist/client/index.html"),
+        let template = fs.readFileSync(
+          path.resolve(__dirname, "../public/dist/client/index.html"),
           "utf-8"
         );
 
-        const appHtml = await render(url);
+                // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
+        template = template.replace(
+        "<!--env-->",
+        `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(/</g, '\\u003c')};</script>`
+        );
+
+
+        const appHtml = await render(url, envVars);
 
         const html = template.replace(`<!--app-html-->`, appHtml);
 

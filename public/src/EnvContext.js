@@ -2,6 +2,7 @@ import React from "react";
 
 const defaultEnv = {
   VITE_SERVER_API_URL: "",
+  VITE_SERVER_ACCOUNT_REGISTER_SUCCESS: "",
 };
 
 const isBrowser = typeof window !== "undefined";

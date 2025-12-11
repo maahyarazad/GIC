@@ -91,8 +91,10 @@ startServer();
 async function startSSR() {
     
   if (!isProduction) {
+    const __dirname = path.resolve();
     app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
 
+    
     const vite = await createViteServer({
       // root: process.cwd(),
       root: path.resolve(__dirname, "public"),
@@ -133,27 +135,23 @@ async function startSSR() {
 
 
         if (req.path.startsWith("/uploads")) {
-    return next(); // Let express.static handle this
-  }
+        return next(); // Let express.static handle this
+    }
 
       try {
         const url = req.originalUrl;
-
+       
         // Build absolute file URL for ssrLoadModule (required for files outside root)
-        const ssrEntryPath = path.resolve(
-          __dirname,
-          "public",
-          "src",
-          "entry-server.jsx"
-        );
+        const ssrEntryPath = path.resolve(__dirname,"public/src/entry-server.jsx");
+
         const ssrEntryFileUrl = pathToFileURL(ssrEntryPath).href;
 
         let template = fs.readFileSync(
-          path.resolve(__dirname, "public", "index.html"),
+          path.resolve(__dirname, "public/index.html"),
           "utf-8"
         );
         
-        // Define your env vars for injection
+        
 
         // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
         template = template.replace(

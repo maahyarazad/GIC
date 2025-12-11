@@ -2,11 +2,12 @@
  "name": "app",
  "version": "1.0.0",
  "main": "index.js",
+   "type": "commonjs",
  "scripts": {
   "tsoa:routes": "tsoa routes",
   "tsoa:spec": "tsoa spec",
   "dev": "npm run tsoa:routes && npm run tsoa:spec && tsx src/server.ts",
-  "build": "npm run tsoa:routes && npm run tsoa:spec && tsc",
+  "build": "rm -rf dist && npm run tsoa:routes && npm run tsoa:spec && tsc",
   "start": "pm2 start dist/server.js --name app",
   "stop": "pm2 stop app",
   "restart": "pm2 restart app",

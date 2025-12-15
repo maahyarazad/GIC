@@ -142,6 +142,15 @@ const EmailTemplatesDataGrid = () => {
     };
 
     const onDelete = async (row: EmailTemplate) => {
+        const isConfirmed = await confirm({
+    title: "Delete Template",
+    message: `Are you sure you want to delete the email template "${row.name}"? This action cannot be undone.`,
+    confirmText: "Delete",
+    cancelText: "Cancel",
+  });
+
+  if (!isConfirmed) return;
+
         try {
             await axiosInstance.delete(`/email-templates/${row._id}`);
             show({ type: "success", message: "Template deleted successfully" });

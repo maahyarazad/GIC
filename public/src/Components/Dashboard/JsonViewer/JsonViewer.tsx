@@ -5,13 +5,13 @@ import { updateClientById } from "../../../api/client";
 import { useToast } from "../../../providers/ToastContext";
 import { JsonData, JsonEditor } from 'json-edit-react'
 import './JsonViewer.css';
-
+import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 
 export default function JsonViewer() {
   const [data, setData] = useState<any>({});
   const [editorKey, setEditorKey] = useState(0);
   const { show } = useToast();
-
+  const {confirm} = useConfirm();
   const fetchClient = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/client");
@@ -29,6 +29,14 @@ export default function JsonViewer() {
   }, []);
 
   const updateClient = async () => {
+const isConfirmed = await confirm({
+    title: "Update Client Data",
+    message: `This JSON file contains the entire site data blueprint. An invalid JSON file could break the website. Are you sure you want to proceed?`,
+    confirmText: "Proceed",
+    cancelText: "Cancel",
+  });
+
+  if (!isConfirmed) return;
     try {
 
       const response = await updateClientById(data._id, data);

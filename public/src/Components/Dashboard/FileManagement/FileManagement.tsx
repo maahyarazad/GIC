@@ -3,6 +3,7 @@ import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
 import {EnvContext} from '../../../../src/EnvContext.js';
+import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 interface UploadedFileDoc {
   _id: string;
   filename: string;
@@ -21,7 +22,7 @@ const FileManagement = () => {
   const [filterModel, setFilterModel] = useState<FilterModel<UploadedFileDoc>[] | null>(null);
   const [uploading, setUploading] = useState(false);
   const { show } = useToast();
-
+  const {confirm} = useConfirm();
   const env = useContext(EnvContext);
 
   const fetchFiles = useCallback(async () => {
@@ -79,6 +80,15 @@ const FileManagement = () => {
   };
 
   const deleteFile = async (id: string) => {
+const isConfirmed = await confirm({
+    title: "Delete File",
+    message: `Are you sure you want to delete this file? This action cannot be undone.`,
+    confirmText: "Delete",
+    cancelText: "Cancel",
+  });
+
+  if (!isConfirmed) return;
+
     try {
       const response = await axiosInstance.delete(`/files/${id}`);
       const message: string = response.data.message;

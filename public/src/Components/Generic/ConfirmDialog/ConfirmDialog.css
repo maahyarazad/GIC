@@ -11,6 +11,11 @@
   animation: fadeInBackdrop 0.3s ease forwards;
 }
 
+.confirm-dialog-backdrop.exit {
+  /* Fade out animation */
+  animation: fadeOutBackdrop 0.3s ease forwards;
+}
+
 .confirm-dialog {
   position: fixed;
   top: 50%;
@@ -25,8 +30,13 @@
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  /* Fade + scale animation */
+  /* Fade + scale in animation */
   animation: fadeScaleIn 0.3s ease forwards;
+}
+
+.confirm-dialog.exit {
+  /* Fade + scale out animation */
+  animation: fadeScaleOut 0.3s ease forwards;
 }
 
 .confirm-dialog__title {
@@ -56,6 +66,14 @@
     opacity: 1;
   }
 }
+@keyframes fadeOutBackdrop {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 @keyframes fadeScaleIn {
   0% {
     opacity: 0;
@@ -64,5 +82,15 @@
   100% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes fadeScaleOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
   }
 }/*# sourceMappingURL=ConfirmDialog.css.map */

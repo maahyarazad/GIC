@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./ConfirmDialog.css";
 
 interface ConfirmDialogProps {
@@ -20,16 +20,38 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   cancelText = "Cancel",
   title,
 }) => {
-  if (!isOpen) return null;
+  const [exiting, setExiting] = useState(false);
+  const [visible, setVisible] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) {
+      setVisible(true);
+      setExiting(false);
+    } else if (visible) {
+      setExiting(true);
+      // Wait for animation duration (300ms) before hiding
+      const timer = setTimeout(() => {
+        setVisible(false);
+        setExiting(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, visible]);
+
+  // Use `visible` here instead of `isOpen` to control render
+  if (!visible) return null;
 
   return (
     <>
       {/* Backdrop */}
-      <div className="confirm-dialog-backdrop" onClick={onCancel} />
+      <div
+        className={`confirm-dialog-backdrop ${exiting ? "exit" : ""}`}
+        onClick={onCancel}
+      />
 
       {/* Dialog */}
       <div
-        className="confirm-dialog"
+        className={`confirm-dialog ${exiting ? "exit" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
@@ -47,19 +69,12 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
         <div className="confirm-dialog__buttons">
           {/* Cancel button with ghost minimal style */}
-          <button
-            onClick={onCancel}
-          className="dashboard-btn confirm-dialog__button--confirm"
-          >
+          <button onClick={onCancel} className="dashboard-btn dashboard-btn--ghost-minimal confirm-dialog__button--cancel">
             {cancelText}
           </button>
 
           {/* Confirm button with default style */}
-          <button
-            onClick={onConfirm}
-              className="dashboard-btn dashboard-btn--ghost-minimal confirm-dialog__button--cancel"
-            
-          >
+          <button onClick={onConfirm} className="dashboard-btn confirm-dialog__button--confirm">
             {confirmText}
           </button>
         </div>

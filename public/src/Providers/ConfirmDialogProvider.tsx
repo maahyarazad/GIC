@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import ConfirmDialog from "../components/Generic/ConfirmDialog/ConfirmDialog";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import ConfirmDialog from "@/components/Generic/ConfirmDialog/ConfirmDialog";
 
 interface ConfirmOptions {
   title?: string;
@@ -48,6 +48,23 @@ export const ConfirmDialogProvider: React.FC<ConfirmDialogProviderProps> = ({ ch
     setIsOpen(false);
     resolvePromise?.(false);
   };
+
+  // Close dialog on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCancel();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isOpen]);
 
   return (
     <ConfirmDialogContext.Provider value={{ confirm }}>

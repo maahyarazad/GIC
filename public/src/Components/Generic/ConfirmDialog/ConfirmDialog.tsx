@@ -24,8 +24,10 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <>
+      {/* Backdrop */}
       <div className="confirm-dialog-backdrop" onClick={onCancel} />
 
+      {/* Dialog */}
       <div
         className="confirm-dialog"
         role="dialog"
@@ -44,16 +46,19 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </p>
 
         <div className="confirm-dialog__buttons">
+          {/* Cancel button with ghost minimal style */}
           <button
             onClick={onCancel}
-            className="confirm-dialog__button confirm-dialog__button--cancel"
+          className="dashboard-btn confirm-dialog__button--confirm"
           >
             {cancelText}
           </button>
 
+          {/* Confirm button with default style */}
           <button
             onClick={onConfirm}
-            className="confirm-dialog__button confirm-dialog__button--confirm"
+              className="dashboard-btn dashboard-btn--ghost-minimal confirm-dialog__button--cancel"
+            
           >
             {confirmText}
           </button>

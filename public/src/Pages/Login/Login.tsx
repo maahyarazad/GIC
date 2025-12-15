@@ -82,7 +82,7 @@ const Login: React.FC = () => {
           <div className="form-group">
             <label>Email</label>
             <input
-              type="email"
+              type={email === "admin" ? "text" : "email"}
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}

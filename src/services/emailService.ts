@@ -1,7 +1,11 @@
 import nodemailer, { SendMailOptions } from "nodemailer";
 import dotenv from "dotenv";
+import {EmailTemplateDoc} from '../controllers/email.controller';
+import pLimit from "p-limit";
 
 dotenv.config();
+
+import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 import { getCollection } from "../db";
 /** Request body for sending OTP */
 export interface EmailOtpRequest {
@@ -163,6 +167,135 @@ export async function sendDynamicEmail(templateName: string, data: Record<string
     console.error(error);
     throw error;
   }
+}
+
+
+
+
+export async function sendDynamicEmailDoc(doc: EmailTemplateDoc, data: Record<string, any>) {
+  try {
+    
+    
+    // Merge global variables + template-specific variables
+    const variables = {
+      ...getGlobalEmailVariables(data),
+      ...data, // data overrides global if needed
+    };
+
+    const htmlBody = replacePlaceholders(doc.html, variables);
+    const textBody = replacePlaceholders(doc.text || "", variables);
+    const subject = replacePlaceholders(doc.subject, variables);
+
+   const result =  await sendRawEmailWithAttachments({
+      to: data.email,
+      subject,
+      html: htmlBody,
+      text: textBody,
+    });
+
+    return result;
+    
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
+
+export async function sendMassDynamicEmailDoc(doc: EmailTemplateDoc, data: Record<string, any>) {
+  try {
+    
+    const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
+    // Merge global variables + template-specific variables
+    const variables = {
+      ...getGlobalEmailVariables(data),
+      ...data, // data overrides global if needed
+    };
+
+    const htmlBody = replacePlaceholders(doc.html, variables);
+    const textBody = replacePlaceholders(doc.text || "", variables);
+    const subject = replacePlaceholders(doc.subject, variables);
+    const subscribers = await collection
+  .find({ active: true })
+  .toArray();
+
+    const result =  await sendMassEmail({
+      recipients: subscribers, htmlBody: htmlBody, textBody: textBody, subject: subject
+    });
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+
+
+
+
+
+
+interface SendMassEmailParams {
+  recipients: NewsletterSubscriber[];
+  htmlBody: string;
+  textBody?: string;
+  subject: string;
+  batchSize?: number;
+  concurrency?: number;
+}
+
+export async function sendMassEmail({
+  recipients,
+  htmlBody,
+  textBody = "",
+  subject,
+  batchSize = 50,
+  concurrency = 5,
+}: SendMassEmailParams) {
+  const limit = pLimit(concurrency);
+
+  let totalSuccess = 0; // accumulate total successes
+
+  // Split recipients into batches
+  for (let i = 0; i < recipients.length; i += batchSize) {
+    const batch = recipients.slice(i, i + batchSize);
+
+    console.log(`Sending batch ${i / batchSize + 1} (${batch.length} recipients)`);
+
+    const results = await Promise.all(
+      batch.map(subscriber =>
+        limit(async () => {
+          try {
+            await sendRawEmailWithAttachments({
+              to: subscriber.email,
+              subject,
+              html: htmlBody,
+              text: textBody,
+            });
+
+            console.log(`✅ Email sent to ${subscriber.email}`);
+            return { email: subscriber.email, success: true };
+          } catch (error) {
+            console.error(`❌ Failed to send email to ${subscriber.email}:`, error);
+            //return { email: subscriber.email, success: false, error };
+          }
+        })
+      )
+    );
+
+    // Count successes for this batch
+    const batchSuccess = results.filter(r => r.success).length;
+    totalSuccess += batchSuccess;
+
+    console.log(
+      `Batch ${i / batchSize + 1} summary: ${batchSuccess} succeeded`
+    );
+  }
+  
+  console.log(`✅ All batches processed. Total successful emails: ${totalSuccess}`);
+  return totalSuccess;
 }
 
 

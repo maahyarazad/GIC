@@ -4,7 +4,7 @@ import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
 import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
-
+import { useConfirm } from '@/Providers/ConfirmDialogProvider'
 export interface EmailTemplate {
     _id?: string;
     name: string;
@@ -18,7 +18,7 @@ export interface EmailTemplate {
 
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
-
+    const { confirm } = useConfirm();
     const columns: Column<EmailTemplate>[] = [
         { field: "_id", headerName: "ID", width: 180 },
         { field: "name", headerName: "Name", sortable: true, filterable: true, width: 150 },
@@ -34,6 +34,7 @@ const EmailTemplatesDataGrid = () => {
                     <button className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
                     <button className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
                     <button className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
+                    <button className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onSendToSubscriber(row)}>Send to Subscribers</button>
                 </div>
             ),
             sortable: false,
@@ -81,51 +82,51 @@ const EmailTemplatesDataGrid = () => {
 
 
 
- const handleSaveTemplate = async (e: any) => {
-    e.preventDefault();
+    const handleSaveTemplate = async (e: any) => {
+        e.preventDefault();
 
-    if (!templateName || !subject || !html) {
-        show({
-            type: "error",
-            message: "Please fill all required fields.",
-        });
-        return;
-    }
-
-    try {
-        const payload = {
-            name: templateName,
-            subject,
-            html,
-        };
-
-        let res;
-
-        // 👉 If id exists → UPDATE
-        if (id) {
-            res = await axiosInstance.put(`/email-templates/${id}`, payload);
-            
-            if (res.data.success) {
-                show({ type: "success", message: res.data.message });
-            }
-        } 
-        // 👉 If no id → CREATE
-        else {
-            res = await axiosInstance.post("/email-templates", payload);
-            
-            if (res.data.success) {
-                show({ type: "success", message: res.data.message });
-            }
+        if (!templateName || !subject || !html) {
+            show({
+                type: "error",
+                message: "Please fill all required fields.",
+            });
+            return;
         }
 
-        // Close modal and reload table
-        setOpen(false);
-        fetchTemplates();
-        
-    } catch (err: any) {
-        show({ type: "error", message: err.message || "Operation failed" });
-    }
-};
+        try {
+            const payload = {
+                name: templateName,
+                subject,
+                html,
+            };
+
+            let res;
+
+            // 👉 If id exists → UPDATE
+            if (id) {
+                res = await axiosInstance.put(`/email-templates/${id}`, payload);
+
+                if (res.data.success) {
+                    show({ type: "success", message: res.data.message });
+                }
+            }
+            // 👉 If no id → CREATE
+            else {
+                res = await axiosInstance.post("/email-templates", payload);
+
+                if (res.data.success) {
+                    show({ type: "success", message: res.data.message });
+                }
+            }
+
+            // Close modal and reload table
+            setOpen(false);
+            fetchTemplates();
+
+        } catch (err: any) {
+            show({ type: "error", message: err.message || "Operation failed" });
+        }
+    };
 
 
 
@@ -152,7 +153,40 @@ const EmailTemplatesDataGrid = () => {
     };
 
     const onSendTestEmail = async (row: EmailTemplate) => {
+        try {
+            debugger;
+            var res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
 
+            if (res.data.success) {
+                show({ type: "success", message: res.data.message });
+            }
+
+        } catch (err: any) {
+            show({ type: "error", message: err.message || "Failed to delete template" });
+        }
+    };
+
+    const onSendToSubscriber = async (row: EmailTemplate) => {
+        const isConfirmed = await confirm({
+            title: "Send Email",
+            message: `Are you sure you want to send this email template "${row.name}" to subscribers?`,
+            confirmText: "Send",
+            cancelText: "Cancel",
+        });
+
+        if (!isConfirmed) return;
+
+        try {
+            const res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
+
+            if (res.data.success) {
+                show({ type: "success", message: "Email template sent successfully to subscribers." });
+            } else {
+                show({ type: "error", message: res.data.message || "Failed to send email template." });
+            }
+        } catch (err: any) {
+            show({ type: "error", message: err.message || "An error occurred while sending the email template." });
+        }
     };
 
     const [html, setHtml] = useState("<div>Hello {{USER_NAME}}</div>");
@@ -229,8 +263,8 @@ const EmailTemplatesDataGrid = () => {
                 onClick={() => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("Add New Email Template"); setId(null) }}>Add New</button>
             <GenericDataGrid<EmailTemplate>
                 rows={rows}
-                        prevButtonClassName="dashboard-btn--ghost-minimal"
-        nextButtonClassName="dashboard-btn--ghost-minimal"
+                prevButtonClassName="dashboard-btn--ghost-minimal"
+                nextButtonClassName="dashboard-btn--ghost-minimal"
                 columns={columns}
                 rowCount={rowCount}
                 paginationModel={paginationModel}

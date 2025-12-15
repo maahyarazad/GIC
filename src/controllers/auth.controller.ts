@@ -14,7 +14,7 @@ import {
 import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
 import { LoginModel, User } from "../types/user.types";
-import { ObjectId } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -32,6 +32,13 @@ const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
 @Route("auth")
 @Tags("Auth")
 export class AuthController extends Controller {
+
+
+  private static userCollection(): Collection<User>{
+    return getCollection<User>("users");
+  }
+
+
   @Get("google/url")
   public async getGoogleAuthUrl(): Promise<{ url: string }> {
     const redirectUri = process.env.GOOGLE_CALLBACK_URL!;
@@ -50,7 +57,7 @@ export class AuthController extends Controller {
   @Get("google/callback")
   @SuccessResponse("302", "Redirecting")
   public async googleCallback(@Query() code: string): Promise<void> {
-    const users = getCollection<User>("users");
+    const users = AuthController.userCollection();
 
     // 1. Exchange code for access_token
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
@@ -140,7 +147,7 @@ export class AuthController extends Controller {
   @Get("facebook/callback")
   @SuccessResponse("302", "Redirecting")
   public async facebookCallback(@Query() code: string): Promise<void> {
-    const users = getCollection<User>("users");
+    const users = AuthController.userCollection();
 
     // 1. Exchange code for token
     const tokenRes = await fetch(
@@ -222,7 +229,7 @@ export class AuthController extends Controller {
 
       const payload = jwt.verify(token, JWT_SECRET) as any;
 
-      const users = getCollection<User>("users");
+      const users = AuthController.userCollection();
       const user = await users.findOne({ _id: new ObjectId(payload.userId) });
 
       if (!user) {
@@ -272,7 +279,7 @@ export class AuthController extends Controller {
     @Body() userData: LoginModel
   ): Promise<ApiResponse<Omit<User, "password">>> {
     try {
-      const usersCollection = getCollection<User>("users");
+      const usersCollection = AuthController.userCollection();
 
       // Check by username or email
       const user = await usersCollection.findOne({
@@ -378,7 +385,7 @@ export class AuthController extends Controller {
     @Body() body: { email: string }
   ): Promise<{ error?: any }> {
     try {
-      const usersCollection = getCollection<User>("users");
+      const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
 
       // 1. Check if user exists
@@ -497,7 +504,7 @@ export class AuthController extends Controller {
         );
       }
 
-      const usersCollection = getCollection<User>("users");
+      const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
 
       // 1. Find reset session

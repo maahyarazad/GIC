@@ -113,7 +113,6 @@ async function startSSR() {
           "@animated-burgers/burger-rotate",
           "react-icons/fa",
           "@reduxjs/toolkit",
-          "react-lazy-load-image-component",
           "react-slick",
           "formik",
           "yup",

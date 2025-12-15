@@ -1,8 +1,8 @@
 // HomeSlider.jsx
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
+
 import './HomeSlider.css';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import 'react-lazy-load-image-component/src/effects/blur.css';
+
 
 const HomeSlider = forwardRef(({ id, title, text, siteData ,image, className }, ref) => {
 

@@ -38,8 +38,8 @@
 .sidebar {
   background: #222;
   color: white;
-  width: 12%;
-  min-width: 12%;
+  width: 200px;
+  min-width: 200px;
   padding: 1rem;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;

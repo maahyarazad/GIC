@@ -80,7 +80,8 @@ export const UserProfilesDataGrid = () => {
       headerName: "Actions",
       width: 150,
       renderCell: (row) => (
-        <>
+        
+        <div className={`${row.email !== 'admin' ? " ": "d-none"}`}>
           <div className="btn-group" role="group" aria-label="Basic example">
             <button className={`btn btn-sm dashboard-btn`}
               disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
@@ -90,7 +91,7 @@ export const UserProfilesDataGrid = () => {
 
           {/* <button className="ms-2 btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button> */}
 
-        </>
+        </div>
       ),
       sortable: false,
       filterable: false,

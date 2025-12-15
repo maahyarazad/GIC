@@ -1,12 +1,13 @@
 import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Path, Middlewares } from "tsoa";
 import { getCollection } from "../db";
-import { ObjectId } from "mongodb";
+import { ObjectId, Collection } from "mongodb";
 import {
   ApiResponse,
   createSuccessResponse,
   createErrorResponse,
 } from "../utils/helpers";
 import {adminAuthMiddleware} from '../middleware/adminauth.middleware';
+import {sendDynamicEmailDoc, sendMassDynamicEmailDoc} from '../services/emailService'
 
 
 // Interface for Email Template
@@ -25,12 +26,18 @@ export interface EmailTemplateDoc {
 @Tags("email-templates")
 export class EmailTemplateController extends Controller {
 
+private static collection(): Collection<EmailTemplateDoc> {
+    return getCollection<EmailTemplateDoc>("email_templates");
+  }
+
   /** Create a new template */
   @Post("/")
   @Middlewares(adminAuthMiddleware)
   public async createTemplate(@Body() body: EmailTemplateDoc): Promise<ApiResponse<EmailTemplateDoc>> {
     try {
-      const collection = getCollection("email_templates");
+      
+
+      const collection = EmailTemplateController.collection();
 
       const now = new Date();
       const doc: EmailTemplateDoc = {
@@ -52,7 +59,7 @@ export class EmailTemplateController extends Controller {
   @Middlewares(adminAuthMiddleware)
   public async getTemplates(): Promise<ApiResponse<EmailTemplateDoc[]>> {
     try {
-      const collection = getCollection("email_templates");
+        const collection = EmailTemplateController.collection();
 
       const templates = await collection.find().toArray();
       const sanitized = templates.map(t => ({
@@ -72,6 +79,24 @@ export class EmailTemplateController extends Controller {
     }
   }
 
+
+  
+  @Post("/{id}")
+  @Middlewares(adminAuthMiddleware)
+  public async sendEmail(@Path() id: string, @Body() params: Partial<EmailTemplateDoc>): Promise<ApiResponse<null>> {
+    try {
+      
+      const collection = EmailTemplateController.collection();
+      const email = await collection.findOne({_id: new ObjectId(id)});
+
+      const result = await sendMassDynamicEmailDoc(email, params );
+
+      return createSuccessResponse(null, `All batches processed. Total successful emails: ${result}`);
+    } catch (err: any) {
+      return createErrorResponse("Failed to fetch templates", "FETCH_ERROR", err);
+    }
+  }
+
   /** Update a template by ID */
   @Put("/{id}")
   @Middlewares(adminAuthMiddleware)
@@ -80,7 +105,7 @@ export class EmailTemplateController extends Controller {
     @Body() body: Partial<EmailTemplateDoc>
   ): Promise<ApiResponse<EmailTemplateDoc>> {
     try {
-      const collection = getCollection("email_templates");
+            const collection = EmailTemplateController.collection();
       const updateDoc = { ...body, updatedAt: new Date() };
 
       const result = await collection.findOneAndUpdate(
@@ -103,7 +128,7 @@ export class EmailTemplateController extends Controller {
   @Delete("/{id}")
   public async deleteTemplate(@Path() id: string): Promise<ApiResponse<null>> {
     try {
-      const collection = getCollection("email_templates");
+            const collection = EmailTemplateController.collection();
       const result = await collection.deleteOne({ _id: new ObjectId(id) });
 
       if (result.deletedCount === 0) {

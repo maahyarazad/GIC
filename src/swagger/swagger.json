@@ -619,6 +619,95 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"EmailTemplateDoc": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"name",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_EmailTemplateDoc_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/EmailTemplateDoc"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
 			"ErrorResponse": {
 				"properties": {
 					"timestamp": {
@@ -657,6 +746,179 @@
 					"success"
 				],
 				"type": "object"
+			},
+			"ApiResponse_EmailTemplateDoc_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"SuccessResponse_EmailTemplateDoc-Array_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/EmailTemplateDoc"
+						},
+						"type": "array"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_EmailTemplateDoc-Array_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc-Array_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"SuccessResponse_null_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_null_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_null_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"Partial_EmailTemplateDoc_": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			},
 			"SuccessResponse__otpSent-boolean__": {
 				"properties": {
@@ -1050,72 +1312,6 @@
 				"type": "object",
 				"description": "Make all properties in T optional"
 			},
-			"SuccessResponse_null_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_null_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_null_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
 			"UploadedFileDoc": {
 				"properties": {
 					"filename": {
@@ -1227,202 +1423,6 @@
 						"$ref": "#/components/schemas/ErrorResponse"
 					}
 				]
-			},
-			"EmailTemplateDoc": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"name",
-					"subject",
-					"html"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"SuccessResponse_EmailTemplateDoc_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"$ref": "#/components/schemas/EmailTemplateDoc"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_EmailTemplateDoc-Array_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"items": {
-							"$ref": "#/components/schemas/EmailTemplateDoc"
-						},
-						"type": "array"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc-Array_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc-Array_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"Partial_EmailTemplateDoc_": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
 			},
 			"SuccessResponse_Omit_User.password__": {
 				"properties": {
@@ -2026,6 +2026,171 @@
 				]
 			}
 		},
+		"/email-templates": {
+			"post": {
+				"operationId": "CreateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new template",
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EmailTemplateDoc"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetTemplates",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc-Array_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all templates",
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/email-templates/{id}": {
+			"post": {
+				"operationId": "SendEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a template by ID",
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a template by ID",
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/otp/send-email": {
 			"post": {
 				"operationId": "SendOtpEmail",
@@ -2524,132 +2689,6 @@
 				},
 				"tags": [
 					"files"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/email-templates": {
-			"post": {
-				"operationId": "CreateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Create a new template",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/EmailTemplateDoc"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetTemplates",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc-Array_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get all templates",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/email-templates/{id}": {
-			"put": {
-				"operationId": "UpdateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update a template by ID",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete a template by ID",
-				"tags": [
-					"email-templates"
 				],
 				"security": [],
 				"parameters": [

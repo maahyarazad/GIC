@@ -10,11 +10,12 @@ export const checkAuthToken = createAsyncThunk(
     try {
     
       const res = await axiosInstance.get("/auth/profile");
-          
+        
       return {
         id: res.data.data._id,
         googleId: res.data.data.googleId,
         name: res.data.data.name,
+        phone: res.data.data.phone,
         email: res.data.data.email,
         avatar: res.data.data.avatar,
         createdAt: res.data.data.createdAt,

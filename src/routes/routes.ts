@@ -1116,6 +1116,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_getSubscriberByEmail: Record<string, TsoaRoute.ParameterSchema> = {
+                email: {"in":"path","name":"email","required":true,"dataType":"string"},
+        };
+        app.get('/newsletter/email/:email',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscriberByEmail)),
+
+            async function NewsletterController_getSubscriberByEmail(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_getSubscriberByEmail, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'getSubscriberByEmail',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsNewsletterController_updateSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},

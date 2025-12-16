@@ -163,7 +163,7 @@ const EmailTemplatesDataGrid = () => {
 
     const onSendTestEmail = async (row: EmailTemplate) => {
         try {
-            debugger;
+            
             var res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
 
             if (res.data.success) {

@@ -38,4 +38,48 @@ export async function uploadUserPhoto(id: string, file: File) {
     console.error('Upload user photo failed', error);
     throw error;
   }
+
+
+  
 }
+
+
+/**
+ * Check Newsletter Subscription Status
+ * @param email - User ID
+ 
+ */
+export async function checkNewsLetter(email: string) {
+  try {
+    
+
+    const response = await axiosInstance.get(`/newsletter/email/${email}`);
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload user photo failed', error);
+    throw error;
+  }
+}
+
+
+/**
+ * Check Newsletter Subscription Status
+ * @param id - User ID
+ 
+ */
+
+export async function getUserData(id: string) {
+  try {
+    
+
+    const response = await axiosInstance.get(`/user/${id}`);
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload user photo failed', error);
+    throw error;
+  }
+}
+
+

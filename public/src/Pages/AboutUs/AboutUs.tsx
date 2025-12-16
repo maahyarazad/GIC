@@ -33,12 +33,12 @@ import "./AboutUs.css";
 //   values: ValuesSection;
 // }
 
-interface Props {
-  siteData: any;
-}
+  interface Props {
+    siteData: any;
+  }
 
 const AboutUs: React.FC<Props> = ({ siteData }) => {
-  debugger;
+  
   return (
     <div className="about-page">
       {/* Hero Section */}

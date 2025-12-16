@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Boardroom.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,9 +8,17 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
 import LockOverlay from '../../Components/LockOverlay/LockOverlay'
-import './Boardroom.css'
-const Boardroom: React.FC = () => {
+import './Boardroom.css';
 
+
+
+import { EnvContext } from '@/EnvContext';
+interface Props {
+  siteData: any;
+}
+
+const Boardroom: React.FC<Props> = ({siteData}) => {
+     const env = useContext(EnvContext);
 
 
   const dispatch = useDispatch();
@@ -34,27 +42,30 @@ const Boardroom: React.FC = () => {
   }, [loading, user, location.pathname]);
 
 
+interface BoardroomEvent {
+  id: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
+interface BoardroomProps {
+  boardroom: BoardroomEvent[];
+}
 
 
   return (
     <div className="boardroom">
         <LockOverlay/>
-    <div className="login-container">
-
-      <div className="login-card">
-        <h2 className="login-title">Welcome Back</h2>
-
-        
-
-       
-
-        <p className="signup-text">
-          Don’t have an account?{" "}
-          <a href="/register">Sign up</a>
-        </p>
-
-      </div>
-    </div>
+      {siteData.boardroom.map(({ id, imageUrl, title, description }) => (
+        <div className="boardroom__item" key={id}>
+          <img src={`${env.VITE_SERVER_API_URL}/uploads/${imageUrl}`} alt={title} className="boardroom__image" />
+          <div className="boardroom__overlay">
+            <h3 className="boardroom__title">{title}</h3>
+            <p className="boardroom__description">{description}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

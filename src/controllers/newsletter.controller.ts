@@ -200,6 +200,36 @@ export class NewsletterController extends Controller {
     }
   }
 
+
+    // Get one subscriber
+  @Get("email/{email}")
+  public async getSubscriberByEmail(
+    @Path() email: string
+  ): Promise<ApiResponse<NewsletterSubscriber>> {
+    try {
+      const collection = getCollection<NewsletterSubscriber>(
+        "newsletter_subscribers"
+      );
+
+      const subscriber = await collection.findOne({ email: email });
+
+      if (!subscriber)
+        return createErrorResponse("Subscriber not found", "NOT_FOUND");
+
+      return createSuccessResponse(
+        subscriber,
+        "Subscriber fetched successfully"
+      );
+    } catch (err: any) {
+      return createErrorResponse(
+        "Failed to fetch subscriber",
+        "FETCH_ERROR",
+        err
+      );
+    }
+  }
+
+
   // Update subscriber
   @Put("/{id}")
   public async updateSubscriber(

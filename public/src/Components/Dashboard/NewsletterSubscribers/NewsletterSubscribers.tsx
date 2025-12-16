@@ -94,7 +94,7 @@ export const NewsletterSubscribers = () => {
       }
 
       const response = await axiosInstance.get("/newsletter", { params });
-      debugger;
+      
       setRows(response.data.data.subscribers);
       setRowCount(response.data.data.total);
     } catch (err) {

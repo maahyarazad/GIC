@@ -22,10 +22,8 @@
   opacity: 0;
   pointer-events: none;
 }
-.lock-overlay .padlock-icon {
-  width: 100px;
-  height: 100px;
-  fill: rgb(242, 241, 241); /* change color */
+.lock-overlay i {
+  font-size: 80px !important;
   padding-bottom: 1rem;
 }
 .lock-overlay h1 {
@@ -38,4 +36,26 @@
 .lock-overlay .logo {
   font-size: 6rem;
   font-weight: 900 !important;
+}
+
+@media (max-width: 768px) {
+  .lock-overlay {
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .lock-overlay i {
+    font-size: 40px !important;
+    padding-bottom: 1rem;
+  }
+  .lock-overlay h1 {
+    font-size: 2.2rem;
+    padding-bottom: 0.5rem;
+  }
+  .lock-overlay h2 {
+    font-size: 1.6rem;
+  }
+  .lock-overlay .logo {
+    font-size: 3rem;
+    font-weight: 800;
+  }
 }/*# sourceMappingURL=LockOverlay.css.map */

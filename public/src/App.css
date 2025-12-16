@@ -62,4 +62,8 @@
 .close-iframe.close-iframe.visible {
   opacity: 1;
   transition: opacity 0.8s ease-in-out;
+}
+
+#section-aboutus {
+  padding-top: 10rem;
 }/*# sourceMappingURL=App.css.map */

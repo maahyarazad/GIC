@@ -114,7 +114,7 @@ const Home = ({ siteData }) => {
 
 
 
-            <div className="container mx-auto px-4 py-6 my-6" id="section-3" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
+            <div className="container mx-auto px-4 py-6 my-6" id="section-aboutus" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
                 <div
                     ref={_ref}
                     className={`slide-down ${_isVisible ? "visible" : ""}`}

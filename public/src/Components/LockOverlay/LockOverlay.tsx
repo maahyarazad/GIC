@@ -2,39 +2,40 @@ import React, { useState, useEffect } from 'react';
 import PadLock from '../../Assets/padlock-svgrepo-com.svg';
 import './LockOverlay.css';
 
- const LockOverlay: React.FC =  ()=>{
+const LockOverlay: React.FC = () => {
 
     const [clicked, setClicked] = useState<boolean>(false);
 
     useEffect(() => {
-    if (!clicked) {
-      document.body.style.overflow = "hidden"; 
-    } else {
-      document.body.style.overflow = ""; 
-    }
+        if (!clicked) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
 
-    
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [clicked]);
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [clicked]);
 
     return (
-        <div className={`lock-overlay ${clicked ?  "hide": ""}` } onClick={()=> setClicked(true)}>   
-        <div className='mb-4 '>
+        <div className={`lock-overlay ${clicked ? "hide" : ""}`} onClick={() => setClicked(true)}>
+            <div className='mb-4 '>
 
-         <h1 className='s-font mb-4 contrast-color logo'>
-           GIC
-</h1>
-        </div>
+                <h1 className='s-font mb-4 contrast-color logo'>
+                    GIC
+                </h1>
+            </div>
 
-           <img className="padlock-icon mb-4" src={PadLock} />
-           <h1 className='s-font'>
-           Restricted Access
-</h1>
-           <h2 className='s-font'>
-           
-By Invitation Only</h2>
+            {/* <img className="padlock-icon mb-4" src={PadLock} /> */}
+            <i className="padlock-icon mb-4 bi bi-shield-lock-fill"></i>
+            <h1 className='s-font'>
+                Restricted Access
+            </h1>
+            <h2 className='s-font'>
+
+                By Invitation Only</h2>
         </div>
     )
 }

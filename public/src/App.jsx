@@ -52,9 +52,10 @@ const App = () => {
         const env = useContext(EnvContext);
     
     const server_endpoint = env.VITE_SERVER_API_URL;
-    console.log(server_endpoint);
+    
     const fetchSiteData = useCallback(async () => {
         try {
+            
             const response = await axiosInstance.get(`${server_endpoint}/client`);
             setSiteData(response.data.data);
         } catch (error) {
@@ -109,7 +110,7 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                    <Route path="/boardroom" element={<Boardroom/>} />
+                    <Route path="/boardroom" element={<Boardroom siteData={siteData}/>} />
                     <Route path="/forgot-password" element={<ForgotPassword/>} />
                     <Route path="/reset-password" element={<ResetPassword/>} />
                     <Route path="*" element={<NotFound />} />

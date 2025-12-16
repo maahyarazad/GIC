@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import {EnvContext} from '../../EnvContext';
-
+import ArrowDown from '@/Components/ArrowDown/ArrowDown';
 const HomeBackground = ({background}) => {
 
     const env = useContext(EnvContext);
-    console.log(env);
-    console.log(`${env.VITE_SERVER_API_URL}/uploads/${background}`);
+    
+    
     return (
+        <>
       <div>
         <video
             autoPlay
@@ -25,7 +26,11 @@ const HomeBackground = ({background}) => {
             <source src={`${env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" />
             Your browser does not support the video tag.
         </video>
+            <ArrowDown/>    
+            
         </div>
+        
+        </>
 
     );
 };

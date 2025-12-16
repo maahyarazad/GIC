@@ -42,7 +42,7 @@ const isConfirmed = await confirm({
       const response = await updateClientById(data._id, data);
 
       if (response.success) {
-        debugger;
+        
         setData(data);
          setEditorKey((k) => k + 1);
         show({

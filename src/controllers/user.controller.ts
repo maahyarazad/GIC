@@ -216,6 +216,7 @@ export class UserController extends Controller {
 
 
   @Put("/{id}")
+  @Middlewares(adminAuthMiddleware)
   public async updateUser(
     @Path() id: string,
     @Body() updateData: UpdateUserRequest

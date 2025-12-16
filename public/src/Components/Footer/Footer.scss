@@ -8,7 +8,7 @@
   border-top: 1px solid #ddd;
   padding: 2rem 1rem;
 
-
+  
   .divider{
     align-self: center;
     border: 1px solid;
@@ -19,6 +19,7 @@
   }
 
   a {
+    
     text-decoration: none;
     color: var(--primary-color);
     font-size: larger;
@@ -33,6 +34,7 @@
     font-size: larger;
     line-height: 1.6;
     margin-top: 1rem;
+    text-align: center;
   }
 
   .footer-info {
@@ -173,31 +175,44 @@
 
   /* Responsive */
   @media screen and (max-width: 992px) {
-    text-align: center;
+    text-align: left;
+
+    .s-font{
+      font-size: 3.5rem !important;
+    }
+
+    .footer-text{
+      font-size: .9rem !important;
+      text-align: left;
+    }
 
     a {
       font-size: small;
+      text-align: left !important;
     }
 
     .footer-logo {
+      
       justify-content: center;
     }
   }
 
-  @media screen and (max-width: 576px) {
-    .footer-text {
-      text-align: left !important;
-    }
+  // @media screen and (max-width: 576px) {
+  //   text-align: left;
 
-    .footer-bottom {
-      padding: 10px;
-    }
+  //   .footer-text {
+  //     text-align: left !important;
+  //   }
 
-    .footer-company {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
+  //   .footer-bottom {
+  //     padding: 10px;
+  //   }
+
+  //   .footer-company {
+  //     display: flex;
+  //     flex-direction: column;
+  //     justify-content: space-between;
+  //     align-items: center;
+  //   }
+  // }
 }

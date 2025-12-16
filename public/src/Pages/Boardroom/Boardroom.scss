@@ -1,3 +1,95 @@
-.boardroom{
-    background: red
+.boardroom {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 1rem;
+    background-color: var(--primary-gray-color);
+  &__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+
+    // &:hover .boardroom__overlay {
+    //   opacity: 1;
+    //   visibility: visible;
+    //   transform: translateY(0);
+    // }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // default desktop behavior
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    opacity: 1;
+    visibility: visible;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    // transform: translateY(10%);
+  }
+
+  &__title {
+    margin: 0;
+    
+    font-weight: 700;
+        font-size: 2.5rem;
+        // line-height: 1rem;
+  }
+
+  &__description {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
+}
+
+/* 📱 Mobile override */
+@media (max-width: 768px) {
+  .boardroom {
+    // display: flex !important;   
+
+    // flex-direction: column;
+    // gap: 16px;
+
+    &__item {
+      height: 80vh;
+      max-height: 520px;
+      margin-bottom: 16px;   // spacing between items
+    }
+
+    > img {
+    position: absolute;
+    inset: 0;                 
+    width: 100%;
+    height: 100%;
+    object-fit: cover;        
+    object-position: center;  
+    display: block;
+  }
+
+    &__overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    &__title {
+      font-size: 2rem;
+      line-height: 1.2;
+    }
+  }
 }

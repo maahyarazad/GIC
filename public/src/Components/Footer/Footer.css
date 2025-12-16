@@ -30,6 +30,7 @@
   font-size: larger;
   line-height: 1.6;
   margin-top: 1rem;
+  text-align: center;
 }
 .footer .footer-info {
   display: flex;
@@ -148,26 +149,20 @@
 }
 @media screen and (max-width: 992px) {
   .footer {
-    text-align: center;
+    text-align: left;
+  }
+  .footer .s-font {
+    font-size: 3.5rem !important;
+  }
+  .footer .footer-text {
+    font-size: 0.9rem !important;
+    text-align: left;
   }
   .footer a {
     font-size: small;
+    text-align: left !important;
   }
   .footer .footer-logo {
     justify-content: center;
-  }
-}
-@media screen and (max-width: 576px) {
-  .footer .footer-text {
-    text-align: left !important;
-  }
-  .footer .footer-bottom {
-    padding: 10px;
-  }
-  .footer .footer-company {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
   }
 }/*# sourceMappingURL=Footer.css.map */

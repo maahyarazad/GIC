@@ -13,7 +13,7 @@ import '@animated-burgers/burger-rotate/dist/styles.css'
 
 const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }) => {
   const env: string = useContext(EnvContext);
-  console.log(env)
+  
     const location = useLocation();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);

@@ -4,9 +4,10 @@ import { FaXTwitter } from "react-icons/fa6";
 
 import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
-import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile } from "../../../api/user";
+import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile, upsertNewsletterSubscriber } from "../../../api/user";
 import { useToast } from "@/providers/ToastContext";
 import { EnvContext } from '@/EnvContext';
+
 // Helper to convert socialLinks array to object keyed by type
 function socialLinksArrayToObject(
   arr: { platform: string; url: string }[] = []
@@ -54,6 +55,8 @@ interface UserProfileFormProps {
 }
 
 export default function UserProfileForm({ initialProfile }: any) {
+
+    
     const env = useContext(EnvContext);
     const {show} = useToast();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -73,6 +76,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
      const fetchUserProfile = useCallback(async ()=>{
         try{
+            
             const res = await getUserProfile(initialProfile.id);
 
 
@@ -140,7 +144,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
     const fetchNewsletterStatus = useCallback(async ()=>{
         try{
-            const res = await checkNewsLetter(initialProfile.email);
+            const res = await checkNewsLetter(profile.email);
             if(res.success){
                 SetNewsletterSubscription(res.data);
             }
@@ -159,10 +163,21 @@ export default function UserProfileForm({ initialProfile }: any) {
    
 
 
+        const handleSubscriptionChange = async (e) => {
+        try {
+            
+            const res = await upsertNewsletterSubscriber(profile.email, { active: e.target.checked });
+            
+            if (res.success) {
+                show({type:"success", message: res.message});
+                fetchNewsletterStatus();
+            }
+        } catch (err) {
+            console.error(err);
+            show({ type: "error", message: err });
+        }
+        };
 
-    const handleSubscriptionChange = () =>{
-        
-    }
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -206,7 +221,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
             }
         } catch (err: any) {
-            
+            console.error(err);
             show({ type: "error", message: err.message });
         }
     };
@@ -270,8 +285,8 @@ export default function UserProfileForm({ initialProfile }: any) {
                     Newsletter Subscription
                 </label >
                     <input className=""
-                    type="checkbox"             // fix input type (no dash)
-                    checked={newsletterSubscription?.active || false} // fallback to false
+                    type="checkbox"             
+                    checked={newsletterSubscription?.active} 
                     onChange={handleSubscriptionChange}
                     />
                 </div>

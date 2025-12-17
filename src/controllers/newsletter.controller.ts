@@ -230,41 +230,42 @@ export class NewsletterController extends Controller {
   }
 
 
-  // Update subscriber
-  @Put("/{id}")
-  public async updateSubscriber(
-    @Path() id: string,
-    @Body() body: Partial<NewsletterSubscriber>
-  ): Promise<ApiResponse<NewsletterSubscriber>> {
-    try {
-      const collection = getCollection("newsletter_subscribers");
 
-      const updateData = {
-        ...body,
-        updatedAt: new Date(),
-      };
 
-      const result = await collection.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: updateData },
-        { returnDocument: "after" }
-      );
 
-      if (!result)
-        return createErrorResponse("Subscriber not found", "NOT_FOUND");
+@Put("/{email}")
+public async upsertSubscriber(
+  @Path() email: string,
+  @Body() body: Partial<NewsletterSubscriber>
+): Promise<ApiResponse<NewsletterSubscriber>> {
+  try {
+    const collection = getCollection("newsletter_subscribers");
+    const now = new Date();
 
-      return createSuccessResponse(
-        undefined,
-        "Subscriber updated successfully"
-      );
-    } catch (err: any) {
-      return createErrorResponse(
-        "Failed to update subscriber",
-        "UPDATE_ERROR",
-        err
-      );
-    }
+    const updateData: Partial<NewsletterSubscriber> = {
+      ...body,
+      updatedAt: now,
+    };
+
+    const result = await collection.findOneAndUpdate(
+      { email },
+      {
+        $set: updateData,
+        $setOnInsert: { createdAt: now, email },
+      },
+      { returnDocument: "after", upsert: true }
+    );
+
+    return createSuccessResponse(null, "Subscriber status updated successfully");
+  } catch (err: any) {
+    return createErrorResponse(
+      "Failed to upsert subscriber",
+      "UPSERT_ERROR",
+      err
+    );
   }
+}
+
 
   // Delete subscriber
   @Delete("/{id}")

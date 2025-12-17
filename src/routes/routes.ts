@@ -311,7 +311,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime"},
             "updatedAt": {"dataType":"datetime"},
             "email": {"dataType":"string","required":true},
-            "active": {"dataType":"boolean"},
+            "active": {"dataType":"boolean","required":true},
         },
         "additionalProperties": true,
     },
@@ -328,7 +328,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_NewsletterSubscriber.email-or-active_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"active":{"dataType":"boolean"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"active":{"dataType":"boolean","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ApiResponse_any_": {
@@ -1182,26 +1182,26 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsNewsletterController_updateSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        const argsNewsletterController_upsertSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+                email: {"in":"path","name":"email","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},
         };
-        app.put('/api/v1/newsletter/:id',
+        app.put('/api/v1/newsletter/:email',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
-            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.updateSubscriber)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.upsertSubscriber)),
 
-            async function NewsletterController_updateSubscriber(request: ExRequest, response: ExResponse, next: any) {
+            async function NewsletterController_upsertSubscriber(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_updateSubscriber, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_upsertSubscriber, request, response });
 
                 const controller = new NewsletterController();
 
               await templateService.apiHandler({
-                methodName: 'updateSubscriber',
+                methodName: 'upsertSubscriber',
                 controller,
                 response,
                 next,

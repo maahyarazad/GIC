@@ -25,24 +25,24 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!loading && user) {
-      // If user is authenticated, redirect away from login page if currently there
-      if (location.pathname === "/login") {
+    useEffect(() => {
+    // wait until auth check is finished
+    if (loading) return;
 
-        navigate("/"); // or wherever main page is
-      }
+    // user is authenticated and currently on login page
+    if (user && location.pathname === "/login") {
+        navigate(redirectTo || "/", { replace: true });
     }
-  }, [loading, user, navigate, location.pathname]);
+    }, [loading, user, location.pathname, navigate, redirectTo]);
 
 
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-     
+          
     e.preventDefault();
     setError("");
     dispatch(setLoadingTrue());
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
 
       const response = await loginUser(payload);
       
-     
+
       if (response.success) {
         dispatch(login(response.data));
         show({type: "success",message: "Logged in successfully"});

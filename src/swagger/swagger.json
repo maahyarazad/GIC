@@ -1257,7 +1257,8 @@
 					}
 				},
 				"required": [
-					"email"
+					"email",
+					"active"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -1334,7 +1335,8 @@
 					}
 				},
 				"required": [
-					"email"
+					"email",
+					"active"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
@@ -2596,45 +2598,6 @@
 					}
 				]
 			},
-			"put": {
-				"operationId": "UpdateSubscriber",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"newsletter"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_NewsletterSubscriber_"
-							}
-						}
-					}
-				}
-			},
 			"delete": {
 				"operationId": "DeleteSubscriber",
 				"responses": {
@@ -2694,6 +2657,47 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/newsletter/{email}": {
+			"put": {
+				"operationId": "UpsertSubscriber",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_NewsletterSubscriber_"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/files": {

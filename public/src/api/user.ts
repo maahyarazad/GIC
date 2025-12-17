@@ -1,6 +1,7 @@
 // src/api/auth.ts
 import axiosInstance from './axiosInstance'; // adjust path accordingly
 import { UpdateUserRequest } from '../../../src/types/user.types';
+import { NewsletterSubscriber } from '../../../src/types/newsletterSubscriber.types';
 
 /**
  * Update user by ID
@@ -60,7 +61,6 @@ export async function getUserProfile(id: string) {
  */
 export async function checkNewsLetter(email: string) {
   try {
-    
 
     const response = await axiosInstance.get(`/newsletter/email/${email}`);
 
@@ -70,6 +70,25 @@ export async function checkNewsLetter(email: string) {
     throw error;
   }
 }
+
+
+/**
+ * Check Newsletter Subscription Status
+ * @param email - User ID
+ 
+ */
+export async function upsertNewsletterSubscriber(email: string, body: Partial<NewsletterSubscriber>) {
+  try {
+
+    const response = await axiosInstance.put(`/newsletter/${email}`, body);
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload user photo failed', error);
+    throw error;
+  }
+}
+
 
 
 /**

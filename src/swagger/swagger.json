@@ -1518,7 +1518,7 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users": {
+		"/api/v1/users": {
 			"get": {
 				"operationId": "GetAllUsers",
 				"responses": {
@@ -1627,7 +1627,7 @@
 				}
 			}
 		},
-		"/users/{id}": {
+		"/api/v1/users/{id}": {
 			"get": {
 				"operationId": "GetUserById",
 				"responses": {
@@ -1695,7 +1695,7 @@
 				}
 			}
 		},
-		"/users/{id}/upload-photo": {
+		"/api/v1/users/{id}/upload-photo": {
 			"post": {
 				"operationId": "UploadPhoto",
 				"responses": {
@@ -1778,7 +1778,7 @@
 				"parameters": []
 			}
 		},
-		"/products": {
+		"/api/v1/products": {
 			"post": {
 				"operationId": "CreateProduct",
 				"responses": {
@@ -1933,7 +1933,7 @@
 				]
 			}
 		},
-		"/products/{id}": {
+		"/api/v1/products/{id}": {
 			"get": {
 				"operationId": "GetProductById",
 				"responses": {
@@ -2026,7 +2026,7 @@
 				]
 			}
 		},
-		"/email-templates": {
+		"/api/v1/email-templates": {
 			"post": {
 				"operationId": "CreateTemplate",
 				"responses": {
@@ -2080,7 +2080,7 @@
 				"parameters": []
 			}
 		},
-		"/email-templates/{id}": {
+		"/api/v1/email-templates/{id}": {
 			"post": {
 				"operationId": "SendEmail",
 				"responses": {
@@ -2191,7 +2191,7 @@
 				]
 			}
 		},
-		"/otp/send-email": {
+		"/api/v1/otp/send-email": {
 			"post": {
 				"operationId": "SendOtpEmail",
 				"responses": {
@@ -2230,7 +2230,7 @@
 				}
 			}
 		},
-		"/otp/send-mobile": {
+		"/api/v1/otp/send-mobile": {
 			"post": {
 				"operationId": "SendOtpMobile",
 				"responses": {
@@ -2269,7 +2269,7 @@
 				}
 			}
 		},
-		"/otp/check-email": {
+		"/api/v1/otp/check-email": {
 			"post": {
 				"operationId": "CheckOtpEmail",
 				"responses": {
@@ -2308,7 +2308,7 @@
 				}
 			}
 		},
-		"/otp/check-mobile": {
+		"/api/v1/otp/check-mobile": {
 			"post": {
 				"operationId": "CheckOtpMobile",
 				"responses": {
@@ -2347,7 +2347,7 @@
 				}
 			}
 		},
-		"/newsletter": {
+		"/api/v1/newsletter": {
 			"post": {
 				"operationId": "CreateSubscriber",
 				"responses": {
@@ -2455,7 +2455,7 @@
 				]
 			}
 		},
-		"/newsletter/{id}": {
+		"/api/v1/newsletter/{id}": {
 			"get": {
 				"operationId": "GetSubscriber",
 				"responses": {
@@ -2554,7 +2554,7 @@
 				]
 			}
 		},
-		"/newsletter/email/{email}": {
+		"/api/v1/newsletter/email/{email}": {
 			"get": {
 				"operationId": "GetSubscriberByEmail",
 				"responses": {
@@ -2585,7 +2585,7 @@
 				]
 			}
 		},
-		"/files": {
+		"/api/v1/files": {
 			"post": {
 				"operationId": "UploadFile",
 				"responses": {
@@ -2703,7 +2703,7 @@
 				]
 			}
 		},
-		"/files/{id}": {
+		"/api/v1/files/{id}": {
 			"delete": {
 				"operationId": "DeleteFile",
 				"responses": {
@@ -2734,7 +2734,7 @@
 				]
 			}
 		},
-		"/client": {
+		"/api/v1/client": {
 			"get": {
 				"operationId": "GetLargeJson",
 				"responses": {
@@ -2754,7 +2754,7 @@
 				"parameters": []
 			}
 		},
-		"/client/{id}": {
+		"/api/v1/client/{id}": {
 			"put": {
 				"operationId": "UpdateJsonById",
 				"responses": {
@@ -2791,7 +2791,7 @@
 				}
 			}
 		},
-		"/auth/google/url": {
+		"/api/v1/auth/google/url": {
 			"get": {
 				"operationId": "GetGoogleAuthUrl",
 				"responses": {
@@ -2821,7 +2821,7 @@
 				"parameters": []
 			}
 		},
-		"/auth/google/callback": {
+		"/api/v1/auth/google/callback": {
 			"get": {
 				"operationId": "GoogleCallback",
 				"responses": {
@@ -2845,7 +2845,7 @@
 				]
 			}
 		},
-		"/auth/facebook/url": {
+		"/api/v1/auth/facebook/url": {
 			"get": {
 				"operationId": "GetFacebookAuthUrl",
 				"responses": {
@@ -2875,7 +2875,7 @@
 				"parameters": []
 			}
 		},
-		"/auth/facebook/callback": {
+		"/api/v1/auth/facebook/callback": {
 			"get": {
 				"operationId": "FacebookCallback",
 				"responses": {
@@ -2899,7 +2899,7 @@
 				]
 			}
 		},
-		"/auth/profile": {
+		"/api/v1/auth/profile": {
 			"get": {
 				"operationId": "GetProfile",
 				"responses": {
@@ -2919,7 +2919,7 @@
 				"parameters": []
 			}
 		},
-		"/auth/verify-token": {
+		"/api/v1/auth/verify-token": {
 			"get": {
 				"operationId": "VerifyToken",
 				"responses": {
@@ -2939,7 +2939,7 @@
 				"parameters": []
 			}
 		},
-		"/auth/login": {
+		"/api/v1/auth/login": {
 			"post": {
 				"operationId": "LoginUser",
 				"responses": {
@@ -2971,7 +2971,7 @@
 				}
 			}
 		},
-		"/auth/logout": {
+		"/api/v1/auth/logout": {
 			"post": {
 				"operationId": "LogoutUser",
 				"responses": {
@@ -3001,7 +3001,7 @@
 				"parameters": []
 			}
 		},
-		"/auth/forgot-password": {
+		"/api/v1/auth/forgot-password": {
 			"post": {
 				"operationId": "ResetPassword",
 				"responses": {
@@ -3044,7 +3044,7 @@
 				}
 			}
 		},
-		"/auth/verify-reset-token": {
+		"/api/v1/auth/verify-reset-token": {
 			"get": {
 				"operationId": "VerifyResetToken",
 				"responses": {
@@ -3073,7 +3073,7 @@
 				]
 			}
 		},
-		"/auth/reset-password": {
+		"/api/v1/auth/reset-password": {
 			"post": {
 				"operationId": "SetNewPassword",
 				"responses": {

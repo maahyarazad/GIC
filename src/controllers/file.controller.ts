@@ -16,7 +16,7 @@ export interface UploadedFileDoc {
 }
 
 
-@Route("files")
+@Route("api/v1/files")
 @Tags("files")
 export class FileController extends Controller {
   @Post("/")

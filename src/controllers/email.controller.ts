@@ -22,7 +22,7 @@ export interface EmailTemplateDoc {
   updatedAt?: Date;
 }
 
-@Route("email-templates")
+@Route("api/v1/email-templates")
 @Tags("email-templates")
 export class EmailTemplateController extends Controller {
 

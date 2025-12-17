@@ -33,7 +33,7 @@ interface OtpCheckMobileBody {
 const otpRequestMap = new Map<string, number>();
 const otpMobileRequestMap = new Map<string, number>();
 
-@Route("otp")
+@Route("api/v1/otp")
 @Tags("otp")
 export class OtpController extends Controller {
   private checkLimiter(body: SendOtpBody) {

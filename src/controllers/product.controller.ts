@@ -6,7 +6,7 @@ import { getCollection } from "../db";
 import { Product, ProductSortKey, SortOrder, UpdateProductRequest, CreateProductRequest } from "../types/product.types";
 
 
-@Route("products")
+@Route("api/v1/products")
 @Tags("Products")
 export class ProductConroller extends Controller {
   @Post("/")

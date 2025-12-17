@@ -1,28 +1,38 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 
 import './ArrowDown.css'
 
 export default function ArrowDown() {
-    // const { scrollY } = useScroll()
-    // const [hidden, setHidden] = useState(true)
 
-    // useMotionValueEvent(scrollY, "change", (latest) => {
+    const [isVisible, setIsVisible] = useState(true);
+    const toggleVisibility = () => {
+        setIsVisible(window.scrollY < 200);
+    };
+   
 
-    //     if (latest > 20) {
-    //         setHidden(false)
-    //     } else {
-    //         setHidden(true)
-    //     }
-    // })
+        const handleScroll = () => {
+            toggleVisibility();
+    
 
-    return true && (
-        <div 
+        };
+    
+        
+    
+        useEffect(() => {
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
+    return (
+        <div className={`${isVisible ? "" : "hidden"}`}>
 
-         className="arrow">
-            <span></span>
-            <span></span>
-            <span></span>
+            <div 
+
+            className="arrow">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     )
 }

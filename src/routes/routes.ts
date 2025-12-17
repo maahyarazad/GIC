@@ -404,7 +404,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 sortBy: {"default":"name","in":"query","name":"sortBy","ref":"UserSortKey"},
                 sortOrder: {"default":"asc","in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
         };
-        app.get('/users',
+        app.get('/api/v1/users',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getAllUsers)),
 
@@ -434,7 +434,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsUserController_getUserById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/users/:id',
+        app.get('/api/v1/users/:id',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.getUserById)),
 
@@ -464,7 +464,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsUserController_createUser: Record<string, TsoaRoute.ParameterSchema> = {
                 userData: {"in":"body","name":"userData","required":true,"ref":"CreateUserRequest"},
         };
-        app.post('/users',
+        app.post('/api/v1/users',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.createUser)),
 
@@ -495,7 +495,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updateData: {"in":"body","name":"updateData","required":true,"ref":"UpdateUserRequest"},
         };
-        app.put('/users/:id',
+        app.put('/api/v1/users/:id',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateUser)),
 
@@ -526,7 +526,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 file: {"in":"formData","name":"file","required":true,"dataType":"file"},
         };
-        app.post('/users/:id/upload-photo',
+        app.post('/api/v1/users/:id/upload-photo',
             upload.fields([
                 {
                     name: "file",
@@ -593,7 +593,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsProductConroller_createProduct: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"CreateProductRequest"},
         };
-        app.post('/products',
+        app.post('/api/v1/products',
             ...(fetchMiddlewares<RequestHandler>(ProductConroller)),
             ...(fetchMiddlewares<RequestHandler>(ProductConroller.prototype.createProduct)),
 
@@ -631,7 +631,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 product_type: {"in":"query","name":"product_type","dataType":"string"},
                 tags: {"in":"query","name":"tags","dataType":"string"},
         };
-        app.get('/products',
+        app.get('/api/v1/products',
             ...(fetchMiddlewares<RequestHandler>(ProductConroller)),
             ...(fetchMiddlewares<RequestHandler>(ProductConroller.prototype.getAllProducts)),
 
@@ -661,7 +661,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsProductConroller_getProductById: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/products/:id',
+        app.get('/api/v1/products/:id',
             ...(fetchMiddlewares<RequestHandler>(ProductConroller)),
             ...(fetchMiddlewares<RequestHandler>(ProductConroller.prototype.getProductById)),
 
@@ -692,7 +692,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"UpdateProductRequest"},
         };
-        app.put('/products/:id',
+        app.put('/api/v1/products/:id',
             ...(fetchMiddlewares<RequestHandler>(ProductConroller)),
             ...(fetchMiddlewares<RequestHandler>(ProductConroller.prototype.updateProduct)),
 
@@ -722,7 +722,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsProductConroller_deleteProduct: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/products/:id',
+        app.delete('/api/v1/products/:id',
             ...(fetchMiddlewares<RequestHandler>(ProductConroller)),
             ...(fetchMiddlewares<RequestHandler>(ProductConroller.prototype.deleteProduct)),
 
@@ -752,7 +752,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsEmailTemplateController_createTemplate: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"EmailTemplateDoc"},
         };
-        app.post('/email-templates',
+        app.post('/api/v1/email-templates',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.createTemplate)),
 
@@ -781,7 +781,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsEmailTemplateController_getTemplates: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/email-templates',
+        app.get('/api/v1/email-templates',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.getTemplates)),
 
@@ -812,7 +812,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 params: {"in":"body","name":"params","required":true,"ref":"Partial_EmailTemplateDoc_"},
         };
-        app.post('/email-templates/:id',
+        app.post('/api/v1/email-templates/:id',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.sendEmail)),
 
@@ -843,7 +843,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"Partial_EmailTemplateDoc_"},
         };
-        app.put('/email-templates/:id',
+        app.put('/api/v1/email-templates/:id',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.updateTemplate)),
 
@@ -873,7 +873,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsEmailTemplateController_deleteTemplate: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/email-templates/:id',
+        app.delete('/api/v1/email-templates/:id',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.deleteTemplate)),
 
@@ -904,7 +904,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 body: {"in":"body","name":"body","required":true,"ref":"SendOtpBody"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/otp/send-email',
+        app.post('/api/v1/otp/send-email',
             ...(fetchMiddlewares<RequestHandler>(OtpController)),
             ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.sendOtpEmail)),
 
@@ -934,7 +934,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsOtpController_sendOtpMobile: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"SendOtpBody"},
         };
-        app.post('/otp/send-mobile',
+        app.post('/api/v1/otp/send-mobile',
             ...(fetchMiddlewares<RequestHandler>(OtpController)),
             ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.sendOtpMobile)),
 
@@ -965,7 +965,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 body: {"in":"body","name":"body","required":true,"ref":"OtpCheckBody"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.post('/otp/check-email',
+        app.post('/api/v1/otp/check-email',
             ...(fetchMiddlewares<RequestHandler>(OtpController)),
             ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.checkOtpEmail)),
 
@@ -995,7 +995,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsOtpController_checkOtpMobile: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"OtpCheckMobileBody"},
         };
-        app.post('/otp/check-mobile',
+        app.post('/api/v1/otp/check-mobile',
             ...(fetchMiddlewares<RequestHandler>(OtpController)),
             ...(fetchMiddlewares<RequestHandler>(OtpController.prototype.checkOtpMobile)),
 
@@ -1025,7 +1025,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsNewsletterController_createSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"Pick_NewsletterSubscriber.email-or-active_"},
         };
-        app.post('/newsletter',
+        app.post('/api/v1/newsletter',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.createSubscriber)),
 
@@ -1059,7 +1059,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                 filters: {"in":"query","name":"filters","dataType":"string"},
         };
-        app.get('/newsletter',
+        app.get('/api/v1/newsletter',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscribers)),
 
@@ -1089,7 +1089,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsNewsletterController_getSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.get('/newsletter/:id',
+        app.get('/api/v1/newsletter/:id',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscriber)),
 
@@ -1119,7 +1119,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsNewsletterController_getSubscriberByEmail: Record<string, TsoaRoute.ParameterSchema> = {
                 email: {"in":"path","name":"email","required":true,"dataType":"string"},
         };
-        app.get('/newsletter/email/:email',
+        app.get('/api/v1/newsletter/email/:email',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.getSubscriberByEmail)),
 
@@ -1150,7 +1150,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},
         };
-        app.put('/newsletter/:id',
+        app.put('/api/v1/newsletter/:id',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.updateSubscriber)),
 
@@ -1180,7 +1180,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsNewsletterController_deleteSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/newsletter/:id',
+        app.delete('/api/v1/newsletter/:id',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.deleteSubscriber)),
 
@@ -1210,7 +1210,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsFileController_uploadFile: Record<string, TsoaRoute.ParameterSchema> = {
                 file: {"in":"formData","name":"file","required":true,"dataType":"file"},
         };
-        app.post('/files',
+        app.post('/api/v1/files',
             upload.fields([
                 {
                     name: "file",
@@ -1250,7 +1250,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                 filters: {"in":"query","name":"filters","dataType":"string"},
         };
-        app.get('/files',
+        app.get('/api/v1/files',
             ...(fetchMiddlewares<RequestHandler>(FileController)),
             ...(fetchMiddlewares<RequestHandler>(FileController.prototype.getFiles)),
 
@@ -1280,7 +1280,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsFileController_deleteFile: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
-        app.delete('/files/:id',
+        app.delete('/api/v1/files/:id',
             ...(fetchMiddlewares<RequestHandler>(FileController)),
             ...(fetchMiddlewares<RequestHandler>(FileController.prototype.deleteFile)),
 
@@ -1309,7 +1309,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsClientController_getLargeJson: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/client',
+        app.get('/api/v1/client',
             ...(fetchMiddlewares<RequestHandler>(ClientController)),
             ...(fetchMiddlewares<RequestHandler>(ClientController.prototype.getLargeJson)),
 
@@ -1340,7 +1340,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 updatedJson: {"in":"body","name":"updatedJson","required":true,"dataType":"any"},
         };
-        app.put('/client/:id',
+        app.put('/api/v1/client/:id',
             ...(fetchMiddlewares<RequestHandler>(ClientController)),
             ...(fetchMiddlewares<RequestHandler>(ClientController.prototype.updateJsonById)),
 
@@ -1369,7 +1369,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_getGoogleAuthUrl: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/auth/google/url',
+        app.get('/api/v1/auth/google/url',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.getGoogleAuthUrl)),
 
@@ -1399,7 +1399,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_googleCallback: Record<string, TsoaRoute.ParameterSchema> = {
                 code: {"in":"query","name":"code","required":true,"dataType":"string"},
         };
-        app.get('/auth/google/callback',
+        app.get('/api/v1/auth/google/callback',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.googleCallback)),
 
@@ -1428,7 +1428,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_getFacebookAuthUrl: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/auth/facebook/url',
+        app.get('/api/v1/auth/facebook/url',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.getFacebookAuthUrl)),
 
@@ -1458,7 +1458,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_facebookCallback: Record<string, TsoaRoute.ParameterSchema> = {
                 code: {"in":"query","name":"code","required":true,"dataType":"string"},
         };
-        app.get('/auth/facebook/callback',
+        app.get('/api/v1/auth/facebook/callback',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.facebookCallback)),
 
@@ -1488,7 +1488,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_getProfile: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/auth/profile',
+        app.get('/api/v1/auth/profile',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.getProfile)),
 
@@ -1518,7 +1518,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_verifyToken: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/auth/verify-token',
+        app.get('/api/v1/auth/verify-token',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyToken)),
 
@@ -1548,7 +1548,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_loginUser: Record<string, TsoaRoute.ParameterSchema> = {
                 userData: {"in":"body","name":"userData","required":true,"ref":"LoginModel"},
         };
-        app.post('/auth/login',
+        app.post('/api/v1/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.loginUser)),
 
@@ -1577,7 +1577,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_logoutUser: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.post('/auth/logout',
+        app.post('/api/v1/auth/logout',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.logoutUser)),
 
@@ -1607,7 +1607,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_resetPassword: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true}}},
         };
-        app.post('/auth/forgot-password',
+        app.post('/api/v1/auth/forgot-password',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.resetPassword)),
 
@@ -1637,7 +1637,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_verifyResetToken: Record<string, TsoaRoute.ParameterSchema> = {
                 token: {"in":"query","name":"token","required":true,"dataType":"string"},
         };
-        app.get('/auth/verify-reset-token',
+        app.get('/api/v1/auth/verify-reset-token',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyResetToken)),
 
@@ -1667,7 +1667,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsAuthController_setNewPassword: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"newPassword":{"dataType":"string","required":true},"token":{"dataType":"string","required":true}}},
         };
-        app.post('/auth/reset-password',
+        app.post('/api/v1/auth/reset-password',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.setNewPassword)),
 

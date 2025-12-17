@@ -11,7 +11,7 @@ import fs from "fs";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
-@Route("users")
+@Route("api/v1/users")
 @Tags("Users")
 export class UserController extends Controller {
   @Get("/")

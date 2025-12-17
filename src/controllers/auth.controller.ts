@@ -29,7 +29,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET!;
 const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
-@Route("auth")
+@Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
 

@@ -22,7 +22,7 @@ import {
 
 import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 
-@Route("newsletter")
+@Route("api/v1/newsletter")
 @Tags("newsletter")
 export class NewsletterController extends Controller {
   // Create subscriber

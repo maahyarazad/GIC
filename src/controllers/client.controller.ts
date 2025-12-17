@@ -5,7 +5,7 @@ import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
 import {adminAuthMiddleware} from '../middleware/adminauth.middleware';
 
 
-@Route("client")
+@Route("api/v1/client")
 @Tags("client")
 export class ClientController extends Controller {
   @Get("/")

@@ -93,6 +93,7 @@ async function startSSR() {
   if (!isProduction) {
     const __dirname = path.resolve();
     app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
+    app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));
 
     
     const vite = await createViteServer({
@@ -178,7 +179,7 @@ async function startSSR() {
   } else {
     /*  PRODUCTION — serve built client and SSR entry */
     app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
-    
+    app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));
     const serverPath = path.resolve(
       __dirname,
       "../public/dist/server/entry-server.js"

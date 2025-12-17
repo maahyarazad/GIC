@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
@@ -6,7 +6,7 @@ import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
 import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile } from "../../../api/user";
 import { useToast } from "@/providers/ToastContext";
-
+import { EnvContext } from '@/EnvContext';
 // Helper to convert socialLinks array to object keyed by type
 function socialLinksArrayToObject(
   arr: { platform: string; url: string }[] = []
@@ -35,6 +35,7 @@ interface UserProfileData {
     email: string;
     photo?: string;
     phone?: string;
+    authorize: boolean;
     photoFile?: File | null;
     title?: string;
     description?: string;
@@ -53,6 +54,7 @@ interface UserProfileFormProps {
 }
 
 export default function UserProfileForm({ initialProfile }: any) {
+    const env = useContext(EnvContext);
     const {show} = useToast();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -72,23 +74,25 @@ export default function UserProfileForm({ initialProfile }: any) {
      const fetchUserProfile = useCallback(async ()=>{
         try{
             const res = await getUserProfile(initialProfile.id);
+
+
            if(res.success){
-
-            debugger;
-
-
-            
+            const user = res.data.user;
             setProfile({
-                id: res.data._id,
-                name: res.data.name,
-                email: res.data.email,
-                phone: res.data.phone,
-                title: res.data.profile?.title || "",
-                description: res.data.profile?.description || "",
-                socialLinks: socialLinksArrayToObject(res.data.profile?.socialLinks),
+                id: user._id,
+                photo: user.profile?.photo,
+                authorize: user.authorize,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                title: user.profile?.title || "",
+                description: user.profile?.description || "",
+                socialLinks: socialLinksArrayToObject(user.profile?.socialLinks),
             });
 
-            debugger;
+            if (user.profile?.photo) {
+                setPhotoPreview(`${env.VITE_SERVER_API_URL}${user.profile.photo}`);
+            }
 
            }
 
@@ -188,10 +192,13 @@ export default function UserProfileForm({ initialProfile }: any) {
 
             const response = await updateUserProfile(profile.id, payload);
             if (photoFile) {
+                const _response = await uploadUserPhoto(profile.id, photoFile);
+                if (!_response.success) {
+                    show({ type: "error", message: _response.message });
+                    return; // optionally stop if upload failed
+                }
+                }
 
-                
-                const _response = await uploadUserPhoto(profile.id, profile.photoFile!);
-            }
 
             if (response.success) {
                 

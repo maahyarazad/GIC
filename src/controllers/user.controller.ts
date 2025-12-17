@@ -9,6 +9,9 @@ import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares, UploadedFile, FormField } from "tsoa";
 import { sendDynamicEmail } from "../services/emailService";
 import { authMiddleware } from "../middleware/auth.middleware";
+import path from "path";
+import fs from "fs/promises";
+import { cwd } from "process";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
@@ -344,15 +347,17 @@ export class UserController extends Controller {
       const usersCollection = getCollection<User>("users");
 
      
-      const result = await usersCollection.findOne({_id: new ObjectId(id),           projection: { password: 0 }});
+      const user = await usersCollection.findOne({_id: new ObjectId(id)});
 
-    if (!result) {
+    if (!user) {
         this.setStatus(404);
         return createErrorResponse("User not found");
       }
 
       this.setStatus(200);
-      return createSuccessResponse(result) ;
+ return createSuccessResponse<{ user: Omit<User, "password"> }>(
+        { user: user as Omit<User, "password"> }
+      );
 
 
     } catch (error) {
@@ -363,12 +368,53 @@ export class UserController extends Controller {
   }
 
 
-  @Post("/{id}/upload-photo")
-  public async uploadPhoto(
-    @Path() id: string,
-    @UploadedFile("file") file: Express.Multer.File
-  ) {
-    // Validate ID, save the file, update user photo URL in DB, etc.
-    // Return success or error response
+@Post("/{id}/upload-photo")
+public async uploadPhoto(
+  @Path() id: string,
+  @UploadedFile("file") file: Express.Multer.File
+) {
+  try {
+    if (!ObjectId.isValid(id)) {
+      this.setStatus(400);
+      return createErrorResponse("Invalid user ID");
+    }
+
+    if (!file) {
+      this.setStatus(400);
+      return createErrorResponse("No file uploaded");
+    }
+
+    // Define where to save the file
+    const uploadDir = path.resolve(process.cwd(), "./uploads/photos");
+    await fs.mkdir(uploadDir, { recursive: true });
+
+    // Generate unique file name or use original file name
+    const filename = `${id}-${Date.now()}-${file.originalname}`;
+    const filepath = path.join(uploadDir, filename);
+
+    // Save the file from buffer (assuming multer stores it in memory)
+    await fs.writeFile(filepath, file.buffer);
+
+    // Update user's photo URL in DB (adjust URL based on your server config)
+    const usersCollection = getCollection<User>("users");
+    const photoUrl = `/uploads/photos/${filename}`; // Adjust base URL as needed
+
+    const updateResult = await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { "profile.photo": photoUrl, updatedAt: new Date() } }
+    );
+
+    if (updateResult.modifiedCount === 0) {
+      this.setStatus(404);
+      return createErrorResponse("User not found or photo not updated");
+    }
+
+    this.setStatus(200);
+    return createSuccessResponse({ photoUrl }, "Photo uploaded successfully");
+  } catch (error) {
+    console.error(error);
+    this.setStatus(500);
+    return createErrorResponse("Failed to upload photo", undefined, error);
   }
+}
 }

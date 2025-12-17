@@ -53,34 +53,6 @@ export async function getUserProfile(id: string) {
 }
 
 
-
-/**
- * Upload user profile photo
- * @param id - User ID
- * @param file - Photo file to upload
- */
-export async function uploadUserPhoto(id: string, file: File) {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const response = await axiosInstance.post(`/users/${id}/upload-photo`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Upload user photo failed', error);
-    throw error;
-  }
-
-
-  
-}
-
-
 /**
  * Check Newsletter Subscription Status
  * @param email - User ID
@@ -110,7 +82,7 @@ export async function getUserData(id: string) {
   try {
     
 
-    const response = await axiosInstance.get(`/user/${id}`);
+    const response = await axiosInstance.get(`/users/${id}`);
 
     return response.data;
   } catch (error) {
@@ -119,4 +91,27 @@ export async function getUserData(id: string) {
   }
 }
 
+/**
+ * Upload user profile photo
+ * @param id - User ID
+ * @param file - Photo file to upload
+ */
+export async function uploadUserPhoto(userId: string, photoFile: File): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const formData = new FormData();
+    formData.append("file", photoFile);
+
+    const response = await axiosInstance.post(`/users/${userId}/upload-photo`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true, // if using cookies/auth
+    });
+
+    return response.data;
+  } catch (error: any) {
+    console.error("uploadUserPhoto error:", error);
+    return { success: false, message: error?.response?.data?.message || error.message || "Upload failed" };
+  }
+}
 

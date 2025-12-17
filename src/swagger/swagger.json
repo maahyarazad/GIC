@@ -519,6 +519,66 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"SuccessResponse__photoUrl-string__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"photoUrl": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"photoUrl"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
 			"ProductContent": {
 				"properties": {
 					"description": {
@@ -1901,8 +1961,22 @@
 			"post": {
 				"operationId": "UploadPhoto",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/ErrorResponse"
+										},
+										{
+											"$ref": "#/components/schemas/SuccessResponse__photoUrl-string__"
+										}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [

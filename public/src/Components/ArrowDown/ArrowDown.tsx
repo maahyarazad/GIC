@@ -12,8 +12,6 @@ export default function ArrowDown() {
     const handleScroll = () => { setScrolled(window.pageYOffset > 100); };
 
 
-    console.log(window.pageYOffset > 100);
-    console.log(window.pageYOffset);
     useEffect(() => {
         
         window.addEventListener('scroll', handleScroll);

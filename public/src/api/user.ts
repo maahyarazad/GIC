@@ -16,8 +16,16 @@ export async function updateUser(id: string, updateData: UpdateUserRequest) {
     throw error;
   }
 }
+
+/**
+ * Update user by ID
+ * @param id - User ID
+ * @param updateData - Fields to update
+ */
+
 export async function updateUserProfile(id: string, updateData: UpdateUserRequest) {
   try {
+    
     const response = await axiosInstance.put(`/users/user-profile/${id}`, updateData);
     return response.data;
   } catch (error) {
@@ -25,6 +33,26 @@ export async function updateUserProfile(id: string, updateData: UpdateUserReques
     throw error;
   }
 }
+
+
+/**
+ * Get user by ID
+ * @param id - User ID
+ 
+ */
+
+export async function getUserProfile(id: string) {
+  try {
+    
+    const response = await axiosInstance.get(`/users/user-profile/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Update user failed', error);
+    throw error;
+  }
+}
+
+
 
 /**
  * Upload user profile photo

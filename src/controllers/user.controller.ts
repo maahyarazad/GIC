@@ -115,38 +115,38 @@ export class UserController extends Controller {
     }
   }
 
-  @Get("/{id}")
-  public async getUserById(
-    @Path() id: string
-  ): Promise<Omit<User, "password">> {
-    try {
-      // Validate ObjectId
-      if (!ObjectId.isValid(id)) {
-        this.setStatus(400);
-        throw new Error("Invalid user ID");
-      }
+//   @Get("/{id}")
+//   public async getUserById(
+//     @Path() id: string
+//   ): Promise<Omit<User, "password">> {
+//     try {
+//       // Validate ObjectId
+//       if (!ObjectId.isValid(id)) {
+//         this.setStatus(400);
+//         throw new Error("Invalid user ID");
+//       }
 
-      const usersCollection = getCollection<User>("users");
+//       const usersCollection = getCollection<User>("users");
 
-      // Find user without password
-      const user = await usersCollection.findOne(
-        { _id: new ObjectId(id) },
-        { projection: { password: 0 } }
-      );
+//       // Find user without password
+//       const user = await usersCollection.findOne(
+//         { _id: new ObjectId(id) },
+//         { projection: { password: 0 } }
+//       );
 
-      if (!user) {
-        this.setStatus(404);
-        throw new Error("User not found");
-      }
+//       if (!user) {
+//         this.setStatus(404);
+//         throw new Error("User not found");
+//       }
 
-      this.setStatus(200);
-      return user as Omit<User, "password">;
-    } catch (error: any) {
-      console.error(error);
-      this.setStatus(this.getStatus() ?? 500); // keep previous or set 500
-      throw new Error(error.message || "Failed to fetch user");
-    }
-  }
+//       this.setStatus(200);
+//       return user as Omit<User, "password">;
+//     } catch (error: any) {
+//       console.error(error);
+//       this.setStatus(this.getStatus() ?? 500); // keep previous or set 500
+//       throw new Error(error.message || "Failed to fetch user");
+//     }
+//   }
 
   @SuccessResponse("201", "Created")
   @Post("/")
@@ -320,7 +320,7 @@ export class UserController extends Controller {
       this.setStatus(200);
       return createSuccessResponse<{ user: Omit<User, "password"> }>(
         { user: result as Omit<User, "password"> },
-        "User updated successfully"
+        "User Profile updated successfully"
       );
     } catch (error) {
       console.error(error);
@@ -328,6 +328,40 @@ export class UserController extends Controller {
       return createErrorResponse("Failed to update user", undefined, error);
     }
   }
+
+
+  @Get("user-profile/{id}")
+  @Middlewares(authMiddleware)
+  public async getUserProfile(
+    @Path() id: string,
+  ): Promise<any> {
+    try {
+      if (!ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid user ID");
+      }
+
+      const usersCollection = getCollection<User>("users");
+
+     
+      const result = await usersCollection.findOne({_id: new ObjectId(id),           projection: { password: 0 }});
+
+    if (!result) {
+        this.setStatus(404);
+        return createErrorResponse("User not found");
+      }
+
+      this.setStatus(200);
+      return createSuccessResponse(result) ;
+
+
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to update user", undefined, error);
+    }
+  }
+
 
   @Post("/{id}/upload-photo")
   public async uploadPhoto(

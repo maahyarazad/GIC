@@ -4,7 +4,21 @@ import { FaXTwitter } from "react-icons/fa6";
 
 import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
-import { updateUserProfile, uploadUserPhoto, checkNewsLetter } from "../../../api/user";
+import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile } from "../../../api/user";
+import { useToast } from "@/providers/ToastContext";
+
+// Helper to convert socialLinks array to object keyed by type
+function socialLinksArrayToObject(
+  arr: { platform: string; url: string }[] = []
+): Record<string, string> {
+  return arr.reduce((acc, link) => {
+    if (link.platform && link.url) {
+      acc[link.platform] = link.url;
+    }
+    return acc;
+  }, {} as Record<string, string>);
+}
+
 
 const ICON_MAP = {
     facebook: FaFacebook,
@@ -16,7 +30,11 @@ const ICON_MAP = {
 
 // Types
 interface UserProfileData {
+    id: string;
+    name: string;
+    email: string;
     photo?: string;
+    phone?: string;
     photoFile?: File | null;
     title?: string;
     description?: string;
@@ -35,11 +53,11 @@ interface UserProfileFormProps {
 }
 
 export default function UserProfileForm({ initialProfile }: any) {
+    const {show} = useToast();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [newsletterSubscription, SetNewsletterSubscription] = useState<object | null>(null);
-    
-    const [profile, setProfile] = useState<UserProfileData>({
+     const [profile, setProfile] = useState<UserProfileData>({
         ...initialProfile,
 
         socialLinks: {
@@ -50,6 +68,45 @@ export default function UserProfileForm({ initialProfile }: any) {
             x: initialProfile.socialLinks?.x || "",
         },
     });
+
+     const fetchUserProfile = useCallback(async ()=>{
+        try{
+            const res = await getUserProfile(initialProfile.id);
+           if(res.success){
+
+            debugger;
+
+
+            
+            setProfile({
+                id: res.data._id,
+                name: res.data.name,
+                email: res.data.email,
+                phone: res.data.phone,
+                title: res.data.profile?.title || "",
+                description: res.data.profile?.description || "",
+                socialLinks: socialLinksArrayToObject(res.data.profile?.socialLinks),
+            });
+
+            debugger;
+
+           }
+
+        }catch(err){
+            console.error(err)
+        }
+        
+
+    }, [])
+
+    useEffect(()=>{
+        fetchUserProfile();
+    }, [fetchUserProfile])
+
+
+       
+
+
 
     const updateField = (field: keyof UserProfileData, value: any) => {
         setProfile({ ...profile, [field]: value });
@@ -95,6 +152,8 @@ export default function UserProfileForm({ initialProfile }: any) {
         fetchNewsletterStatus();
     }, [fetchNewsletterStatus])
 
+   
+
 
 
     const handleSubscriptionChange = () =>{
@@ -115,9 +174,9 @@ export default function UserProfileForm({ initialProfile }: any) {
 
             // Build final payload strictly matching UpdateUserRequest
             const payload: UpdateUserRequest = {
-                name: initialProfile.name,
-                email: initialProfile.email,
-                authorize: initialProfile.authorize,
+                name: profile.name,
+                email: profile.email,
+                authorize: profile.authorize,
 
                 profile: {
                     photo: profile.photo,
@@ -127,20 +186,21 @@ export default function UserProfileForm({ initialProfile }: any) {
                 },
             };
 
-            const response = await updateUserProfile(initialProfile.id, payload);
+            const response = await updateUserProfile(profile.id, payload);
             if (photoFile) {
 
                 
-                const _response = await uploadUserPhoto(initialProfile.id, profile.photoFile!);
+                const _response = await uploadUserPhoto(profile.id, profile.photoFile!);
             }
 
-            // if (response.success) {
-            //   show({ type: "success", message: response.message });
+            if (response.success) {
+                
+              show({type:"success", message: response.message});
 
-            // }
+            }
         } catch (err: any) {
             
-            // show({ type: "error", message: err.message });
+            show({ type: "error", message: err.message });
         }
     };
 

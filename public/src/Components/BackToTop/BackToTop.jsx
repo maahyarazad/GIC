@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './BackToTop.css';
+import './BackToTop.css'
 
 const BackToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -74,7 +74,7 @@ const BackToTop = () => {
                     ref={circleRef}
                 />
             </svg>
-            <span className="arrow contrast-color">↑</span>
+            <span className="backto-top-arrow contrast-color">↑</span>
         </button>
     );
 };

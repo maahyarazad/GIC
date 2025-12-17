@@ -16,6 +16,15 @@ export async function updateUser(id: string, updateData: UpdateUserRequest) {
     throw error;
   }
 }
+export async function updateUserProfile(id: string, updateData: UpdateUserRequest) {
+  try {
+    const response = await axiosInstance.put(`/users/user-profile/${id}`, updateData);
+    return response.data;
+  } catch (error) {
+    console.error('Update user failed', error);
+    throw error;
+  }
+}
 
 /**
  * Upload user profile photo

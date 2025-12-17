@@ -7,7 +7,8 @@ import { getCollection } from "../db";
 import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares, UploadedFile, FormField } from "tsoa";
-import fs from "fs";
+import { sendDynamicEmail } from "../services/emailService";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
@@ -214,7 +215,6 @@ export class UserController extends Controller {
     }
   }
 
-
   @Put("/{id}")
   @Middlewares(adminAuthMiddleware)
   public async updateUser(
@@ -222,8 +222,6 @@ export class UserController extends Controller {
     @Body() updateData: UpdateUserRequest
   ): Promise<any> {
     try {
-      
-
       if (!ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid user ID");
@@ -236,9 +234,6 @@ export class UserController extends Controller {
         updateData.password = await bcrypt.hash(updateData.password, 10);
       }
 
-    
-
-    
       updateData.updatedAt = new Date();
 
       const result = await usersCollection.findOneAndUpdate(
@@ -254,6 +249,73 @@ export class UserController extends Controller {
         this.setStatus(404);
         return createErrorResponse("User not found");
       }
+
+      if (updateData.authorize) {
+        let login_link: string;
+        if (process.env.NODE_MODE === "PRODUCTION") {
+          login_link = `${process.env.CLIENT_ORIGIN_PROD}/login`;
+        } else {
+          login_link = `${process.env.CLIENT_ORIGIN_DEV}/login`;
+        }
+
+        const params: Record<string, any> = {
+          USER_NAME: updateData.email,
+          LOGIN_LINK: login_link,
+          email: updateData.email,
+        };
+
+        await sendDynamicEmail("account_activated", params);
+      }
+
+      this.setStatus(200);
+      return createSuccessResponse<{ user: Omit<User, "password"> }>(
+        { user: result as Omit<User, "password"> },
+        "User updated successfully"
+      );
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to update user", undefined, error);
+    }
+  }
+
+
+  @Put("user-profile/{id}")
+  @Middlewares(authMiddleware)
+  public async updateUserProfile(
+    @Path() id: string,
+    @Body() updateData: UpdateUserRequest
+  ): Promise<any> {
+    try {
+      if (!ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid user ID");
+      }
+
+      const usersCollection = getCollection<User>("users");
+
+      // Hash new password if provided
+      if (updateData.password) {
+        updateData.password = await bcrypt.hash(updateData.password, 10);
+      }
+
+      updateData.updatedAt = new Date();
+
+      const result = await usersCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: updateData },
+        {
+          returnDocument: "after",
+          projection: { password: 0 },
+        }
+      );
+
+      if (!result) {
+        this.setStatus(404);
+        return createErrorResponse("User not found");
+      }
+
+     
 
       this.setStatus(200);
       return createSuccessResponse<{ user: Omit<User, "password"> }>(

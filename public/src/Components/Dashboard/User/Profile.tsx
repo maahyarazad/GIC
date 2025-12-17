@@ -5,195 +5,210 @@ import { User } from '../../../../../../src/types/user.types'
 import { updateUser, UpdateUserRequest } from '../../../api/user'
 import { useToast } from "../../../providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
-
+import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 
 export const UserProfilesDataGrid = () => {
-  const { show } = useToast();
-  const columns: Column<User>[] = [
-    {
-      field: "_id",
-      headerName: "ID",
-      width: 180,
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      sortable: true,
-      filterable: true,
-      width: 150,
-    },
-{
-  field: "authorize",
-  headerName: "Authorize",
-  width: 120,
-  sortable: true,
-  filterable: false,
-  renderCell: (params) => (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      {params.authorize ? (
-        <FaCheck style={{ color: "green", fontSize: "18px" }} />
-      ) : (
-        <FaTimes style={{ color: "red", fontSize: "18px" }} />
-      )}
-    </div>
-  ),
-}
-,
-    {
-      field: "email",
-      headerName: "Email",
-      sortable: true,
-      filterable: true,
-      width: 250,
-    },
-    {
-      field: "role",
-      headerName: "Role",
-      sortable: true,
-      filterable: true,
-      width: 100,
-    },
-    {
-      field: "avatar",
-      headerName: "Avatar",
-      renderCell: (row) =>
-        row.avatar ? (
-          <img
-            src={row.avatar}
-            alt={row.name}
-            style={{ width: 40, height: 40, borderRadius: "50%" }}
-          />
-        ) : (
-          "—"
-        ),
-      width: 60,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      sortable: true,
-      width: 180,
-      renderCell: (row) =>
-        row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
-    },
-    {
-      headerName: "Actions",
-      width: 150,
-      renderCell: (row) => (
-        
-        <div className={`${row.email !== 'admin' ? " ": "d-none"}`}>
-          <div className="btn-group" role="group" aria-label="Basic example">
-            <button className={`btn btn-sm dashboard-btn`}
-              disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
-            <button className={`btn btn-sm dashboard-btn`}
-              disabled={!row.authorize} onClick={() => toggleAuthorization(row)}>Unauthorize</button>
-          </div>
+    const { show } = useToast();
+    const { confirm } = useConfirm();
+    const columns: Column<User>[] = [
+        {
+            field: "_id",
+            headerName: "ID",
+            width: 180,
+        },
+        {
+            field: "name",
+            headerName: "Name",
+            sortable: true,
+            filterable: true,
+            width: 150,
+        },
+        {
+            field: "authorize",
+            headerName: "Authorize",
+            width: 120,
+            sortable: true,
+            filterable: false,
+            renderCell: (params) => (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {params.authorize ? (
+                        <FaCheck style={{ color: "green", fontSize: "18px" }} />
+                    ) : (
+                        <FaTimes style={{ color: "red", fontSize: "18px" }} />
+                    )}
+                </div>
+            ),
+        }
+        ,
+        {
+            field: "email",
+            headerName: "Email",
+            sortable: true,
+            filterable: true,
+            width: 250,
+        },
+        {
+            field: "role",
+            headerName: "Role",
+            sortable: true,
+            filterable: true,
+            width: 100,
+        },
+        {
+            field: "avatar",
+            headerName: "Avatar",
+            renderCell: (row) =>
+                row.avatar ? (
+                    <img
+                        src={row.avatar}
+                        alt={row.name}
+                        style={{ width: 40, height: 40, borderRadius: "50%" }}
+                    />
+                ) : (
+                    "—"
+                ),
+            width: 60,
+        },
+        {
+            field: "createdAt",
+            headerName: "Created At",
+            sortable: true,
+            width: 180,
+            renderCell: (row) =>
+                row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
+        },
+        {
+            headerName: "Actions",
+            width: 150,
+            renderCell: (row) => (
 
-          {/* <button className="ms-2 btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button> */}
+                <div className={`${row.email !== 'admin' ? " " : "d-none"}`}>
+                    <div className="btn-group" role="group" aria-label="Basic example">
+                        <button className={`btn btn-sm dashboard-btn`}
+                            disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
+                        <button className={`btn btn-sm dashboard-btn`}
+                            disabled={!row.authorize} onClick={() => toggleAuthorization(row)}>Unauthorize</button>
+                    </div>
 
-        </div>
-      ),
-      sortable: false,
-      filterable: false,
-    }
+                    {/* <button className="ms-2 btn btn-sm dashboard-btn" onClick={() => onDelete(row)}>Send Reset Password Link</button> */}
 
-  ];
+                </div>
+            ),
+            sortable: false,
+            filterable: false,
+        }
 
-  const [rows, setRows] = useState<User[]>([]);
-  const [rowCount, setRowCount] = useState(0);
-  const [paginationModel, setPaginationModel] = useState<PaginationModel>({
-    page: 1,
-    pageSize: 10,
-  });
-  const [sortModel, setSortModel] = useState<SortModel<User> | null>(null);
-  const [filterModel, setFilterModel] = useState<FilterModel<User>[] | null>(
-    null
-  );
-  const [loading, setLoading] = useState(false);
+    ];
 
-  const fetchUserProfiles = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
+    const [rows, setRows] = useState<User[]>([]);
+    const [rowCount, setRowCount] = useState(0);
+    const [paginationModel, setPaginationModel] = useState<PaginationModel>({
+        page: 1,
+        pageSize: 10,
+    });
+    const [sortModel, setSortModel] = useState<SortModel<User> | null>(null);
+    const [filterModel, setFilterModel] = useState<FilterModel<User>[] | null>(
+        null
+    );
+    const [loading, setLoading] = useState(false);
 
-      // Map pagination: limit & skip
-      params.append("limit", paginationModel.pageSize.toString());
-      params.append("skip", ((paginationModel.page - 1) * paginationModel.pageSize).toString());
+    const fetchUserProfiles = useCallback(async () => {
+        setLoading(true);
+        try {
+            const params = new URLSearchParams();
 
-      // Map sort
-      if (sortModel) {
-        params.append("sortBy", String(sortModel.field));
-        params.append("sortOrder", sortModel.sort);
-      }
+            // Map pagination: limit & skip
+            params.append("limit", paginationModel.pageSize.toString());
+            params.append("skip", ((paginationModel.page - 1) * paginationModel.pageSize).toString());
 
-      // Add filter
-      if (filterModel && filterModel.length > 0) {
-        params.append("filters", JSON.stringify(filterModel));
-      }
+            // Map sort
+            if (sortModel) {
+                params.append("sortBy", String(sortModel.field));
+                params.append("sortOrder", sortModel.sort);
+            }
 
-      const response = await axiosInstance.get("/users", { params });
+            // Add filter
+            if (filterModel && filterModel.length > 0) {
+                params.append("filters", JSON.stringify(filterModel));
+            }
 
-      setRows(response.data.data.users);
-      setRowCount(response.data.data.total);
-    } catch (err) {
-      console.error("Failed to fetch user profiles", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [paginationModel, sortModel, filterModel]);
+            const response = await axiosInstance.get("/users", { params });
 
-  useEffect(() => {
-    fetchUserProfiles();
-  }, [fetchUserProfiles]);
+            setRows(response.data.data.users);
+            setRowCount(response.data.data.total);
+        } catch (err) {
+            console.error("Failed to fetch user profiles", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [paginationModel, sortModel, filterModel]);
 
-
-  const toggleAuthorization = async (row) => {
-
-
-    try {
-      
-      const payload: UpdateUserRequest = {
-        name: row.email,
-        email: row.email,
-        authorize: !row.authorize,
-      };
-
-
-      const response = await updateUser(row._id, payload);
-
-      if (response.success) {
-        show({type: "success",          message: response.message});
+    useEffect(() => {
         fetchUserProfiles();
-      }
-    } catch (err: any) {
-      show({
-        type: "error",
-        message: err.message,
+    }, [fetchUserProfiles]);
 
-      });
-    } finally {
 
+    const _toggle = async (row) => {
+             try {
+    
+                const payload: UpdateUserRequest = {
+                    name: row.email,
+                    email: row.email,
+                    authorize: !row.authorize,
+                };
+    
+    
+                const response = await updateUser(row._id, payload);
+    
+                if (response.success) {
+                    show({ type: "success", message: response.message });
+                    fetchUserProfiles();
+                }
+            } catch (err: any) {
+                show({
+                    type: "error",
+                    message: err.message,
+    
+                });
+            } finally {
+    
+            }
     }
-  };
+    const toggleAuthorization = async (row) => {
+
+        if(!row.authorize) {
+            const isConfirmed = await confirm({
+                title: "Activate User",
+                message: `Are you sure you want to activate the user "${row.name}"? This will send an activation email to the user.`,
+                confirmText: "Activate",
+                cancelText: "Cancel",
+            });
+    
+            if (!isConfirmed) return;
+            await _toggle(row);
+        }else{
+            await _toggle(row);
+        }
+    };
 
 
-  return (
-    <>
-      <h3 className="mb-3">User Profiles</h3>
-      <GenericDataGrid<User>
-        rows={rows}
-        columns={columns}
-        rowCount={rowCount}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        sortModel={sortModel}
-        onSortModelChange={setSortModel}
-        filterModel={filterModel}
-        onFilterModelChange={setFilterModel}
-        prevButtonClassName="dashboard-btn--ghost-minimal"
-        nextButtonClassName="dashboard-btn--ghost-minimal"
-        getRowId={(row) => row._id!.toString()}
-      />
-    </>
-  );
+    return (
+        <>
+            <h3 className="mb-3">User Profiles</h3>
+            <GenericDataGrid<User>
+                rows={rows}
+                columns={columns}
+                rowCount={rowCount}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                sortModel={sortModel}
+                onSortModelChange={setSortModel}
+                filterModel={filterModel}
+                onFilterModelChange={setFilterModel}
+                prevButtonClassName="dashboard-btn--ghost-minimal"
+                nextButtonClassName="dashboard-btn--ghost-minimal"
+                getRowId={(row) => row._id!.toString()}
+            />
+        </>
+    );
 };

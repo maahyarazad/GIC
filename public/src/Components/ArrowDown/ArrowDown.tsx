@@ -5,30 +5,26 @@ import './ArrowDown.css'
 
 export default function ArrowDown() {
 
-    const [isVisible, setIsVisible] = useState(true);
-    const toggleVisibility = () => {
-        setIsVisible(window.scrollY < 200);
-    };
-   
+    const [scrolled, setScrolled] = useState(false);
 
-        const handleScroll = () => {
-            toggleVisibility();
-    
 
-        };
-    
+
+    const handleScroll = () => { setScrolled(window.pageYOffset > 100); };
+
+
+    console.log(window.pageYOffset > 100);
+    console.log(window.pageYOffset);
+    useEffect(() => {
         
-    
-        useEffect(() => {
-            window.addEventListener('scroll', handleScroll);
-            return () => window.removeEventListener('scroll', handleScroll);
-        }, []);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
     return (
-        <div className={`${isVisible ? "" : "hidden"}`}>
+        <div className={`arrow-container`}>
 
-            <div 
+            <div
 
-            className="arrow">
+                className={`${scrolled ? "invisible" : ""} arrow`}>
                 <span></span>
                 <span></span>
                 <span></span>

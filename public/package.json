@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.6",
     "file-type": "^21.0.0",
     "formik": "^2.4.6",
+    "js-cookie": "^3.0.5",
     "json-edit-react": "^1.29.0",
     "libphonenumber-js": "^1.12.29",
     "lucide-react": "^0.510.0",

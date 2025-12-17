@@ -1,34 +1,46 @@
-.arrow 
-{
-    position: absolute;
-    left: 50vw;
-    top: 75vh;
-    width: 30px;
-    span {
+.arrow-container{
+    
+
+    
+    
+    .arrow 
+    {
+        opacity: 1; 
+        transition: opacity 0.5s ease; 
+        position: absolute;
+        left: 50%;
+        top: 85%;
+        width: 30px;
+        &.invisible{
+            opacity: 0;
+            pointer-events: none; 
+        }
+        span {
+            
+          display: block;
+          width: 30px;
+          height: 30px;
         
-      display: block;
-      width: 30px;
-      height: 30px;
-    
-      transform: rotate(45deg);
-    
-      border-right: 5px solid #f5f5f5; /* gray-900 */
-      border-bottom: 5px solid #f4f4f4;
-    
-      margin-top: -10px;
+          transform: rotate(45deg);
         
-      animation: scroll 2s infinite;
+          border-right: 5px solid #f5f5f5; /* gray-900 */
+          border-bottom: 5px solid #f4f4f4;
+        
+          margin-top: -10px;
+            
+          animation: scroll 2s infinite;
+        }
+    
     }
-
-}
-
-/* delays */
-.arrow span:nth-child(2) {
-  animation-delay: -0.2s;
-}
-
-.arrow span:nth-child(3) {
-  animation-delay: -0.4s;
+    
+    /* delays */
+    .arrow span:nth-child(2) {
+      animation-delay: -0.2s;
+    }
+    
+    .arrow span:nth-child(3) {
+      animation-delay: -0.4s;
+    }
 }
 
 

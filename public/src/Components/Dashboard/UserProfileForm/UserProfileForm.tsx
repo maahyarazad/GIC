@@ -4,7 +4,7 @@ import { FaXTwitter } from "react-icons/fa6";
 
 import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
-import { updateUser, uploadUserPhoto, checkNewsLetter } from "../../../api/user";
+import { updateUserProfile, uploadUserPhoto, checkNewsLetter } from "../../../api/user";
 
 const ICON_MAP = {
     facebook: FaFacebook,
@@ -127,7 +127,7 @@ export default function UserProfileForm({ initialProfile }: any) {
                 },
             };
 
-            const response = await updateUser(initialProfile.id, payload);
+            const response = await updateUserProfile(initialProfile.id, payload);
             if (photoFile) {
 
                 

@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback , useContext} from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
 import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
-import { useConfirm } from '@/Providers/ConfirmDialogProvider'
+import { useConfirm } from '@/Providers/ConfirmDialogProvider';
+import { EnvContext } from '@/EnvContext';
+
+
 export interface EmailTemplate {
     _id?: string;
     name: string;
@@ -19,6 +22,7 @@ export interface EmailTemplate {
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
+    const env = useContext(EnvContext);
     const columns: Column<EmailTemplate>[] = [
         { field: "_id", headerName: "ID", width: 180 },
         { field: "name", headerName: "Name", sortable: true, filterable: true, width: 150 },
@@ -143,13 +147,13 @@ const EmailTemplatesDataGrid = () => {
 
     const onDelete = async (row: EmailTemplate) => {
         const isConfirmed = await confirm({
-    title: "Delete Template",
-    message: `Are you sure you want to delete the email template "${row.name}"? This action cannot be undone.`,
-    confirmText: "Delete",
-    cancelText: "Cancel",
-  });
+            title: "Delete Template",
+            message: `Are you sure you want to delete the email template "${row.name}"? This action cannot be undone.`,
+            confirmText: "Delete",
+            cancelText: "Cancel",
+        });
 
-  if (!isConfirmed) return;
+        if (!isConfirmed) return;
 
         try {
             await axiosInstance.delete(`/email-templates/${row._id}`);
@@ -163,7 +167,7 @@ const EmailTemplatesDataGrid = () => {
 
     const onSendTestEmail = async (row: EmailTemplate) => {
         try {
-            
+
             var res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
 
             if (res.data.success) {
@@ -176,6 +180,9 @@ const EmailTemplatesDataGrid = () => {
     };
 
     const onSendToSubscriber = async (row: EmailTemplate) => {
+        debugger;
+
+
         const isConfirmed = await confirm({
             title: "Send Email",
             message: `Are you sure you want to send this email template "${row.name}" to subscribers?`,
@@ -186,7 +193,10 @@ const EmailTemplatesDataGrid = () => {
         if (!isConfirmed) return;
 
         try {
-            const res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
+
+            const res = await axiosInstance.post(`/email-templates/${row._id}`, {
+                "UNSUBSCRIBE_LINK": `${env.VITE_SERVER_API_URL}/unsubscribe/${row._id}`
+            });
 
             if (res.data.success) {
                 show({ type: "success", message: "Email template sent successfully to subscribers." });

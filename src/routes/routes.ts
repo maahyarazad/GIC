@@ -1213,25 +1213,26 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsNewsletterController_deleteSubscriber: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsNewsletterController_unSubscribe: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},
         };
-        app.delete('/api/v1/newsletter/:id',
+        app.put('/api/v1/newsletter/:id',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
-            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.deleteSubscriber)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.unSubscribe)),
 
-            async function NewsletterController_deleteSubscriber(request: ExRequest, response: ExResponse, next: any) {
+            async function NewsletterController_unSubscribe(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_deleteSubscriber, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_unSubscribe, request, response });
 
                 const controller = new NewsletterController();
 
               await templateService.apiHandler({
-                methodName: 'deleteSubscriber',
+                methodName: 'unSubscribe',
                 controller,
                 response,
                 next,

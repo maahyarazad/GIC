@@ -51,13 +51,13 @@ export class NewsletterController extends Controller {
           );
 
         case existing && !existing.active:
-             const _result = await collection.findOneAndUpdate(
-                { _id: new ObjectId(existing._id) },
-                { $set: {active: true, updatedAt: new Date} },
-                { returnDocument: "after" }
-            );
+          const _result = await collection.findOneAndUpdate(
+            { _id: new ObjectId(existing._id) },
+            { $set: { active: true, updatedAt: new Date() } },
+            { returnDocument: "after" }
+          );
 
-            if (!_result) {
+          if (!_result) {
             return createErrorResponse(
               "Failed to create subscriber",
               "CREATE_ERROR"
@@ -200,8 +200,7 @@ export class NewsletterController extends Controller {
     }
   }
 
-
-    // Get one subscriber
+  // Get one subscriber
   @Get("email/{email}")
   public async getSubscriberByEmail(
     @Path() email: string
@@ -229,64 +228,76 @@ export class NewsletterController extends Controller {
     }
   }
 
+  @Put("/{email}")
+  public async upsertSubscriber(
+    @Path() email: string,
+    @Body() body: Partial<NewsletterSubscriber>
+  ): Promise<ApiResponse<NewsletterSubscriber>> {
+    try {
+      const collection = getCollection("newsletter_subscribers");
+      const now = new Date();
 
+      const updateData: Partial<NewsletterSubscriber> = {
+        ...body,
+        updatedAt: now,
+      };
 
+      const result = await collection.findOneAndUpdate(
+        { email },
+        {
+          $set: updateData,
+          $setOnInsert: { createdAt: now, email },
+        },
+        { returnDocument: "after", upsert: true }
+      );
 
-
-@Put("/{email}")
-public async upsertSubscriber(
-  @Path() email: string,
-  @Body() body: Partial<NewsletterSubscriber>
-): Promise<ApiResponse<NewsletterSubscriber>> {
-  try {
-    const collection = getCollection("newsletter_subscribers");
-    const now = new Date();
-
-    const updateData: Partial<NewsletterSubscriber> = {
-      ...body,
-      updatedAt: now,
-    };
-
-    const result = await collection.findOneAndUpdate(
-      { email },
-      {
-        $set: updateData,
-        $setOnInsert: { createdAt: now, email },
-      },
-      { returnDocument: "after", upsert: true }
-    );
-
-    return createSuccessResponse(null, "Subscriber status updated successfully");
-  } catch (err: any) {
-    return createErrorResponse(
-      "Failed to upsert subscriber",
-      "UPSERT_ERROR",
-      err
-    );
+      return createSuccessResponse(
+        null,
+        "Subscriber status updated successfully"
+      );
+    } catch (err: any) {
+      return createErrorResponse(
+        "Failed to upsert subscriber",
+        "UPSERT_ERROR",
+        err
+      );
+    }
   }
-}
 
-
-  // Delete subscriber
-  @Delete("/{id}")
-  public async deleteSubscriber(
-    @Path() id: string
-  ): Promise<ApiResponse<null>> {
+  @Put("/{id}")
+  public async unSubscribe(
+    @Path() id: string,
+    @Body() body: Partial<NewsletterSubscriber>
+  ): Promise<ApiResponse<NewsletterSubscriber>> {
     try {
       const collection = getCollection("newsletter_subscribers");
 
-      const found = await collection.findOne({ _id: new ObjectId(id) });
-      if (!found) {
-        return createErrorResponse("Subscriber not found", "NOT_FOUND");
+      const now = new Date();
+      const updateData: Partial<NewsletterSubscriber> = {
+        active: false,
+        updatedAt: now,
+      };
+
+      const result = await collection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      );
+
+      if (!result.value) {
+        return createErrorResponse(
+          "Subscriber not found",
+          "SUBSCRIBER_NOT_FOUND"
+        );
       }
 
-      await collection.deleteOne({ _id: new ObjectId(id) });
-
-      return createSuccessResponse(null, "Subscriber deleted successfully");
+      return createSuccessResponse(
+        null,
+        "Subscriber unsubscribed successfully"
+      );
     } catch (err: any) {
       return createErrorResponse(
-        "Failed to delete subscriber",
-        "DELETE_ERROR",
+        "Failed to unsubscribe subscriber",
+        "UNSUBSCRIBE_ERROR",
         err
       );
     }

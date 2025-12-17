@@ -2598,15 +2598,15 @@
 					}
 				]
 			},
-			"delete": {
-				"operationId": "DeleteSubscriber",
+			"put": {
+				"operationId": "UnSubscribe",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
+									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
 								}
 							}
 						}
@@ -2625,7 +2625,17 @@
 							"type": "string"
 						}
 					}
-				]
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_NewsletterSubscriber_"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/newsletter/email/{email}": {

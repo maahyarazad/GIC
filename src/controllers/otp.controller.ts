@@ -1,5 +1,5 @@
 import { Controller, Post, Route, Body, SuccessResponse, Request, Tags } from "tsoa";
-import { sendDynamicEmail, EmailOtpRequest, emailOtp } from "../services/emailService";
+import { sendDynamicEmailDoc, EmailOtpRequest, emailOtp } from "../services/emailService";
 import smsglobal from "smsglobal";
 import dotenv from "dotenv";
 import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
@@ -136,7 +136,7 @@ export class OtpController extends Controller {
           message: `To complete your registration for`,
         };
 
-        await sendDynamicEmail("otp_verification", params);
+        await sendDynamicEmailDoc("otp_verification", params);
       }
 
       return createSuccessResponse(

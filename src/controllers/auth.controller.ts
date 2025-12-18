@@ -20,7 +20,7 @@ import {
   createErrorResponse,
   ApiResponse,
 } from "../utils/helpers";
-import { sendDynamicEmail } from "../services/emailService";
+import { sendDynamicEmailDoc } from "../services/emailService";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -420,7 +420,7 @@ export class AuthController extends Controller {
         USER_NAME: existing.email,
       };
 
-      await sendDynamicEmail("reset_password", params);
+      await sendDynamicEmailDoc("reset_password", params);
 
       this.setStatus(200);
     } catch (error: any) {

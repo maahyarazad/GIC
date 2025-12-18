@@ -8,6 +8,7 @@ import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 import { getCollection } from "../db";
 import { generateUnsubscribeToken } from "../utils/helpers";
 
+ 
 
 /** Request body for sending OTP */
 export interface EmailOtpRequest {
@@ -167,14 +168,14 @@ export async function sendMassDynamicEmailDoc(
         const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_MODE === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
 
         // 🔁 VARIABLES PER SUBSCRIBER
-        const variables = {
+        const variables : Record<string, any> = {
         ...getGlobalEmailVariables(data),
         ...data,
         SUBSCRIBER_TOKEN: unsubscribeToken, // token string
         EMAIL: subscriber.email,
         };
 
-        delete variables.UNSUBSCRIBE_LINK!;
+        delete variables.UNSUBSCRIBE_LINK;
         // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
         const _variables = {
         ...variables,

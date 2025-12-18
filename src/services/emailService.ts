@@ -204,19 +204,24 @@ export async function sendMassDynamicEmailDoc(
 
 
 
-export async function sendDynamicEmailDoc(doc: EmailTemplateDoc, data: Record<string, any>) {
+export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>) {
   try {
     
-    
+        const templateCollection = getCollection("email_templates");
+    // Fetch template from DB
+    const template = await templateCollection.findOne({
+      name: doc,
+    });
+
     // Merge global variables + template-specific variables
     const variables = {
       ...getGlobalEmailVariables(data),
       ...data, // data overrides global if needed
     };
 
-    const htmlBody = replacePlaceholders(doc.html, variables);
-    const textBody = replacePlaceholders(doc.text || "", variables);
-    const subject = replacePlaceholders(doc.subject, variables);
+    const htmlBody = replacePlaceholders(template.html, variables);
+    const textBody = replacePlaceholders(template.text || "", variables);
+    const subject = replacePlaceholders(template.subject, variables);
 
    const result =  await sendRawEmailWithAttachments({
       to: data.email,

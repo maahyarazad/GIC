@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; // import your generic grid
 import axiosInstance from "../../../api/axiosInstance";
-import { User } from '../../../../../../src/types/user.types'
-import { updateUser, UpdateUserRequest } from '../../../api/user'
+import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
+import { updateUser} from '../../../api/user'
 import { useToast } from "../../../providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";

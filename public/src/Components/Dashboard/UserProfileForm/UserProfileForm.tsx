@@ -76,8 +76,9 @@ export default function UserProfileForm({ initialProfile }: any) {
 
      const fetchUserProfile = useCallback(async ()=>{
         try{
+            if(!initialProfile) return;
             
-            const res = await getUserProfile(initialProfile.id);
+            const res = await getUserProfile(initialProfile._id || initialProfile.id);
 
 
            if(res.success){

@@ -7,7 +7,7 @@ import { getCollection } from "../db";
 import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares, UploadedFile, FormField } from "tsoa";
-import { sendDynamicEmail } from "../services/emailService";
+import { sendDynamicEmailDoc } from "../services/emailService";
 import { authMiddleware } from "../middleware/auth.middleware";
 import path from "path";
 import fs from "fs/promises";
@@ -267,7 +267,7 @@ export class UserController extends Controller {
           email: updateData.email,
         };
 
-        await sendDynamicEmail("account_activated", params);
+        await sendDynamicEmailDoc("account_activated", params);
       }
 
       this.setStatus(200);

@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; // import your generic grid
 import axiosInstance from "../../../api/axiosInstance";
 import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
-import { updateUser} from '../../../api/user'
+import { updateUser } from '../../../api/user'
 import { useToast } from "../../../providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
-
+import debounce from "@/Hooks/useDebounce";
 export const UserProfilesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
@@ -115,6 +115,7 @@ export const UserProfilesDataGrid = () => {
     const fetchUserProfiles = useCallback(async () => {
         setLoading(true);
         try {
+
             const params = new URLSearchParams();
 
             // Map pagination: limit & skip
@@ -143,50 +144,59 @@ export const UserProfilesDataGrid = () => {
         }
     }, [paginationModel, sortModel, filterModel]);
 
+
+
+    const debouncedFetch = useMemo(() => debounce(fetchUserProfiles, 400),[fetchUserProfiles]);
+
+
     useEffect(() => {
-        fetchUserProfiles();
-    }, [fetchUserProfiles]);
+        debouncedFetch();
+
+        return () => {
+            debouncedFetch.cancel();
+        };
+    }, [debouncedFetch]);
 
 
     const _toggle = async (row) => {
-             try {
-    
-                const payload: UpdateUserRequest = {
-                    name: row.email,
-                    email: row.email,
-                    authorize: !row.authorize,
-                };
-    
-    
-                const response = await updateUser(row._id, payload);
-    
-                if (response.success) {
-                    show({ type: "success", message: response.message });
-                    fetchUserProfiles();
-                }
-            } catch (err: any) {
-                show({
-                    type: "error",
-                    message: err.message,
-    
-                });
-            } finally {
-    
+        try {
+
+            const payload: UpdateUserRequest = {
+                name: row.email,
+                email: row.email,
+                authorize: !row.authorize,
+            };
+
+
+            const response = await updateUser(row._id, payload);
+
+            if (response.success) {
+                show({ type: "success", message: response.message });
+                fetchUserProfiles();
             }
+        } catch (err: any) {
+            show({
+                type: "error",
+                message: err.message,
+
+            });
+        } finally {
+
+        }
     }
     const toggleAuthorization = async (row) => {
 
-        if(!row.authorize) {
+        if (!row.authorize) {
             const isConfirmed = await confirm({
                 title: "Activate User",
                 message: `Are you sure you want to activate the user "${row.name}"? This will send an activation email to the user.`,
                 confirmText: "Activate",
                 cancelText: "Cancel",
             });
-    
+
             if (!isConfirmed) return;
             await _toggle(row);
-        }else{
+        } else {
             await _toggle(row);
         }
     };

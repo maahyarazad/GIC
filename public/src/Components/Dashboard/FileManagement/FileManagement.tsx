@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback, useContext, useMemo } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
 import { EnvContext } from '../../../../src/EnvContext.js';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
+import debounce from "@/Hooks/useDebounce";
 interface UploadedFileDoc {
     _id: string;
     filename: string;
@@ -49,9 +50,21 @@ const FileManagement = () => {
         }
     }, [paginationModel, sortModel, filterModel]);
 
-    useEffect(() => {
-        fetchFiles();
-    }, [fetchFiles]);
+
+
+
+        const debouncedFetch = useMemo(() => debounce(fetchFiles, 400),[fetchFiles]);
+    
+    
+        useEffect(() => {
+            debouncedFetch();
+    
+            return () => {
+                debouncedFetch.cancel();
+            };
+        }, [debouncedFetch]);
+
+        
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback , useContext} from "react";
+import React, { useEffect, useState, useCallback , useMemo} from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
 import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';
-
+import debounce from "@/Hooks/useDebounce";
 
 
 export interface EmailTemplate {
@@ -80,10 +80,19 @@ const EmailTemplatesDataGrid = () => {
         }
     }, [paginationModel, sortModel, filterModel]);
 
-    useEffect(() => {
-        fetchTemplates();
-    }, [fetchTemplates]);
 
+
+
+            const debouncedFetch = useMemo(() => debounce(fetchTemplates, 400),[fetchTemplates]);
+        
+        
+            useEffect(() => {
+                debouncedFetch();
+        
+                return () => {
+                    debouncedFetch.cancel();
+                };
+            }, [debouncedFetch]);
 
 
     const handleSaveTemplate = async (e: any) => {

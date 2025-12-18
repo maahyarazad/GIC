@@ -101,7 +101,7 @@ export class EmailTemplateController extends Controller {
     }
   }
 
-  @Post("/{id}")
+  @Post("send-email-template/{id}")
   @Middlewares(adminAuthMiddleware)
   public async sendEmail(
     @Path() id: string,

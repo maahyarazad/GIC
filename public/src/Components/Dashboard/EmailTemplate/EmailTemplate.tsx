@@ -5,7 +5,7 @@ import { useToast } from "../../../providers/ToastContext";
 import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';
-import { EnvContext } from '@/EnvContext';
+
 
 
 export interface EmailTemplate {
@@ -22,7 +22,7 @@ export interface EmailTemplate {
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
-    const env = useContext(EnvContext);
+    
     const columns: Column<EmailTemplate>[] = [
         { field: "_id", headerName: "ID", width: 180 },
         { field: "name", headerName: "Name", sortable: true, filterable: true, width: 150 },
@@ -194,12 +194,10 @@ const EmailTemplatesDataGrid = () => {
 
         try {
 
-            const res = await axiosInstance.post(`/email-templates/${row._id}`, {
-                "UNSUBSCRIBE_LINK": `${env.VITE_SERVER_API_URL}/unsubscribe/${row._id}`
-            });
+            const res = await axiosInstance.post(`email-templates/send-email-template/${row._id}`);
 
             if (res.data.success) {
-                show({ type: "success", message: "Email template sent successfully to subscribers." });
+                show({ type: "success", message: res.data.message });
             } else {
                 show({ type: "error", message: res.data.message || "Failed to send email template." });
             }

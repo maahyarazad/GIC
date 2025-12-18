@@ -465,7 +465,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 params: {"in":"body","name":"params","required":true,"ref":"Partial_EmailTemplateDoc_"},
         };
-        app.post('/api/v1/email-templates/:id',
+        app.post('/api/v1/email-templates/send-email-template/:id',
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController)),
             ...(fetchMiddlewares<RequestHandler>(EmailTemplateController.prototype.sendEmail)),
 
@@ -1215,9 +1215,8 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsNewsletterController_unSubscribe: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"Partial_NewsletterSubscriber_"},
         };
-        app.put('/api/v1/newsletter/:id',
+        app.get('/api/v1/newsletter/unsubscribe/:id',
             ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
             ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.unSubscribe)),
 
@@ -1720,6 +1719,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'setNewPassword',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_verifyUnsubscribeResetToken: Record<string, TsoaRoute.ParameterSchema> = {
+                token: {"in":"query","name":"token","required":true,"dataType":"string"},
+        };
+        app.get('/api/v1/auth/verify-unsubscribe-token',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyUnsubscribeResetToken)),
+
+            async function AuthController_verifyUnsubscribeResetToken(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_verifyUnsubscribeResetToken, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyUnsubscribeResetToken',
                 controller,
                 response,
                 next,

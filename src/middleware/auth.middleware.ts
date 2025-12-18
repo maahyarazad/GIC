@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
 import { User } from "../types/user.types";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface AuthRequest extends Request {
   user?: User;

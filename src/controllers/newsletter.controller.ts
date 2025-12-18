@@ -264,10 +264,10 @@ export class NewsletterController extends Controller {
     }
   }
 
-  @Put("/{id}")
+  @Get("unsubscribe/{id}")
   public async unSubscribe(
     @Path() id: string,
-    @Body() body: Partial<NewsletterSubscriber>
+    
   ): Promise<ApiResponse<NewsletterSubscriber>> {
     try {
       const collection = getCollection("newsletter_subscribers");
@@ -283,7 +283,7 @@ export class NewsletterController extends Controller {
         { $set: updateData }
       );
 
-      if (!result.value) {
+      if (!result) {
         return createErrorResponse(
           "Subscriber not found",
           "SUBSCRIBER_NOT_FOUND"

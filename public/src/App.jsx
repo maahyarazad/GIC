@@ -15,6 +15,7 @@ import Register from './Pages/Register/Register';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import NotFound from './Pages/NotFound/NotFound';
 import ProtectedRoute from './Pages/ProtectedRoutes';
+import Unsubscribe from './Pages/Unsubscribe/Unsubscribe'
 
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
@@ -109,6 +110,7 @@ const App = () => {
                     <Route path="/boardroom" element={<Boardroom siteData={siteData}/>} />
                     <Route path="/forgot-password" element={<ForgotPassword/>} />
                     <Route path="/reset-password" element={<ResetPassword/>} />
+                    <Route path="/unsubscribe" element={<Unsubscribe/>} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
 

@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
 /* ============================================================
    API RESPONSE WRAPPERS
    ============================================================ */
-
 export type SuccessResponse<T> = {
     success: true;
     message?: string;
@@ -100,4 +103,18 @@ export interface FilterModel<T> {
     field: keyof T;
     operator: "contains" | "equals" | "startsWith" | "endsWith"; // extend as needed
     value: string | number;
+}
+
+
+export function generateUnsubscribeToken(subscriberId: string) {
+  return jwt.sign(
+    {
+      sub: subscriberId,
+      purpose: "unsubscribe",
+    },
+    JWT_SECRET,
+    {
+      expiresIn: "30d", // adjust if needed
+    }
+  );
 }

@@ -13,7 +13,7 @@ import path from "path";
 import fs from "fs/promises";
 import { cwd } from "process";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 @Route("api/v1/users")
 @Tags("Users")

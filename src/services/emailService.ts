@@ -4,9 +4,11 @@ import {EmailTemplateDoc} from '../controllers/email.controller';
 import pLimit from "p-limit";
 
 dotenv.config();
-
 import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 import { getCollection } from "../db";
+import { generateUnsubscribeToken } from "../utils/helpers";
+
+
 /** Request body for sending OTP */
 export interface EmailOtpRequest {
   email: string;
@@ -88,6 +90,8 @@ function replacePlaceholders(
   });
 }
 
+
+
 export async function emailOtp(reqBody: EmailOtpRequest) {
   const { email, event, otp, message } = reqBody;
 
@@ -140,29 +144,57 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 }
 
 
-export async function sendDynamicEmail(templateName: string, data: Record<string, any>) {
+
+
+export async function sendMassDynamicEmailDoc(
+  doc: EmailTemplateDoc,
+  data: Record<string, any>
+) {
   try {
-    const templateCollection = getCollection("email_templates");
+    const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
 
-    const template = await templateCollection.findOne({ name: templateName });
-    if (!template) throw new Error("Email template not found");
+    const subscribers = await collection
+      .find({ active: true })
+      .toArray();
 
-    // Merge global variables + template-specific variables
-    const variables = {
-      ...getGlobalEmailVariables(data),
-      ...data, // data overrides global if needed
-    };
+    const emails = subscribers.map((subscriber) => {
+      const unsubscribeToken = generateUnsubscribeToken(
+        subscriber._id.toString()
+      );
 
-    const htmlBody = replacePlaceholders(template.html, variables);
-    const textBody = replacePlaceholders(template.text || "", variables);
-    const subject = replacePlaceholders(template.subject, variables);
 
-    return await sendRawEmailWithAttachments({
-      to: data.email,
-      subject,
-      html: htmlBody,
-      text: textBody,
+
+        const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_MODE === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
+
+        // 🔁 VARIABLES PER SUBSCRIBER
+        const variables = {
+        ...getGlobalEmailVariables(data),
+        ...data,
+        SUBSCRIBER_TOKEN: unsubscribeToken, // token string
+        EMAIL: subscriber.email,
+        };
+
+        delete variables.UNSUBSCRIBE_LINK!;
+        // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
+        const _variables = {
+        ...variables,
+        UNSUBSCRIBE_LINK: replacePlaceholders(UNSUBSCRIBE_BASE_URL, variables),
+        };
+
+        
+      return {
+        email: subscriber.email,
+        subject: replacePlaceholders(doc.subject, _variables),
+        htmlBody: replacePlaceholders(doc.html, _variables),
+        textBody: replacePlaceholders(doc.text || "", _variables),
+      };
     });
+
+    const result = await sendMassEmail({
+      recipients: emails,
+    });
+
+    return result;
   } catch (error) {
     console.error(error);
     throw error;
@@ -203,97 +235,68 @@ export async function sendDynamicEmailDoc(doc: EmailTemplateDoc, data: Record<st
 
 
 
-export async function sendMassDynamicEmailDoc(doc: EmailTemplateDoc, data: Record<string, any>) {
-  try {
-    
-    const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
-    // Merge global variables + template-specific variables
-    const variables = {
-      ...getGlobalEmailVariables(data),
-      ...data, // data overrides global if needed
-    };
-
-    const htmlBody = replacePlaceholders(doc.html, variables);
-    const textBody = replacePlaceholders(doc.text || "", variables);
-    const subject = replacePlaceholders(doc.subject, variables);
-    const subscribers = await collection
-  .find({ active: true })
-  .toArray();
-
-    const result =  await sendMassEmail({
-      recipients: subscribers, htmlBody: htmlBody, textBody: textBody, subject: subject
-    });
-
-    return result;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
 
 
-
-
-
-
-
-interface SendMassEmailParams {
-  recipients: NewsletterSubscriber[];
+export interface MassEmailRecipient {
+  email: string;
+  subject: string;
   htmlBody: string;
   textBody?: string;
-  subject: string;
+}
+
+export interface SendMassEmailParams {
+  recipients: MassEmailRecipient[];
   batchSize?: number;
   concurrency?: number;
 }
 
 export async function sendMassEmail({
   recipients,
-  htmlBody,
-  textBody = "",
-  subject,
   batchSize = 50,
   concurrency = 5,
 }: SendMassEmailParams) {
   const limit = pLimit(concurrency);
+  let totalSuccess = 0;
 
-  let totalSuccess = 0; // accumulate total successes
-
-  // Split recipients into batches
   for (let i = 0; i < recipients.length; i += batchSize) {
     const batch = recipients.slice(i, i + batchSize);
 
-    console.log(`Sending batch ${i / batchSize + 1} (${batch.length} recipients)`);
+    console.log(
+      `Sending batch ${Math.floor(i / batchSize) + 1} (${batch.length} recipients)`
+    );
 
     const results = await Promise.all(
-      batch.map(subscriber =>
+      batch.map((recipient) =>
         limit(async () => {
           try {
             await sendRawEmailWithAttachments({
-              to: subscriber.email,
-              subject,
-              html: htmlBody,
-              text: textBody,
+              to: recipient.email,
+              subject: recipient.subject,
+              html: recipient.htmlBody,
+              text: recipient.textBody || "",
             });
 
-            console.log(`✅ Email sent to ${subscriber.email}`);
-            return { email: subscriber.email, success: true };
+            console.log(`✅ Email sent to ${recipient.email}`);
+            return { success: true };
           } catch (error) {
-            console.error(`❌ Failed to send email to ${subscriber.email}:`, error);
-            //return { email: subscriber.email, success: false, error };
+            console.error(
+              `❌ Failed to send email to ${recipient.email}:`,
+              error
+            );
+            return { success: false };
           }
         })
       )
     );
 
-    // Count successes for this batch
     const batchSuccess = results.filter(r => r.success).length;
     totalSuccess += batchSuccess;
 
     console.log(
-      `Batch ${i / batchSize + 1} summary: ${batchSuccess} succeeded`
+      `Batch ${Math.floor(i / batchSize) + 1} summary: ${batchSuccess} succeeded`
     );
   }
-  
+
   console.log(`✅ All batches processed. Total successful emails: ${totalSuccess}`);
   return totalSuccess;
 }

@@ -23,7 +23,7 @@ import {
 import { sendDynamicEmail } from "../services/emailService";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
@@ -32,12 +32,9 @@ const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
 @Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
-
-
-  private static userCollection(): Collection<User>{
+  private static userCollection(): Collection<User> {
     return getCollection<User>("users");
   }
-
 
   @Get("google/url")
   public async getGoogleAuthUrl(): Promise<{ url: string }> {
@@ -304,15 +301,13 @@ export class AuthController extends Controller {
         return createErrorResponse("Invalid password", "INVALID_PASSWORD");
       }
 
-
-    if (!user.authorize) {
-      this.setStatus(401);
-      return createErrorResponse(
-        "User has not been authorized by the administration. Please wait for the activation email.",
-        "USER_NOT_AUTHORIZED"
-      );
-    }
-
+      if (!user.authorize) {
+        this.setStatus(401);
+        return createErrorResponse(
+          "User has not been authorized by the administration. Please wait for the activation email.",
+          "USER_NOT_AUTHORIZED"
+        );
+      }
 
       // 🔑 Sign JWT
       const token = jwt.sign(
@@ -549,6 +544,48 @@ export class AuthController extends Controller {
       return createErrorResponse(
         error.message || "Failed to reset password",
         "INTERNAL_ERROR"
+      );
+    }
+  }
+
+  @Get("/verify-unsubscribe-token")
+  @SuccessResponse("200", "Token Valid")
+  public async verifyUnsubscribeResetToken(
+    @Query() token: string
+  ): Promise<any> {
+    if (!token) {
+      this.setStatus(400);
+      return createErrorResponse("Token is required", "MISSING_TOKEN");
+    }
+
+    try {
+      const payload = jwt.verify(token, JWT_SECRET) as any;
+
+      if (payload.purpose !== "unsubscribe") {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Invalid token purpose",
+          "INVALID_TOKEN_PURPOSE"
+        );
+      }
+      
+      
+
+      // If needed, you can return user info or email from payload
+      this.setStatus(200);
+      return createSuccessResponse(
+        {
+          valid: true,
+          subscription_id: payload.sub, // assuming sub contains user ID
+          email: payload.email, // if included in token
+        },
+        "Token is valid"
+      );
+    } catch (error: any) {
+      this.setStatus(400);
+      return createErrorResponse(
+        error.message || "Invalid or expired token",
+        "INVALID_TOKEN"
       );
     }
   }

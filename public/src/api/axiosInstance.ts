@@ -15,11 +15,23 @@ export interface ApiError {
 }
 
 // --------------------------
-// 🎯 Normalize backend API errors
+//  Normalize backend API errors
 // --------------------------
 function normalizeApiError(error: unknown): ApiError {
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data;
+    let data = error.response?.data;
+
+    // If data is ArrayBuffer, decode it
+    if (data instanceof ArrayBuffer) {
+      try {
+        const decoder = new TextDecoder("utf-8");
+        const text = decoder.decode(data);
+        data = JSON.parse(text); // Try to parse JSON
+      } catch (e) {
+        // fallback: just use the raw text
+        data = { message: `Failed to parse error: ${e}, raw data: ${data}` };
+      }
+    }
 
     if (data && typeof data === "object") {
       return {
@@ -27,21 +39,39 @@ function normalizeApiError(error: unknown): ApiError {
         message: data.message ?? "Unknown API error",
         error: {
           message: data.error?.message ?? "Unknown error",
-          code: data.error?.code,
+          code: data.error?.code ?? error.code ?? "ERR_UNKNOWN",
           details: data.error?.details,
         },
         timestamp: data.timestamp ?? new Date().toISOString(),
       };
     }
+
+    // If data is not object even after decoding
+    return {
+      success: false,
+      message: "Unknown API error",
+      error: {
+        message: error.message,
+        code: error.code ?? "ERR_UNKNOWN",
+        details: null,
+      },
+      timestamp: new Date().toISOString(),
+    };
   }
 
+  // Fallback for non-Axios errors
   return {
     success: false,
-    message: error instanceof Error ? error.message : "Unexpected error",
-    error: { message: "Unexpected error" },
+    message: "Unknown error",
+    error: {
+      message: (error as Error)?.message ?? "No message",
+      code: "ERR_UNKNOWN",
+      details: null,
+    },
     timestamp: new Date().toISOString(),
   };
 }
+
 
 // --------------------------
 // 📌 Create Axios Instance

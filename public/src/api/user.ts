@@ -54,6 +54,28 @@ export async function getUserProfile(id: string) {
 }
 
 
+
+
+/**
+ * Get user by ID
+ * @param id - User ID
+ 
+ */
+
+export async function getPDFBlob(id: string): Promise<Blob> {
+    debugger;
+  const response = await axiosInstance.get(`/watermark/${id}`, {
+    responseType: "arraybuffer",
+    transformResponse: [(data) => data],
+  });
+
+  return new Blob([response.data], {
+    type: "application/pdf",
+  });
+}
+
+
+
 /**
  * Check Newsletter Subscription Status
  * @param email - User ID

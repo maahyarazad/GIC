@@ -4,20 +4,20 @@ import { FaXTwitter } from "react-icons/fa6";
 
 import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
-import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile, upsertNewsletterSubscriber } from "../../../api/user";
+import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile, upsertNewsletterSubscriber, getPDFBlob } from "../../../api/user";
 import { useToast } from "@/providers/ToastContext";
 import { EnvContext } from '@/EnvContext';
 
 // Helper to convert socialLinks array to object keyed by type
 function socialLinksArrayToObject(
-  arr: { platform: string; url: string }[] = []
+    arr: { platform: string; url: string }[] = []
 ): Record<string, string> {
-  return arr.reduce((acc, link) => {
-    if (link.platform && link.url) {
-      acc[link.platform] = link.url;
-    }
-    return acc;
-  }, {} as Record<string, string>);
+    return arr.reduce((acc, link) => {
+        if (link.platform && link.url) {
+            acc[link.platform] = link.url;
+        }
+        return acc;
+    }, {} as Record<string, string>);
 }
 
 
@@ -56,13 +56,13 @@ interface UserProfileFormProps {
 
 export default function UserProfileForm({ initialProfile }: any) {
 
-    
+
     const env = useContext(EnvContext);
-    const {show} = useToast();
+    const { show } = useToast();
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [newsletterSubscription, SetNewsletterSubscription] = useState<object | null>(null);
-     const [profile, setProfile] = useState<UserProfileData>({
+    const [profile, setProfile] = useState<UserProfileData>({
         ...initialProfile,
 
         socialLinks: {
@@ -74,46 +74,70 @@ export default function UserProfileForm({ initialProfile }: any) {
         },
     });
 
-     const fetchUserProfile = useCallback(async ()=>{
-        try{
-            if(!initialProfile) return;
-            
+    const fetchUserProfile = useCallback(async () => {
+        try {
+            if (!initialProfile) return;
+
             const res = await getUserProfile(initialProfile._id || initialProfile.id);
 
 
-           if(res.success){
-            const user = res.data.user;
-            setProfile({
-                id: user._id,
-                photo: user.profile?.photo,
-                authorize: user.authorize,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-                title: user.profile?.title || "",
-                description: user.profile?.description || "",
-                socialLinks: socialLinksArrayToObject(user.profile?.socialLinks),
-            });
+            if (res.success) {
+                const user = res.data.user;
+                setProfile({
+                    id: user._id,
+                    photo: user.profile?.photo,
+                    authorize: user.authorize,
+                    name: user.name,
+                    email: user.email,
+                    phone: user.phone,
+                    title: user.profile?.title || "",
+                    description: user.profile?.description || "",
+                    socialLinks: socialLinksArrayToObject(user.profile?.socialLinks),
+                });
 
-            if (user.profile?.photo) {
-                setPhotoPreview(`${env.VITE_SERVER_API_URL}${user.profile.photo}`);
+                if (user.profile?.photo) {
+                    setPhotoPreview(`${env.VITE_SERVER_API_URL}${user.profile.photo}`);
+                }
+
             }
 
-           }
-
-        }catch(err){
+        } catch (err) {
             console.error(err)
         }
-        
+
 
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchUserProfile();
     }, [fetchUserProfile])
 
 
-       
+
+
+    const pdfDownload = async () => {
+        try {
+            if (!initialProfile) return;
+
+            const blob = await getPDFBlob(initialProfile._id || initialProfile.id);
+            
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "watermarked.pdf";
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            debugger
+            show({ type: "error", message: err!.message! });
+            console.error(err);
+        }
+    };
+
 
 
 
@@ -143,41 +167,41 @@ export default function UserProfileForm({ initialProfile }: any) {
         }
     };
 
-    const fetchNewsletterStatus = useCallback(async ()=>{
-        try{
+    const fetchNewsletterStatus = useCallback(async () => {
+        try {
             const res = await checkNewsLetter(profile.email);
-            if(res.success){
+            if (res.success) {
                 SetNewsletterSubscription(res.data);
             }
 
-        }catch(err){
+        } catch (err) {
             console.error(err)
         }
-        
+
 
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchNewsletterStatus();
     }, [fetchNewsletterStatus])
 
-   
 
 
-        const handleSubscriptionChange = async (e) => {
+
+    const handleSubscriptionChange = async (e) => {
         try {
-            
+
             const res = await upsertNewsletterSubscriber(profile.email, { active: e.target.checked });
-            
+
             if (res.success) {
-                show({type:"success", message: res.message});
+                show({ type: "success", message: res.message });
                 fetchNewsletterStatus();
             }
         } catch (err) {
             console.error(err);
             show({ type: "error", message: err });
         }
-        };
+    };
 
 
 
@@ -213,12 +237,12 @@ export default function UserProfileForm({ initialProfile }: any) {
                     show({ type: "error", message: _response.message });
                     return; // optionally stop if upload failed
                 }
-                }
+            }
 
 
             if (response.success) {
-                
-              show({type:"success", message: response.message});
+
+                show({ type: "success", message: response.message });
 
             }
         } catch (err: any) {
@@ -229,31 +253,32 @@ export default function UserProfileForm({ initialProfile }: any) {
 
     return (
         <form onSubmit={handleSubmit} className="profile-form">
+            <button type="button" className="btn dashboard-btn" onClick={pdfDownload}>DL PDF</button>
             <button type="submit" className="btn dashboard-btn">Save Profile</button>
             <div className="form-group">
 
-             <div className="d-lg-flex mb-2">
-                <div className="form-group flex-grow-1 me-lg-2">
+                <div className="d-lg-flex mb-2">
+                    <div className="form-group flex-grow-1 me-lg-2">
 
-                <label>Email</label>
-                <input
-                    className="disabled"
-                    type="text"
-                    value={profile.email || ""}
-                    disabled
-                />
+                        <label>Email</label>
+                        <input
+                            className="disabled"
+                            type="text"
+                            value={profile.email || ""}
+                            disabled
+                        />
+                    </div>
+                    <div className="form-group flex-grow-1 mt-3 mt-lg-0">
+                        <label>Phone Number</label>
+                        <input
+                            className="disabled"
+                            type="text"
+                            value={profile.phone || ""}
+                            disabled
+                        />
+                    </div>
+
                 </div>
-                <div className="form-group flex-grow-1 mt-3 mt-lg-0">
-                    <label>Phone Number</label>
-                    <input
-                        className="disabled"
-                        type="text"
-                        value={profile.phone || ""}
-                        disabled
-                    />
-                </div>
-                
-            </div>
             </div>
             {/* Photo Upload */}
             <div className="form-group">
@@ -282,16 +307,16 @@ export default function UserProfileForm({ initialProfile }: any) {
             <div className="form-group">
                 <div className="d-flex align-items-center">
 
-                <label className="pe-1 m-0">
-                    Newsletter Subscription
-                </label >
+                    <label className="pe-1 m-0">
+                        Newsletter Subscription
+                    </label >
                     <input className=""
-                    type="checkbox"             
-                    checked={newsletterSubscription?.active} 
-                    onChange={handleSubscriptionChange}
+                        type="checkbox"
+                        checked={newsletterSubscription?.active}
+                        onChange={handleSubscriptionChange}
                     />
                 </div>
-                </div>
+            </div>
 
             {/* Description */}
             <div className="form-group">

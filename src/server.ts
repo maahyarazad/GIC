@@ -1,5 +1,5 @@
 import "dotenv/config";
-
+import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
@@ -11,7 +11,7 @@ import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "./swagger/swagger.json";
 import { pathToFileURL } from "url";
 import { createServer as createViteServer } from "vite";
-
+import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller";
 import { verifyRequirements } from "./db";
 
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
@@ -36,6 +36,9 @@ app.use(
 );
 
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+
+
 
 app.use(
   session({
@@ -55,6 +58,8 @@ app.use(express.json());
 
 /* ---------------------- Routes (TSOA) ---------------------- */
 RegisterRoutes(app);
+RegisterFileDownloadRoutes(app);
+// 
 
 /* ---------------------- Swagger Docs ---------------------- */
 app.use(

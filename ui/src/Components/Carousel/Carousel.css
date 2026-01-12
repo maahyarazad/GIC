@@ -37,6 +37,8 @@
   height: 100%;
   position: relative;
   box-sizing: border-box;
+  /* Picture container */
+  /* Content overlay */
 }
 .carousel-slide a {
   text-decoration: none;
@@ -46,36 +48,42 @@
   height: 100%;
   position: relative;
 }
-.carousel-slide picture {
+.carousel-slide .picture-container {
   position: relative;
   display: block;
   flex-shrink: 0;
   width: 100%;
 }
-.carousel-slide picture .content {
-  padding: 0rem;
+.carousel-slide .picture-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  -o-object-fit: contain;
+     object-fit: contain; /* keep original aspect ratio */
+}
+.carousel-slide .content {
   flex-grow: 1;
   display: flex;
   justify-content: center;
   position: relative;
-}
-.carousel-slide picture .content img {
-  width: 100%;
-  height: auto;
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-.carousel-slide picture .content h3 {
-  top: 30vh;
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* text won't block clicks on image */
+}
+.carousel-slide .content h3 {
+  position: absolute;
+  top: 30vh; /* original style */
   margin: 0 0 0.375rem 0;
   font-size: 2rem;
   color: var(--primary-contrast-color);
   flex-shrink: 0;
 }
-.carousel-slide picture .content p {
-  top: 40vh;
+.carousel-slide .content p {
   position: absolute;
+  top: 40vh; /* original style */
   margin: 0;
   font-size: 0.9rem;
   color: var(--primary-gray-color);

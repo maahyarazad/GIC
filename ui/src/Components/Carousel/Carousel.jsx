@@ -31,14 +31,14 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
                 ? containerWidth              // full width on mobile
                 : (containerWidth - totalGap) / visibleItems;
             setSlideWidth(width);
-        //     console.log(`containerWidth ==== ${containerWidth}`);
-          
-        //   console.log(`visibleItems ==== ${visibleItems}`);
-        //   console.log(`totalGap ==== ${totalGap}`);
-        //   console.log(`width ==== ${width}`);
+            //     console.log(`containerWidth ==== ${containerWidth}`);
+
+            //   console.log(`visibleItems ==== ${visibleItems}`);
+            //   console.log(`totalGap ==== ${totalGap}`);
+            //   console.log(`width ==== ${width}`);
         };
 
-        
+
 
         updateWidth();
         window.addEventListener('resize', updateWidth);
@@ -50,7 +50,7 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
 
     // Navigation handlers
     const goPrev = () => {
-        if(currentIndex === 0) return;
+        if (currentIndex === 0) return;
         setCurrentIndex(prev => (prev - 1));
     };
 
@@ -63,30 +63,30 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
         // console.log(`containerRef.current.clientWidth ==== ${containerRef.current.clientWidth}`);
         // console.log(`maxIndex ==== ${maxIndex}`);
 
-        if(currentIndex === maxIndex) return;
+        if (currentIndex === maxIndex) return;
         setCurrentIndex(prev => (prev + 1));
     };
 
     const startX = useRef(0);
-const handleStart = (e) => {
-    startX.current = e.touches[0].clientX;
-  };
+    const handleStart = (e) => {
+        startX.current = e.touches[0].clientX;
+    };
 
-  const handleEnd = (e) => {
-    const diff = startX.current - e.changedTouches[0].clientX;
+    const handleEnd = (e) => {
+        const diff = startX.current - e.changedTouches[0].clientX;
 
-    if (Math.abs(diff) > 50) {
-      diff > 0 ? goNext() : goPrev();
-    }
-  };
+        if (Math.abs(diff) > 50) {
+            diff > 0 ? goNext() : goPrev();
+        }
+    };
 
     return (
         <>
             <div className="carousel-wrapper">
-                <div ref={containerRef} 
-                onTouchStart={handleStart}
-                                onTouchEnd={handleEnd}
-                className="carousel-container">
+                <div ref={containerRef}
+                    onTouchStart={handleStart}
+                    onTouchEnd={handleEnd}
+                    className="carousel-container">
                     <div
                         className="carousel-track"
                         style={{
@@ -95,23 +95,35 @@ const handleStart = (e) => {
                     >
                         {items.map((item, idx) => (
                             <div
-                                
+
                                 key={idx}
                                 className="carousel-slide"
                                 style={{ minWidth: slideWidth, maxWidth: containerRef?.current?.clientWidth }}
                             >
                                 <a href={item.href} title={item.title} target="_blank" rel="noopener noreferrer">
-                                    <picture>
+                                    {/* Image with responsive sources */}
+                                    <picture style={{ display: "block", maxWidth: "400px" }}>
                                         {item.sources?.map(({ media, srcSet }, i) => (
                                             <source key={i} media={media} srcSet={srcSet} />
                                         ))}
-                                        <div className="content">
-                                            <img src={item.imgSrc} alt={item.title} title={item.title} />
-                                            <h3>{item.title}</h3>
-                                            <p>{item.description}</p>
-                                        </div>
+
+                                        {/* fallback image */}
+                                        <img
+                                            src={item.imgSrc}
+                                            alt={item.title}
+                                            title={item.title}
+                                            style={{ width: "100%", height: "auto", display: "block" }}
+                                        />
                                     </picture>
+
+                                    {/* Content outside picture */}
+                                    <div className="content">
+                                        <h3>{item.title}</h3>
+                                        <p>{item.description}</p>
+                                    </div>
                                 </a>
+
+
                             </div>
                         ))}
                     </div>

@@ -9,12 +9,12 @@ export async function addWatermark(inputPath: string, outputPath: string, text: 
   pages.forEach(page => {
     const { width, height } = page.getSize();
     page.drawText(text, {
-      x: width/10,
-      y: height/10,
+      x: width/20,
+      y: height/20,
       size: 20,
       color: rgb(0.5, 0.5, 0.5),
-      rotate: degrees(45),
-      opacity: 0.3,
+      rotate: degrees(0),
+      opacity: 0.5,
     });
   });
 

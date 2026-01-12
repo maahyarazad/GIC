@@ -1,11 +1,11 @@
-import { getCollection } from "../db";
-import { User } from "../types/user.types";
+import { getCollection } from "../db.js";
+import { User } from "../types/user.types.js";
 import { ObjectId } from "mongodb";
-import { addWatermark } from "../services/watermarkService";
+import { addWatermark } from "../services/watermarkService.js";
 import path from "path";
 import fs from "fs";
 import { Application } from "express";
-import { authMiddleware } from "../middleware/auth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -33,7 +33,9 @@ export function RegisterFileDownloadRoutes(app: Application) {
         `uploads/watermarked-${id}.pdf`
       );
 
-      const uniqueIndex = `${user.email}__${id}__${user.role}__${version}`;
+
+      const fullname = user.name === "" ? user.email.split("@") : user.name.split("@");
+      const uniqueIndex = `Confidential Black File [informal, not Official]  ${fullname[0]}`;
 
       await addWatermark(inputPath, outputPath, uniqueIndex);
 

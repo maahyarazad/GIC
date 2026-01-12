@@ -1,4 +1,5 @@
 import "dotenv/config";
+
 import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
@@ -6,13 +7,19 @@ import path from "path";
 import fs from "fs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { RegisterRoutes } from "./routes/routes";
 import swaggerUi from "swagger-ui-express";
-import * as swaggerDocument from "./swagger/swagger.json";
+
 import { pathToFileURL } from "url";
 import { createServer as createViteServer } from "vite";
-import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller";
-import { verifyRequirements } from "./db";
+
+/* ---- LOCAL IMPORTS (ESM-safe) ---- */
+import { RegisterRoutes } from "./routes/routes.js";
+import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller.js";
+import { verifyRequirements } from "./db.js";
+
+/* ---- JSON IMPORT (REQUIRED ASSERTION) ---- */
+import swaggerDocument from "./swagger/swagger.json" with { type: "json" };
+
 
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
 
@@ -182,6 +189,7 @@ async function startSSR() {
       }
     });
   } else {
+    
     /*  PRODUCTION — serve built client and SSR entry */
     app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
     app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));

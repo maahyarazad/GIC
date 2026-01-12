@@ -15,7 +15,11 @@ build: {
     },
     outDir: "dist/client",
   },
-  ssr: {
-    noExternal: [],
-  },
+ssr: {
+  noExternal: [
+    "react-router-dom",
+    "react",
+    "react-dom"
+  ],
+}
 });

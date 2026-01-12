@@ -280,6 +280,23 @@ export default function UserProfileForm({ initialProfile }: any) {
 
                 </div>
             </div>
+            <div className="form-group">
+
+                <div className="d-lg-flex mb-2">
+                    <div className="form-group flex-grow-1 me-lg-2">
+
+                        <label>Fullname</label>
+                        <input
+                            
+                            type="text"
+                            value={profile.name || ""}
+                            onChange={(e) => updateField("name", e.target.value)}
+                        />
+                    </div>
+                   
+
+                </div>
+            </div>
             {/* Photo Upload */}
             <div className="form-group">
                 <label>Profile Photo</label>

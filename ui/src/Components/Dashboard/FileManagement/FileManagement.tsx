@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext, useMemo } from "re
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
-import { EnvContext } from '../../../../src/EnvContext.js';
+import { EnvContext } from '../../../EnvContext.js';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 interface UploadedFileDoc {

@@ -2,12 +2,12 @@ import React, { useState, Suspense, useRef, useContext } from "react";
 import "./Register.css";
 import axiosInstance from "../../api/axiosInstance";
 import { useToast } from "../../providers/ToastContext";
-import OtpTimer, {OtpTimerRef} from "./../../Components/OTP/OtpTimer";
+import OtpTimer, {OtpTimerRef} from "../../Components/OTP/OtpTimer";
 import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
-import Button from "./../../Components/Button/Button";
-import {EnvContext} from '../../../src/EnvContext.js';
+import Button from "../../Components/Button/Button";
+import {EnvContext} from '../../EnvContext.js';
 
 
 interface SendOtpBody {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback , useMemo} from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
-import SlideMenu from '../../../Components/Generic/SlideMenu/SlideMenu';
+import SlideMenu from '../../Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';
 import debounce from "@/Hooks/useDebounce";

@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, UseSelector } from 'react-redux';
 import './Navbar.css';
 import type { RootState } from "../../store";
-import {EnvContext} from '../../../src/EnvContext.js'
+import {EnvContext} from '../../EnvContext.js'
 import Burger from '@animated-burgers/burger-rotate'
 
 import '@animated-burgers/burger-rotate/dist/styles.css'

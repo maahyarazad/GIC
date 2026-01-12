@@ -18,8 +18,7 @@ build: {
 ssr: {
   noExternal: [
     "react-router-dom",
-    "react",
-    "react-dom"
   ],
+  external: ['react', 'react-dom'], // <-- prevent bundling React into SSR build
 }
 });

@@ -13,12 +13,12 @@ import { pathToFileURL } from "url";
 import { createServer as createViteServer } from "vite";
 
 /* ---- LOCAL IMPORTS (ESM-safe) ---- */
-import { RegisterRoutes } from "./routes/routes.js";
-import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller.js";
-import { verifyRequirements } from "./db.js";
+import { RegisterRoutes } from "./routes/routes";
+import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller";
+import { verifyRequirements } from "./db";
 
 /* ---- JSON IMPORT (REQUIRED ASSERTION) ---- */
-import swaggerDocument from "./swagger/swagger.json" with { type: "json" };
+import swaggerDocument from "./swagger/swagger.json";
 
 
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
@@ -110,7 +110,7 @@ async function startSSR() {
     
     const vite = await createViteServer({
       // root: process.cwd(),
-      root: path.resolve(__dirname, "public"),
+      root: path.resolve(__dirname, "ui"),
       server: {
         middlewareMode: true,
       },
@@ -118,7 +118,7 @@ async function startSSR() {
       base: process.env.CLIENT_ORIGIN_DEV,
       resolve: {
         alias: {
-          "@": path.resolve(__dirname, "public/src"),
+          "@": path.resolve(__dirname, "ui/src"),
         },
       },
       optimizeDeps: {
@@ -154,12 +154,12 @@ async function startSSR() {
         const url = req.originalUrl;
        
         // Build absolute file URL for ssrLoadModule (required for files outside root)
-        const ssrEntryPath = path.resolve(__dirname,"public/src/entry-server.jsx");
+        const ssrEntryPath = path.resolve(__dirname,"ui/src/entry-server.jsx");
 
         const ssrEntryFileUrl = pathToFileURL(ssrEntryPath).href;
 
         let template = fs.readFileSync(
-          path.resolve(__dirname, "public/index.html"),
+          path.resolve(__dirname, "ui/index.html"),
           "utf-8"
         );
         
@@ -195,13 +195,13 @@ async function startSSR() {
     app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));
     const serverPath = path.resolve(
       __dirname,
-      "../public/dist/server/entry-server.js"
+      "../ui/dist/server/entry-server.js"
     );
 
     const compression = (await import("compression")).default;
     app.use(compression());
     // Serve static assets
-    app.use(express.static(path.resolve(__dirname, "../public/dist/client")));
+    app.use(express.static(path.resolve(__dirname, "../ui/dist/client")));
 
     const { render } = await import(serverPath);
 
@@ -210,7 +210,7 @@ async function startSSR() {
         const url = req.originalUrl;
 
         let template = fs.readFileSync(
-          path.resolve(__dirname, "../public/dist/client/index.html"),
+          path.resolve(__dirname, "../ui/dist/client/index.html"),
           "utf-8"
         );
 

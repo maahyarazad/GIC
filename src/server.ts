@@ -69,11 +69,23 @@ RegisterFileDownloadRoutes(app);
 // 
 
 /* ---------------------- Swagger Docs ---------------------- */
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocument, { explorer: true })
-);
+if (!isProduction){
+
+    app.use(
+      "/api-docs",
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerDocument, { explorer: true })
+    );
+}
+
+
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`User-agent: *
+Allow: /`);
+});
+
+
 
 /* ---------------------- Static uploads ---------------------- */
 
@@ -181,6 +193,8 @@ async function startSSR() {
           .replace(`<!--app-head-->`, appHtml.head ?? "")
           .replace(`<!--app-html-->`, appHtml.html ?? "");
 
+          
+
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e: any) {
         vite.ssrFixStacktrace(e);
@@ -223,7 +237,9 @@ async function startSSR() {
 
         const appHtml = await render(url, envVars);
 
-        const html = template.replace(`<!--app-html-->`, appHtml);
+        const html = template
+        .replace("<!--app-head-->", appHtml.head ?? "")
+        .replace("<!--app-html-->", appHtml.html ?? "");
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {

@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 
 import { store } from './store.js'
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <>
     <Provider store={store}>
       <ConfirmDialogProvider>
 
@@ -20,5 +20,5 @@ createRoot(document.getElementById('root')).render(
         </ToastProvider>
       </ConfirmDialogProvider>
     </Provider>
-  </StrictMode>
+  </>
 );

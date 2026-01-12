@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react";
+import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./store.js";
 
@@ -8,7 +8,7 @@ import { ConfirmDialogProvider } from "./providers/ConfirmDialogProvider.js";
 
 export function RootProviders({ children }) {
   return (
-    <StrictMode>
+    <>
       <Provider store={store}>
         <ConfirmDialogProvider>
           <ToastProvider>
@@ -16,6 +16,6 @@ export function RootProviders({ children }) {
           </ToastProvider>
         </ConfirmDialogProvider>
       </Provider>
-    </StrictMode>
+    </>
   );
 }

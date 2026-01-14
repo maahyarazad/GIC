@@ -4,7 +4,7 @@ import './GenericDataGrid.css';
 export interface Column<T> {
     field?: keyof T;
     headerName: string;
-    width?: number | string;
+    width: number | string;
     renderCell?: (row: T) => React.ReactNode;
     sortable?: boolean;
     filterable?: boolean;
@@ -122,7 +122,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
 
     return (
         <div className="table-wrapper">
-            <table className="my-table">
+            <table className="my-table" >
                 <thead>
                     <tr>
                         {columns.map((col) => (
@@ -175,13 +175,13 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                 <tbody>
                     {loading ? (
                         <tr>
-                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }}>
+                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
                                 Loading...
                             </td>
                         </tr>
                     ) : rows.length === 0 ? (
                         <tr>
-                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }}>
+                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
                                 No data found.
                             </td>
                         </tr>
@@ -189,7 +189,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                         rows.map((row) => (
                             <tr key={row._id?.toString()}>
                                 {columns.map((col, idx) => (
-                                    <td
+                                    <td className="td-scroll"
                                         key={String(col.field ?? idx)}
                                         data-label={col.headerName}
                                         style={{ padding: 8, borderBottom: "1px solid #eee" }}

@@ -6,6 +6,7 @@
 .table-wrapper table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   /* MOBILE STYLES */
 }
 .table-wrapper table th,
@@ -14,6 +15,14 @@
   border-bottom: 1px solid #ccc;
   white-space: nowrap;
   text-align: left;
+  overflow: scroll;
+}
+.table-wrapper table th .td-scroll,
+.table-wrapper table td .td-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  display: block;
 }
 .table-wrapper table th.sortable {
   cursor: pointer;

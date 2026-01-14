@@ -6,13 +6,22 @@
   table {
     width: 100%;
     border-collapse: collapse;
-
+table-layout: fixed; 
     th,
     td {
       padding: 8px;
       border-bottom: 1px solid #ccc;
       white-space: nowrap;  // for desktop
       text-align: left;
+      overflow: scroll;
+
+  .td-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    display: block;
+  }
+
     }
 
     th.sortable {

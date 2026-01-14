@@ -1,18 +1,47 @@
 import { ObjectId } from "mongodb";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { User, UserSortKey, UserFilter, RawUserSearchQuery, CreateUserRequest, UpdateUserRequest } from "../types/user.types";
-import { Sort, createSuccessResponse, createErrorResponse, escapeRegExp, FilterModel } from "../utils/helpers";
+import {
+  User,
+  UserSortKey,
+  UserFilter,
+  RawUserSearchQuery,
+  CreateUserRequest,
+  UpdateUserRequest,
+} from "../types/user.types";
+import {
+  Sort,
+  createSuccessResponse,
+  createErrorResponse,
+  escapeRegExp,
+  FilterModel,
+} from "../utils/helpers";
 import { getCollection } from "../db";
 import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
-import { Controller, Get, Route, Post, Put, Path, Query, Body, SuccessResponse, Tags, Middlewares, UploadedFile, FormField } from "tsoa";
+import {
+  Controller,
+  Get,
+  Route,
+  Post,
+  Put,
+  Path,
+  Query,
+  Body,
+  SuccessResponse,
+  Tags,
+  Middlewares,
+  UploadedFile,
+  FormField,
+} from "tsoa";
 import { sendDynamicEmailDoc } from "../services/emailService";
 import { authMiddleware } from "../middleware/auth.middleware";
 import path from "path";
 import fs from "fs/promises";
 import { cwd } from "process";
 import dotenv from "dotenv";
+import { Request } from "tsoa";
+import {LogChangeModel} from '../types/base.types';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -120,38 +149,38 @@ export class UserController extends Controller {
     }
   }
 
-//   @Get("/{id}")
-//   public async getUserById(
-//     @Path() id: string
-//   ): Promise<Omit<User, "password">> {
-//     try {
-//       // Validate ObjectId
-//       if (!ObjectId.isValid(id)) {
-//         this.setStatus(400);
-//         throw new Error("Invalid user ID");
-//       }
+  //   @Get("/{id}")
+  //   public async getUserById(
+  //     @Path() id: string
+  //   ): Promise<Omit<User, "password">> {
+  //     try {
+  //       // Validate ObjectId
+  //       if (!ObjectId.isValid(id)) {
+  //         this.setStatus(400);
+  //         throw new Error("Invalid user ID");
+  //       }
 
-//       const usersCollection = getCollection<User>("users");
+  //       const usersCollection = getCollection<User>("users");
 
-//       // Find user without password
-//       const user = await usersCollection.findOne(
-//         { _id: new ObjectId(id) },
-//         { projection: { password: 0 } }
-//       );
+  //       // Find user without password
+  //       const user = await usersCollection.findOne(
+  //         { _id: new ObjectId(id) },
+  //         { projection: { password: 0 } }
+  //       );
 
-//       if (!user) {
-//         this.setStatus(404);
-//         throw new Error("User not found");
-//       }
+  //       if (!user) {
+  //         this.setStatus(404);
+  //         throw new Error("User not found");
+  //       }
 
-//       this.setStatus(200);
-//       return user as Omit<User, "password">;
-//     } catch (error: any) {
-//       console.error(error);
-//       this.setStatus(this.getStatus() ?? 500); // keep previous or set 500
-//       throw new Error(error.message || "Failed to fetch user");
-//     }
-//   }
+  //       this.setStatus(200);
+  //       return user as Omit<User, "password">;
+  //     } catch (error: any) {
+  //       console.error(error);
+  //       this.setStatus(this.getStatus() ?? 500); // keep previous or set 500
+  //       throw new Error(error.message || "Failed to fetch user");
+  //     }
+  //   }
 
   @SuccessResponse("201", "Created")
   @Post("/")
@@ -223,6 +252,7 @@ export class UserController extends Controller {
   @Put("/{id}")
   @Middlewares(adminAuthMiddleware)
   public async updateUser(
+    @Request() req: Express.Request,
     @Path() id: string,
     @Body() updateData: UpdateUserRequest
   ): Promise<any> {
@@ -241,9 +271,14 @@ export class UserController extends Controller {
 
       updateData.updatedAt = new Date();
 
+
+
+
       const result = await usersCollection.findOneAndUpdate(
         { _id: new ObjectId(id) },
-        { $set: updateData },
+        {
+          $set: {...updateData},
+        },
         {
           returnDocument: "after",
           projection: { password: 0 },
@@ -254,6 +289,23 @@ export class UserController extends Controller {
         this.setStatus(404);
         return createErrorResponse("User not found");
       }
+
+      // Log Collection
+      const token = req.cookies?.token;
+      const decoded = jwt.verify(token, JWT_SECRET) as {
+        userId: string;
+        role: string;
+      };
+      
+      const logCollection = getCollection<LogChangeModel>("log_changes");
+
+        await logCollection.insertOne({
+            targetId: new ObjectId(id),
+            lastModifiedBy: new ObjectId(decoded.userId),
+            collection: "users",
+            message: "User Activation Updated",
+            createdAt: new Date(),
+        });
 
       if (updateData.authorize) {
         let login_link: string;
@@ -283,7 +335,6 @@ export class UserController extends Controller {
       return createErrorResponse("Failed to update user", undefined, error);
     }
   }
-
 
   @Put("user-profile/{id}")
   @Middlewares(authMiddleware)
@@ -320,8 +371,6 @@ export class UserController extends Controller {
         return createErrorResponse("User not found");
       }
 
-     
-
       this.setStatus(200);
       return createSuccessResponse<{ user: Omit<User, "password"> }>(
         { user: result as Omit<User, "password"> },
@@ -334,12 +383,9 @@ export class UserController extends Controller {
     }
   }
 
-
   @Get("user-profile/{id}")
   @Middlewares(authMiddleware)
-  public async getUserProfile(
-    @Path() id: string,
-  ): Promise<any> {
+  public async getUserProfile(@Path() id: string): Promise<any> {
     try {
       if (!ObjectId.isValid(id)) {
         this.setStatus(400);
@@ -348,20 +394,17 @@ export class UserController extends Controller {
 
       const usersCollection = getCollection<User>("users");
 
-     
-      const user = await usersCollection.findOne({_id: new ObjectId(id)});
+      const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
-    if (!user) {
+      if (!user) {
         this.setStatus(404);
         return createErrorResponse("User not found");
       }
 
       this.setStatus(200);
- return createSuccessResponse<{ user: Omit<User, "password"> }>(
-        { user: user as Omit<User, "password"> }
-      );
-
-
+      return createSuccessResponse<{ user: Omit<User, "password"> }>({
+        user: user as Omit<User, "password">,
+      });
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -370,53 +413,53 @@ export class UserController extends Controller {
   }
 
 
-@Post("/{id}/upload-photo")
-public async uploadPhoto(
-  @Path() id: string,
-  @UploadedFile("file") file: Express.Multer.File
-) {
-  try {
-    if (!ObjectId.isValid(id)) {
-      this.setStatus(400);
-      return createErrorResponse("Invalid user ID");
+  @Post("/{id}/upload-photo")
+  public async uploadPhoto(
+    @Path() id: string,
+    @UploadedFile("file") file: Express.Multer.File
+  ) {
+    try {
+      if (!ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid user ID");
+      }
+
+      if (!file) {
+        this.setStatus(400);
+        return createErrorResponse("No file uploaded");
+      }
+
+      // Define where to save the file
+      const uploadDir = path.resolve(process.cwd(), "./uploads/photos");
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      // Generate unique file name or use original file name
+      const filename = `${id}-${Date.now()}-${file.originalname}`;
+      const filepath = path.join(uploadDir, filename);
+
+      // Save the file from buffer (assuming multer stores it in memory)
+      await fs.writeFile(filepath, file.buffer);
+
+      // Update user's photo URL in DB (adjust URL based on your server config)
+      const usersCollection = getCollection<User>("users");
+      const photoUrl = `/uploads/photos/${filename}`; // Adjust base URL as needed
+
+      const updateResult = await usersCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { "profile.photo": photoUrl, updatedAt: new Date() } }
+      );
+
+      if (updateResult.modifiedCount === 0) {
+        this.setStatus(404);
+        return createErrorResponse("User not found or photo not updated");
+      }
+
+      this.setStatus(200);
+      return createSuccessResponse({ photoUrl }, "Photo uploaded successfully");
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to upload photo", undefined, error);
     }
-
-    if (!file) {
-      this.setStatus(400);
-      return createErrorResponse("No file uploaded");
-    }
-
-    // Define where to save the file
-    const uploadDir = path.resolve(process.cwd(), "./uploads/photos");
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // Generate unique file name or use original file name
-    const filename = `${id}-${Date.now()}-${file.originalname}`;
-    const filepath = path.join(uploadDir, filename);
-
-    // Save the file from buffer (assuming multer stores it in memory)
-    await fs.writeFile(filepath, file.buffer);
-
-    // Update user's photo URL in DB (adjust URL based on your server config)
-    const usersCollection = getCollection<User>("users");
-    const photoUrl = `/uploads/photos/${filename}`; // Adjust base URL as needed
-
-    const updateResult = await usersCollection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { "profile.photo": photoUrl, updatedAt: new Date() } }
-    );
-
-    if (updateResult.modifiedCount === 0) {
-      this.setStatus(404);
-      return createErrorResponse("User not found or photo not updated");
-    }
-
-    this.setStatus(200);
-    return createSuccessResponse({ photoUrl }, "Photo uploaded successfully");
-  } catch (error) {
-    console.error(error);
-    this.setStatus(500);
-    return createErrorResponse("Failed to upload photo", undefined, error);
   }
-}
 }

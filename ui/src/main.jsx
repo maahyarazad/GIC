@@ -8,17 +8,20 @@ import { ConfirmDialogProvider } from './providers/ConfirmDialogProvider';
 import { Provider } from 'react-redux';
 
 import { store } from './store.js'
+import { ModalProvider } from './Providers/ModalContext.js';
 createRoot(document.getElementById('root')).render(
-  <>
-    <Provider store={store}>
-      <ConfirmDialogProvider>
+    <>
+        <Provider store={store}>
+            <ConfirmDialogProvider>
+                <ModalProvider>
 
-        <ToastProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </ToastProvider>
-      </ConfirmDialogProvider>
-    </Provider>
-  </>
+                    <ToastProvider>
+                        <AuthProvider>
+                            <App />
+                        </AuthProvider>
+                    </ToastProvider>
+                </ModalProvider>
+            </ConfirmDialogProvider>
+        </Provider>
+    </>
 );

@@ -25,12 +25,12 @@ type MenuItem =
 // Access control map — ensure keys match MenuItem exactly:
   const accessControl: Record<MenuItem, string[]> = {
   users: ["admin"],       
-  sitedata: ["admin"],
-  file_management: ["admin"],
-  email_management: ["admin"],
-  newsletter_subscribers: ["admin"],
+  sitedata: ["admin","procurement"],
+  file_management: ["admin","procurement"],
+  email_management: ["admin", "procurement"],
+  newsletter_subscribers: ["admin", "procurement"],
   profile: ["user"],
-  logout: ["admin", "user"],
+  logout: ["admin", "user", "procurement"],
  
 };
 

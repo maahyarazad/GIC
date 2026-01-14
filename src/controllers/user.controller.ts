@@ -297,13 +297,13 @@ export class UserController extends Controller {
         role: string;
       };
       
-      const logCollection = getCollection<LogChangeModel>("log_changes");
+      const logCollection = getCollection<LogChangeModel>("log_change");
 
         await logCollection.insertOne({
             targetId: new ObjectId(id),
             lastModifiedBy: new ObjectId(decoded.userId),
             collection: "users",
-            message: "User Activation Updated",
+            message: `User Activation Updated => ${updateData.authorize ? "Authorized" :  "Unauthorized"}`,
             createdAt: new Date(),
         });
 

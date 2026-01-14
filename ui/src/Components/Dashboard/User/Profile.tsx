@@ -2,35 +2,125 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; // import your generic grid
 import axiosInstance from "../../../api/axiosInstance";
 import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
-import { updateUser } from '../../../api/user'
+import { updateUser, getLogs } from '../../../api/user'
 import { useToast } from "../../../providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import { CiTimer } from "react-icons/ci";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
+import { useModal } from "@/Providers/ModalContext";
 import debounce from "@/Hooks/useDebounce";
+
+
 export const UserProfilesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
+    const [logs, setLogs] = useState(null);
+    const { openModal } = useModal();
+
+    const handleDeleteClick = async (id: string) => { await fetchLogDetails(id) };
+
+
+    useEffect(() => {
+        if (logs !== null) {
+
+            openModal({
+                title: "User Change Logs",
+                content: (
+                    <div style={{ overflowY: "auto", padding: "8px" }}>
+                        {logs.length === 0 ? (
+                            <p>No logs found.</p>
+                        ) : (
+                            <ul style={{ padding: 0, listStyle: "none" }}>
+                                {logs.map((log) => (
+                                    <li
+                                        key={log._id.toString()}
+                                        style={{
+                                            marginBottom: "12px",
+                                            padding: "8px",
+                                            borderBottom: "1px solid #eee",
+                                            borderRadius: "4px",
+                                            backgroundColor: "#f9f9f9",
+                                        }}
+                                    >
+                                        <strong>{log.message}</strong>
+                                        <div style={{ fontSize: "0.9rem", marginTop: "4px", color: "#555" }}>
+                                            <div>
+                                                <strong>User:</strong> <br />
+                                                {log.userDetails.name} ({log.userDetails.role})
+                                            </div>
+                                            <div>
+                                                <strong>Email:</strong> <br />{log.userDetails.email}
+                                            </div>
+                                            <div>
+                                                <strong>Time:</strong> <br />{new Date(log.createdAt).toLocaleString()}
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                ),
+
+                cancelText: "Close",
+
+                onCancel: () => console.log("Cancelled"),
+            });
+        }
+    }, [logs])
+
+    const fetchLogDetails = async (id: string) => {
+        try {
+
+            const response = await getLogs(id);
+            setLogs(response.data.logs);
+
+        } catch (err: any) {
+            show({
+                type: "error",
+                message: err.message,
+
+            });
+        } finally {
+
+        }
+    }
+
+
+
     const columns: Column<User>[] = [
         {
             field: "_id",
             headerName: "ID",
-            width: 180,
+            width: '13%',
+        },
+        {
+            field: "phone",
+            headerName: "Logs",
+            width: '3%',
+            sortable: true,
+            filterable: false,
+            renderCell: (params) => (
+                <div style={{ display: "flex", justifyContent: "center", cursor: 'pointer' }} onClick={() => handleDeleteClick(params._id)}>
+                    <CiTimer style={{ color: "gray", fontSize: "18px" }} />
+                </div>
+            ),
         },
         {
             field: "name",
             headerName: "Name",
             sortable: true,
             filterable: true,
-            width: 150,
+            width: '10%',
         },
         {
             field: "authorize",
             headerName: "Authorize",
-            width: 120,
+            width: '5%',
             sortable: true,
             filterable: false,
             renderCell: (params) => (
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center" }}>
                     {params.authorize ? (
                         <FaCheck style={{ color: "green", fontSize: "18px" }} />
                     ) : (
@@ -45,14 +135,14 @@ export const UserProfilesDataGrid = () => {
             headerName: "Email",
             sortable: true,
             filterable: true,
-            width: 250,
+            width: '15%',
         },
         {
             field: "role",
             headerName: "Role",
             sortable: true,
             filterable: true,
-            width: 100,
+            width: '5%',
         },
         {
             field: "avatar",
@@ -67,22 +157,23 @@ export const UserProfilesDataGrid = () => {
                 ) : (
                     "—"
                 ),
-            width: 60,
+            width: '5%',
         },
         {
             field: "createdAt",
             headerName: "Created At",
             sortable: true,
-            width: 180,
+            width: '15%',
             renderCell: (row) =>
                 row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
         },
         {
             headerName: "Actions",
-            width: 150,
+            width: '15%',
             renderCell: (row) => (
 
-                <div className={`${row.email !== 'admin' ? " " : "d-none"}`}>
+
+                <div className={`${row.role !== 'admin' ? " " : "d-none"}`}>
                     <div className="btn-group" role="group" aria-label="Basic example">
                         <button className={`btn btn-sm dashboard-btn`}
                             disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
@@ -146,7 +237,7 @@ export const UserProfilesDataGrid = () => {
 
 
 
-    const debouncedFetch = useMemo(() => debounce(fetchUserProfiles, 400),[fetchUserProfiles]);
+    const debouncedFetch = useMemo(() => debounce(fetchUserProfiles, 400), [fetchUserProfiles]);
 
 
     useEffect(() => {
@@ -184,6 +275,7 @@ export const UserProfilesDataGrid = () => {
 
         }
     }
+
     const toggleAuthorization = async (row) => {
 
         if (!row.authorize) {

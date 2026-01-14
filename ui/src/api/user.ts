@@ -21,6 +21,21 @@ export async function updateUser(id: string, updateData: UpdateUserRequest) {
 /**
  * Update user by ID
  * @param id - User ID
+ */
+export async function getLogs(id: string) {
+  try {
+    const response = await axiosInstance.get(`/logs/${id}`);
+    
+    return response.data;
+  } catch (error) {
+    console.error('Update user failed', error);
+    throw error;
+  }
+}
+
+/**
+ * Update user by ID
+ * @param id - User ID
  * @param updateData - Fields to update
  */
 

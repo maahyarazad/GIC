@@ -9,6 +9,15 @@ export interface BaseModel {
   updatedAt?: Date;
 }
 
+export interface LogChangeModel{
+      _id?: ObjectId;
+      targetId: ObjectId;
+      lastModifiedBy : ObjectId,
+      collection: string,
+      message: string,
+        createdAt?: Date;
+}
+
 /* ============================================================
    SORT MODEL (Global)
    ============================================================ */

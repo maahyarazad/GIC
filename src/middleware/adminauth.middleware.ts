@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
 import { User } from "../types/user.types";
 import { ObjectId } from "mongodb";
+import dotenv from "dotenv";
+dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 export interface AuthRequest extends Request {

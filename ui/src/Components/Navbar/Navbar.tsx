@@ -231,8 +231,24 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
+ <div className='position-absolute gic-logo'
+                style={{
+                    backgroundImage: `
+                       
+                        url(${env.VITE_SERVER_API_URL}/android-chrome-512x512.png)
+                    `,
+                      filter: "brightness(0) invert(1)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    color: 'transparent',
+                     transform: "scale(2)",
+                     fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'
+                }}
 
-                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
+            >LOGO</div>
+
+                    {/* <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a> */}
                     <ul className="navbar-links desktop-only">
 
                         {navbarLinks?.map((link) => (
@@ -321,6 +337,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                     {siteData.getStartedNow}
                 </button> */}
             </div>
+             
         </nav>
     );
 };

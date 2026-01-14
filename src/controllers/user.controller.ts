@@ -12,6 +12,8 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import path from "path";
 import fs from "fs/promises";
 import { cwd } from "process";
+import dotenv from "dotenv";
+dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

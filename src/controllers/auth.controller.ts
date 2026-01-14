@@ -23,6 +23,9 @@ import {
 import { sendDynamicEmailDoc } from "../services/emailService";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+dotenv.config();
+
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const FRONTEND_URL = process.env.FRONTEND_URL!;

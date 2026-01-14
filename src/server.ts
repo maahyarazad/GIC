@@ -104,13 +104,17 @@ startServer();
 
 /* ---------------------- SSR + Static Handling ---------------------- */
 
+const envVars = {
+  VITE_SERVER_API_URL: isProduction
+    ? process.env.CLIENT_ORIGIN_PROD
+    : process.env.CLIENT_ORIGIN_DEV,
+
+  VITE_SERVER_ACCOUNT_REGISTER_SUCCESS:
+    process.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
+};
 
 
-
-        const envVars = {
-            VITE_SERVER_API_URL: process.env.CLIENT_ORIGIN_DEV ,
-            VITE_SERVER_ACCOUNT_REGISTER_SUCCESS: process.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS 
-        };
+       
 
 async function startSSR() {
     

@@ -1,6 +1,6 @@
 .footer {
   background-color: var(--primary-gray-color);
-  min-height: 50vh;
+  min-height: 500px;
   width: 100%;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
@@ -15,6 +15,7 @@
   -o-object-fit: cover;
      object-fit: cover;
   transform: scale(1.5);
+  margin-bottom: 30px;
 }
 .footer .divider {
   align-self: center;
@@ -152,6 +153,18 @@
   .footer .s-font {
     font-size: 3.5rem !important;
   }
+  .footer .main-logo-container {
+    display: flex;
+    position: relative;
+    padding-left: 40px;
+  }
+  .footer .main-logo-container .main-logo {
+    width: auto;
+    height: 80px;
+    -o-object-fit: cover;
+       object-fit: cover;
+    padding-bottom: 20px;
+  }
   .footer .footer-text {
     font-size: 0.9rem !important;
     text-align: left;
@@ -161,6 +174,6 @@
     text-align: left !important;
   }
   .footer .footer-logo {
-    justify-content: center;
+    justify-content: start;
   }
 }/*# sourceMappingURL=Footer.css.map */

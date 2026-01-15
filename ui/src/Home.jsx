@@ -260,7 +260,7 @@ const Home = ({ siteData }) => {
                         data={siteData.serviceCards_1}
                         containerTitle={siteData.serviceCards_1_title}
                         serviceKeyName={"serviceCards_1"}
-                        gridClass={"col-12 col-lg-3 px-0"} />
+                        gridClass={"col-12 col-lg-6  px-0"} />
                 </div>
             </div>
 

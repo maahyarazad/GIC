@@ -1,6 +1,6 @@
 .footer {
   background-color: var(--primary-gray-color);
-  min-height: 50vh;
+  min-height: 500px;
   width: 100%;  // Changed from 100vw to 100% to prevent horizontal scroll
   box-sizing: border-box;
   font-family: Arial, sans-serif;
@@ -10,12 +10,11 @@
 
   
       .main-logo {
-      width: auto;
-      height: 80px;
-      object-fit: cover;
-    //   border-radius: 50%;
-      transform: scale(1.5);
-    //   transition: transform 0.3s ease;
+        width: auto;
+        height: 80px;
+        object-fit: cover;
+        transform: scale(1.5);
+        margin-bottom: 30px;
     }
 
   .divider{
@@ -183,10 +182,26 @@
       font-size: 3.5rem !important;
     }
 
+    .main-logo-container{
+        display: flex;
+        position: relative;
+            padding-left:40px;
+
+         .main-logo {
+            
+            
+            width: auto;
+            height: 80px;
+            object-fit: cover;
+            padding-bottom: 20px;
+        
+        }
+    }
     .footer-text{
       font-size: .9rem !important;
       text-align: left;
     }
+
 
     a {
       font-size: small;
@@ -195,7 +210,7 @@
 
     .footer-logo {
       
-      justify-content: center;
+      justify-content: start;
     }
   }
 

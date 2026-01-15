@@ -2,78 +2,68 @@
 .navbar {
     position: sticky;
     top: 0;
-    height: 8vh;
+    height: 80px;
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+
     box-sizing: border-box;
     transition: all 120ms ease-in-out;
     background-color: black;
+    padding: 0;
 
-    .menu-button {
+    .mobile-menu-container {
+        display: none;
 
-        position: absolute;
-        left: 10px;
     }
 
     .navbar-section-middle {
         position: relative;
-        width: 90vw;
+        width: 100%;
+        height: 80px;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
 
-        .logo-section {
-            position: absolute;
-        }
-
-        .gic-logo {
-            display: block;
+        .left {
             position: relative;
-            /* ensure relative positioning */
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+
+            .main-logo {
+                object-fit: cover;
+                width: auto;
+                height: 70px;
+                display: block;
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 10%;
+                right: -30px;
+                height: 80%;
+                width: 0.5px;
+                background-color: rgb(169, 168, 168);
+
+            }
         }
 
-        .gic-logo::after {
-            content: "";
-            position: absolute;
-            top: 10%;
-            right: -30px;
-            /* adjust distance from .gic-logo */
-            height: 80%;
-            /* vertical line height */
-            width: 0.5px;
-            /* line thickness */
-            background-color: rgb(169, 168, 168);
-            /* line color */
-            
+        .middle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            li {
+                font-size: 1em !important;
+            }
         }
     }
 
-
-
-    // a,
-    // div {
-    //     color: var(--primary-color) !important;
-    //     transition: all 120ms ease-in-out;
-
-    //     &:hover {
-    //         color: inherit !important;
-    //         transition: all 120ms ease-in-out;
-    //     }
-    // }
-
-    &.navbar-scrolled {
-        // height: 8vh;
-        // transition: all 120ms ease-in-out;
-
-    }
-
-    a,
-    li div {
+    a,li div {
         color: var(--primary-color) !important;
-        // transition: all 120ms ease-in-out;
     }
 
     .navbar-links.desktop-only {
@@ -92,36 +82,13 @@
 
                 &:hover {
                     color: var(--primary-color) !important;
-                    // background: rgba(255, 255, 255, 0.284);
-                    // backdrop-filter: blur(10px);
-                    // -webkit-backdrop-filter: blur(10px);
-                    // border-radius: 5px;
-                    // color: var(--primary-contrast-color);
-                    // transition: all 120ms ease-in-out;
+                    
                 }
             }
         }
     }
 
-    // &:not(.navbar-scrolled) {
-    //     .navbar-links.desktop-only {
-    //         a {
-    //             font-size: 1.1em;
-    //             padding: 0.5em 0;
-    //             color: var(--primary-color) !important;
-    //             transition: all 120ms ease-in-out;
 
-    //             &:hover {
-    //                 background: transparent;
-    //                 backdrop-filter: blur(1px);
-    //                 -webkit-backdrop-filter: blur(1px);
-    //                 border-radius: 5px;
-    //                 color: var(--primary-contrast-color) !important;
-    //                 transition: all 120ms ease-in-out;
-    //             }
-    //         }
-    //     }
-    // }
 
     .navbar-section-right {
         display: flex;
@@ -308,8 +275,29 @@
     }
 
     /* Responsive */
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 800px) {
 
+
+        .mobile-menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .menu-button {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                margin-left: 15px;
+
+            }
+
+            .main-logo {
+                object-fit: cover;
+                margin-right: 15px;
+                height: 60px;
+                display: block;
+            }
+        }
 
         .mobile-menu {
             display: block;
@@ -320,7 +308,7 @@
         }
 
         .navbar-section-middle {
-            display: none;
+            display: none !important;
         }
 
         .menu-toggle {
@@ -335,14 +323,31 @@
     @media screen and (max-width: 1499px) {
         .navbar-section-middle {
             position: relative;
-            width: auto;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+  flex: 0 0 auto;
+                width: 75%;
 
-            .gic-logo {
+            .left {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+
+                 .main-logo {
+                object-fit: cover;
+
+                height: 60px;
+                display: block;
+                  
+            }
+
+            }
+            
+            .right{
                 display: none;
             }
+
         }
 
         .navbar-section-middle .logo-section {
@@ -351,7 +356,10 @@
 
 
         .navbar-links.desktop-only {
+              
             li {
+                white-space: nowrap;
+
                 &.active {
                     a {
                         color: var(--primary-contrast-color) !important;
@@ -359,17 +367,13 @@
                 }
 
                 a {
-                    font-size: 1em;
-                    padding: 0em 1em 0em 1em;
+                    font-size: 0.9em;
+                    padding: 0em 0.1em 0em 0.1em;
                     color: var(--primary-color);
                     transition: all 120ms ease-in-out;
 
                 }
             }
         }
-
-
     }
-
-
 }

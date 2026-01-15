@@ -2,54 +2,62 @@
 .navbar {
   position: sticky;
   top: 0;
-  height: 8vh;
+  height: 80px;
   z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
   box-sizing: border-box;
   transition: all 120ms ease-in-out;
   background-color: black;
+  padding: 0;
   /* Toggle Switch */
   /* Hamburger Icon */
   /* Mobile Menu */
   /* Responsive */
 }
-.navbar .menu-button {
-  position: absolute;
-  left: 10px;
+.navbar .mobile-menu-container {
+  display: none;
 }
 .navbar .navbar-section-middle {
   position: relative;
-  width: 90vw;
+  width: 100%;
+  height: 80px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
-.navbar .navbar-section-middle .logo-section {
-  position: absolute;
-}
-.navbar .navbar-section-middle .gic-logo {
-  display: block;
+.navbar .navbar-section-middle .left {
   position: relative;
-  /* ensure relative positioning */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
-.navbar .navbar-section-middle .gic-logo::after {
+.navbar .navbar-section-middle .left .main-logo {
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: auto;
+  height: 70px;
+  display: block;
+}
+.navbar .navbar-section-middle .left::after {
   content: "";
   position: absolute;
   top: 10%;
   right: -30px;
-  /* adjust distance from .gic-logo */
   height: 80%;
-  /* vertical line height */
   width: 0.5px;
-  /* line thickness */
   background-color: rgb(169, 168, 168);
-  /* line color */
 }
-.navbar a,
-.navbar li div {
+.navbar .navbar-section-middle .middle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.navbar .navbar-section-middle .middle li {
+  font-size: 1em !important;
+}
+.navbar a, .navbar li div {
   color: var(--primary-color) !important;
 }
 .navbar .navbar-links.desktop-only li.active a {
@@ -211,10 +219,28 @@
   align-self: flex-end;
   cursor: pointer;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   .navbar {
     /* Corrected this part: apply justify-content to navbar */
     justify-content: start;
+  }
+  .navbar .mobile-menu-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .navbar .mobile-menu-container .menu-button {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-left: 15px;
+  }
+  .navbar .mobile-menu-container .main-logo {
+    -o-object-fit: cover;
+       object-fit: cover;
+    margin-right: 15px;
+    height: 60px;
+    display: block;
   }
   .navbar .mobile-menu {
     display: block;
@@ -223,7 +249,7 @@
     display: none;
   }
   .navbar .navbar-section-middle {
-    display: none;
+    display: none !important;
   }
   .navbar .menu-toggle {
     display: flex;
@@ -233,23 +259,38 @@
 @media screen and (max-width: 1499px) {
   .navbar .navbar-section-middle {
     position: relative;
-    width: auto;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    flex: 0 0 auto;
+    width: 75%;
+  }
+  .navbar .navbar-section-middle .left {
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
   }
-  .navbar .navbar-section-middle .gic-logo {
+  .navbar .navbar-section-middle .left .main-logo {
+    -o-object-fit: cover;
+       object-fit: cover;
+    height: 60px;
+    display: block;
+  }
+  .navbar .navbar-section-middle .right {
     display: none;
   }
   .navbar .navbar-section-middle .logo-section {
     position: absolute;
   }
+  .navbar .navbar-links.desktop-only li {
+    white-space: nowrap;
+  }
   .navbar .navbar-links.desktop-only li.active a {
     color: var(--primary-contrast-color) !important;
   }
   .navbar .navbar-links.desktop-only li a {
-    font-size: 1em;
-    padding: 0em 1em 0em 1em;
+    font-size: 0.9em;
+    padding: 0em 0.1em 0em 0.1em;
     color: var(--primary-color);
     transition: all 120ms ease-in-out;
   }

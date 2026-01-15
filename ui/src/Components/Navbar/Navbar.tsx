@@ -3,17 +3,21 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, UseSelector } from 'react-redux';
 import './Navbar.css';
 import type { RootState } from "../../store";
-import {EnvContext} from '../../EnvContext.js'
+import { EnvContext } from '../../EnvContext.js'
 import Burger from '@animated-burgers/burger-rotate'
-
+import mainLogo from '../../Assets/gic-log-main.png';
 import '@animated-burgers/burger-rotate/dist/styles.css'
 
 
 
+type NavbarProps = {
+    companyName: any, navbarLinks: any, siteData: any, onLanguageChange: any, currentlanguage: any
+}
+const Navbar = (
+    { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
+) => {
+    const env: string = useContext(EnvContext);
 
-const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }) => {
-  const env: string = useContext(EnvContext);
-  
     const location = useLocation();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -25,9 +29,9 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
     const user = useSelector((state: RootState) => state.auth.user);
-    function isLinkActive(_linkPath) {
+    function isLinkActive(_linkPath: string) {
         // Normalize by removing leading and trailing slashes
-        const normalizePath = (path) => path.replace(/^\/+|\/+$/g, '');
+        const normalizePath = (path: string) => path.replace(/^\/+|\/+$/g, '');
 
         const currentPathRaw = location.pathname;
 
@@ -199,6 +203,37 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
     );
 
 
+    const Links: React.ReactNode = (
+        <div className='col-6 middle'>
+            <ul className="navbar-links desktop-only">
+
+                {navbarLinks?.map((link) => (
+                    <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
+                        {
+                            link.type === 'link' && <a href={link.path}>{link.label}</a>
+                        }
+                        {
+                            link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                        }
+                    </li>
+                ))}
+                {User}
+            </ul>
+        </div>
+    );
+
+
+    const NavContent = (
+        <>
+            <div className="left col-3">
+                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+            </div>
+            {Links}
+            <div className="right col-3"></div>
+        </>
+    );
+
+
 
     return (
         <nav
@@ -211,89 +246,31 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
         >
 
 
-            <div className="d-flex justify-content-center flex-column relative" >
+            <div className="d-flex justify-content-center flex-column relative w-100" >
 
-                <div className='menu-button'>
+                {/* Mobile Menu Button*/}
+                <div className='mobile-menu-container'>
 
-                    <button className={`menu-toggle ${scrolled ? 'scrolled' : ''}`} aria-label="Toggle menu">
-                        <Burger isOpen={menuOpen} direction="right" onClick={toggleMenu}>
+                    <div className='menu-button'>
 
-                        </Burger>
-                    </button>
+                        <button className={`menu-toggle ${scrolled ? 'scrolled' : ''}`} aria-label="Toggle menu">
+                            <Burger isOpen={menuOpen} direction="right" onClick={toggleMenu}>
+                            </Burger>
+                        </button>
+
+                    </div>
+                    <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
                 </div>
 
 
-
-
-
-
+                {/* Desktop Nav Links UnScrolled */}
                 <div className={`navbar-section-middle ${showNavbar ? "d-none" : ""}`}>
-
-
-
- {/* <div className='position-absolute gic-logo'
-                style={{
-                    backgroundImage: `
-                       
-                        url(${env.VITE_SERVER_API_URL}/android-chrome-512x512.png)
-                    `,
-                      filter: "brightness(0) invert(1)",
-                    backgroundSize: "contain",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                    color: 'transparent',
-                     transform: "scale(2)",
-                     fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'
-                }}
-
-            >LOGO</div> */}
-
-                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
-                    <ul className="navbar-links desktop-only">
-
-                        {navbarLinks?.map((link) => (
-                            <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                                {
-                                    link.type === 'link' && <a href={link.path}>{link.label}</a>
-                                }
-                                {
-                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                                }
-                            </li>
-                        ))}
-                        {User}
-                    </ul>
-
+                    {NavContent}
                 </div>
 
-                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`}
-
-                    style={{
-                        // display: mobileView ?  'none': 'flex', 
-                        height: showNavbar ? '3vh' : 0,
-                        // transition: "transform 0.4s ease, opacity 0.4s ease",
-                        // transform: showNavbar ? "translateY(0)" : "translateY(-100%)",
-                        opacity: showNavbar ? 1 : 0,
-                    }}
-                >
-
-
-                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
-                    {/* Desktop Nav Links */}
-                    <ul className="navbar-links desktop-only">
-
-                        {navbarLinks?.map((link) => (
-                            <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                                {
-                                    link.type === 'link' && <a href={link.path}>{link.label}</a>
-                                }
-                                {
-                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                                }
-                            </li>
-                        ))}
-                        {User}
-                    </ul>
+                {/* Desktop Nav Links Scrolled ===> It is a clone with effect */}
+                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0 }}>
+                    {NavContent}
                 </div>
 
 
@@ -337,7 +314,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                     {siteData.getStartedNow}
                 </button> */}
             </div>
-             
+
         </nav>
     );
 };

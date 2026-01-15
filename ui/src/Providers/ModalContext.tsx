@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import ModalDialog from "../Components/Generic/Dialog/Dialog"
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import ModalDialog from "../Components/Generic/Dialog/Dialog";
 
 interface ModalOptions {
   title?: string;
@@ -28,6 +28,23 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [exiting, setExiting] = useState(false);
   const [options, setOptions] = useState<ModalOptions | null>(null);
 
+  // Close modal on Escape key press
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
   const openModal = (opts: ModalOptions) => {
     setOptions(opts);
     setIsOpen(true);
@@ -41,7 +58,8 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setIsOpen(false);
       setExiting(false);
       options?.onCancel?.();
-    }, 300); // animation duration
+      setOptions(null);
+    }, 300); // match your animation duration
   };
 
   const handleConfirm = () => {
@@ -50,6 +68,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setIsOpen(false);
       setExiting(false);
       options?.onConfirm?.();
+      setOptions(null);
     }, 300);
   };
 

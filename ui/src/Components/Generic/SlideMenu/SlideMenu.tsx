@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useEffect} from "react";
 import "./SlideMenu.css";
 
 interface SlideMenuProps {
@@ -9,6 +9,23 @@ interface SlideMenuProps {
 }
 
 const SlideMenu: React.FC<SlideMenuProps> = ({ isOpen, onClose, children, headerTitle }) => {
+    useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Cleanup listener on unmount or when menu closes
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <>
       {/* Backdrop */}

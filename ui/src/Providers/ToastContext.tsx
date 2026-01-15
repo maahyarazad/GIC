@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 
 type ToastType = "success" | "error" | "info" | "warning";
 
-interface ToastOptions {
+export default interface ToastOptions {
   type?: ToastType;
   message: string;
   duration?: number; // ms

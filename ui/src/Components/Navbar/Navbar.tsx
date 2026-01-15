@@ -231,7 +231,7 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
 
 
 
- <div className='position-absolute gic-logo'
+ {/* <div className='position-absolute gic-logo'
                 style={{
                     backgroundImage: `
                        
@@ -246,9 +246,9 @@ const Navbar = ({ companyName, navbarLinks, siteData, onLanguageChange, currentl
                      fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh'
                 }}
 
-            >LOGO</div>
+            >LOGO</div> */}
 
-                    {/* <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a> */}
+                    <a href='/' className='s-font position-absolute gic-logo' style={{ fontSize: '2em', textDecoration: 'none', left: '15vw', top: '-1vh' }}>GIC</a>
                     <ul className="navbar-links desktop-only">
 
                         {navbarLinks?.map((link) => (

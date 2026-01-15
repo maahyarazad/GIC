@@ -83,6 +83,19 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
         onPaginationModelChange({ page: 1, pageSize: parseInt(e.target.value, 10) });
     };
 
+    const copyToClipboard = (text: string) => {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(
+    () => {
+      // Optional: show some feedback, e.g. alert or toast
+      console.log("Copied to clipboard:", text);
+    },
+    (err) => {
+      console.error("Could not copy text: ", err);
+    }
+  );
+};
+
     const handleSort = (field: keyof T) => {
         if (!onSortModelChange) return;
         if (!sortModel || sortModel.field !== field) {
@@ -190,6 +203,14 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                             <tr key={row._id?.toString()}>
                                 {columns.map((col, idx) => (
                                     <td className="td-scroll"
+                                        title={String(col.field
+                                                ? String(row[col.field])
+                                                : null)}
+                                                onClick={() => {
+                                                    if (col.field) {
+                                                    copyToClipboard(String(row[col.field]));
+                                                    }
+                                                }}
                                         key={String(col.field ?? idx)}
                                         data-label={col.headerName}
                                         style={{ padding: 8, borderBottom: "1px solid #eee" }}

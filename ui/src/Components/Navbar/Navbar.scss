@@ -62,7 +62,8 @@
         }
     }
 
-    a,li div {
+    a,
+    li div {
         color: var(--primary-color) !important;
     }
 
@@ -82,7 +83,7 @@
 
                 &:hover {
                     color: var(--primary-color) !important;
-                    
+
                 }
             }
         }
@@ -240,8 +241,8 @@
         position: fixed;
         left: -100%;
         width: 100vw;
-        height: 94vh;
-        top: 8vh;
+        height: calc(100% - 80px);
+        top: 80px;
         background: #fff;
         box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
         padding: 2rem;
@@ -326,25 +327,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-  flex: 0 0 auto;
-                width: 75%;
+            flex: 0 0 auto;
+            width: 75%;
 
             .left {
                 display: flex;
                 justify-content: flex-end;
                 align-items: center;
 
-                 .main-logo {
-                object-fit: cover;
+                .main-logo {
+                    object-fit: cover;
 
-                height: 60px;
-                display: block;
-                  
+                    height: 60px;
+                    display: block;
+
+                }
+
             }
 
-            }
-            
-            .right{
+            .right {
                 display: none;
             }
 
@@ -356,7 +357,7 @@
 
 
         .navbar-links.desktop-only {
-              
+
             li {
                 white-space: nowrap;
 

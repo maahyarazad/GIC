@@ -30,7 +30,7 @@ export function RegisterFileDownloadRoutes(app: Application) {
 
       const outputPath = path.resolve(
         process.cwd(),
-        `uploads/watermarked-${id}.pdf`
+        `uploads/${id}.pdf`
       );
 
 
@@ -42,7 +42,7 @@ export function RegisterFileDownloadRoutes(app: Application) {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="watermarked-${id}.pdf"`
+        `attachment; filename="${id}.pdf"`
       );
 
       const stream = fs.createReadStream(outputPath);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; // import your generic grid
+import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; 
 import axiosInstance from "../../../api/axiosInstance";
 import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
 import { updateUser, getLogs } from '../../../api/user'
@@ -9,82 +9,27 @@ import { CiTimer } from "react-icons/ci";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useModal } from "@/Providers/ModalContext";
 import debounce from "@/Hooks/useDebounce";
-
-
+import Loader from "@/Components/Loader/Loader";
+import LogsList from "./LogsList";
 export const UserProfilesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
-    const [logs, setLogs] = useState(null);
+    
     const { openModal } = useModal();
-
-    const handleDeleteClick = async (id: string) => { await fetchLogDetails(id) };
-
-
-    useEffect(() => {
-        if (logs !== null) {
-
-            openModal({
+    
+    const handleViewLogs = async (id: string) => { 
+        openModal({
                 title: "User Change Logs",
-                content: (
-                    <div style={{ overflowY: "auto", padding: "8px" }}>
-                        {logs.length === 0 ? (
-                            <p>No logs found.</p>
-                        ) : (
-                            <ul style={{ padding: 0, listStyle: "none" }}>
-                                {logs.map((log) => (
-                                    <li
-                                        key={log._id.toString()}
-                                        style={{
-                                            marginBottom: "12px",
-                                            padding: "8px",
-                                            borderBottom: "1px solid #eee",
-                                            borderRadius: "4px",
-                                            backgroundColor: "#f9f9f9",
-                                        }}
-                                    >
-                                        <strong>{log.message}</strong>
-                                        <div style={{ fontSize: "0.9rem", marginTop: "4px", color: "#555" }}>
-                                            <div>
-                                                <strong>User:</strong> <br />
-                                                {log.userDetails.name} ({log.userDetails.role})
-                                            </div>
-                                            <div>
-                                                <strong>Email:</strong> <br />{log.userDetails.email}
-                                            </div>
-                                            <div>
-                                                <strong>Time:</strong> <br />{new Date(log.createdAt).toLocaleString()}
-                                            </div>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                ),
-
+                content: ( <LogsList userId={id} show={show}/>),
                 cancelText: "Close",
-
                 onCancel: () => console.log("Cancelled"),
-            });
-        }
-    }, [logs])
+            }); 
+        };
 
-    const fetchLogDetails = async (id: string) => {
-        try {
 
-            const response = await getLogs(id);
-            setLogs(response.data.logs);
 
-        } catch (err: any) {
-            show({
-                type: "error",
-                message: err.message,
 
-            });
-        } finally {
-
-        }
-    }
+   
 
 
 
@@ -101,7 +46,7 @@ export const UserProfilesDataGrid = () => {
             sortable: true,
             filterable: false,
             renderCell: (params) => (
-                <div style={{ display: "flex", justifyContent: "center", cursor: 'pointer' }} onClick={() => handleDeleteClick(params._id)}>
+                <div style={{ display: "flex", justifyContent: "center", cursor: 'pointer' }} onClick={() => handleViewLogs(params._id)}>
                     <CiTimer style={{ color: "gray", fontSize: "18px" }} />
                 </div>
             ),
@@ -201,7 +146,7 @@ export const UserProfilesDataGrid = () => {
     const [filterModel, setFilterModel] = useState<FilterModel<User>[] | null>(
         null
     );
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const fetchUserProfiles = useCallback(async () => {
         setLoading(true);
@@ -297,20 +242,25 @@ export const UserProfilesDataGrid = () => {
     return (
         <>
             <h3 className="mb-3">User Profiles</h3>
-            <GenericDataGrid<User>
-                rows={rows}
-                columns={columns}
-                rowCount={rowCount}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                sortModel={sortModel}
-                onSortModelChange={setSortModel}
-                filterModel={filterModel}
-                onFilterModelChange={setFilterModel}
-                prevButtonClassName="dashboard-btn--ghost-minimal"
-                nextButtonClassName="dashboard-btn--ghost-minimal"
-                getRowId={(row) => row._id!.toString()}
-            />
+            {loading ?
+                <Loader/>
+
+             : 
+                <GenericDataGrid<User>
+                    rows={rows}
+                    columns={columns}
+                    rowCount={rowCount}
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    sortModel={sortModel}
+                    onSortModelChange={setSortModel}
+                    filterModel={filterModel}
+                    onFilterModelChange={setFilterModel}
+                    prevButtonClassName="dashboard-btn--ghost-minimal"
+                    nextButtonClassName="dashboard-btn--ghost-minimal"
+                    getRowId={(row) => row._id!.toString()}
+                />
+             }
         </>
     );
 };

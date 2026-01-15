@@ -6,85 +6,98 @@ import { useToast } from "../../../providers/ToastContext";
 import { JsonData, JsonEditor } from 'json-edit-react'
 import './JsonViewer.css';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
-
+import Loader from "@/Components/Loader/Loader";
 export default function JsonViewer() {
-  const [data, setData] = useState<any>({});
-  const [editorKey, setEditorKey] = useState(0);
-  const { show } = useToast();
-  const {confirm} = useConfirm();
-  const fetchClient = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get("/client");
+    const [data, setData] = useState<any>({});
+    const [editorKey, setEditorKey] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const { show } = useToast();
+    const { confirm } = useConfirm();
 
-      if (response.status === 200) {
 
-        setData(response?.data?.data);
-      }
-    } catch (err: any) {
-      show({
-        type: "error",
-        message: err.message,
-      });
-    }
-  }, []);
+    const fetchClient = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await axiosInstance.get("/client");
 
-  const updateClient = async () => {
-const isConfirmed = await confirm({
-    title: "Update Client Data",
-    message: `This JSON file contains the entire site data blueprint. An invalid JSON file could break the website. Are you sure you want to proceed?`,
-    confirmText: "Proceed",
-    cancelText: "Cancel",
-  });
+            if (response.status === 200) {
 
-  if (!isConfirmed) return;
-    try {
+                setData(response?.data?.data);
+            }
+        } catch (err: any) {
+            show({
+                type: "error",
+                message: err.message,
+            });
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-      const response = await updateClientById(data._id, data);
-
-      if (response.success) {
-        
-        setData(data);
-         setEditorKey((k) => k + 1);
-        show({
-          type: "success",
-          message: response.message,
+    const updateClient = async () => {
+        const isConfirmed = await confirm({
+            title: "Update Client Data",
+            message: `This JSON file contains the entire site data blueprint. An invalid JSON file could break the website. Are you sure you want to proceed?`,
+            confirmText: "Proceed",
+            cancelText: "Cancel",
         });
-      }
-    } catch (err: any) {
-      show({
-        type: "error",
-        message: err.message,
-      });
+
+        if (!isConfirmed) return;
+        try {
+            setLoading(true);
+            const response = await updateClientById(data._id, data);
+
+            if (response.success) {
+
+                setData(data);
+                setEditorKey((k) => k + 1);
+                show({
+                    type: "success",
+                    message: response.message,
+                });
+            }
+        } catch (err: any) {
+            show({
+                type: "error",
+                message: err.message,
+            });
+        } finally {
+            setLoading(false);
+        }
     }
-  }
 
 
-  useEffect(() => {
-    fetchClient();
-  }, [fetchClient, ]);
+    useEffect(() => {
+        fetchClient();
+    }, [fetchClient,]);
 
 
-  const handleChange = (updatedJson: JsonData) => {
-    
-    
-    setData(updatedJson);
-  };
+    const handleChange = (updatedJson: JsonData) => {
 
 
-  return (
-    <>
-      <h3 className="mb-3">Email Template</h3>
-      <button className="btn dashboard-btn mb-2" onClick={updateClient}>
-        Update Sitedata
-      </button>
-      <div className="application-json-editor-continer">
+        setData(updatedJson);
+    };
 
-        <JsonEditor
-          data={data}
-          key={editorKey}
-          setData={handleChange}
-        />
-      </div>
-    </>
-  );
+
+    return (
+        <>
+            <h3 className="mb-3">Email Template</h3>
+            <button className="btn dashboard-btn mb-2" onClick={updateClient}>
+                Update Sitedata
+            </button>
+            <div className="application-json-editor-continer">
+
+                {loading ?
+                    <Loader />
+
+                    :
+                    <JsonEditor
+                        data={data}
+                        key={editorKey}
+                        setData={handleChange}
+                    />
+                }
+            </div>
+        </>
+    );
 }

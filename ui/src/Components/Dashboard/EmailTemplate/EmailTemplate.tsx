@@ -6,7 +6,7 @@ import SlideMenu from '../../Generic/SlideMenu/SlideMenu';
 import HtmlCodeEditor from "../HtmlEditor/HtmlEditor";
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';
 import debounce from "@/Hooks/useDebounce";
-
+import Loader from "@/Components/Loader/Loader";
 
 export interface EmailTemplate {
     _id?: string;
@@ -19,26 +19,28 @@ export interface EmailTemplate {
     updatedAt?: string;
 }
 
+const buttonGroupStyle = {fontSize: 10, padding: 5}
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
+    
     const { confirm } = useConfirm();
     
     const columns: Column<EmailTemplate>[] = [
-        { field: "_id", headerName: "ID", width: 180 },
-        { field: "name", headerName: "Name", sortable: true, filterable: true, width: 150 },
-        { field: "subject", headerName: "Subject", sortable: true, filterable: true, width: 250 },
-        { field: "variables", headerName: "Variables", width: 200, renderCell: row => (row.variables?.join(", ") || "—") },
-        { field: "createdAt", headerName: "Created At", width: 180, renderCell: row => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—" },
-        { field: "updatedAt", headerName: "Updated At", width: 180, renderCell: row => row.updatedAt ? new Date(row.updatedAt).toLocaleDateString() : "—" },
+        { field: "_id", headerName: "ID", width: '10%' },
+        { field: "name", headerName: "Name", sortable: true, filterable: true, width: '10%' },
+        { field: "subject", headerName: "Subject", sortable: true, filterable: true,  width: '10%' },
+        // { field: "variables", headerName: "Variables",  width: '10%', renderCell: row => (row.variables?.join(", ") || "—") },
+        { field: "createdAt", headerName: "Created At",  width: '10%', renderCell: row => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—" },
+        { field: "updatedAt", headerName: "Updated At",  width: '10%', renderCell: row => row.updatedAt ? new Date(row.updatedAt).toLocaleDateString() : "—" },
         {
             headerName: "Actions",
-            width: 250,
+             width: '30%',
             renderCell: (row) => (
-                <div className="btn-group" role="group">
-                    <button className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
-                    <button className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
-                    <button className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
-                    <button className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onSendToSubscriber(row)}>Send to Subscribers</button>
+                <div className=" btn-group" role="group">
+                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
+                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
+                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
+                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onSendToSubscriber(row)}>Send to Subscribers</button>
                 </div>
             ),
             sortable: false,
@@ -51,7 +53,7 @@ const EmailTemplatesDataGrid = () => {
     const [paginationModel, setPaginationModel] = useState<PaginationModel>({ page: 1, pageSize: 10 });
     const [sortModel, setSortModel] = useState<SortModel<EmailTemplate> | null>(null);
     const [filterModel, setFilterModel] = useState<FilterModel<EmailTemplate>[] | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
 
     const fetchTemplates = useCallback(async () => {
@@ -189,7 +191,7 @@ const EmailTemplatesDataGrid = () => {
     };
 
     const onSendToSubscriber = async (row: EmailTemplate) => {
-        debugger;
+        
 
 
         const isConfirmed = await confirm({
@@ -285,8 +287,15 @@ const EmailTemplatesDataGrid = () => {
                 </form>
             </SlideMenu>
 
-            <button className={`btn btn-sm dashboard-btn`}
+            <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={() => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("Add New Email Template"); setId(null) }}>Add New</button>
+
+
+            {loading ?
+                <Loader/>
+
+             : 
+
             <GenericDataGrid<EmailTemplate>
                 rows={rows}
                 prevButtonClassName="dashboard-btn--ghost-minimal"
@@ -301,6 +310,7 @@ const EmailTemplatesDataGrid = () => {
                 onFilterModelChange={setFilterModel}
                 getRowId={(row) => row._id!}
             />
+             }
         </>
     );
 };

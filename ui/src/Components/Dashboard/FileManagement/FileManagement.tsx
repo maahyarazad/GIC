@@ -5,6 +5,8 @@ import { useToast } from "../../../Providers/ToastContext";
 import { EnvContext } from '../../../EnvContext.js';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
+import Loader from "@/Components/Loader/Loader";
+
 interface UploadedFileDoc {
     _id: string;
     filename: string;
@@ -25,9 +27,11 @@ const FileManagement = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
     const env = useContext(EnvContext);
+    const [loading, setLoading] = useState(true);
 
     const fetchFiles = useCallback(async () => {
         try {
+            setLoading(true);
             const params = new URLSearchParams();
             params.append("limit", paginationModel.pageSize.toString());
             params.append("skip", ((paginationModel.page - 1) * paginationModel.pageSize).toString());
@@ -47,6 +51,8 @@ const FileManagement = () => {
             setRowCount(response.data.data.total); // adjust if server returns total count
         } catch (err) {
             console.error("Failed to fetch files", err);
+        }finally{
+            setLoading(false);
         }
     }, [paginationModel, sortModel, filterModel]);
 
@@ -120,12 +126,12 @@ const FileManagement = () => {
     };
 
     const columns: Column<UploadedFileDoc>[] = [
-        { field: "_id", headerName: "ID", sortable: true, filterable: true },
-        { field: "filename", headerName: "Filename", sortable: true, filterable: true },
-        { field: "mimetype", headerName: "Type", sortable: true },
+        { field: "_id", headerName: "ID", sortable: true, filterable: true , width:"10%"},
+        { field: "filename", headerName: "Filename", sortable: true, filterable: true , width:"20%"},
+        { field: "mimetype", headerName: "Type", sortable: true , width:"10%"},
         {
             headerName: "Preview",
-            width: 50, // adjust width
+            width: '5%', // adjust width
             renderCell: (row) => {
                 if (row.mimetype.startsWith("image/")) {
                     return (
@@ -153,10 +159,10 @@ const FileManagement = () => {
                 return "—";
             }
         },
-        { field: "size", headerName: "Size (KB)", sortable: true, renderCell: (row) => Math.round(row.size / 1024) },
-        { field: "createdAt", headerName: "Uploaded At", sortable: true, renderCell: (row) => new Date(row.createdAt).toLocaleString() },
+        { field: "size", headerName: "Size (KB)", sortable: true , width:"10%", renderCell: (row) => Math.round(row.size / 1024) },
+        { field: "createdAt", headerName: "Uploaded At", sortable: true , width:"10%", renderCell: (row) => new Date(row.createdAt).toLocaleString() },
         {
-            headerName: "Actions",
+            headerName: "Actions", width:"10%",
             renderCell: (row) => (
                 <button type="button" className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
                     Delete
@@ -174,6 +180,11 @@ const FileManagement = () => {
                 <input type="file" onChange={handleFileUpload} hidden />
             </label>
 
+
+            {loading ?
+                <Loader/>
+
+             : 
             <GenericDataGrid
                 rows={files}
                 prevButtonClassName="dashboard-btn--ghost-minimal"
@@ -188,6 +199,7 @@ const FileManagement = () => {
                 onFilterModelChange={setFilterModel}
                 getRowId={(row) => row._id}
             />
+             }
         </div>
     );
 };

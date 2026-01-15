@@ -2,25 +2,26 @@ import React, { useEffect, useState, useCallback } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid"; // import your generic grid
 import axiosInstance from "../../../api/axiosInstance";
 import { NewsletterSubscriber } from '../../../../../src/types/newsletterSubscriber.types';
-
+import Loader from "@/Components/Loader/Loader";
 import { useToast } from "../../../providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 
 export const NewsletterSubscribers = () => {
     const { show } = useToast();
+    
     const columns: Column<NewsletterSubscriber>[] = [
         {
             field: "_id",
             headerName: "ID",
-            width: 180,
+            width: '10%',
         },
         {
             field: "active",
             headerName: "Active",
-            width: 120,
+            width: '5%',
             sortable: true,
-            filterable: true,
+            // filterable: true,
             renderCell: (params) => (
                 <div style={{ display: "flex", alignItems: "center" }}>
                     {params.active ? (
@@ -37,7 +38,7 @@ export const NewsletterSubscribers = () => {
             headerName: "email",
             sortable: true,
             filterable: true,
-            width: 150,
+            width: '10%',
         },
 
 
@@ -45,7 +46,7 @@ export const NewsletterSubscribers = () => {
             field: "createdAt",
             headerName: "Created At",
             sortable: true,
-            width: 180,
+            width: '10%',
             renderCell: (row) =>
                 row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
         },
@@ -53,7 +54,7 @@ export const NewsletterSubscribers = () => {
             field: "updatedAt",
             headerName: "Updated At",
             sortable: true,
-            width: 180,
+            width: '10%',
             renderCell: (row) =>
                 row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
         },
@@ -113,6 +114,10 @@ export const NewsletterSubscribers = () => {
     return (
         <>
             <h3 className="mb-3">Newsletter Subscribers</h3>
+              {loading ?
+                <Loader/>
+
+             : 
             <GenericDataGrid<NewsletterSubscriber>
                 rows={rows}
                 prevButtonClassName="dashboard-btn--ghost-minimal"
@@ -127,6 +132,7 @@ export const NewsletterSubscribers = () => {
                 onFilterModelChange={setFilterModel}
                 getRowId={(row) => row._id!.toString()}
             />
+             }
         </>
     );
 };

@@ -291,7 +291,8 @@ export class UserController extends Controller {
       }
 
       // Log Collection
-      const token = req.cookies?.token;
+    const token = (req as any).cookies?.token;
+
       const decoded = jwt.verify(token, JWT_SECRET) as {
         userId: string;
         role: string;

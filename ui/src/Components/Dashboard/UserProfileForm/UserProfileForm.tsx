@@ -7,7 +7,7 @@ import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.typ
 import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile, upsertNewsletterSubscriber, getPDFBlob } from "../../../api/user";
 import { useToast } from "@/providers/ToastContext";
 import { EnvContext } from '@/EnvContext';
-
+import axiosInstance from '../../../api/axiosInstance';
 // Helper to convert socialLinks array to object keyed by type
 function socialLinksArrayToObject(
     arr: { platform: string; url: string }[] = []
@@ -119,13 +119,13 @@ export default function UserProfileForm({ initialProfile }: any) {
         try {
             if (!initialProfile) return;
 
-            const blob = await getPDFBlob(initialProfile._id || initialProfile.id);
-            
+            const { blob, filename } = await getPDFBlob(initialProfile.id);
+
             const url = window.URL.createObjectURL(blob);
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = "watermarked.pdf";
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
 
@@ -253,7 +253,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
     return (
         <form onSubmit={handleSubmit} className="profile-form">
-            <button type="button" className="btn dashboard-btn" onClick={pdfDownload}>DL PDF</button>
+            <button type="button" className="btn dashboard-btn" onClick={pdfDownload}>Download Sample Watermarked PDF</button>
             <button type="submit" className="btn dashboard-btn">Save Profile</button>
             <div className="form-group">
 
@@ -287,13 +287,13 @@ export default function UserProfileForm({ initialProfile }: any) {
 
                         <label>Fullname</label>
                         <input
-                            
+
                             type="text"
                             value={profile.name || ""}
                             onChange={(e) => updateField("name", e.target.value)}
                         />
                     </div>
-                   
+
 
                 </div>
             </div>

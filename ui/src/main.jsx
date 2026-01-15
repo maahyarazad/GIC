@@ -14,7 +14,6 @@ createRoot(document.getElementById('root')).render(
         <Provider store={store}>
             <ConfirmDialogProvider>
                 <ModalProvider>
-
                     <ToastProvider>
                         <AuthProvider>
                             <App />

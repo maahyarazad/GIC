@@ -3,6 +3,8 @@ import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaArrowRight } from 'react-icons/fa';
 import { useToast } from '../../providers/ToastContext';
 import axiosInstance from '../../api/axiosInstance';
+import mainLogo from '../../Assets/gic-log-main.png';
+import { useNavigate } from 'react-router-dom';
 
 interface SocialLink {
     platform: string;
@@ -27,13 +29,13 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
     const [email, setEmail] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const validationMessageRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
     const { show } = useToast();
 
     if (!footerData) return null;
 
     const handleSubmit = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
         // ❌ Invalid email
         if (!emailRegex.test(email)) {
             inputRef.current?.classList.add('invalid');
@@ -88,9 +90,9 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
                 <div className="col">
                     <div className="d-flex justify-content-lg-center justify-content-start py-4">
                         <div className="d-flex flex-column align-items-start align-items-lg-center">
-                            <a href="/" className="s-font contrast-color" style={{ fontSize: '5em', textDecoration: 'none' }}>
-                                GIC
-                            </a>
+                            <div onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
+                                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+                            </div>
 
                             <div className="footer-text">
                                 Building C1

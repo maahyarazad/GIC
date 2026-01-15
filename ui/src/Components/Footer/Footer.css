@@ -9,6 +9,13 @@
   padding: 2rem 1rem;
   /* Responsive */
 }
+.footer .main-logo {
+  width: auto;
+  height: 80px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  transform: scale(1.5);
+}
 .footer .divider {
   align-self: center;
   border: 1px solid;
@@ -82,15 +89,6 @@
   max-height: 130px;
   overflow: hidden;
   display: inline-block;
-}
-.footer .logo-container-footer .footer-logo {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 50%;
-  transform: scale(2);
-  transition: transform 0.3s ease;
 }
 .footer .footer-about {
   font-size: 14px;

@@ -225,7 +225,7 @@ const Navbar = (
 
     const NavContent = (
         <>
-            <div className="left col-3">
+            <div className="left col-3" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
                 <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
             </div>
             {Links}
@@ -259,7 +259,9 @@ const Navbar = (
                         </button>
 
                     </div>
-                    <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+                    <div onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
+                        <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+                    </div>
                 </div>
 
 
@@ -291,7 +293,7 @@ const Navbar = (
 
             >
                 <ul className="mobile-links">
-                    <a href='/' className='s-font absolute gic-logo contrast-color' style={{ fontSize: '4.5em', textDecoration: 'none' }}>GIC</a>
+                    {/* <a href='/' className='s-font absolute gic-logo contrast-color' style={{ fontSize: '4.5em', textDecoration: 'none' }}>GIC</a> */}
                     {navbarLinks?.map((link) => (
                         <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                             <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>

@@ -28,13 +28,15 @@ export const adminAuthMiddleware = async (
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string};
 
 
-    // Check role
-    if (decoded.role !== "admin") {
+    // Check if role is admin or procurement
+    if (!["admin", "procurement"].includes(decoded.role)) {
       return res.status(403).json({ message: "Forbidden: Admins only" });
     }
 
-    // req.user = user;
+    
+
     next();
+    
   } catch (error) {
     console.error("Admin auth error:", error);
     return res.status(401).json({ message: "Invalid or expired token" });

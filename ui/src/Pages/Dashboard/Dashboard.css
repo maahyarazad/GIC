@@ -5,33 +5,42 @@
 }
 .dashboard nav {
   position: relative;
-  /* The sliding rectangle */
 }
 .dashboard nav ul {
   list-style: none;
   padding: 0;
+  margin: 0;
   text-decoration-line: none;
   position: relative;
 }
-.dashboard nav .selector {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  transition: transform 0.3s ease, width 0.3s ease;
-  z-index: -1;
-}
 .dashboard nav li {
-  padding: 8px 12px;
+  padding: 10px 12px;
   cursor: pointer;
   color: #aaa;
   position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+.dashboard nav li::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+  z-index: -1;
 }
 .dashboard nav li.active {
   color: var(--primary-contrast-color);
+}
+.dashboard nav li.active::before {
+  transform: scaleX(1);
+}
+.dashboard nav li:hover::before {
+  transform: scaleX(1);
 }
 
 /* Sidebar styles */
@@ -43,6 +52,7 @@
   padding: 1rem;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
 /* Desktop: sidebar always visible */
@@ -65,7 +75,7 @@
     bottom: 0;
     width: 250px;
     transform: translateX(-100%);
-    z-index: 1000;
+    z-index: 1001;
   }
   .sidebar.open {
     transform: translateX(0);
@@ -84,6 +94,7 @@
     border: none;
     cursor: pointer;
     margin: 1rem;
+    z-index: 1100;
   }
 }
 /* Main content takes rest space */
@@ -91,5 +102,7 @@
   flex-grow: 1;
   padding: 1rem;
   height: 92vh;
-  overflow-y: scroll;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }/*# sourceMappingURL=Dashboard.css.map */

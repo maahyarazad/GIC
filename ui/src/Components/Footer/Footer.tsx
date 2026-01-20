@@ -91,7 +91,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
                     <div className="d-flex justify-content-lg-center justify-content-start py-4">
                         <div className="d-flex flex-column align-items-start align-items-lg-center">
                             <div onClick={() => navigate("/")} style={{cursor: 'pointer'}} className='main-logo-container'>
-                                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+                                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
                             </div>
 
                             <div className="footer-text">

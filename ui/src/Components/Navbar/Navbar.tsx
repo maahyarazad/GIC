@@ -226,7 +226,7 @@ const Navbar = (
     const NavContent = (
         <>
             <div className="left col-3" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
-                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+               <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
             </div>
             {Links}
             <div className="right col-3"></div>
@@ -260,7 +260,7 @@ const Navbar = (
 
                     </div>
                     <div onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
-                        <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" loading="lazy" decoding="async" title="German Industry Club Logo" />
+                        <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
                     </div>
                 </div>
 

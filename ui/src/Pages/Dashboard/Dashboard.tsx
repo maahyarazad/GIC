@@ -16,7 +16,7 @@ const getDefaultTab = (role: string): MenuItem => {
     case "admin":
       return "users";
     case "procurement":
-      return "file_management";
+      return "sitedata";
     case "user":
     default:
       return "profile";
@@ -90,12 +90,13 @@ const Dashboard: React.FC = () => {
     // Sidebar toggle
     const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
-    const handleMenuClick = (item: MenuItem) => {
-        setSelectedMenu(item);
-        if (window.innerWidth < 768) {
-            setSidebarOpen(false);
-        }
-    };
+const handleMenuClick = (item: MenuItem) => {
+  setSelectedMenu(item);
+
+  if (typeof window !== "undefined" && window.innerWidth < 768) {
+    setSidebarOpen(false);
+  }
+};
 
     // Sliding selector
     const selectorRef = useRef<HTMLDivElement>(null);

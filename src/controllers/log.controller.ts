@@ -49,6 +49,7 @@ export class LogController extends Controller {
 
       const result = await logsCollection
 .aggregate([
+    
   {
     $lookup: {
       from: "users",
@@ -74,10 +75,11 @@ export class LogController extends Controller {
 ])
 .toArray();
   
+const _logs = result.filter((x) => x.targetId.toString() === id);
 
       this.setStatus(200);
       return createSuccessResponse<{ logs: Array<any> }>({
-        logs: result,
+        logs: _logs
       });
     } catch (error) {
       console.error(error);

@@ -165,7 +165,7 @@ export async function sendMassDynamicEmailDoc(
 
 
 
-        const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_MODE === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
+        const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_ENV === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
 
         // 🔁 VARIABLES PER SUBSCRIBER
         const variables : Record<string, any> = {

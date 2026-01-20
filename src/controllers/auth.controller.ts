@@ -411,7 +411,7 @@ export class AuthController extends Controller {
       });
 
       let resetLink: string;
-      if (process.env.NODE_MODE === "PRODUCTION") {
+      if (process.env.NODE_ENV === "PRODUCTION") {
         resetLink = `${process.env.CLIENT_ORIGIN_PROD}/reset-password?token=${token}`;
       } else {
         resetLink = `${process.env.CLIENT_ORIGIN_DEV}/reset-password?token=${token}`;

@@ -310,7 +310,7 @@ export class UserController extends Controller {
 
       if (updateData.authorize) {
         let login_link: string;
-        if (process.env.NODE_MODE === "PRODUCTION") {
+        if (process.env.NODE_ENV === "PRODUCTION") {
           login_link = `${process.env.CLIENT_ORIGIN_PROD}/login`;
         } else {
           login_link = `${process.env.CLIENT_ORIGIN_DEV}/login`;

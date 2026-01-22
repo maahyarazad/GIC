@@ -9,6 +9,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"), // IMPORTANT
     },
   },
+//     server: {
+//     hmr: {
+//       overlay: false, // 🔕 silence violation spam
+//     },
+//   },
 build: {
     rollupOptions: {
       input: "index.html",
@@ -19,6 +24,6 @@ ssr: {
   noExternal: [
     "react-router-dom",
   ],
-  external: ['react', 'react-dom'], // <-- prevent bundling React into SSR build
+  
 }
 });

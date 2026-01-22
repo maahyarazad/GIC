@@ -3,7 +3,7 @@ import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaArrowRight } from 'react-icons/fa';
 import { useToast } from '../../providers/ToastContext';
 import axiosInstance from '../../api/axiosInstance';
-import mainLogo from '../../Assets/gic-log-main.png';
+import mainLogo from '../../../public/gic-log-main.png';
 import { useNavigate } from 'react-router-dom';
 
 interface SocialLink {
@@ -144,4 +144,4 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
     );
 };
 
-export default Footer;
+export default React.memo(Footer);

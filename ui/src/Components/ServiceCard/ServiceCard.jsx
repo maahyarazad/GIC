@@ -28,6 +28,7 @@ const ServiceCard = forwardRef(({
             {clickable ? (
                 <a href={href} className={`iot-card ${hoverClass} ${fixHeight ? 'fix-height' : '' }`} >
                     <div className="iot-card__image">
+                        {/* <SafeImage src={imageSrc} alt={imageAlt} width={60} height={60}/> */}
                         <img src={imageSrc} alt={imageAlt} width={60} height={60} />
                         
                     </div>

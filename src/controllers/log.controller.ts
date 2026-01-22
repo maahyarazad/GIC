@@ -41,45 +41,44 @@ export class LogController extends Controller {
         return createErrorResponse("logs not found");
       }
       if (logs.length === 0) {
-       this.setStatus(200);
-      return createSuccessResponse<{ logs: Array<any> }>({
-        logs: [],
-      });
+        this.setStatus(200);
+        return createSuccessResponse<{ logs: Array<any> }>({
+          logs: [],
+        });
       }
 
       const result = await logsCollection
-.aggregate([
-    
-  {
-    $lookup: {
-      from: "users",
-      localField: "lastModifiedBy",
-      foreignField: "_id",
-      as: "userDetails",
-    },
-  },
-  { $unwind: "$userDetails" }, // flatten array
-  {
-    $project: {
-      _id: 1,
-      targetId: 1,
-      lastModifiedBy: 1,
-      collection: 1,
-      message: 1,
-      createdAt: 1,
-      "userDetails.name": 1,
-      "userDetails.email": 1,
-      "userDetails.role": 1,
-    },
-  },
-])
-.toArray();
-  
-const _logs = result.filter((x) => x.targetId.toString() === id);
+        .aggregate([
+          {
+            $lookup: {
+              from: "users",
+              localField: "lastModifiedBy",
+              foreignField: "_id",
+              as: "userDetails",
+            },
+          },
+          { $unwind: "$userDetails" }, // flatten array
+          {
+            $project: {
+              _id: 1,
+              targetId: 1,
+              lastModifiedBy: 1,
+              collection: 1,
+              message: 1,
+              createdAt: 1,
+              "userDetails.name": 1,
+              "userDetails.email": 1,
+              "userDetails.role": 1,
+            },
+          },
+        ])
+        .toArray();
+
+      const _logs = result.filter((x) => x.targetId.toString() === id);
 
       this.setStatus(200);
       return createSuccessResponse<{ logs: Array<any> }>({
-        logs: _logs
+        logs: _logs,
       });
     } catch (error) {
       console.error(error);

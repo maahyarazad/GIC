@@ -5,7 +5,7 @@ import './Navbar.css';
 import type { RootState } from "../../store";
 import { EnvContext } from '../../EnvContext.js'
 import Burger from '@animated-burgers/burger-rotate'
-import mainLogo from '../../Assets/gic-log-main.png';
+import mainLogo from '../../../public/gic-log-main.png';
 import '@animated-burgers/burger-rotate/dist/styles.css'
 
 
@@ -321,4 +321,4 @@ const Navbar = (
     );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

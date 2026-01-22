@@ -23,6 +23,7 @@ import BackToTop from './Components/BackToTop/BackToTop';
 import MainLoader from './Components/MainLoader';
 import axiosInstance from './api/axiosInstance';
 
+
 import { Routes, Route, useLocation } from 'react-router-dom';
 import {useScrollRestoration} from './Components/useScrollRestoration';
 import './App.css';
@@ -46,23 +47,34 @@ useScrollRestoration();
 };
 
 const App = () => {
-    const [siteData, setSiteData] = useState(null);
-    const [language, setLanguage] = useState('EN');
+const [siteData, setSiteData] = useState(null);
+const [language, setLanguage] = useState("EN");
     const [sessionId, setSessionId] = useState(null);
+useEffect(() => {
+  let cancelled = false;
 
-    const fetchSiteData = useCallback(async () => {
-        try {
-            
-            const response = await axiosInstance.get(`/client`);
-            setSiteData(response.data.data);
-        } catch (error) {
-            console.error('Error fetching footer data:', error);
-        }
-    }, [language]);
+  const fetchSiteData = async () => {
+    try {
+      const response = await axiosInstance.get(`/client`, {
+        headers: {
+          "Accept-Language": language,
+        },
+      });
 
-    useEffect(() => {
-        fetchSiteData();
-    }, [fetchSiteData]);
+      if (!cancelled) {
+        setSiteData(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching site data:", error);
+    }
+  };
+
+  fetchSiteData();
+
+  return () => {
+    cancelled = true;
+  };
+}, [language]);
 
     useEffect(() => {
         let guid = localStorage.getItem('session-guid');

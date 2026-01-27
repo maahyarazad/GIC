@@ -23,12 +23,12 @@
   right: 0;
   height: 100vh;
   width: 80%;
-  
+    z-index: 9999;
   background-color: #fff;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
   transform: translateX(100%);
   transition: transform 0.3s ease;
-  z-index: 1000;
+  
   overflow-y: auto;
   display: flex;
   flex-direction: column;

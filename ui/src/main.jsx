@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { store } from './store.js'
 import { ModalProvider } from './Providers/ModalContext.js';
 import MainLoader from "./Components/MainLoader.jsx";
+import '../public/bootstrap/dist/css/bootstrap.min.css';
 
 
 const Root = () => {

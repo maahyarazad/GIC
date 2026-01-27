@@ -153,31 +153,10 @@ const EmailTemplatesDataGrid = () => {
         setOpen(false); setHtml(""); setTemplateName(""); setSubject(""); setHeaderTitle(""); setId(null);
     }
 
-    const onCreate = () => {
-        const initialHtml = "<div>Hello {{USER_NAME}}</div>";
-        const initialTemplateName = "";
-        const initialSubject = "";
-        const initialHeaderTitle = "Add New Email Template";
-        const initialId = null;
-
-        openMenu(
-            <TemplateForm
-                id={initialId}
-                templateName={initialTemplateName}
-                setTemplateName={setTemplateName}
-                subject={initialSubject}
-                setSubject={setSubject}
-                html={initialHtml}
-                setHtml={setHtml}
-                handleSaveTemplate={handleSaveTemplate}
-            />,
-            "New Template",
-            handleResetState
-        );
-    };
+    const onCreate = () => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("New Email Template"); setId(null);}
 
     const onEdit = (row: EmailTemplate) => {
-        const editHeaderTitle = `Modify ${row.name}`;
+        
         setHeaderTitle(`Modify ${row.name}`)
         setId(row._id!);
         setTemplateName(row.name);

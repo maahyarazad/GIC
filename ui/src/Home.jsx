@@ -91,7 +91,7 @@ const Home = ({ siteData }) => {
     if (!siteData) return null;
 
     return (
-        <div>
+        <div style={{overflowX: 'clip' }}>
             <HomeBackground background={siteData.media.home_background}/>
             {siteData.homeSliders.map((slider, index) => (
                 <HomeSlider

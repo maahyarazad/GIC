@@ -17,6 +17,7 @@ const Navbar = (
     { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
 ) => {
     const env: string = useContext(EnvContext);
+const isReady = useSelector((state: RootState) => state.app.isReady);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -223,7 +224,7 @@ const Navbar = (
     );
 
 
-    const NavContent = (
+    const NavContent = isReady ? (
         <>
             <div className="left col-3" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
@@ -231,9 +232,10 @@ const Navbar = (
             {Links}
             <div className="right col-3"></div>
         </>
-    );
+    ) : null;
 
 
+useEffect(()=> {}, [isReady])
 
     return (
         <nav
@@ -260,7 +262,10 @@ const Navbar = (
 
                     </div>
                     <div onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
+                        {isReady ? 
+                        
                         <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+                        : null}
                     </div>
                 </div>
 

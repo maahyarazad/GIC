@@ -1,9 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import Button from "../../Components/Button/Button";
 import MainLoader from '../../Components/MainLoader';
+import { setReady } from '../../features/appSlice'; 
+import {  useDispatch } from "react-redux";
+
+
 const ResetPassword: React.FC = () => {
+
+    
+          const dispatch = useDispatch();
+        useEffect(()=>{
+                dispatch(setReady(true));
+               
+        }, [dispatch])
+
     useEffect(() => {
     const login = document.querySelector(".login-container") as HTMLElement | null;
     if (!login) return;

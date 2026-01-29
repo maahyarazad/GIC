@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Login.css";
-import { useSelector, useDispatch } from "react-redux";
+
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
-
-
+import { setReady } from '../../features/appSlice'; 
+import { useSelector, useDispatch } from "react-redux";
 const Login: React.FC = () => {
 
 
@@ -18,7 +18,11 @@ const Login: React.FC = () => {
   const [searchParams] = useSearchParams();
   const user = useSelector((state: RootState) => state.auth.user);
   const loading = useSelector((state: RootState) => state.auth.loading);
-
+    
+    React.useEffect(()=>{
+            dispatch(setReady(true));
+           
+    }, [dispatch])
 
 
   const [email, setEmail] = useState("");

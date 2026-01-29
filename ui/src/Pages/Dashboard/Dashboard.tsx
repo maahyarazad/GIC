@@ -54,7 +54,17 @@ const getDefaultTab = (role: string): MenuItem => {
   }
 };
 
+import { setReady } from '../../features/appSlice'; 
+import {  useDispatch } from "react-redux";
 const Dashboard: React.FC = () => {
+
+    
+          const dispatch = useDispatch();
+            React.useEffect(()=>{
+                    dispatch(setReady(true));
+                   
+            }, [dispatch])
+
   const userProfile = useSelector((state: any) => state.auth?.user);
   const userRole = userProfile?.role || "user";
 

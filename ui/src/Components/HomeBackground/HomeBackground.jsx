@@ -1,5 +1,5 @@
 import { useContext, useState, useCallback } from "react";
-import { useDispatch } from "react-redux";
+    import { useDispatch } from "react-redux";
 import { setReady } from '../../features/appSlice'; // adjust path
 import { EnvContext } from '../../EnvContext';
 import ArrowDown from '@/Components/ArrowDown/ArrowDown';
@@ -12,7 +12,7 @@ const HomeBackground = ({ background }) => {
 
   const handleVideoLoaded = useCallback(() => {
     setVideoLoaded(true);
-    debugger;
+    
     dispatch(setReady(true));
     
   }, [dispatch]);

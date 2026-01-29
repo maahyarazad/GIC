@@ -9,6 +9,8 @@ import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
 import LockOverlay from '../../Components/LockOverlay/LockOverlay'
 import './Boardroom.css';
+import { setReady } from '../../features/appSlice'; 
+
 
 
 
@@ -21,7 +23,13 @@ const Boardroom: React.FC<Props> = ({siteData}) => {
      const env = useContext(EnvContext);
 
 
-  const dispatch = useDispatch();
+      const dispatch = useDispatch();
+        React.useEffect(()=>{
+                dispatch(setReady(true));
+               
+        }, [dispatch])
+
+  
   const { show } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

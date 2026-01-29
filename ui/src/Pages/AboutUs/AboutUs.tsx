@@ -1,44 +1,21 @@
 import React from "react";
 import "./AboutUs.css";
+import { setReady } from '../../features/appSlice';
+import { useDispatch } from "react-redux";
 
-// interface ParagraphsSection {
-//   title: string;
-//   paragraphs: string[];
-// }
 
-// interface ItemsSection {
-//   title: string;
-//   items: { title: string; description: string }[];
-// }
-
-// interface TextSection {
-//   title: string;
-//   text: string;
-// }
-
-// interface ValuesSection {
-//   title: string;
-//   items: { title: string; description: string }[];
-// }
-
-// interface AboutUsData {
-//   hero: {
-//     title: string;
-//     subHeading: string;
-//   };
-//   whoWeAre: ParagraphsSection;
-//   whatWeDo: ItemsSection;
-//   mission: TextSection;
-//   vision: TextSection;
-//   values: ValuesSection;
-// }
 
   interface Props {
     siteData: any;
   }
 
 const AboutUs: React.FC<Props> = ({ siteData }) => {
-  
+    const dispatch = useDispatch();
+    React.useEffect(()=>{
+            dispatch(setReady(true));
+           
+    }, [dispatch])
+    
   return (
     <div className="about-page">
       {/* Hero Section */}

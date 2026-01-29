@@ -17,7 +17,7 @@ const Navbar = (
     { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
 ) => {
     const env: string = useContext(EnvContext);
-const isReady = useSelector((state: RootState) => state.app.isReady);
+    const isReady = useSelector((state: RootState) => state.app.isReady);
 
     const location = useLocation();
     const navigate = useNavigate();

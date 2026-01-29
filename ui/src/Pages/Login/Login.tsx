@@ -12,7 +12,6 @@ import Button  from "../../Components/Button/Button";
 const Login: React.FC = () => {
 
 
-
   const dispatch = useDispatch();
   const { show } = useToast();
   const navigate = useNavigate();
@@ -39,6 +38,22 @@ const Login: React.FC = () => {
     }, [loading, user, location.pathname, navigate, redirectTo]);
 
 
+    useEffect(() => {
+  function setLoginContainerHeight() {
+    const login = document.querySelector(".login-container") as HTMLElement | null;
+    if (login) {
+      const vh = window.innerHeight;
+      login.style.minHeight = `${vh - 80}px`;
+    }
+  }
+
+  setLoginContainerHeight();
+  window.addEventListener("resize", setLoginContainerHeight);
+
+  return () => {
+    window.removeEventListener("resize", setLoginContainerHeight);
+  };
+}, []);
 
 
   const handleSubmit = async (e: React.FormEvent) => {

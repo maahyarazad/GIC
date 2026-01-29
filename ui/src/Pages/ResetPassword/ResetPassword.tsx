@@ -4,6 +4,23 @@ import axiosInstance from "../../api/axiosInstance";
 import Button from "../../Components/Button/Button";
 import MainLoader from '../../Components/MainLoader';
 const ResetPassword: React.FC = () => {
+        useEffect(() => {
+  function setLoginContainerHeight() {
+    const login = document.querySelector(".login-container") as HTMLElement | null;
+    if (login) {
+      const vh = window.innerHeight;
+      login.style.minHeight = `${vh - 80}px`;
+    }
+  }
+
+  setLoginContainerHeight();
+  window.addEventListener("resize", setLoginContainerHeight);
+
+  return () => {
+    window.removeEventListener("resize", setLoginContainerHeight);
+  };
+}, []);
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

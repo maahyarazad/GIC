@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "./Register.css";
 import axiosInstance from "../../api/axiosInstance";
 import { useToast } from "../../providers/ToastContext";
@@ -41,7 +41,22 @@ interface OtpCheckBody {
 
 
 const Register: React.FC = () => {
+    useEffect(() => {
+  function setLoginContainerHeight() {
+    const login = document.querySelector(".login-container") as HTMLElement | null;
+    if (login) {
+      const vh = window.innerHeight;
+      login.style.minHeight = `${vh - 80}px`;
+    }
+  }
 
+  setLoginContainerHeight();
+  window.addEventListener("resize", setLoginContainerHeight);
+
+  return () => {
+    window.removeEventListener("resize", setLoginContainerHeight);
+  };
+}, []);
     const env = useContext(EnvContext);
     const navigate = useNavigate();
     const { show } = useToast();
@@ -347,7 +362,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
     return (
         <>
             <div className="login-container">
-                <div className={`login-card ${registrationProcess?.currentStep === 0 ? "visible slide-in-right" : "hide"}`}>
+                <div className={`register-card  ${registrationProcess?.currentStep === 0 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Create an Account</h2>
 
                     {error && <div className="login-error">{error}</div>}
@@ -412,7 +427,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                     </p>
                 </div>
 
-                <div className={`login-card otp-card ${registrationProcess?.currentStep === 1 ? "visible slide-in-right" : "hide"}`}>
+                <div className={`register-card otp-card ${registrationProcess?.currentStep === 1 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Email and Proceed</h2>
                     {error && <div className="login-error">{error}</div>}
 
@@ -482,7 +497,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
 
 
 
-                <div className={`login-card otp-card ${registrationProcess?.currentStep === 2 ? "visible slide-in-right" : "hide"}`}>
+                <div className={`register-card otp-card ${registrationProcess?.currentStep === 2 ? "visible slide-in-right" : "hide"}`}>
                     <h2 className="login-title">Verify Phone and Finish Registration</h2>
                     {error && <div className="login-error">{error}</div>}
 

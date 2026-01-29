@@ -176,7 +176,15 @@ const Home = ({ siteData }) => {
 
                             <h2 ref={_ref1} className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
                             <h3 ref={_ref2} className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
-                            <h5 ref={_ref3} className={`fs-4 pb-3 slide-down visible`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
+                            <h5 ref={_ref3} className="fs-4 pb-3 slide-down visible" style={{ lineHeight: 2 }}>
+                            {siteData.aboutUs.description.split('\n').map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                {line}
+                                <br />
+                                </React.Fragment>
+                            ))}
+                            </h5>
+
 
                         </div>
                         <div className="col-12 col-md-6 d-flex justify-content-center image-column">
@@ -210,7 +218,15 @@ const Home = ({ siteData }) => {
                                 {siteData.advisorySection.header}
                             </h2>
                             <h4 className="fs-2 pb-3">
-                                {siteData.advisorySection.description}
+                                
+                                                            {siteData.advisorySection.description.split('\n').map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                {line}
+                                <br />
+                                </React.Fragment>
+                            ))}
+                            
+
                             </h4>
                         </div>
 
@@ -257,7 +273,15 @@ const Home = ({ siteData }) => {
                     <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
                         <h2 className={`contrast-color`} style={{ paddingTop: '20rem', fontSize: '4rem' }}>{siteData.heroSection.header}</h2>
                         <h3 className={`fs-4  text-white pt-5`} style={{ fontWeight: 900 }}>{siteData.heroSection.title}</h3>
-                        <h5 className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
+                        <h5 className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>
+                            
+                             {siteData.heroSection.description.split('\n').map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                {line}
+                                <br />
+                                </React.Fragment>
+                            ))}
+                            </h5>
                     </div>
 
                 </div>
@@ -344,7 +368,13 @@ const Home = ({ siteData }) => {
                                 className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`}
                                 style={{ lineHeight: 2 }}
                             >
-                                {siteData.aboutUs_footer.description}
+                                
+                                   {siteData.aboutUs_footer.description.split('\n').map((line, idx) => (
+                                <React.Fragment key={idx}>
+                                {line}
+                                <br />
+                                </React.Fragment>
+                            ))}
                             </h5>
                         </div>
 

@@ -4,21 +4,12 @@ import Button from "../../Components/Button/Button";
 
 export default function ForgotPassword() {
     useEffect(() => {
-  function setLoginContainerHeight() {
     const login = document.querySelector(".login-container") as HTMLElement | null;
-    if (login) {
-      const vh = window.innerHeight;
-      login.style.minHeight = `${vh - 80}px`;
-    }
-  }
+    if (!login) return;
 
-  setLoginContainerHeight();
-  window.addEventListener("resize", setLoginContainerHeight);
-
-  return () => {
-    window.removeEventListener("resize", setLoginContainerHeight);
-  };
-}, []);
+    const vh = window.innerHeight;
+    login.style.minHeight = `${vh - 80}px`;
+    }, []);
 
 
 

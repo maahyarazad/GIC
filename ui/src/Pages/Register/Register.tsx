@@ -42,21 +42,13 @@ interface OtpCheckBody {
 
 const Register: React.FC = () => {
     useEffect(() => {
-  function setLoginContainerHeight() {
     const login = document.querySelector(".login-container") as HTMLElement | null;
-    if (login) {
-      const vh = window.innerHeight;
-      login.style.minHeight = `${vh - 80}px`;
-    }
-  }
+    if (!login) return;
 
-  setLoginContainerHeight();
-  window.addEventListener("resize", setLoginContainerHeight);
+    const vh = window.innerHeight;
+    login.style.minHeight = `${vh - 80}px`;
+    }, []);
 
-  return () => {
-    window.removeEventListener("resize", setLoginContainerHeight);
-  };
-}, []);
     const env = useContext(EnvContext);
     const navigate = useNavigate();
     const { show } = useToast();

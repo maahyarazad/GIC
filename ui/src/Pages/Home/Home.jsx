@@ -179,20 +179,20 @@ const Home = ({ siteData }) => {
                             <h5 ref={_ref3} className={`fs-4 pb-3 slide-down visible`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
 
                         </div>
-                            <div className="col-12 col-md-6 d-flex justify-content-center image-column">
-                                <img
-                                    src="https://placehold.co/500x500"
-                                    alt={siteData.aboutUs.header}
-                                    className="img-fluid rounded shadow"
-                                />
-                            </div>
-                       <div className={`row align-items-center toggle-button-container ${isOpen ? "expanded" : ""}`}>
-  <button className="btn" onClick={toggleAccordion}>
-    <span className={`icon-arrow ${isOpen ? 'open' : ''}`}>
-      <IoIosArrowDown />
-    </span>
-  </button>
-</div>
+                        <div className="col-12 col-md-6 d-flex justify-content-center image-column">
+                            <img
+                                src="https://placehold.co/500x500"
+                                alt={siteData.aboutUs.header}
+                                className="img-fluid rounded shadow"
+                            />
+                        </div>
+                        <div className={`row align-items-center toggle-button-container ${isOpen ? "expanded" : ""}`}>
+                            <button className="btn" onClick={toggleAccordion}>
+                                <span className={`icon-arrow ${isOpen ? 'open' : ''}`}>
+                                    <IoIosArrowDown />
+                                </span>
+                            </button>
+                        </div>
 
                     </div>
                 </div>
@@ -201,7 +201,7 @@ const Home = ({ siteData }) => {
 
 
 
-            <div className="container mx-auto px-4 py-6 my-6" id="section-2" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
+            <div className="container mx-auto px-4 py-6 my-6" id="section-2" style={{ marginTop: '5vh', marginBottom: '5vh' }}>
                 <div ref={ref} className={`slide-down ${isVisible ? "visible" : ""}`}>
                     <div className="row justify-content-center align-items-center">
 

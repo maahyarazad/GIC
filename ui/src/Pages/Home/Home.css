@@ -2,6 +2,7 @@
   .container-with-toggle .image-column {
     position: sticky;
     top: 25vh;
+    padding-bottom: 20vh;
     align-self: flex-start;
   }
 }

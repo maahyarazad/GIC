@@ -6,7 +6,7 @@
   transition: opacity 0.5s ease;
   position: absolute;
   left: 50%;
-  top: 85%;
+  top: 80%;
   width: 30px;
 }
 .arrow-container .arrow.invisible {

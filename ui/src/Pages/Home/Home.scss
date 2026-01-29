@@ -1,0 +1,33 @@
+.container-with-toggle {
+    position: relative;
+
+
+
+    &.expanded {
+        // max-height will be set dynamically by JS, so can leave empty here
+        transition: max-height 0.5s ease-in-out;
+    }
+
+    .toggle-button {
+        position: absolute;
+        // top: 75vh;
+        left: calc(50% - 1rem);
+        font-size: 40px;
+        color: var(--primary-contrast-color);;
+        .expanded {
+            
+        }
+
+    }
+
+    .image-column {
+        @media (min-width: 768px) {
+            position: sticky;
+            top: 25vh; // distance from top
+            align-self: flex-start;
+        }
+    }
+
+
+
+}

@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import HomeSlider from './Components/HomeSlider/HomeSlider';
-import ServiceGrid from './Components/ServiceGrid/ServiceGrid';
-import TestimonialCarousel from './Components/TestemonialCarousel/TestemonialCarousel';
+import HomeSlider from '../../Components/HomeSlider/HomeSlider';
+import ServiceGrid from '../../Components/ServiceGrid/ServiceGrid';
+import TestimonialCarousel from '../../Components/TestemonialCarousel/TestemonialCarousel';
 
-import HomeBackground from './Components/HomeBackground/HomeBackground';
-import ImageSlider from './Components/Carousel/Carousel';
-import Carousel from './Components/Carousel/Carousel';
+import HomeBackground from '../../Components/HomeBackground/HomeBackground';
+import ImageSlider from '../../Components/Carousel/Carousel';
+import Carousel from '../../Components/Carousel/Carousel';
 // import TypeWriter from './Components/TypeWriter/TypeWriter';
 // import ShowCases from './Components/ShowCases/ShowCases';
-import UseInView from './Hooks/UseInView';
-import FloatingSocialMedia from './Components/FloatingSocialMedia/FloatingSocialMedia';
-import { EnvContext } from './EnvContext';
+import UseInView from '../../Hooks/UseInView';
+import FloatingSocialMedia from '../../Components/FloatingSocialMedia/FloatingSocialMedia';
+import { EnvContext } from '../../EnvContext';
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
+import './Home.css';
 
 
 const Home = ({ siteData }) => {
-    
+
     const env = useContext(EnvContext);
 
     const [ref, isVisible] = UseInView();
@@ -41,7 +44,7 @@ const Home = ({ siteData }) => {
     const [_ref14, _isVisible14] = UseInView({ delay: 700 });
 
 
-    
+
     const silderRefs = useRef([]);
     const [visibleSliders, setVisibleSliders] = useState([]);
     useEffect(() => {
@@ -90,9 +93,57 @@ const Home = ({ siteData }) => {
 
     if (!siteData) return null;
 
+
+
+
+
+    const [isOpen, setIsOpen] = useState(false);
+    const contentRef = useRef(null);
+    const scrollPositionRef = useRef(null);
+    const [maxHeight, setMaxHeight] = useState("0px");
+    // const [maxHeightToggleButton, setMaxHeightToggleButton] = useState("75px");
+
+    const toggleAccordion = () => {
+        setIsOpen((prev) => !prev);
+
+    };
+
+    useEffect(() => {
+        if (!contentRef.current) return;
+
+        if (isOpen) {
+            debugger;
+            scrollPositionRef.current = window.scrollY;
+        }
+
+        if (isOpen) {
+            setMaxHeight(`${contentRef.current.scrollHeight}px`);
+            // setMaxHeightToggleButton(
+            //     `calc(${contentRef.current.scrollHeight}px - 5vh)`
+            // );
+        } else {
+            setMaxHeight("60vh");
+            // setMaxHeightToggleButton("55vh");
+
+            // Restore scroll AFTER layout change
+            requestAnimationFrame(() => {
+
+                window.scrollTo({
+                    top: scrollPositionRef.current,
+                    behavior: "instant" // no animation
+                });
+            });
+        }
+    }, [isOpen]);
+
+
+
+
     return (
-        <div style={{overflowX: 'clip' }}>
-            <HomeBackground background={siteData.media.home_background}/>
+        <div style={{ overflowX: 'clip' }}>
+            <HomeBackground background={siteData.media.home_background} />
+
+
             {siteData.homeSliders.map((slider, index) => (
                 <HomeSlider
                     key={slider.id}
@@ -108,7 +159,7 @@ const Home = ({ siteData }) => {
 
 
 
-            <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.disableSocialLinks}/>
+            <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.disableSocialLinks} />
 
 
 
@@ -117,11 +168,20 @@ const Home = ({ siteData }) => {
             <div className="container mx-auto px-4 py-6 my-6" id="section-aboutus" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
                 <div
                     ref={_ref}
-                    className={`slide-down ${_isVisible ? "visible" : ""}`}
+                    className={`slide-down ${_isVisible ? "visible" : ""} container-with-toggle`}
                 >
-                    <div className="row align-items-center">
+                    <div className={`row align-items-center`}>
+
+
+
+
                         {/* Text Column */}
-                        <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0">
+                        <div className={`col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 `} ref={contentRef} style={{
+                            maxHeight: maxHeight,
+                            overflow: 'hidden',
+                            transition: 'max-height 0.3s ease-in-out',
+                        }}>
+
                             <h2
                                 ref={_ref1}
                                 className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
@@ -130,11 +190,12 @@ const Home = ({ siteData }) => {
                                 className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
                             <h5
                                 ref={_ref3}
-                                className={`fs-4 pb-3 slide-down ${_isVisible3 ? "visible" : ""}`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
+                                className={`fs-4 pb-3 slide-down visible`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
+
                         </div>
 
                         {/* Image Column */}
-                        <div className="col-12 col-md-6 d-flex justify-content-center">
+                        <div className="col-12 col-md-6 d-flex justify-content-center image-column">
                             <img
                                 src="https://placehold.co/500x500"
                                 alt={siteData.aboutUs.header}
@@ -142,6 +203,13 @@ const Home = ({ siteData }) => {
                             />
                         </div>
                     </div>
+                    <button 
+                    // style={{ top: maxHeightToggleButton }}
+                        className={`toggle-button btn ${isOpen ? "expanded" : ""}`}
+                        onClick={toggleAccordion}
+                    >
+                        {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                    </button>
                 </div>
             </div>
 

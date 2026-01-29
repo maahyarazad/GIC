@@ -3,6 +3,8 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 
 import './HomeSlider.css';
 
+import { IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp } from "react-icons/io";
 
 const HomeSlider = forwardRef(({ id, title, text, siteData ,image, className }, ref) => {
 
@@ -18,15 +20,27 @@ const HomeSlider = forwardRef(({ id, title, text, siteData ,image, className }, 
     }
 
 
+    
     return (
-        <div ref={ref} id={id} className={`home-slider ${className}`}>
+
+        //  <div className={`accordion ${open ? "open" : ""}`}>
+        
+                       
+        
+        //                 <div className="accordion-content">
+        //                     Stuff goes Here
+        //                 </div>
+        //             </div>
+
+        <div ref={ref} id={id} className={`home-slider ${className} `}>
             {/* <LazyLoadImage
                 src={image}
                 alt={title}
                 placeholderSrc={image}
                 className="slider-image"
             /> */}
-            <div className="slider-content">
+            
+            <div className={`slider-content`}>
                 <h1 className="slider-title">{title}</h1>   
                 <h2 className="slider-text">{text}</h2>
                 <div className="d-flex justify-content-end button-wrapper">

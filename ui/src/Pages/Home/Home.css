@@ -1,0 +1,19 @@
+.container-with-toggle {
+  position: relative;
+}
+.container-with-toggle.expanded {
+  transition: max-height 0.5s ease-in-out;
+}
+.container-with-toggle .toggle-button {
+  position: absolute;
+  left: calc(50% - 1rem);
+  font-size: 40px;
+  color: var(--primary-contrast-color);
+}
+@media (min-width: 768px) {
+  .container-with-toggle .image-column {
+    position: sticky;
+    top: 25vh;
+    align-self: flex-start;
+  }
+}/*# sourceMappingURL=Home.css.map */

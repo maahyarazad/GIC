@@ -2,8 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import React, { useState, useEffect, useCallback , useContext} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-
-import Home from './Home';
+import Home from './Pages/Home/Home';
 import AboutUs from './Pages/AboutUs/AboutUs';
 import Services from './Pages/Services';
 import ContactUs from './Pages/ContactUs';

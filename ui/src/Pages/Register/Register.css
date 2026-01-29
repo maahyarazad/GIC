@@ -4,6 +4,9 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  max-height: calc(100vh - 80px);
+  overflow-y: hidden;
+  position: relative;
 }
 
 .register-card {
@@ -13,6 +16,8 @@
   max-width: 420px;
   height: -moz-fit-content;
   height: fit-content;
+  justify-content: center;
+  align-items: center;
   background: #fff;
   padding: 2.5rem;
   opacity: 0;

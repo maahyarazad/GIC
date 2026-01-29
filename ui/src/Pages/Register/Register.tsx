@@ -46,7 +46,7 @@ const Register: React.FC = () => {
     if (!login) return;
 
     const vh = window.innerHeight;
-    login.style.minHeight = `${vh - 80}px`;
+    login.style.height = `${vh - 80}px`;
     }, []);
 
     const env = useContext(EnvContext);

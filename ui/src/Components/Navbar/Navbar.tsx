@@ -241,7 +241,7 @@ const Navbar = (
             style={{
                 backgroundColor: scrolled
                     ? 'var(--primary-gray-color)'
-                    : (location.pathname === '/' ? 'transparent' : 'black')
+                    : (location.pathname === '/' ? 'transparent' : 'var(--primary-gray-color)')
             }}
         >
 

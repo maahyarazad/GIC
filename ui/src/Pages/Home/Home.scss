@@ -1,21 +1,31 @@
 .container-with-toggle {
-    position: relative;
-
-
 
     .image-column {
         @media (min-width: 768px) {
             position: sticky;
-            top: 25vh; // distance from top
+            top: 25vh;
             align-self: flex-start;
         }
     }
 
     .toggle-button-container {
+        position: static; /* default */
+
+        &.expanded {
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+            background: var(--background-color, white); /* Optional: add bg to avoid overlap */
+            padding: 0.5rem 0;
+            display: flex;
+            justify-content: center;
+            /* Make sure it stretches full width or adjust as needed */
+            width: 100%;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1); /* subtle shadow on top */
+        }
 
         .icon-arrow {
             display: inline-block;
-            /* needed for transform */
             transition: transform 0.3s ease;
         }
 
@@ -23,18 +33,13 @@
             transform: rotate(180deg);
         }
 
-
         button {
             font-size: 50px;
             color: var(--primary-contrast-color);
-            position: sticky;
-            top: 20px;
-            /* distance from the top of viewport */
-            z-index: 100;
-            /* make sure it appears on top */
+            border: none;
+            background: none;
+            cursor: pointer;
         }
-
-
     }
 }
 
@@ -50,4 +55,18 @@
 h2,
 h3 {
     line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+    .container-with-toggle .toggle-button-container.expanded {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        background: var(--background-color, white);
+        padding: 0.5rem 0;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
 }

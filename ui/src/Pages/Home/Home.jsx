@@ -186,13 +186,14 @@ const Home = ({ siteData }) => {
                                     className="img-fluid rounded shadow"
                                 />
                             </div>
-                        <div className={`row align-items-center toggle-button-container  ${isOpen ? "expanded" : ""}`}>
-                            <button className="btn" onClick={toggleAccordion}>
-                                <span className={`icon-arrow ${isOpen ? 'open' : ''}`}>
-                                    <IoIosArrowDown />
-                                </span>
-                            </button>
-                        </div>
+                       <div className={`row align-items-center toggle-button-container ${isOpen ? "expanded" : ""}`}>
+  <button className="btn" onClick={toggleAccordion}>
+    <span className={`icon-arrow ${isOpen ? 'open' : ''}`}>
+      <IoIosArrowDown />
+    </span>
+  </button>
+</div>
+
                     </div>
                 </div>
             </div>

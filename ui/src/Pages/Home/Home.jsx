@@ -112,7 +112,7 @@ const Home = ({ siteData }) => {
         if (!contentRef.current) return;
 
         if (isOpen) {
-            debugger;
+            
             scrollPositionRef.current = window.scrollY;
         }
 
@@ -172,10 +172,6 @@ const Home = ({ siteData }) => {
                 >
                     <div className={`row align-items-center`}>
 
-
-
-
-                        {/* Text Column */}
                         <div className={`col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 `} ref={contentRef} style={{
                             maxHeight: maxHeight,
                             overflow: 'hidden',
@@ -203,13 +199,16 @@ const Home = ({ siteData }) => {
                             />
                         </div>
                     </div>
-                    <button 
-                    // style={{ top: maxHeightToggleButton }}
-                        className={`toggle-button btn ${isOpen ? "expanded" : ""}`}
-                        onClick={toggleAccordion}
-                    >
-                        {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                    </button>
+                    <div className={`row align-items-center toggle-button-container  ${isOpen ? "expanded" : ""}`}>
+
+                        <button 
+                        // style={{ top: maxHeightToggleButton }}
+                            className={`btn`}
+                            onClick={toggleAccordion}
+                        >
+                            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -343,29 +342,29 @@ const Home = ({ siteData }) => {
                 >
                     <div className="row align-items-center">
 
-                        {/* Image Column */}
+                        
                         <div className="col-12 col-md-6 d-flex justify-content-center order-2 order-md-1">
                             <img
                                 src="https://placehold.co/500x500"
-                                alt={siteData.aboutUs.header}
+                                alt={siteData.aboutUs_footer.header}
                                 className="img-fluid rounded shadow"
                             />
                         </div>
 
-                        {/* Text Column */}
+                        
                         <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 mt-lg-0 mt-5 order-1 order-md-2">
                             <h2
                                 ref={_ref4}
                                 className={`fs-1 pb-3 slide-down ${_isVisible4 ? "visible" : ""}`}
                             >
-                                {siteData.aboutUs.header}
+                                {siteData.aboutUs_footer.header}
                             </h2>
 
                             <h3
                                 ref={_ref5}
                                 className={`fs-4 pb-3 slide-down contrast-color ${_isVisible5 ? "visible" : ""}`}
                             >
-                                {siteData.aboutUs.title}
+                                {siteData.aboutUs_footer.title}
                             </h3>
 
                             <h5
@@ -373,7 +372,7 @@ const Home = ({ siteData }) => {
                                 className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`}
                                 style={{ lineHeight: 2 }}
                             >
-                                {siteData.aboutUs.description}
+                                {siteData.aboutUs_footer.description}
                             </h5>
                         </div>
 

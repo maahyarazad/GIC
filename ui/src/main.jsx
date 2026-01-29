@@ -13,14 +13,17 @@ import '../public/bootstrap/dist/css/bootstrap.min.css';
 
 
 const Root = () => {
+    
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
     // Wait for all fonts to be loaded
     document.fonts.ready.then(() => setFontsLoaded(true));
+    
   }, []);
 
   if (!fontsLoaded) {
+    
     return (
       <MainLoader/>
     );

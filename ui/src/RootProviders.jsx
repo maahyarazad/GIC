@@ -57,17 +57,16 @@ export function RootProviders({ children }) {
 
     }, []);
 
+    
     if (typeof window !== "undefined" && !ready) {
         return <MainLoader />;
     }
 
-
+    
     return (
         <>
             <Provider store={store}>
                 <SlideMenuProvider>
-
-
                     <ConfirmDialogProvider>
                         <ModalProvider>
                             <ToastProvider>

@@ -12,11 +12,13 @@
 }
 
 .carousel-container {
-    overflow: hidden; /* clip slides */
+    overflow: hidden;
+    /* clip slides */
     height: 100%;
     background-color: #f5f5f5;
     position: relative;
-    border-radius: 0.5rem; /* Uncomment if you want rounded corners */
+    border-radius: 0.5rem;
+    /* Uncomment if you want rounded corners */
     box-sizing: border-box;
 }
 
@@ -47,54 +49,59 @@
         flex-direction: column;
         height: 100%;
         position: relative;
+        max-width: 400px;
     }
 
-   /* Picture container */
-.picture-container {
-position: relative;
+    /* Picture container */
+    .picture-container {
+        position: relative;
         display: block;
         flex-shrink: 0;
         width: 100%;
 
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain; /* keep original aspect ratio */
-  }
-}
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            /* keep original aspect ratio */
+        }
+    }
 
-/* Content overlay */
-.content {
-              flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            position: relative;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; /* text won't block clicks on image */
+    /* Content overlay */
+    .content {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        /* text won't block clicks on image */
 
-  h3 {
-    position: absolute;
-    top: 30vh; /* original style */
-    margin: 0 0 0.375rem 0;
-    font-size: 2rem;
-    color: var(--primary-contrast-color);
-    flex-shrink: 0;
-  }
+        h3 {
+            position: absolute;
+            top: 30vh;
+            /* original style */
+            margin: 0 0 0.375rem 0;
+            font-size: 2rem;
+            color: var(--primary-contrast-color);
+            flex-shrink: 0;
+        }
 
-  p {
-    position: absolute;
-    top: 40vh; /* original style */
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--primary-gray-color);
-    flex-grow: 1;
-  }
-}
+        p {
+            position: absolute;
+            top: 40vh;
+            /* original style */
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--primary-gray-color);
+            flex-grow: 1;
+        }
+    }
 }
 
 .carousel-btn {
@@ -142,7 +149,8 @@ position: relative;
     .carousel-btn-prev {
         left: 0;
         margin-left: 0;
-        right: auto;  /* unset right */
+        right: auto;
+        /* unset right */
         width: 2.5rem;
         height: 2.5rem;
         background-color: transparent;
@@ -153,11 +161,12 @@ position: relative;
     .carousel-btn-next {
         right: 0;
         margin-right: 0;
-        left: auto; /* unset left */
+        left: auto;
+        /* unset left */
         width: 2.5rem;
         height: 2.5rem;
-            background-color: transparent;
-            color: var(--primary-gray-color);
-            font-size: 2rem;
+        background-color: transparent;
+        color: var(--primary-gray-color);
+        font-size: 2rem;
     }
 }

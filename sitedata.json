@@ -1,0 +1,337 @@
+{
+  "_id": "6925a49f3d1ea968eba308ed",
+  "companyName": "GIC",
+  "companyLogo": "https://cdn.dribbble.com/userupload/18467822/file/original-6dc62fc38015a876784c9dcc98737906.jpg?resize=400x0",
+  "navLinks": [
+    {
+      "label": "Home",
+      "path": "/",
+      "type": "link",
+      "id": 1
+    },
+    {
+      "label": "About Us",
+      "path": "/about-us",
+      "type": "link",
+      "id": 2
+    },
+    {
+      "label": "Boardroom",
+      "path": "/boardroom",
+      "type": "link",
+      "id": 3
+    },
+    {
+      "label": "Contact Us",
+      "path": "/contact-us",
+      "type": "link",
+      "id": 4
+    }
+  ],
+  "about_us": {
+    "hero": {
+      "title": "About Us",
+      "subHeading": "Who We Are | What We Do"
+    },
+    "whoWeAre": {
+      "title": "Who We Are",
+      "paragraphs": [
+        "We are a dedicated community built on collaboration, trust, and a shared passion for growth. Our team consists of professionals, creatives, and innovators committed to creating meaningful connections and opportunities.",
+        "Our identity is shaped by integrity, diversity, and the belief that every individual has something valuable to contribute. We are more than just an organization — we are a collective working toward positive impact."
+      ]
+    },
+    "whatWeDo": {
+      "title": "What We Do",
+      "items": [
+        {
+          "title": "Community Engagement",
+          "description": "Events, workshops, and activities that bring people together."
+        },
+        {
+          "title": "Professional Support",
+          "description": "Networking, resources, and growth opportunities for individuals and businesses."
+        },
+        {
+          "title": "Cultural Exchange",
+          "description": "Celebrating diversity and enabling cross-cultural collaboration."
+        },
+        {
+          "title": "Innovation & Digital Solutions",
+          "description": "Modern, forward-thinking tools and platforms."
+        },
+        {
+          "title": "Education & Development",
+          "description": "Training and content to support learning and professional growth."
+        }
+      ]
+    },
+    "mission": {
+      "title": "Our Mission",
+      "text": "To build a dynamic and supportive environment where people and organizations can thrive, collaborate, and feel connected."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "text": "To be a trusted and innovative community recognized for empowering individuals and creating meaningful progress."
+    },
+    "values": {
+      "title": "Our Values",
+      "items": [
+        {
+          "title": "Integrity",
+          "description": "We do what’s right."
+        },
+        {
+          "title": "Community",
+          "description": "We grow together."
+        },
+        {
+          "title": "Innovation",
+          "description": "We build future-ready solutions."
+        },
+        {
+          "title": "Respect",
+          "description": "We value every voice."
+        },
+        {
+          "title": "Excellence",
+          "description": "We aim high in everything we do."
+        }
+      ]
+    }
+  },
+  "serviceCards_1": [
+    {
+      "href": "",
+      "imageSrc": "https://placehold.co/400x600",
+      "imageAlt": "Healthcare icon",
+      "title": "Healthcare",
+      "description": "We develop services, tools, and systems to provide patients and staff with up-to-date software.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://placehold.co/400x600",
+      "imageAlt": "Education icon",
+      "title": "Education",
+      "description": "E-learning solutions that make education flexible, engaging, and highly efficient.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://placehold.co/400x600",
+      "imageAlt": "Retail and commerce icon",
+      "title": "Retail",
+      "description": "We build stronger connections with customers through web and mobile applications with superior shopping experience and 24/7 availability.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    },
+    {
+      "href": "",
+      "imageSrc": "https://placehold.co/400x600",
+      "imageAlt": "Manufacturing icon",
+      "title": "Manufacturing",
+      "description": "Comprehensive software solutions for supply chain management, inventory management, warehouses, production monitoring, process automation, and more.",
+      "services": [],
+      "showServicesList": false,
+      "clickable": false,
+      "hoverEffect": true,
+      "fixHeight": true
+    }
+  ],
+  "ContactUs": {
+    "h2": "Contact Us",
+    "p": "Lorem ipsum dolor sit amet.",
+    "steps": [
+      "Lorem ipsum dolor sit amet.",
+      "Lorem ipsum dolor sit amet.",
+      "Lorem ipsum dolor sit amet.",
+      "Lorem ipsum dolor sit amet.",
+      "Lorem ipsum dolor sit amet."
+    ],
+    "questionText": " If you have any questions, email us at",
+    "privacy": "By submitting, you agree to the collection of your name and email for communication purposes.",
+    "privacyPolicy": "Privacy Policy",
+    "form": {
+      "nameLabel": "Full Name",
+      "emailLabel": "Email Address",
+      "messageLabel": "Message",
+      "phone": "Phone Number",
+      "attachFile": "Attach File",
+      "selectedFile": " Selected file:"
+    },
+    "sendYourRequest": "Send Your Request",
+    "sending": ""
+  },
+  "homeSliders": [
+    {
+      "id": 1,
+      "title": "The Mandate",
+      "text": "Geostrategic Expansion, Measured Investment. Sovereign Connectivity",
+      "image": "https://png.pngtree.com/background/20210709/original/pngtree-technology-business-blue-background-glare-picture-image_939240.jpg"
+    }
+  ],
+  "advisorySection": {
+    "header": "German industrial leaders conquer markets in Middle East & Africa.",
+    "description": "Positioned upstream from the standard the Club is a discreet forum for established players with strategic interests in MEA offering invaluable research and guidance to leaders grappling with complex transformations, providing clarity, future strategic foresight, and access amongst leaders. \n\nThe Clubs cadre of associate experts comprises of regional (MEA) government officials, renowned CEOs, esteemed economists, visionary futurists, tech leaders, logistic strategists, legal advisors and regional security analysts. \n\nWe are not a networking platform! Instead, we curate bridges to key decision-makers in ministries and government bodies of MEA countries. At our core, we function as a strategic interface between established industrial expertise, local regulatory and investment landscapes. We are an operational catalyst for those moving beyond export toward local value creation. Therefore, our focus is on deepening market penetration and capital allocation beyond mere trade.\n"
+  },
+  "advisoryItems": [
+    {
+      "href": "https://placehold.co/400x520",
+      "title": "Jan Hussing",
+      "description": "Geopolitics, Geoeconomics & Policy",
+      "imgSrc": "http://localhost:5612/uploads/6964de485ceeb4a0df4da449.png",
+      "sources": [
+        {
+          "media": "(max-width: 400px)",
+          "srcSet": "http://localhost:5612/uploads/6964de485ceeb4a0df4da449.png"
+        }
+      ]
+    },
+    {
+      "href": "https://placehold.co/400x520",
+      "title": "Jan Hussing",
+      "description": "Geopolitics, Geoeconomics & Policy",
+      "imgSrc": "https://placehold.co/400x520",
+      "sources": [
+        {
+          "media": "(max-width: 400px)",
+          "srcSet": "https://placehold.co/400x520"
+        }
+      ]
+    },
+    {
+      "href": "https://placehold.co/400x520",
+      "title": "Jan Hussing",
+      "description": "Geopolitics, Geoeconomics & Policy",
+      "imgSrc": "https://placehold.co/400x520",
+      "sources": [
+        {
+          "media": "(max-width: 400px)",
+          "srcSet": "https://placehold.co/400x520"
+        }
+      ]
+    },
+    {
+      "href": "https://placehold.co/400x520",
+      "title": "Jan Hussing",
+      "description": "Geopolitics, Geoeconomics & Policy",
+      "imgSrc": "https://placehold.co/400x520",
+      "sources": [
+        {
+          "media": "(max-width: 400px)",
+          "srcSet": "https://placehold.co/400x520"
+        }
+      ]
+    },
+    {
+      "href": "https://placehold.co/400x520",
+      "title": "Jan Hussing",
+      "description": "Geopolitics, Geoeconomics & Policy",
+      "imgSrc": "https://placehold.co/400x520",
+      "sources": [
+        {
+          "media": "(max-width: 400px)",
+          "srcSet": "https://placehold.co/400x520"
+        }
+      ]
+    }
+  ],
+  "aboutUs": {
+    "header": "German Industrial Club",
+    "title": "BRIDGEBUILDING. RESEARCH & ANALYTICS. ACCESS GOVERNMENTAL TENDERS. CAPITALIZING ON REGIONAL MARKET INEFFICIENCIES",
+    "description": "The GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\n"
+  },
+"aboutUs_footer": {
+    "header": "German Industrial Club",
+    "title": "BRIDGEBUILDING. RESEARCH & ANALYTICS. ACCESS GOVERNMENTAL TENDERS. CAPITALIZING ON REGIONAL MARKET INEFFICIENCIES",
+    "description": "The GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\nThe GERMAN INDUSTRY CLUB is an exclusive boutique circle of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa (MEA). We act as a discrete bridge to the industrial evolution of the MEA markets for selected executives and investors committed to promoting German industrial interests in the MEA region. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among these leaders who recognize the region’s untapped potential for market expansion while maintaining operational and investment resilience.\n\n"
+  },
+  "heroSection": {
+    "header": "Lorem ipsum",
+    "title": "Lorem ipsum dolor sit amet.",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat."
+  },
+  "footer": {
+    "companyName": "PalmX",
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXZlaUXIWozu3xqknYB3S9nknCPGFPAEVZLA&s",
+    "about": "PalmX is a leading provider of innovative business solutions.",
+    "navLinks": [
+      {
+        "label": "Privacy Policy",
+        "path": "/privacy-policy"
+      },
+      {
+        "label": "Terms & Conditions",
+        "path": "/terms-conditions"
+      },
+      {
+        "label": "Sitemap",
+        "path": "/sitemap"
+      }
+    ],
+    "socialLinks": [
+      {
+        "name": "facebook",
+        "icon": "FaFacebook",
+        "link": "https://facebook.com"
+      },
+      {
+        "name": "instagram",
+        "icon": "FaInstagram",
+        "link": "https://instagram.com"
+      },
+      {
+        "name": "linkedin",
+        "icon": "FaLinkedin",
+        "link": "https://linkedin.com"
+      },
+      {
+        "name": "youtube",
+        "icon": "FaYoutube",
+        "link": "https://youtube.com"
+      },
+      {
+        "name": "x",
+        "icon": "FaXTwitter",
+        "link": "https://x.com"
+      }
+    ],
+    "contact": {
+      "email": "hallo@palm-x.com",
+      "phone": "+1 123-456-7890"
+    },
+    "disableSocialLinks": false
+  },
+  "media": {
+    "home_background": "69281fc357391ce679b46afd.mp4",
+    "sliding_down_image_invert": "692815829e680ea7bbc658ed.png",
+    "sliding_down_image": "6928157c9e680ea7bbc658ec.png",
+    "contact_us_background": "692824d1f1267e38a00f59a5.jpg",
+    "mobile_background": "69281fbd57391ce679b46afc.jpg"
+  },
+  "boardroom": [
+    {
+      "id": 0,
+      "imageUrl": "693fe5349d7973377b510a6b.jpg",
+      "title": "BusinessBreakfast - Artificial Intelligence 02. September 2025",
+      "description": "KI im Unternehmensalltag: Erfahren Sie, wie Künstliche Intelligenz schon heute praktische Lösungen für Ihr Business bietet – zur Effizienzsteigerung, Kostenreduktion und zur Optimierung Ihres Angebotsportfolios!"
+    },
+    {
+      "id": 1,
+      "imageUrl": "6940f29209107c5543cc682d.png",
+      "title": "ClubTime Dubai - 24. November 2025",
+      "description": "In angenehmer Atmosphäre möchten wir Ihnen die Möglichkeit bieten, neue Kontakte zu knüpfen, bestehende Beziehungen zu vertiefen und sich über Themen aus Business und Alltag auszutauschen."
+    }
+  ]
+}

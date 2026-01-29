@@ -79,6 +79,27 @@ export default function JsonViewer() {
     };
 
 
+    // useEffect(() => {
+    // if (!loading) {
+    //     const timer = setTimeout(() => {
+    //     document.querySelectorAll(".jer-collapse-icon.jer-accordion-icon.jer-rotate-90").forEach((btn) => {
+    //         const parent = btn.closest(".json-edit-react__path-node"); // adjust if needed
+    //         if (parent) {
+    //         if (btn instanceof HTMLElement) {
+    //             btn.click(); // collapse it
+    //         }
+    //         }
+    //     });
+    //     }, 50);
+
+    //     return () => clearTimeout(timer);
+    // }
+    // }, [loading, editorKey]);
+
+
+
+
+
     return (
         <>
             <h3 className="mb-3">Email Template</h3>
@@ -92,6 +113,7 @@ export default function JsonViewer() {
 
                     :
                     <JsonEditor
+                        
                         data={data}
                         key={editorKey}
                         setData={handleChange}

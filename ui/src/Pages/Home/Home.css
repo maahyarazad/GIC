@@ -1,9 +1,6 @@
 .container-with-toggle {
   position: relative;
 }
-.container-with-toggle.expanded {
-  transition: max-height 0.5s ease-in-out;
-}
 @media (min-width: 768px) {
   .container-with-toggle .image-column {
     position: sticky;
@@ -11,8 +8,16 @@
     align-self: flex-start;
   }
 }
+.container-with-toggle .toggle-button-container .icon-arrow {
+  display: inline-block;
+  /* needed for transform */
+  transition: transform 0.3s ease;
+}
+.container-with-toggle .toggle-button-container .icon-arrow.open {
+  transform: rotate(180deg);
+}
 .container-with-toggle .toggle-button-container button {
-  font-size: 40px;
+  font-size: 50px;
   color: var(--primary-contrast-color);
   position: sticky;
   top: 20px;
@@ -21,10 +26,14 @@
   /* make sure it appears on top */
 }
 
-#section-2 *, #section-1 *, #section-3 *, #section-4 * {
+#section-2 *,
+#section-1 *,
+#section-3 *,
+#section-4 * {
   line-height: 1.5;
 }
 
-h2, h3 {
+h2,
+h3 {
   line-height: 1.5;
 }/*# sourceMappingURL=Home.css.map */

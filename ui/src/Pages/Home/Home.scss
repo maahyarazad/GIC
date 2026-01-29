@@ -3,13 +3,6 @@
 
 
 
-    &.expanded {
-        // max-height will be set dynamically by JS, so can leave empty here
-        transition: max-height 0.5s ease-in-out;
-    }
-
-
-
     .image-column {
         @media (min-width: 768px) {
             position: sticky;
@@ -20,8 +13,19 @@
 
     .toggle-button-container {
 
+        .icon-arrow {
+            display: inline-block;
+            /* needed for transform */
+            transition: transform 0.3s ease;
+        }
+
+        .icon-arrow.open {
+            transform: rotate(180deg);
+        }
+
+
         button {
-            font-size: 40px;
+            font-size: 50px;
             color: var(--primary-contrast-color);
             position: sticky;
             top: 20px;
@@ -34,12 +38,16 @@
     }
 }
 
-#section-2, #section-1, #section-3, #section-4 {
-  * {
-    line-height: 1.5;
-  }
+#section-2,
+#section-1,
+#section-3,
+#section-4 {
+    * {
+        line-height: 1.5;
+    }
 }
 
-h2, h3{
-  line-height: 1.5;
+h2,
+h3 {
+    line-height: 1.5;
 }

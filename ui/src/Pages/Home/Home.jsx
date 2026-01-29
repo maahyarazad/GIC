@@ -112,7 +112,7 @@ const Home = ({ siteData }) => {
         if (!contentRef.current) return;
 
         if (isOpen) {
-            
+
             scrollPositionRef.current = window.scrollY;
         }
 
@@ -165,62 +165,45 @@ const Home = ({ siteData }) => {
 
 
 
-            <div className="container mx-auto px-4 py-6 my-6" id="section-aboutus" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
-                <div
-                    ref={_ref}
-                    className={`slide-down ${_isVisible ? "visible" : ""} container-with-toggle`}
-                >
+            <div className="container" id="section-aboutus">
+                <div ref={_ref} className={`slide-down ${_isVisible ? "visible" : ""} container-with-toggle  my-4 py-2`}>
                     <div className={`row align-items-center`}>
-
                         <div className={`col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 `} ref={contentRef} style={{
                             maxHeight: maxHeight,
                             overflow: 'hidden',
                             transition: 'max-height 0.3s ease-in-out',
                         }}>
 
-                            <h2
-                                ref={_ref1}
-                                className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
-                            <h3
-                                ref={_ref2}
-                                className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
-                            <h5
-                                ref={_ref3}
-                                className={`fs-4 pb-3 slide-down visible`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
+                            <h2 ref={_ref1} className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
+                            <h3 ref={_ref2} className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
+                            <h5 ref={_ref3} className={`fs-4 pb-3 slide-down visible`} style={{ lineHeight: 2 }}>{siteData.aboutUs.description}</h5>
 
                         </div>
-
-                        {/* Image Column */}
-                        <div className="col-12 col-md-6 d-flex justify-content-center image-column">
-                            <img
-                                src="https://placehold.co/500x500"
-                                alt={siteData.aboutUs.header}
-                                className="img-fluid rounded shadow"
-                            />
+                            <div className="col-12 col-md-6 d-flex justify-content-center image-column">
+                                <img
+                                    src="https://placehold.co/500x500"
+                                    alt={siteData.aboutUs.header}
+                                    className="img-fluid rounded shadow"
+                                />
+                            </div>
+                        <div className={`row align-items-center toggle-button-container  ${isOpen ? "expanded" : ""}`}>
+                            <button className="btn" onClick={toggleAccordion}>
+                                <span className={`icon-arrow ${isOpen ? 'open' : ''}`}>
+                                    <IoIosArrowDown />
+                                </span>
+                            </button>
                         </div>
-                    </div>
-                    <div className={`row align-items-center toggle-button-container  ${isOpen ? "expanded" : ""}`}>
-
-                        <button 
-                        // style={{ top: maxHeightToggleButton }}
-                            className={`btn`}
-                            onClick={toggleAccordion}
-                        >
-                            {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                        </button>
                     </div>
                 </div>
             </div>
 
 
 
+
             <div className="container mx-auto px-4 py-6 my-6" id="section-2" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
-                <div
-                    ref={ref}
-                    className={`slide-down ${isVisible ? "visible" : ""}`}
-                >
+                <div ref={ref} className={`slide-down ${isVisible ? "visible" : ""}`}>
                     <div className="row justify-content-center align-items-center">
-                        {/* Header + Description */}
+
                         <div className="col-12 text-center mb-4">
                             <h2 className="fs-4 pb-2 contrast-color">
                                 {siteData.advisorySection.header}
@@ -230,7 +213,7 @@ const Home = ({ siteData }) => {
                             </h4>
                         </div>
 
-                        {/* Carousel */}
+
                         <div className="col-12">
                             <Carousel items={siteData.advisoryItems} itemsPerPage={3} gap={15} />
                         </div>
@@ -241,10 +224,7 @@ const Home = ({ siteData }) => {
 
 
 
-            <div
-                id="section-4"
-                ref={_ref10}
-                className={`position-relative slide-down ${_isVisible10 ? "visible" : ""}`}
+            <div id="section-4" ref={_ref10} className={`position-relative slide-down ${_isVisible10 ? "visible" : ""}`}
                 style={{
                     marginTop: "10vh",
 
@@ -253,8 +233,7 @@ const Home = ({ siteData }) => {
                     width: "100%",       // ❗ responsive width
                     maxHeight: "1080px", // optional cap for desktop
                     overflow: "hidden",
-                }}
-            >
+                }}>
 
                 {/* BACKGROUND IMAGE */}
                 <div className='d-flex justify-content-center align-items-center'
@@ -275,15 +254,9 @@ const Home = ({ siteData }) => {
 
                     {/* Text Column */}
                     <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start mb-4 mb-md-0  mt-lg-0 mt-5">
-                        <h2
-
-                            className={`contrast-color`} style={{ paddingTop: '20rem', fontSize: '4rem' }}>{siteData.heroSection.header}</h2>
-                        <h3
-
-                            className={`fs-4  text-white pt-5`} style={{ fontWeight: 900 }}>{siteData.heroSection.title}</h3>
-                        <h5
-
-                            className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
+                        <h2 className={`contrast-color`} style={{ paddingTop: '20rem', fontSize: '4rem' }}>{siteData.heroSection.header}</h2>
+                        <h3 className={`fs-4  text-white pt-5`} style={{ fontWeight: 900 }}>{siteData.heroSection.title}</h3>
+                        <h5 className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>{siteData.heroSection.description}</h5>
                     </div>
 
                 </div>
@@ -306,6 +279,7 @@ const Home = ({ siteData }) => {
                 />
 
             </div>
+
             <div
                 id="section-4"
                 ref={_ref11}
@@ -336,13 +310,10 @@ const Home = ({ siteData }) => {
 
 
             <div className="container mx-auto px-4 py-6 my-6" id="section-4" style={{ marginTop: '10vh', marginBottom: '10vh' }}>
-                <div
-                    ref={_ref7}
-                    className={`slide-down ${_isVisible7 ? "visible" : ""}`}
-                >
+                <div ref={_ref7} className={`slide-down ${_isVisible7 ? "visible" : ""}`}>
                     <div className="row align-items-center">
 
-                        
+
                         <div className="col-12 col-md-6 d-flex justify-content-center order-2 order-md-1">
                             <img
                                 src="https://placehold.co/500x500"
@@ -351,7 +322,7 @@ const Home = ({ siteData }) => {
                             />
                         </div>
 
-                        
+
                         <div className="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0 mt-lg-0 mt-5 order-1 order-md-2">
                             <h2
                                 ref={_ref4}
@@ -381,6 +352,7 @@ const Home = ({ siteData }) => {
                 </div>
             </div>
         </div>
+
     );
 };
 

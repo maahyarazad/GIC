@@ -30,7 +30,7 @@ const HomeBackground = ({ background }) => {
         }} 
         onLoadedData={handleVideoLoaded}
       >
-        <source src={`${env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" />
+        <source src={`${env.VITE_SERVER_API_URL}/uploads/${background}`} type="video/mp4" fetchPriority='high'/>
         Your browser does not support the video tag.
       </video>
       <ArrowDown />

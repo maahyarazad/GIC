@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import React, { useState, useEffect, useCallback , useContext} from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import Home from './Pages/Home/Home';
@@ -24,12 +24,12 @@ import axiosInstance from './api/axiosInstance';
 
 
 import { Routes, Route, useLocation } from 'react-router-dom';
-import {useScrollRestoration} from './Components/useScrollRestoration';
+import { useScrollRestoration } from './Components/useScrollRestoration';
 import './App.css';
 
 const AppContainer = ({ children }) => {
     const location = useLocation();
-useScrollRestoration();
+    useScrollRestoration();
     useEffect(() => {
         const segments = location.pathname.split("/").filter(Boolean);
         const capitalizedSegments = segments.map(
@@ -46,34 +46,35 @@ useScrollRestoration();
 };
 
 const App = () => {
-const [siteData, setSiteData] = useState(null);
-const [language, setLanguage] = useState("EN");
+    const [siteData, setSiteData] = useState(null);
+    const [language, setLanguage] = useState("EN");
     const [sessionId, setSessionId] = useState(null);
-useEffect(() => {
-  let cancelled = false;
+    useEffect(() => {
+        let cancelled = false;
 
-  const fetchSiteData = async () => {
-    try {
-      const response = await axiosInstance.get(`/client`, {
-        headers: {
-          "Accept-Language": language,
-        },
-      });
+        const fetchSiteData = async () => {
+            try {
 
-      if (!cancelled) {
-        setSiteData(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching site data:", error);
-    }
-  };
+                const response = await axiosInstance.get(`/client`, {
+                    headers: {
+                        "Accept-Language": language,
+                    },
+                });
 
-  fetchSiteData();
+                if (!cancelled) {
+                    setSiteData(response.data.data);
+                }
+            } catch (error) {
+                console.error("Error fetching site data:", error);
+            }
+        };
 
-  return () => {
-    cancelled = true;
-  };
-}, [language]);
+        fetchSiteData();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [language]);
 
     useEffect(() => {
         let guid = localStorage.getItem('session-guid');
@@ -95,7 +96,9 @@ useEffect(() => {
     };
 
     if (!siteData) {
-        return <MainLoader />;
+        return (
+            <MainLoader />
+        )
     }
 
     return (
@@ -108,20 +111,20 @@ useEffect(() => {
                     currentlanguage={language}
                     companyName={siteData.companyName}
                 />
-                
+
                 <Routes>
                     <Route path="/" element={<Home siteData={siteData} />} />
-                    
+
                     <Route path="/services" element={<Services />} />
                     <Route path="/contact-us" element={<ContactUs siteData={siteData} />} />
                     <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                    <Route path="/boardroom" element={<Boardroom siteData={siteData}/>} />
-                    <Route path="/forgot-password" element={<ForgotPassword/>} />
-                    <Route path="/reset-password" element={<ResetPassword/>} />
-                    <Route path="/unsubscribe" element={<Unsubscribe/>} />
+                    <Route path="/boardroom" element={<Boardroom siteData={siteData} />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/unsubscribe" element={<Unsubscribe />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
 

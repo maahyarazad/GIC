@@ -62,4 +62,54 @@
 .close-iframe.close-iframe.visible {
   opacity: 1;
   transition: opacity 0.8s ease-in-out;
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+.loading-text {
+  white-space: nowrap;
+}
+
+.dots {
+  display: inline-block;
+  width: 1.5em; /* reserves space for ... */
+  text-align: left;
+}
+
+.dots::after {
+  content: "";
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
 }/*# sourceMappingURL=App.css.map */

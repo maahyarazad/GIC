@@ -223,11 +223,16 @@ const Navbar = (
         </div>
     );
 
+    const [navbarBg, setNavbarBg] = useState('var(--primary-gray-color)');
+
+
+
+    useEffect(() => { }, [isReady])
 
     const NavContent = isReady ? (
         <>
-            <div className="left col-3" onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
-               <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+            <div className="left col-3" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
             </div>
             {Links}
             <div className="right col-3"></div>
@@ -235,17 +240,23 @@ const Navbar = (
     ) : null;
 
 
-useEffect(()=> {}, [isReady])
+
+    useEffect(() => {
+        if (scrolled) {
+            setNavbarBg('var(--primary-gray-color)');
+            return;
+        }
+        
+        if (location.pathname === '/') {
+            setNavbarBg('transparent');
+        } else {
+            setNavbarBg('var(--primary-gray-color)');
+        }
+
+    }, [scrolled, location.pathname]);
 
     return (
-        <nav
-            className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`}
-            style={{
-                backgroundColor: scrolled
-                    ? 'var(--primary-gray-color)'
-                    : (location.pathname === '/' ? 'transparent' : 'var(--primary-gray-color)')
-            }}
-        >
+        <nav className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`} style={{ backgroundColor: navbarBg }}>
 
 
             <div className="d-flex justify-content-center flex-column relative w-100" >
@@ -261,11 +272,11 @@ useEffect(()=> {}, [isReady])
                         </button>
 
                     </div>
-                    <div onClick={() => navigate("/")} style={{cursor: 'pointer'}}>
-                        {isReady ? 
-                        
-                        <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-                        : null}
+                    <div onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+                        {isReady ?
+
+                            <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+                            : null}
                     </div>
                 </div>
 
@@ -276,7 +287,7 @@ useEffect(()=> {}, [isReady])
                 </div>
 
                 {/* Desktop Nav Links Scrolled ===> It is a clone with effect */}
-                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0 , height: showNavbar ? 'auto' : 0}}>
+                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0, height: showNavbar ? 'auto' : 0 }}>
                     {NavContent}
                 </div>
 

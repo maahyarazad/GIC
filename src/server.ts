@@ -191,7 +191,16 @@ async function startSSR() {
         // Load the SSR renderer
         const { render } = await vite.ssrLoadModule(ssrEntryFileUrl);
 
-        const appHtml = await render(url, envVars);
+            const { appHtml, preloadedState } = await render(url, envVars);
+
+        const stateScript = `
+            <script>
+            window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+            /</g,
+            "\\u003c"
+            )}
+            </script>
+            `;
 
         const html = template
           .replace(`<!--app-head-->`, appHtml.head ?? "")

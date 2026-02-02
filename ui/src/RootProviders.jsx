@@ -1,81 +1,66 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Provider } from "react-redux";
-import { store } from "./store.js";
+import { createAppStore } from "./store.js";
 
 import { ToastProvider } from "./Providers/ToastContext";
 import { ModalProvider } from "./Providers/ModalContext";
 import { AuthProvider } from "./Providers/AuthProvider";
 import { SlideMenuProvider } from "./Providers/SlideMenuProvider";
-
 import { ConfirmDialogProvider } from "./providers/ConfirmDialogProvider.js";
 import MainLoader from "./Components/MainLoader.jsx";
 
-export function RootProviders({ children }) {
+export function RootProviders({ children, preloadedState }) {
+  const storeRef = useRef(null);
 
-    const [ready, setReady] = useState(false);
+  if (!storeRef.current) {
+    storeRef.current = createAppStore(preloadedState);
+  }
 
-    useEffect(() => {
-        // Helper to check if all images inside #root are loaded
-        const waitForImages = () => {
-            return new Promise((resolve) => {
-                const images = Array.from(document.querySelectorAll("#root img"));
+  const [ready, setReady] = useState(typeof window === "undefined");
 
-                if (images.length === 0) {
-                    resolve();
-                    return;
-                }
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-                let loadedCount = 0;
-                const onLoadOrError = () => {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                        resolve();
-                    }
-                };
+    const waitForImages = () =>
+      new Promise((resolve) => {
+        const images = Array.from(document.querySelectorAll("#root img"));
+        if (images.length === 0) return resolve();
 
-                images.forEach((img) => {
-                    if (img.complete) {
-                        onLoadOrError();
-                    } else {
-                        img.addEventListener("load", onLoadOrError);
-                        img.addEventListener("error", onLoadOrError);
-                    }
-                });
-            });
-        };
+        let loaded = 0;
+        const done = () => ++loaded === images.length && resolve();
 
-        const waitForFonts = () => {
-            if (document.fonts) {
-                return document.fonts.ready;
-            }
-            return Promise.resolve();
-        };
-
-        Promise.all([waitForFonts(), waitForImages()]).then(() => {
-            setReady(true);
+        images.forEach((img) => {
+          if (img.complete) done();
+          else {
+            img.addEventListener("load", done);
+            img.addEventListener("error", done);
+          }
         });
+      });
 
-    }, []);
+    const waitForFonts = () =>
+      document.fonts ? document.fonts.ready : Promise.resolve();
 
-    
-    if (typeof window !== "undefined" && !ready) {
-        return <MainLoader />;
-    }
+    Promise.all([waitForFonts(), waitForImages()]).then(() => {
+      setReady(true);
+    });
+  }, []);
 
-    
-    return (
-        <>
-            <Provider store={store}>
-                <SlideMenuProvider>
-                    <ConfirmDialogProvider>
-                        <ModalProvider>
-                            <ToastProvider>
-                                <AuthProvider>{children}</AuthProvider>
-                            </ToastProvider>
-                        </ModalProvider>
-                    </ConfirmDialogProvider>
-                </SlideMenuProvider>
-            </Provider>
-        </>
-    );
+  if (typeof window !== "undefined" && !ready) {
+    return <MainLoader />;
+  }
+
+  return (
+    <Provider store={storeRef.current}>
+      <SlideMenuProvider>
+        <ConfirmDialogProvider>
+          <ModalProvider>
+            <ToastProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </ToastProvider>
+          </ModalProvider>
+        </ConfirmDialogProvider>
+      </SlideMenuProvider>
+    </Provider>
+  );
 }

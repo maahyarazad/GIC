@@ -1,18 +1,26 @@
-import { configureStore } from '@reduxjs/toolkit';
-import cartReducer from './features/cartSlice';
-import productsReducer from './features/productsSlice';
-import authReducer from './features/authSlice';
-import appReducer from './features/appSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import cartReducer from "./features/cartSlice";
+import productsReducer from "./features/productsSlice";
+import authReducer from "./features/authSlice";
+import appReducer from "./features/appSlice";
 
-export const store = configureStore({
-  reducer: {
-     auth: authReducer,
-    cart: cartReducer,
-    products: productsReducer,
-    app: appReducer,
-  },
-});
+// ✅ Factory function for SSR
+export function createAppStore(preloadedState?: Partial<RootState>) {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+      cart: cartReducer,
+      products: productsReducer,
+      app: appReducer,
+    },
+    preloadedState,
+  });
+}
 
-// Infer RootState and AppDispatch types for usage throughout the app
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+// ✅ Client-side default store (optional but convenient)
+export const store = createAppStore();
+
+// 🔹 Types
+export type AppStore = ReturnType<typeof createAppStore>;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

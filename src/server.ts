@@ -247,11 +247,19 @@ async function startSSR() {
           )};</script>`
         );
 
-        const appHtml = await render(url, envVars);
+        const { appHtml, preloadedState } = await render(url, envVars);
+        const stateScript = `
+            <script>
+            window.__PRELOADED_STATE__ = ${JSON.stringify(
+              preloadedState
+            ).replace(/</g, "\\u003c")}
+            </script>
+            `;
 
         const html = template
-          .replace("<!--app-head-->", appHtml.head ?? "")
-          .replace("<!--app-html-->", appHtml.html ?? "");
+          .replace(`<!--app-head-->`, appHtml.head ?? "")
+          .replace(`<!--app-html-->`, appHtml.html ?? "")
+          .replace("</body>", `${stateScript}</body>`);
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {

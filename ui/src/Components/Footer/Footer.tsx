@@ -5,6 +5,7 @@ import { useToast } from '../../providers/ToastContext';
 import axiosInstance from '../../api/axiosInstance';
 import mainLogo from '../../../public/gic-log-main.png';
 import { useNavigate } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 interface SocialLink {
     platform: string;
@@ -134,7 +135,7 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
                     <div className="d-flex justify-content-lg-center justify-content-start flex-column">
                         {footerData.navLinks.map((link) => (
                             <div key={link.label} style={{ marginBottom: '0.5rem' }}>
-                                <a href={link.path}>{link.label}</a>
+                                <Link to={link.path}>{link.label}</Link>
                             </div>
                         ))}
                     </div>

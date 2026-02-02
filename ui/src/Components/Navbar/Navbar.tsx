@@ -211,7 +211,7 @@ const Navbar = (
                 {navbarLinks?.map((link) => (
                     <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
                         {
-                            link.type === 'link' && <a href={link.path}>{link.label}</a>
+                            link.type === 'link' && <Link to={link.path}>{link.label}</Link>
                         }
                         {
                             link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>

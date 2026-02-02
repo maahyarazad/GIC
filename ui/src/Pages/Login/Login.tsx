@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Login.css";
 
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
 import { setReady } from '../../features/appSlice'; 
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
           </div>
           
       <div className="forgot-password">
-        <a href="/forgot-password">Forgot your password?</a>
+        <Link to="/forgot-password">Forgot your password?</Link>
       </div>
     <Button type="submit" disabled={loading} className="btn btn-primary-contrast" loading={loading}>
        Login
@@ -119,7 +119,7 @@ const Login: React.FC = () => {
 
         <p className="signup-text">
           Don’t have an account?{" "}
-          <a href="/register">Sign up</a>
+          <Link to="/register">Sign up</Link>
         </p>
 
       </div>

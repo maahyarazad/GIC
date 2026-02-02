@@ -3,7 +3,7 @@ import axiosInstance from "../../api/axiosInstance";
 import Button from "../../Components/Button/Button"; 
 import { setReady } from '../../features/appSlice'; 
 import {  useDispatch } from "react-redux";
-
+import { Link } from "react-router-dom";
 export default function ForgotPassword() {
 
 
@@ -87,7 +87,7 @@ export default function ForgotPassword() {
         </form>
 
         <p className="signup-text">
-          Remembered your password? <a href="/login">Go back to login</a>
+          Remembered your password? <Link to="/login">Go back to login</Link>
         </p>
 
       </div>

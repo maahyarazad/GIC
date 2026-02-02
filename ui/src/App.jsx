@@ -20,15 +20,16 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import BackToTop from './Components/BackToTop/BackToTop';
 import MainLoader from './Components/MainLoader';
-import axiosInstance from './api/axiosInstance';
+import {fetchSiteData} from './api/axiosInstance';
 
-
+import {useSelector, useDispatch} from 'react-redux';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useScrollRestoration } from './Components/useScrollRestoration';
 import './App.css';
-
+import { loadSiteData } from './features/appSlice';
 const AppContainer = ({ children }) => {
     const location = useLocation();
+
     useScrollRestoration();
     useEffect(() => {
         const segments = location.pathname.split("/").filter(Boolean);
@@ -46,36 +47,20 @@ const AppContainer = ({ children }) => {
 };
 
 const App = () => {
-    const [siteData, setSiteData] = useState(null);
+        const dispatch = useDispatch();
     const [language, setLanguage] = useState("EN");
     const [sessionId, setSessionId] = useState(null);
-    useEffect(() => {
-        let cancelled = false;
+   
 
-        const fetchSiteData = async () => {
-            try {
 
-                const response = await axiosInstance.get(`/client`, {
-                    headers: {
-                        "Accept-Language": language,
-                    },
-                });
+const siteData = useSelector((state) => state.app.siteData);
 
-                if (!cancelled) {
-                    setSiteData(response.data.data);
-                }
-            } catch (error) {
-                console.error("Error fetching site data:", error);
-            }
-        };
 
-        fetchSiteData();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [language]);
-
+useEffect(() => {
+  if (!siteData) {
+    dispatch(loadSiteData('english'));
+  }
+}, []);
     useEffect(() => {
         let guid = localStorage.getItem('session-guid');
         if (!guid) {

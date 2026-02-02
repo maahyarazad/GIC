@@ -1,35 +1,44 @@
+import { fetchSiteData } from "./api/axiosInstance";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
 import App from "./App";
 import { EnvContext } from "./EnvContext";
 import { RootProviders } from "./RootProviders";
 
-export function render(url, env) {
-  const preloadedState = {
-    auth: {
-      isAuthenticated: false,
-      user: null,
-    },
-    app: {
-      theme: "light",
-    },
-  };
+export async function render(url, env) {
+    let siteData = null;
 
-  const html = renderToString(
-    <EnvContext.Provider value={env}>
-      <StaticRouter location={url}>
-        <RootProviders preloadedState={preloadedState}>
-          <App />
-        </RootProviders>
-      </StaticRouter>
-    </EnvContext.Provider>
-  );
+    try {
+        siteData = await fetchSiteData(env.language);
+    } catch (err) {
+        console.error("SSR siteData fetch failed", err);
+    }
 
-  return {
-    appHtml: {
-      html,
-      head: "", // 👈 keep this, even if unused
-    },
-    preloadedState,
-  };
+    const preloadedState = {
+        auth: { isAuthenticated: false, user: null },
+        app: {
+            siteData,
+            loading: false,
+            error: null,
+            isReady: true,
+        },
+    };
+
+    const html = renderToString(
+        <EnvContext.Provider value={env}>
+            <StaticRouter location={url}>
+                <RootProviders preloadedState={preloadedState}>
+                    <App />
+                </RootProviders>
+            </StaticRouter>
+        </EnvContext.Provider>
+    );
+
+    return {
+        appHtml: {
+            html,
+            head: "",
+        },
+        preloadedState,
+    };
 }

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
 import Button from "../../Components/Button/Button";
 import {EnvContext} from '../../EnvContext.js';
-
+import {Link } from 'react-router-dom';
 
 interface SendOtpBody {
     email?: string;
@@ -422,7 +422,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                     </form>
 
                     <p className="signup-text">
-                        Already have an account? <a href="/login">Login</a>
+                        Already have an account? <Link to="/login">Login</Link>
                     </p>
                 </div>
 

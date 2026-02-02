@@ -108,4 +108,16 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+
+export async function fetchSiteData(language?: string) {
+  const res = await axiosInstance.get("/client", {
+    headers: {
+      "Accept-Language": language,
+    },
+  });
+
+  return res.data.data;
+}
+
+
 export default axiosInstance;

@@ -117,10 +117,10 @@ export default function UserProfileForm({ initialProfile }: any) {
 
     const pdfDownload = async () => {
         try {
-            if (!initialProfile) return;
-
-            const { blob, filename } = await getPDFBlob(initialProfile.id);
-
+            
+            
+            const { blob, filename } = await getPDFBlob();
+debugger;
             const url = window.URL.createObjectURL(blob);
 
             const a = document.createElement("a");

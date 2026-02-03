@@ -8,14 +8,24 @@ import { Application } from "express";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import dotenv from "dotenv";
 dotenv.config();
+import jwt from "jsonwebtoken";
 
+const JWT_SECRET = process.env.JWT_SECRET;
 export function RegisterFileDownloadRoutes(app: Application) {
-  app.get("/api/v1/watermark/:id", authMiddleware, async (req, res) => {
+  app.get("/api/v1/watermark/", authMiddleware, async (req, res) => {
     try {
-      const { id } = req.params;
+     
+    const __dirname = path.resolve();
+       const token = req.cookies?.token;
+      
+        if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+        }
+      
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string };
 
       const usersCollection = getCollection<User>("users");
-      const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+      const user = await usersCollection.findOne({ _id: new ObjectId(decoded.userId) });
 
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -24,13 +34,13 @@ export function RegisterFileDownloadRoutes(app: Application) {
       const version = process.env.PDF_WATERMARK_VERSION;
 
       const inputPath = path.resolve(
-        process.cwd(),
+        __dirname,
         "file_storage/agnes-j-metro-models-gmbh.pdf"
       );
 
       const outputPath = path.resolve(
-        process.cwd(),
-        `uploads/${id}.pdf`
+        __dirname,
+        `uploads/${decoded.userId}.pdf`
       );
 
 
@@ -42,7 +52,7 @@ export function RegisterFileDownloadRoutes(app: Application) {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename="${id}.pdf"`
+        `attachment; filename="${decoded.userId}.pdf"`
       );
 
       const stream = fs.createReadStream(outputPath);

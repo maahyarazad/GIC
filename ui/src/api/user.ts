@@ -78,22 +78,23 @@ export interface PDFResponse {
 
 /**
  * Fetch PDF blob by ID along with filename from response headers
- * @param id - file ID
+ * 
  * @returns object with Blob and filename string
  */
-export async function getPDFBlob(id: string): Promise<PDFResponse> {
-  const response = await axiosInstance.get(`/watermark/${id}`, {
+export async function getPDFBlob(): Promise<PDFResponse> {
+  const response = await axiosInstance.get(`/watermark/`, {
     responseType: "arraybuffer",
     transformResponse: [(data) => data],
   });
-
   const blob = new Blob([response.data], {
-    type: "application/pdf",
-  });
-
-  let filename = `${id}.pdf`; // fallback filename
-
-  const disposition = response.headers["content-disposition"];
+      type: "application/pdf",
+    });
+    
+    const disposition = response.headers["content-disposition"];
+    debugger;
+    
+    let filename = "";
+    
   if (disposition) {
     const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
     if (filenameMatch && filenameMatch[1]) {

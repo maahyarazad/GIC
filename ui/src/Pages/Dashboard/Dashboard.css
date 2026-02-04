@@ -52,7 +52,7 @@
   padding: 1rem;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
-  z-index: 1000;
+  z-index: 999;
 }
 
 /* Desktop: sidebar always visible */

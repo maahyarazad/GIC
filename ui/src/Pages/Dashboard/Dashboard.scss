@@ -59,7 +59,7 @@
   padding: 1rem;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out;
-  z-index: 1000; // make sure sidebar is above content
+  z-index: 999; // make sure sidebar is above content
 }
 
 /* Desktop: sidebar always visible */

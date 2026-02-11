@@ -20,6 +20,8 @@ import { LogController } from './../controllers/log.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FileController } from './../controllers/file.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ContinentController } from './../controllers/continent.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ClientController } from './../controllers/client.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/auth.controller';
@@ -364,6 +366,42 @@ const models: TsoaRoute.Models = {
     "ApiResponse__files-UploadedFileDoc-Array--total-number__": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse__files-UploadedFileDoc-Array--total-number__"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateContinentRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "slug": {"dataType":"string","required":true},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "products": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "children": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}],"required":true},
+            "isActive": {"dataType":"boolean","required":true},
+            "order": {"dataType":"double"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateContinentRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string"},
+            "slug": {"dataType":"string"},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "products": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "children": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "isActive": {"dataType":"boolean"},
+            "order": {"dataType":"double"},
+            "updatedAt": {"dataType":"datetime"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ContinentSortKey": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["name"]},{"dataType":"enum","enums":["slug"]},{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["order"]},{"dataType":"enum","enums":["isActive"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SuccessResponse_Omit_User.password__": {
@@ -1370,6 +1408,131 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_createContinent: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"CreateContinentRequest"},
+        };
+        app.post('/api/v1/continents',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.createContinent)),
+
+            async function ContinentController_createContinent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_createContinent, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'createContinent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_updateContinent: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"UpdateContinentRequest"},
+        };
+        app.put('/api/v1/continents/:id',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.updateContinent)),
+
+            async function ContinentController_updateContinent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_updateContinent, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'updateContinent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_getAllCategories: Record<string, TsoaRoute.ParameterSchema> = {
+                filtersJson: {"in":"query","name":"filters","dataType":"string"},
+                limit: {"default":20,"in":"query","name":"limit","dataType":"double"},
+                skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
+                sortBy: {"default":"name","in":"query","name":"sortBy","ref":"ContinentSortKey"},
+                sortOrder: {"default":"asc","in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+        };
+        app.get('/api/v1/continents',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.getAllCategories)),
+
+            async function ContinentController_getAllCategories(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_getAllCategories, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'getAllCategories',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_deleteContinent: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/api/v1/continents/:id',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.deleteContinent)),
+
+            async function ContinentController_deleteContinent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_deleteContinent, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteContinent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);

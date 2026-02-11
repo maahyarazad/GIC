@@ -5,7 +5,7 @@ import { useToast } from "../../../providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
-import { Continent } from '../../../../../src/types/continent.types'
+import { ContinetViewModel } from '../../../../../src/types/continent.types'
 import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 
@@ -15,9 +15,9 @@ const buttonGroupStyle = { fontSize: 10, padding: 5 };
 const CategoriesDataGrid = () => {
     const { show } = useToast();
     const { confirm } = useConfirm();
-    const { openMenu , onClose} = useSlideMenu();
+    const { openMenu, onClose } = useSlideMenu();
 
-    const columns: Column<Continent>[] = [
+    const columns: Column<ContinetViewModel>[] = [
         { field: "_id", headerName: "ID", width: "10%" },
         { field: "name", headerName: "Name", sortable: true, filterable: true, width: "15%" },
         { field: "slug", headerName: "Slug", sortable: true, filterable: true, width: "15%" },
@@ -71,11 +71,11 @@ const CategoriesDataGrid = () => {
         }
     ];
 
-    const [rows, setRows] = useState<Continent[]>([]);
+    const [rows, setRows] = useState<ContinetViewModel[]>([]);
     const [rowCount, setRowCount] = useState(0);
     const [paginationModel, setPaginationModel] = useState<PaginationModel>({ page: 1, pageSize: 10 });
-    const [sortModel, setSortModel] = useState<SortModel<Continent> | null>(null);
-    const [filterModel, setFilterModel] = useState<FilterModel<Continent>[] | null>(null);
+    const [sortModel, setSortModel] = useState<SortModel<ContinetViewModel> | null>(null);
+    const [filterModel, setFilterModel] = useState<FilterModel<ContinetViewModel>[] | null>(null);
     const [loading, setLoading] = useState(true);
 
 
@@ -96,7 +96,7 @@ const CategoriesDataGrid = () => {
             }
 
             if (filterModel && filterModel.length > 0) {
-                params.append("filters", JSON.stringify(filterModel));
+                params.append("filters", JSON.stringify(filterModel)); g
             }
 
             const response = await axiosInstance.get("/continents", { params });
@@ -118,9 +118,9 @@ const CategoriesDataGrid = () => {
     }, [debouncedFetch]);
 
 
-    const onDelete = async (row: Continent) => {
+    const onDelete = async (row: ContinetViewModel) => {
         const isConfirmed = await confirm({
-            title: "Delete Continent",
+            title: "Delete ContinetViewModel",
             message: `Are you sure you want to delete "${row.name}"?`,
             confirmText: "Delete",
             cancelText: "Cancel",
@@ -131,19 +131,20 @@ const CategoriesDataGrid = () => {
         try {
             debugger;
             await axiosInstance.delete(`/continents/${row._id}`);
-            show({ type: "success", message: "Continent deleted successfully" });
+            show({ type: "success", message: "ContinetViewModel deleted successfully" });
             fetchCategories();
         } catch (err: any) {
-            show({ type: "error", message: err.message || "Failed to delete Continent" });
+            show({ type: "error", message: err.message || "Failed to delete ContinetViewModel" });
         }
     };
 
 
-    const emptyContinent: Continent = {
+    const emptyContinent: ContinetViewModel = {
         name: "",
         slug: "",
         description: "",
         products: [],
+          productObjects: [],
         parent: null,
         children: [],
         isActive: true,
@@ -154,11 +155,11 @@ const CategoriesDataGrid = () => {
     const [headerTitle, setHeaderTitle] = useState<string | null>(null);
 
     const [open, setOpen] = useState(false);
-    const [continent, setContinent] = useState<Continent>(emptyContinent);
+    const [continent, setContinent] = useState<ContinetViewModel>(emptyContinent);
 
 
     const onCreate = () => {
-        setHeaderTitle("New Continent");
+        setHeaderTitle("New ContinetViewModel");
         setId(null);
         setContinent({
             ...emptyContinent,
@@ -167,54 +168,63 @@ const CategoriesDataGrid = () => {
         setOpen(true);
     };
 
-        const onEdit = (row: Continent) => {
-            setHeaderTitle(`Modify ${row.name}`);
-            setId(row._id!);
-            setContinent({ ...row }); // create a new object reference
-            setOpen(true);
-        };
+    const onEdit = (row: ContinetViewModel) => {
+        setHeaderTitle(`Modify ${row.name}`);
+        setId(row._id!);
+        setContinent({ ...row }); // create a new object reference
+        setOpen(true);
+    };
 
-        const resetState = () => {
-            
-             setId(null);
-             setHeaderTitle(null);
-             setContinent(emptyContinent);
-             setOpen(false);
-        }
+    const resetState = () => {
 
-    const handleSaveContinent = async (continent: Continent) => {
+        setId(null);
+        setHeaderTitle(null);
+        setContinent(emptyContinent);
+        setOpen(false);
+    }
+
+    const handleSaveContinent = async (continent: ContinetViewModel) => {
         try {
-            const payload = {
-                name: continent.name,
-                slug: continent.slug,
-                description: continent.description ?? null,
-                parent: continent.parent ?? null,
-                children: continent.children ?? null,
-                products: continent.products ?? [],
-                isActive: continent.isActive ?? true,
-                order: Number(continent.order) || 0,
-            };
+            // Prepare payload matching Create/UpdateContinentRequest
+            // const payload = {
+            //     name: continent.name,
+            //     slug: continent.slug,
+            //     description: continent.description ?? null,
+            //     parent: continent.parent ?? null,
+            //     children: continent.children ?? null,
+            //     products: continent.products?.map(p => p._id) ?? [], // only send ObjectIds
+            //     productObjects: [],
+            //     isActive: continent.isActive ?? true,
+            //     order: Number(continent.order) || 0,
+            //     image: continent.image ?? null,
+            //     imageAlt: continent.imageAlt ?? null,
+            //     seoTitle: continent.seoTitle ?? null,
+            //     seoDescription: continent.seoDescription ?? null,
+            //     seoKeywords: continent.seoKeywords ?? null,
+            // };
 
-            
             if (continent._id) {
-                
-                await axiosInstance.put(`/continents/${continent._id}`, payload);
-                show({ type: "success", message: "Continent updated!" });
+                // Update existing continent
+                await axiosInstance.put(`/continents/${continent._id}`, continent);
+                show({ type: "success", message: "ContinetViewModel updated!" });
             } else {
-                await axiosInstance.post("/continents", payload);
-                show({ type: "success", message: "Continent created!" });
+                // Create new continent
+                await axiosInstance.post("/continents", continent);
+                show({ type: "success", message: "ContinetViewModel created!" });
             }
 
-           resetState();
-            fetchCategories(); 
+            // Reset form / state and reload
+            resetState();
+            fetchCategories();
         } catch (err: any) {
-            
+            console.error(err);
             show({
                 type: "error",
-                message: err.error?.message || "Failed to save continent",
+                message: err.response?.data?.message || "Failed to save continent",
             });
         }
     };
+
 
 
     useEffect(() => {
@@ -228,17 +238,17 @@ const CategoriesDataGrid = () => {
                 />
 
             );
-        }else {onClose();}
+        } else { onClose(); }
     }, [open, id, continent, headerTitle]);
 
 
-// useEffect(()=>{
-//     debugger;
-//      setOpen(false);
-//         setHeaderTitle(null);
-//         setId(null);
-//         setContinent(emptyContinent);
-// }, [onClose])
+    // useEffect(()=>{
+    //     debugger;
+    //      setOpen(false);
+    //         setHeaderTitle(null);
+    //         setId(null);
+    //         setContinent(emptyContinent);
+    // }, [onClose])
 
     return (
         <>
@@ -250,7 +260,7 @@ const CategoriesDataGrid = () => {
             {loading ? (
                 <Loader />
             ) : (
-                <GenericDataGrid<Continent>
+                <GenericDataGrid<ContinetViewModel>
                     prevButtonClassName="dashboard-btn--ghost-minimal"
                     nextButtonClassName="dashboard-btn--ghost-minimal"
                     rows={rows}

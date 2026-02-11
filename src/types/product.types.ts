@@ -1,96 +1,86 @@
 import { BaseModel } from "./base.types";
-
+import { ObjectId } from "mongodb";
 export type ProductSortKey =
-  | "sku"
+  | "fileId"
   | "name"
-  | "price"
-  | "product_type"
-  | "partner"
-  | "set"
-  | "sale_price"
-  | "sale_period"
+  | "downloadCount"
+  | "importance"
   | "createdAt"
   | "updatedAt";
 
-  
-  export type SortOrder = "asc" | "desc";
+export type SortOrder = "asc" | "desc";
 
 export interface ProductSort {
   key: ProductSortKey;
   order: SortOrder;
 }
 
-
 export type ProductFilter = {
   name?: { $regex: RegExp };
-  price?: { $gte?: number; $lte?: number };
-  product_type?: string;
+  downloadCount?: { $gte?: number; $lte?: number };
   tags?: string[];
+  importance?: number;
 };
 
-
 export interface Product extends BaseModel {
-  
-  sku: string;
+  fileId: string; // replaced sku with fileId
   name: string;
-  price: number;
-  product_type: string;
-  partner: string | null;
-  set: string | null;
-
+  code: string;
   content: ProductContent | null;
   variant: ProductVariant | null;
   media: ProductMedia | null;
 
-  tags: string[]  | null;
+  tags: string[] | null;
 
-  sale_price: string | number | null;
-  sale_period: string | null;
+  downloadCount: number; // new field
+  importance: "A" | "B" | "C" | "D";
 
-  parent: (string | null)[]  | null;
-  children: string[]  | null;
-  recommended: string[]  | null;
+parent?: ObjectId | null;
+  children: string[] | null;
+  recommended: string[] | null;
 }
-
 export interface ProductContent {
-  description: string;
-  feature: string[];
-  care: string[];
+  // UI content fields
+  description?: string | null;
+  shortDescription?: string | null;
+  highlights?: string[] | null;
+  features?: string[] | null;
 }
 
 export interface ProductVariant {
-  color: string[];
-  size: string[];
+  // If you don't need color/size anymore, can use variant for UI purposes
+  variantName?: string | null;
+  variantValue?: string | null;
 }
 
 export interface ProductMedia {
-  images: string[];
-  video: string;
+  // SEO and UI media
+  images?: string[] | null;         // multiple images
+  imageAlt?: string | null;         // alt text for main image
+  video?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string[] | null;
 }
 
 export interface CreateProductRequest {
-  sku: string;
+  fileId: string;
   name: string;
-  price: number;
-  product_type: string;
-  partner: string | null;
-  set: string | null;
 
   content: ProductContent | null;
   variant: ProductVariant | null;
   media: ProductMedia | null;
 
-  tags: string[]  | null;
+  tags: string[] | null;
 
-  sale_price: string | number | null;
-  sale_period: string | null;
+  downloadCount?: number;
+  importance?: number;
 
-  parent: (string | null)[];
-  children: string[]  | null;
-  recommended: string[]  | null;
+parent?: ObjectId | null;
+  children: string[] | null;
+  recommended: string[] | null;
 }
 
 export interface UpdateProductRequest extends Partial<CreateProductRequest> {
   updatedAt?: Date;
 }
-

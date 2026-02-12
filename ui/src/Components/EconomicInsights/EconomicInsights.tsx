@@ -3,7 +3,7 @@ import axiosInstance from "@/api/axiosInstance"; // your axios instance
 import "./EconomicInsights.css"; // optional: for styling tabs/products
 import Loader from "@/Components/Loader/Loader";
 import 'flag-icons/css/flag-icons.min.css';
-import {getPDFBlob} from '@/api/user';
+import { getPDFBlob } from '@/api/user';
 import { useToast } from "@/providers/ToastContext";
 
 
@@ -39,6 +39,8 @@ const EconomicInsights: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [loadingProducts, setLoadingProducts] = useState(true);
+    const [downloadingProductId, setDownloadingProductId] = useState<string | null>(null);
+
     const [error, setError] = useState<string | null>(null);
     const { show } = useToast();
     // Fetch categories (continents) on mount
@@ -108,31 +110,34 @@ const EconomicInsights: React.FC = () => {
         )
 
 
-            const pdfDownload = async ( fileId: string) => {
-                try {
-                    
-                    
-                    const { blob, filename } = await getPDFBlob(fileId);
-        
-                    const url = window.URL.createObjectURL(blob);
-        
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-        
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                } catch (err) {
-                    debugger
-                    show({ type: "error", message: err!.message! });
-                    console.error(err);
-                }
-            };
+
+    const pdfDownload = async (fileId: string) => {
+
+        try {
+
+            const { blob, filename } = await getPDFBlob(fileId);
+
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            debugger
+            show({ type: "error", message: err!.message! });
+            console.error(err);
+        } finally {
+            setDownloadingProductId(null);
+        }
+    };
 
 
-
+    useEffect
 
     if (error) return <p className="text-danger">{error}</p>;
 
@@ -171,8 +176,9 @@ const EconomicInsights: React.FC = () => {
             ) : (
                 <div className="products row mt-2">
                     {products.map((p) => (
-                        <div key={p._id} className="col-md-4 mb-3 col-lg-2" 
-                            onClick={()=> pdfDownload(p.fileId)}>
+
+                        <div key={p._id} className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
+                            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}>
                             <div className="card h-100">
                                 <div className="card-body text-center"> {/* center the content */}
                                     <h5 className="card-title">{p.name}</h5>
@@ -185,6 +191,16 @@ const EconomicInsights: React.FC = () => {
 
                                     <p className="card-text">Downloads: {p.downloadCount}</p>
                                     <p className="card-text">Importance: {p.importance}</p>
+
+                                    {/* Loader overlay */}
+
+
+                                    <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
+                                        <Loader />
+                                    </div>
+
+
+
                                 </div>
                             </div>
                         </div>

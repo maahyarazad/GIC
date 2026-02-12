@@ -1458,7 +1458,7 @@
 						"type": "array",
 						"nullable": true
 					},
-					"productObject": {
+					"productObjects": {
 						"items": {
 							"$ref": "#/components/schemas/Product"
 						},

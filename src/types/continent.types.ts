@@ -35,7 +35,7 @@ export interface CreateContinentRequest extends BaseModel {
 
   // Accept full product objects now
 products?: (ObjectId | null)[] | null;
-productObject?: Product[] | null;
+productObjects?: Product[] | null;
   parent?: string | null;
   children?: string[] | null;
 

@@ -130,7 +130,7 @@ public async updateContinent(
     let continentProductIds: ObjectId[] = [];
 
 
-    const productObjects = body.productObject ?? [];
+    const productObjects = body.productObjects ?? [];
 
     // Upsert products
     if (productObjects && productObjects.length > 0) {
@@ -140,7 +140,7 @@ public async updateContinent(
       );
     }
 
-    delete body.productObject;
+    delete body.productObjects;
     delete body._id;
     // Update continent data (add products)
     const updateData: Partial<Continent> = {

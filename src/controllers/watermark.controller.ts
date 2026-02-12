@@ -10,6 +10,7 @@ import dotenv from "dotenv";
 import { Product } from "../types/product.types";
 dotenv.config();
 import jwt from "jsonwebtoken";
+import {LogChangeModel} from '../types/base.types';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -71,6 +72,17 @@ export function RegisterFileDownloadRoutes(app: Application) {
         { _id: new ObjectId(product._id) },
         { $set: updateData }
       );
+
+      const logCollection = getCollection<LogChangeModel>("log_change");
+      
+        await logCollection.insertOne({
+            targetId: new ObjectId(product._id),
+            lastModifiedBy: new ObjectId(decoded.userId),
+            collection: "products",
+            message: `${JSON.stringify(product)}`,
+            createdAt: new Date(),
+        });
+
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(

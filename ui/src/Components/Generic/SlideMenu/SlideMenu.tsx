@@ -1,4 +1,4 @@
-import React , {useEffect} from "react";
+import React , {useEffect, useState} from "react";
 import "./SlideMenu.css";
 
 interface SlideMenuProps {
@@ -9,11 +9,23 @@ interface SlideMenuProps {
 }
 
 const SlideMenu: React.FC<SlideMenuProps> = ({ isOpen, onClose, children, headerTitle }) => {
+    const [isMobile, setIsMobile] = useState(false);
+     useEffect(() => {
+        const onResize = () => {
+          setIsMobile(window.innerWidth <= 768);
+        };
+    
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+      }, []);
+
     useEffect(() => {
     if (!isOpen) return;
 
     document.body.style.overflow = "hidden";
     
+
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -39,7 +51,7 @@ const SlideMenu: React.FC<SlideMenuProps> = ({ isOpen, onClose, children, header
 
 
       {/* Sliding menu */}
-      <div className={`slide-menu ${isOpen ? "open" : ""}`} role="dialog" aria-modal="true">
+      <div className={`slide-menu ${isOpen ? "open" : ""}`} role="dialog" aria-modal="true" style={{width: isMobile ? "100%" : "80%"}}>
         {/* Sticky header */}
         <div className="slide-menu__header">
 

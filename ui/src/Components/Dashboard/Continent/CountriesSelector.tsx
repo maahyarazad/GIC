@@ -141,7 +141,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
     return (
         <div>
 
-            <div className="col-3">
+            <div className="col-lg-3 col-12">
                 <label className="form-label fw-bold">Countries</label>
                 <Select
                     options={options}
@@ -164,13 +164,13 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                         <div style={{ width: "15%" }}>Code</div>
                         <div style={{ width: "30%" }}>File ID</div>
                         <div style={{ width: "15%" }}>Importance</div>
-                        <div style={{ width: "15%" }}>Actions</div>
+                        <div style={{ width: "15%" }} className="d-none justify-self-end">Actions</div>
                     </div>
                 )}
 
                 {/* Products */}
                 {(continent.productObjects ?? []).map((product, index) => (
-                    <div key={index} className="d-flex gap-2 mt align-items-center">
+                    <div key={index} className="d-flex gap-2 mt align-items-center mb-1">
                         {/* Name */}
                         <input
                             type="hidden"
@@ -223,7 +223,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                         <button
                             style={{ width: "15%", fontSize: 24, color: 'red' }}
                             type="button"
-                            className="btn"
+                            className="btn d-flex justify-items-start"
                             title="Delete the product"
                             onClick={() => handleDelete(index)}
                         >

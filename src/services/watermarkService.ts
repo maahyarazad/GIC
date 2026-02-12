@@ -10,7 +10,7 @@ export async function addWatermark(inputPath: string, outputPath: string, text: 
     const { width, height } = page.getSize();
     page.drawText(text, {
       x: width/20,
-      y: height/20,
+      y: height/35,
       size: 20,
       color: rgb(0.5, 0.5, 0.5),
       rotate: degrees(0),

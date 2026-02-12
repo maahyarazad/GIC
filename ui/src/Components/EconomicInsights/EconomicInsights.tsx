@@ -172,7 +172,7 @@ const EconomicInsights: React.FC = () => {
                 <div className="products row mt-2">
                     {products.map((p) => (
                         <div key={p._id} className="col-md-4 mb-3 col-lg-2" 
-                            onClick={()=> pdfDownload(p.fileId);}>
+                            onClick={()=> pdfDownload(p.fileId)}>
                             <div className="card h-100">
                                 <div className="card-body text-center"> {/* center the content */}
                                     <h5 className="card-title">{p.name}</h5>

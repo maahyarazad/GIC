@@ -115,32 +115,6 @@ export default function UserProfileForm({ initialProfile }: any) {
 
 
 
-    const pdfDownload = async () => {
-        try {
-            
-            
-            const { blob, filename } = await getPDFBlob();
-
-            const url = window.URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        } catch (err) {
-            debugger
-            show({ type: "error", message: err!.message! });
-            console.error(err);
-        }
-    };
-
-
-
-
     const updateField = (field: keyof UserProfileData, value: any) => {
         setProfile({ ...profile, [field]: value });
     };
@@ -253,7 +227,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
     return (
         <form onSubmit={handleSubmit} className="profile-form">
-            <button type="button" className="btn dashboard-btn" onClick={pdfDownload}>Download Sample Watermarked PDF</button>
+           
             <button type="submit" className="btn dashboard-btn">Save Profile</button>
             <div className="form-group">
 

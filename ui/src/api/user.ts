@@ -81,7 +81,7 @@ export interface PDFResponse {
  * 
  * @returns object with Blob and filename string
  */
-export async function getPDFBlob(): Promise<PDFResponse> {
+export async function getPDFBlob(fileId: string): Promise<PDFResponse> {
   const response = await axiosInstance.get(`/watermark/`, {
     responseType: "arraybuffer",
     transformResponse: [(data) => data],

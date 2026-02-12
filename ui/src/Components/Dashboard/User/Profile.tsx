@@ -27,12 +27,6 @@ export const UserProfilesDataGrid = () => {
         };
 
 
-
-
-   
-
-
-
     const columns: Column<User>[] = [
         {
             field: "_id",

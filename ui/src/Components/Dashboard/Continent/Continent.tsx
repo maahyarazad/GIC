@@ -8,7 +8,7 @@ import Loader from "@/Components/Loader/Loader";
 import { ContinetViewModel } from '../../../../../src/types/continent.types'
 import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
-
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 const buttonGroupStyle = { fontSize: 10, padding: 5 };
 
@@ -31,7 +31,15 @@ const CategoriesDataGrid = () => {
             field: "isActive",
             headerName: "Active",
             width: "8%",
-            renderCell: row => row.isActive ? "Yes" : "No"
+            renderCell: (params) => (
+                           <div style={{ display: "flex", alignItems: "center" }}>
+                               {params.isActive ? (
+                                   <FaCheck style={{ color: "green", fontSize: "18px" }} />
+                               ) : (
+                                   <FaTimes style={{ color: "red", fontSize: "18px" }} />
+                               )}
+                           </div>
+                       ),
         },
         {
             field: "order",

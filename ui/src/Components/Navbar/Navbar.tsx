@@ -287,7 +287,7 @@ const Navbar = (
                 </div>
 
                 {/* Desktop Nav Links Scrolled ===> It is a clone with effect */}
-                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0, height: showNavbar ? 'auto' : 0 }}>
+                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0, height: showNavbar ? 'auto' : '0px', pointerEvents: showNavbar ? 'auto' : 'none'}}>
                     {NavContent}
                 </div>
 

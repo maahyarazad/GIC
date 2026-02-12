@@ -1,0 +1,78 @@
+/* EconomicInsights.scss */
+.economic-insights .categories {
+  position: relative;
+}
+.economic-insights .categories .categories-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+.economic-insights .categories .categories-scroll::-webkit-scrollbar {
+  display: none;
+}
+.economic-insights .categories .categories-scroll .continent {
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.economic-insights .categories .categories-scroll .continent:hover {
+  background: #e0e0e0;
+}
+.economic-insights .categories .categories-scroll .continent.active {
+  background: #111;
+  color: #fff;
+}
+.economic-insights .categories::before, .economic-insights .categories::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+.economic-insights .categories::before {
+  left: 0;
+  background: linear-gradient(to right, white, transparent);
+}
+.economic-insights .categories::after {
+  right: 0;
+  background: linear-gradient(to left, white, transparent);
+}
+.economic-insights .products .card {
+  border: 1px solid #dee2e6;
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.economic-insights .products .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.economic-insights .products .card .card-img-top {
+  -o-object-fit: cover;
+     object-fit: cover;
+  height: 200px;
+}
+.economic-insights .products .card .card-body .flag-icon {
+  font-size: 3rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.economic-insights .products .card .card-body .card-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}/*# sourceMappingURL=EconomicInsights.css.map */

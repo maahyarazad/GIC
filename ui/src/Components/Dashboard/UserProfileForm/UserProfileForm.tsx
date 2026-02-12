@@ -120,7 +120,7 @@ export default function UserProfileForm({ initialProfile }: any) {
             
             
             const { blob, filename } = await getPDFBlob();
-debugger;
+
             const url = window.URL.createObjectURL(blob);
 
             const a = document.createElement("a");

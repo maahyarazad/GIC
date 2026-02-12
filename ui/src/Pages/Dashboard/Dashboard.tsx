@@ -5,6 +5,7 @@ import JsonViewer from "@/Components/Dashboard/JsonViewer/JsonViewer";
 import FileManagement from "@/Components/Dashboard/FileManagement/FileManagement";
 import EmailTemplatesDataGrid from "@/Components/Dashboard/EmailTemplate/EmailTemplate";
 import UserProfileForm from "@/Components/Dashboard/UserProfileForm/UserProfileForm";
+import EconomicInsights from "@/Components/EconomicInsights/EconomicInsights";
 import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
@@ -20,6 +21,7 @@ type MenuItem =
     | "newsletter_subscribers"
     | "continent"
     | "profile"
+    | "economic_insights"
     | "logout";
 
 // --- Menu access control ---
@@ -31,6 +33,7 @@ const accessControl: Record<MenuItem, string[]> = {
     newsletter_subscribers: ["admin", "procurement"],
     continent: ["admin", "procurement"],
     profile: ["user"],
+    economic_insights: ["user","admin", "procurement"],
     logout: ["admin", "user", "procurement"],
 };
 
@@ -43,6 +46,7 @@ const menuTitles: Record<MenuItem, string> = {
     newsletter_subscribers: "Email Subscribers",
     continent: "Manage Continents",
     profile: "Profile",
+    economic_insights: "Economic Insights",
     logout: "Logout",
 };
 
@@ -127,6 +131,7 @@ const Dashboard: React.FC = () => {
             newsletter_subscribers: <NewsletterSubscribers />,
             continent: <Continent />,
             profile: <UserProfileForm initialProfile={userProfile} />,
+            economic_insights: <EconomicInsights />,
             logout: <LogoutComponent />,
         }),
         [userProfile]

@@ -41,7 +41,8 @@
     display: block;
   }
   .table-wrapper table thead {
-    display: none; /* hide header row */
+    display: none;
+    /* hide header row */
   }
   .table-wrapper table tbody {
     display: block;
@@ -57,12 +58,14 @@
   }
   .table-wrapper table td {
     display: flex;
-    flex-wrap: wrap; /* allow wrapping */
+    flex-wrap: wrap;
+    /* allow wrapping */
     justify-content: flex-start;
     gap: 8px;
     padding: 6px 0;
     border: none;
-    white-space: normal !important; /* override nowrap */
+    white-space: normal !important;
+    /* override nowrap */
     text-align: left;
     position: relative;
     padding-left: 0;

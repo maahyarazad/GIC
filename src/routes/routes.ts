@@ -365,6 +365,9 @@ const models: TsoaRoute.Models = {
     "CreateContinentRequest": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"ref":"ObjectId"},
+            "createdAt": {"dataType":"datetime"},
+            "updatedAt": {"dataType":"datetime"},
             "name": {"dataType":"string","required":true},
             "slug": {"dataType":"string","required":true},
             "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},

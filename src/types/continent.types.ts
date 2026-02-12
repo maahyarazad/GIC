@@ -28,7 +28,7 @@ export interface ContinetViewModel extends Continent{
 }
 
 // Request when creating a continent
-export interface CreateContinentRequest {
+export interface CreateContinentRequest extends BaseModel {
   name: string;
   slug: string;
   description?: string | null;

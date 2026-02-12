@@ -1425,6 +1425,17 @@
 			},
 			"CreateContinentRequest": {
 				"properties": {
+					"_id": {
+						"$ref": "#/components/schemas/ObjectId"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
 					"name": {
 						"type": "string"
 					},

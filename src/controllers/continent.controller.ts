@@ -48,7 +48,8 @@ export class ContinentController extends Controller {
     try {
       validateRequiredFields(body, ["name", "slug"]);
 
-      const productObjects = body.productObjects!;
+    const productObjects = body.productObject ?? [];
+
 
       const collection = getCollection<Continent>("continents");
       const duplicate = await collection.findOne({ slug: body.slug });
@@ -128,11 +129,14 @@ public async updateContinent(
 
     let continentProductIds: ObjectId[] = [];
 
+
+    const productObjects = body.productObject ?? [];
+
     // Upsert products
-    if (body.productObjects && body.productObjects.length > 0) {
+    if (productObjects && productObjects.length > 0) {
       continentProductIds = await this.upsertProductsForContinent(
         _id,
-        body.productObjects
+       productObjects
       );
     }
 
@@ -208,7 +212,7 @@ public async updateContinent(
             case "equals":
               // Special handling for boolean fields
               if (field === "isActive") {
-                return { isActive: value === "true" || value === true };
+                return { isActive: value === "true" || value === 1 || Boolean(value) };
               }
 
               return { [field]: value };

@@ -1503,71 +1503,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"UpdateContinentRequest": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"products": {
-						"items": {
-							"$ref": "#/components/schemas/ObjectId"
-						},
-						"type": "array"
-					},
-					"productObject": {
-						"items": {
-							"$ref": "#/components/schemas/Product"
-						},
-						"type": "array"
-					},
-					"parent": {
-						"type": "string"
-					},
-					"children": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"order": {
-						"type": "number",
-						"format": "double"
-					},
-					"image": {
-						"type": "string"
-					},
-					"imageAlt": {
-						"type": "string"
-					},
-					"seoTitle": {
-						"type": "string"
-					},
-					"seoDescription": {
-						"type": "string"
-					},
-					"seoKeywords": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"additionalProperties": true
-			},
 			"ContinentSortKey": {
 				"type": "string",
 				"enum": [
@@ -3102,8 +3037,8 @@
 				]
 			}
 		},
-		"/api/v1/continents/{id}": {
-			"put": {
+		"/api/v1/continents/update": {
+			"post": {
 				"operationId": "UpdateContinent",
 				"responses": {
 					"200": {
@@ -3119,27 +3054,20 @@
 					"Continents"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UpdateContinentRequest"
+								"$ref": "#/components/schemas/CreateContinentRequest"
 							}
 						}
 					}
 				}
-			},
+			}
+		},
+		"/api/v1/continents/{id}": {
 			"delete": {
 				"operationId": "DeleteContinent",
 				"responses": {

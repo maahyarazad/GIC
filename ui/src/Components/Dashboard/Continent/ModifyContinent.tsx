@@ -134,10 +134,10 @@ const ModifyContinent = forwardRef<
                 {/* Countries */}
                 <div className="col-12 col-lg-12">
                   {/* Countries Selector */}
-    <CountriesSelector
-      continent={formState}
-      setContinent={setFormState}
-    />
+                        <CountriesSelector
+                        continent={formState}
+                        setContinent={setFormState}
+                        />
                 </div>
 
                 {/* Description */}

@@ -8,7 +8,7 @@ export interface Continent extends BaseModel {
   description?: string | null;
 
   // Continent now stores full Product objects
-    products?: (ObjectId | null)[] | null;
+    products?: (ObjectId | null)[];
 
   parent: string | null;      // parent continent
   children: string[] | null;  // child continent IDs

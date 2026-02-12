@@ -383,28 +383,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateContinentRequest": {
-        "dataType": "refObject",
-        "properties": {
-            "name": {"dataType":"string"},
-            "slug": {"dataType":"string"},
-            "description": {"dataType":"string"},
-            "products": {"dataType":"array","array":{"dataType":"refAlias","ref":"ObjectId"}},
-            "productObject": {"dataType":"array","array":{"dataType":"refObject","ref":"Product"}},
-            "parent": {"dataType":"string"},
-            "children": {"dataType":"array","array":{"dataType":"string"}},
-            "isActive": {"dataType":"boolean"},
-            "order": {"dataType":"double"},
-            "image": {"dataType":"string"},
-            "imageAlt": {"dataType":"string"},
-            "seoTitle": {"dataType":"string"},
-            "seoDescription": {"dataType":"string"},
-            "seoKeywords": {"dataType":"array","array":{"dataType":"string"}},
-            "updatedAt": {"dataType":"datetime"},
-        },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ContinentSortKey": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["name"]},{"dataType":"enum","enums":["slug"]},{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["order"]},{"dataType":"enum","enums":["isActive"]}],"validators":{}},
@@ -1479,10 +1457,9 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsContinentController_updateContinent: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateContinentRequest"},
+                body: {"in":"body","name":"body","required":true,"ref":"CreateContinentRequest"},
         };
-        app.put('/api/v1/continents/:id',
+        app.post('/api/v1/continents/update',
             ...(fetchMiddlewares<RequestHandler>(ContinentController)),
             ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.updateContinent)),
 

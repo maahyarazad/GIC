@@ -12,6 +12,8 @@ const SlideMenu: React.FC<SlideMenuProps> = ({ isOpen, onClose, children, header
     useEffect(() => {
     if (!isOpen) return;
 
+    document.body.style.overflow = "hidden";
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();

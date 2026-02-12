@@ -13,29 +13,35 @@ interface Props {
 const importanceOptions = ["A", "B", "C", "D"] as const;
 
 const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
+
+
+
+    const editMode = (continent._id !== null && continent._id !== undefined);
+
     const options = useMemo(() => countryList().getData(), []);
 
     const fetchProductsByParent = useCallback(async (parentId: string) => {
-    try {
-        const { data } = await axiosInstance.get(`/products/by-parent/${parentId}`);
-        return data; 
-    } catch (err) {
-        console.error("Failed to fetch products", err);
-        return [];
-    }
+        try {
+            const { data } = await axiosInstance.get(`/products/by-parent/${parentId}`);
+            debugger;
+            return data;
+        } catch (err) {
+            console.error("Failed to fetch products", err);
+            return [];
+        }
     }, []);
 
 
     useEffect(() => {
-    if (!continent._id) return;
+        if (!continent._id) return;
 
-    const loadProducts = async () => {
-        const result = await fetchProductsByParent(continent._id);
-        debugger;
-        setContinent(prev => ({ ...prev, productObjects: result.products ?? [] }));
-    };
+        const loadProducts = async () => {
+            const result = await fetchProductsByParent(continent._id);
 
-    loadProducts();
+            setContinent(prev => ({ ...prev, productObjects: result.products ?? [] }));
+        };
+
+        loadProducts();
     }, [continent._id, fetchProductsByParent]);
 
     const handleSelect = (selectedOption: { label: string; value: string } | null) => {
@@ -79,19 +85,37 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
     }, []);
 
 
-    const handleDelete = (index: number) => {
-        setContinent(prev => {
-            const updatedProducts = [...(prev.productObjects ?? [])];
+    const handleDelete = async (index: number) => {
 
-            // Remove item at index
-            updatedProducts.splice(index, 1);
+        if (editMode) {
+            const productId = continent.productObjects?.[index]?._id;
+            if (!productId) return;
+            try {
+                const { data } = await axiosInstance.delete(`/products/${productId}`);
+                console.log("Deleted product:", data);
 
-            return {
-                ...prev,
-                productObjects: updatedProducts,
-            };
-        });
+                // Optionally, update local state after deletion
+                setContinent(prev => {
+                    const updatedProducts = [...(prev.productObjects ?? [])];
+                    updatedProducts.splice(index, 1);
+                    return { ...prev, productObjects: updatedProducts };
+                });
+
+                return data;
+            } catch (err) {
+                console.error("Failed to delete product", err);
+                return null;
+            }
+        } else {
+            // Local deletion only
+            setContinent(prev => {
+                const updatedProducts = [...(prev.productObjects ?? [])];
+                updatedProducts.splice(index, 1);
+                return { ...prev, productObjects: updatedProducts };
+            });
+        }
     };
+
 
 
     const handleProductChange = (
@@ -108,7 +132,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
 
             return {
                 ...prev,
-                productObjects: updatedProducts, 
+                productObjects: updatedProducts,
             };
         });
     };
@@ -148,6 +172,12 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                 {(continent.productObjects ?? []).map((product, index) => (
                     <div key={index} className="d-flex gap-2 mt align-items-center">
                         {/* Name */}
+                        <input
+                            type="hidden"
+                            value={product._id}
+                            name={`products[${index}]._id`}
+                        />
+
                         <input
                             type="text"
                             className="form-control"

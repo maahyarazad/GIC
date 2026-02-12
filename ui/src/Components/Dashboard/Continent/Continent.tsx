@@ -129,7 +129,7 @@ const CategoriesDataGrid = () => {
         if (!isConfirmed) return;
 
         try {
-            debugger;
+            
             await axiosInstance.delete(`/continents/${row._id}`);
             show({ type: "success", message: "ContinetViewModel deleted successfully" });
             fetchCategories();
@@ -185,30 +185,14 @@ const CategoriesDataGrid = () => {
 
     const handleSaveContinent = async (continent: ContinetViewModel) => {
         try {
-            // Prepare payload matching Create/UpdateContinentRequest
-            // const payload = {
-            //     name: continent.name,
-            //     slug: continent.slug,
-            //     description: continent.description ?? null,
-            //     parent: continent.parent ?? null,
-            //     children: continent.children ?? null,
-            //     products: continent.products?.map(p => p._id) ?? [], // only send ObjectIds
-            //     productObjects: [],
-            //     isActive: continent.isActive ?? true,
-            //     order: Number(continent.order) || 0,
-            //     image: continent.image ?? null,
-            //     imageAlt: continent.imageAlt ?? null,
-            //     seoTitle: continent.seoTitle ?? null,
-            //     seoDescription: continent.seoDescription ?? null,
-            //     seoKeywords: continent.seoKeywords ?? null,
-            // };
-
-            if (continent._id) {
-                // Update existing continent
-                await axiosInstance.put(`/continents/${continent._id}`, continent);
+            const editMode = (continent._id !== null && continent._id !== undefined);
+            if (editMode) {
+               debugger;
+            
+                await axiosInstance.post(`/continents/update`, continent);
                 show({ type: "success", message: "ContinetViewModel updated!" });
             } else {
-                // Create new continent
+               
                 await axiosInstance.post("/continents", continent);
                 show({ type: "success", message: "ContinetViewModel created!" });
             }
@@ -242,13 +226,7 @@ const CategoriesDataGrid = () => {
     }, [open, id, continent, headerTitle]);
 
 
-    // useEffect(()=>{
-    //     debugger;
-    //      setOpen(false);
-    //         setHeaderTitle(null);
-    //         setId(null);
-    //         setContinent(emptyContinent);
-    // }, [onClose])
+
 
     return (
         <>

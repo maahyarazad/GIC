@@ -40,6 +40,7 @@ export type ContinentSortKey =
 @Tags("Continents")
 export class ContinentController extends Controller {
   @Post("/")
+  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("201", "Created")
   public async createContinent(
     @Body() body: CreateContinentRequest
@@ -80,7 +81,7 @@ export class ContinentController extends Controller {
         // Upsert or link products
         const productIds = await this.createProductsForContinent(
           result.insertedId,
-         productObjects
+          productObjects
         );
 
         // Update the continent with product IDs
@@ -100,18 +101,21 @@ export class ContinentController extends Controller {
     }
   }
 
-  @Put("/{id}")
-  public async updateContinent(
-    @Path() id: string,
-    @Body() body: UpdateContinentRequest
-  ): Promise<any> {
-    try {
-      const collection = getCollection<Continent>("continents");
+@Post("/update")
+@Middlewares(adminAuthMiddleware)
+public async updateContinent(
+  
+  @Body() body: CreateContinentRequest
+): Promise<any> {
+  try {
+    const collection = getCollection<Continent>("continents");
+    const _id = new ObjectId(body._id);
 
-      // Check for duplicate slug
+    // Check duplicate slug
+    if (body.slug) {
       const duplicate = await collection.findOne({
         slug: body.slug,
-        _id: { $ne: new ObjectId(id) },
+        _id: { $ne: _id },
       });
 
       if (duplicate) {
@@ -120,45 +124,42 @@ export class ContinentController extends Controller {
           `Continent with slug "${body.slug}" already exists`
         );
       }
-
-      const _id = new ObjectId(id);
-
-      let continentProductIds: ObjectId[] = [];
-
-      // Upsert products if provided
-      if (body.products && body.products.length > 0) {
-        continentProductIds = await this.upsertProductsForContinent(
-          _id,
-          body.products
-        );
-      }
-
-      // Build updateData for the continent
-      const updateData: Partial<Continent> = {
-        ...body,
-        products: continentProductIds.map((id) => id.toString()), // store product IDs in continent
-        updatedAt: new Date(),
-      };
-
-      // Update continent
-      const result = await collection.findOneAndUpdate(
-        { _id },
-        { $set: updateData },
-        { returnDocument: "after" }
-      );
-
-      if (!result.value) {
-        return createErrorResponse("Continent not found");
-      }
-
-      return createSuccessResponse(result.value);
-    } catch (error: any) {
-      return createErrorResponse(error.message || "Failed to update Continent");
     }
+
+    let continentProductIds: ObjectId[] = [];
+
+    // Upsert products
+    if (body.productObjects && body.productObjects.length > 0) {
+      continentProductIds = await this.upsertProductsForContinent(
+        _id,
+        body.productObjects
+      );
+    }
+
+    delete body.productObject;
+    delete body._id;
+    // Update continent data (add products)
+    const updateData: Partial<Continent> = {
+      ...body,
+      products: continentProductIds,
+      updatedAt: new Date(),
+    };
+
+    await collection.updateOne(
+      { _id }, // correct filter
+      { $set: updateData }
+    );
+
+    return createSuccessResponse("Continent updated successfully");
+  } catch (error: any) {
+    console.error("Update continent error:", error);
+    this.setStatus(500);
+    return createErrorResponse(error.message || "Failed to update Continent");
   }
+}
+
 
   @Get("/")
-  @Middlewares(adminAuthMiddleware)
   public async getAllCategories(
     @Query("filters") filtersJson?: string,
     @Query() limit: number = 20,
@@ -266,6 +267,7 @@ export class ContinentController extends Controller {
   }
 
   @Delete("/{id}")
+  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Deleted")
   public async deleteContinent(@Path() id: string): Promise<any> {
     try {
@@ -289,31 +291,83 @@ export class ContinentController extends Controller {
     }
   }
 
-private async createProductsForContinent(
-  continentId: ObjectId,
-  products: Product[]
-): Promise<ObjectId[]> {
-  const productsCollection = getCollection<Product>("products");
-  const continentProductIds: ObjectId[] = [];
+  private async createProductsForContinent(
+    continentId: ObjectId,
+    products: Product[]
+  ): Promise<ObjectId[]> {
+    const productsCollection = getCollection<Product>("products");
+    const continentProductIds: ObjectId[] = [];
 
-  for (const p of products) {
-    const newProduct: Product = {
-      ...p,
-      parent: continentId,
-      children: p.children ?? [],
-      recommended: p.recommended ?? [],
-      downloadCount: p.downloadCount ?? 0,
-      importance: p.importance ?? "A",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    for (const p of products) {
+      const newProduct: Product = {
+        ...p,
+        parent: continentId,
+        children: p.children ?? [],
+        recommended: p.recommended ?? [],
+        downloadCount: p.downloadCount ?? 0,
+        importance: p.importance ?? "A",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-    const result = await productsCollection.insertOne(newProduct);
+      const result = await productsCollection.insertOne(newProduct);
 
-    continentProductIds.push(result.insertedId);
+      continentProductIds.push(result.insertedId);
+    }
+
+    return continentProductIds;
   }
 
-  return continentProductIds;
-}
+  private async upsertProductsForContinent(
+    continentId: ObjectId,
+    products: Product[]
+  ): Promise<ObjectId[]> {
+    const productsCollection = getCollection<Product>("products");
+    const resultIds: ObjectId[] = [];
 
+    for (const p of products) {
+      if (p._id) {
+        // Existing product → update
+        const updateResult = await productsCollection.updateOne(
+          { _id: new ObjectId(p._id) },
+          {
+            $set: {
+              name: p.name,
+              code: p.code,
+              fileId: p.fileId,
+              importance: p.importance ?? "A",
+              recommended: p.recommended ?? [],
+              children: p.children ?? [],
+              downloadCount: p.downloadCount ?? 0,
+              updatedAt: new Date(),
+            },
+          }
+        );
+
+        if (updateResult.modifiedCount > 0) {
+          resultIds.push(p._id);
+        } else {
+          // If nothing was modified, still include the _id
+          resultIds.push(p._id);
+        }
+      } else {
+        // New product → create
+        const newProduct: Product = {
+          ...p,
+          parent: continentId,
+          children: p.children ?? [],
+          recommended: p.recommended ?? [],
+          downloadCount: p.downloadCount ?? 0,
+          importance: p.importance ?? "A",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        const insertResult = await productsCollection.insertOne(newProduct);
+        resultIds.push(insertResult.insertedId);
+      }
+    }
+
+    return resultIds;
+  }
 }

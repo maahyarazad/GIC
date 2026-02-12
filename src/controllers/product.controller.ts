@@ -10,7 +10,7 @@ import {
   Query,
   Body,
   SuccessResponse,
-  Tags,
+  Tags,Middlewares
 } from "tsoa";
 import { getCollection } from "../db";
 import {
@@ -26,11 +26,13 @@ import {
   validateRequiredFields,
   Sort,
 } from "../utils/helpers";
+import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 
 @Route("api/v1/products")
 @Tags("Products")
 export class ProductController extends Controller {
   @Post("/")
+  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("201", "Product created successfully")
   public async createProduct(@Body() body: CreateProductRequest): Promise<any> {
     try {
@@ -152,6 +154,7 @@ export class ProductController extends Controller {
 
 
   @Put("{id}")
+  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Product updated successfully")
   public async updateProduct(@Path() id: string, @Body() body: UpdateProductRequest): Promise<any> {
     try {
@@ -181,6 +184,7 @@ export class ProductController extends Controller {
   }
 
   @Delete("{id}")
+  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Product deleted successfully")
   public async deleteProduct(@Path() id: string): Promise<any> {
     try {

@@ -10,7 +10,7 @@ import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
-const buttonGroupStyle = { fontSize: 10, padding: 5 };
+const buttonGroupStyle = { fontSize: 14, padding: 5 };
 
 const CategoriesDataGrid = () => {
     const { show } = useToast();
@@ -58,6 +58,7 @@ const CategoriesDataGrid = () => {
             renderCell: (row) => (
                 <div className="btn-group">
                     <button
+                    title="Edit"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn"
                         onClick={() => onEdit(row)}
@@ -66,6 +67,7 @@ const CategoriesDataGrid = () => {
                     </button>
 
                     <button
+                     title="Delete"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn--delete-ghost"
                         onClick={() => onDelete(row)}

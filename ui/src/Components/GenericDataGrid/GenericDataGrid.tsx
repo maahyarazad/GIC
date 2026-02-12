@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ObjectId } from "mongodb";
 import './GenericDataGrid.css';
 export interface Column<T> {
@@ -46,7 +46,7 @@ interface DataGridProps<T> {
     // New prop: function to get unique id from row
     getRowId: (row: T) => string | number;
     prevButtonClassName?: string;
-  nextButtonClassName?: string;
+    nextButtonClassName?: string;
 
 }
 
@@ -83,18 +83,36 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
         onPaginationModelChange({ page: 1, pageSize: parseInt(e.target.value, 10) });
     };
 
-    const copyToClipboard = (text: string) => {
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(
-    () => {
-      // Optional: show some feedback, e.g. alert or toast
-      console.log("Copied to clipboard:", text);
-    },
-    (err) => {
-      console.error("Could not copy text: ", err);
-    }
-  );
-};
+
+    const [copyFeedback, setCopyFeedback] = useState<{
+        x: number;
+        y: number;
+        visible: boolean;
+    } | null>(null);
+
+
+    const copyToClipboard = (
+        text: string,
+        event: React.MouseEvent
+    ) => {
+        if (!text) return;
+
+        navigator.clipboard.writeText(text).then(() => {
+            setCopyFeedback({
+                x: event.clientX,
+                y: event.clientY,
+                visible: true,
+            });
+
+            // Auto hide after 1.5s
+            setTimeout(() => {
+                setCopyFeedback(null);
+            }, 1500);
+        }).catch((err) => {
+            console.error("Could not copy text: ", err);
+        });
+    };
+
 
     const handleSort = (field: keyof T) => {
         if (!onSortModelChange) return;
@@ -134,149 +152,167 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
     const totalPages = Math.ceil(rowCount / paginationModel.pageSize);
 
     return (
-        <div className="table-wrapper">
-            <table className="my-table" >
-                <thead>
-                    <tr>
-                        {columns.map((col) => (
-                            <th
-                                key={String(col.field ?? col.headerName)}
-                                style={{
-                                    borderBottom: "1px solid #ccc",
-                                    padding: 8,
-                                    cursor: col.sortable ? "pointer" : "default",
-                                    userSelect: "none",
-                                    width: col.width,
-                                }}
-                                onClick={() => {
-                                    if (col.sortable && col.field) {
-                                        handleSort(col.field);
-                                    }
-                                }}
-                            >
-                                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                                    <span>{col.headerName}</span>
-                                    {sortModel?.field === col.field && (
-                                        <span>{sortModel?.sort === "asc" ? "▲" : "▼"}</span>
-                                    )}
-                                </div>
-
-                                {col.filterable && col.field && (
-                                    <input
-                                        onClick={(e) => e.stopPropagation()}
-                                        type="text"
-                                        value={
-                                            Array.isArray(filterModel)
-                                                ? filterModel.find((f) => f.field === col.field)?.value ?? ""
-                                                : ""
+        <>
+        {copyFeedback && (
+  <div
+    className="copy-toast"
+    style={{
+      top: copyFeedback.y,
+      left: copyFeedback.x,
+    }}
+  >
+    Copied ✓
+  </div>
+)}
+            <div className="table-wrapper">
+                <table className="my-table" >
+                    <thead>
+                        <tr>
+                            {columns.map((col) => (
+                                <th
+                                    key={String(col.field ?? col.headerName)}
+                                    style={{
+                                        borderBottom: "1px solid #ccc",
+                                        padding: 8,
+                                        cursor: col.sortable ? "pointer" : "default",
+                                        userSelect: "none",
+                                        width: col.width,
+                                    }}
+                                    onClick={() => {
+                                        if (col.sortable && col.field) {
+                                            handleSort(col.field);
                                         }
-                                        onChange={(e) => {
-                                            if (col.field) {
+                                    }}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                                        <span>{col.headerName}</span>
+                                        {sortModel?.field === col.field && (
+                                            <span>{sortModel?.sort === "asc" ? "▲" : "▼"}</span>
+                                        )}
+                                    </div>
 
-                                                handleFilterChange(col.field!, e.target.value);
+                                    {col.filterable && col.field && (
+                                        <input
+                                            onClick={(e) => e.stopPropagation()}
+                                            type="text"
+                                            value={
+                                                Array.isArray(filterModel)
+                                                    ? filterModel.find((f) => f.field === col.field)?.value ?? ""
+                                                    : ""
                                             }
-                                        }}
-                                        placeholder="Filter..."
-                                        style={{ marginTop: 4, width: "90%" }}
-                                    />
-                                )}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
+                                            onChange={(e) => {
+                                                if (col.field) {
 
-                <tbody>
-                    {loading ? (
-                        <tr>
-                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
-                                Loading...
-                            </td>
+                                                    handleFilterChange(col.field!, e.target.value);
+                                                }
+                                            }}
+                                            placeholder="Filter..."
+                                            style={{ marginTop: 4, width: "90%" }}
+                                        />
+                                    )}
+                                </th>
+                            ))}
                         </tr>
-                    ) : rows.length === 0 ? (
-                        <tr>
-                            <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
-                                No data found.
-                            </td>
-                        </tr>
-                    ) : (
-                        rows.map((row) => (
-                            <tr key={row._id?.toString()}>
-                                {columns.map((col, idx) => (
-                                    <td className="td-scroll"
-                                        title={String(col.field
+                    </thead>
+
+                    <tbody>
+                        {loading ? (
+                            <tr>
+                                <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
+                                    Loading...
+                                </td>
+                            </tr>
+                        ) : rows.length === 0 ? (
+                            <tr>
+                                <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
+                                    No data found.
+                                </td>
+                            </tr>
+                        ) : (
+                            rows.map((row) => (
+                                <tr key={row._id?.toString()}>
+                                    {columns.map((col, idx) => (
+                                        <td className="td-scroll"
+                                            title={String(col.field
                                                 ? String(row[col.field])
                                                 : null)}
-                                                onClick={() => {
-                                                    if (col.field) {
-                                                    copyToClipboard(String(row[col.field]));
-                                                    }
-                                                }}
-                                        key={String(col.field ?? idx)}
-                                        data-label={col.headerName}
-                                        style={{ padding: 8, borderBottom: "1px solid #eee" }}
-                                    >
-                                        {col.renderCell
-                                            ? col.renderCell(row)
-                                            : col.field
-                                                ? String(row[col.field])
-                                                : null}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                    )}
-                </tbody>
+                                            onClick={(e) => {
+                                                if (!col.field || col.renderCell) return; 
+                                                if (col.field) {
+                                                    copyToClipboard(String(row[col.field]), e)
+                                                    
+                                                }
+                                            }}
+                                            key={String(col.field ?? idx)}
+                                            data-label={col.headerName}
+                                            style={{ padding: 8, borderBottom: "1px solid #eee" }}
+                                          
+                                        >
+                                            {col.renderCell
+                                                ? col.renderCell(row)
+                                                : col.field
+                                                    ? String(row[col.field])
+                                                    : null}
+
+                                                    
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
 
 
-            </table>
+                </table>
 
-            {/* Pagination Controls */}
-            <div
-                style={{
-                    marginTop: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                }}
-            >
-                <div>
-                    Page {paginationModel.page} of {totalPages} ({rowCount} items)
-                </div>
+                {/* Pagination Controls */}
+                <div
+                    style={{
+                        marginTop: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <div>
+                        Page {paginationModel.page} of {totalPages} ({rowCount} items)
+                    </div>
 
-                <div>
-                    <button
-                     className={prevButtonClassName}
-                        onClick={() => handlePageChange(paginationModel.page - 1)}
-                        disabled={paginationModel.page <= 1}
-                        style={{ marginRight: 10 }}
-                    >
-                        Previous
-                    </button>
+                    <div>
+                        <button
+                            className={prevButtonClassName}
+                            onClick={() => handlePageChange(paginationModel.page - 1)}
+                            disabled={paginationModel.page <= 1}
+                            style={{ marginRight: 10 }}
+                        >
+                            Previous
+                        </button>
 
-                    <button
-                         className={nextButtonClassName}
-                        onClick={() => handlePageChange(paginationModel.page + 1)}
-                        disabled={paginationModel.page >= totalPages}
-                    >
-                        Next
-                    </button>
-                </div>
+                        <button
+                            className={nextButtonClassName}
+                            onClick={() => handlePageChange(paginationModel.page + 1)}
+                            disabled={paginationModel.page >= totalPages}
+                        >
+                            Next
+                        </button>
+                    </div>
 
-                <div>
-                    <label htmlFor="pageSizeSelect">Items per page: </label>
-                    <select
-                        id="pageSizeSelect"
-                        value={paginationModel.pageSize}
-                        onChange={handlePageSizeChange}
-                    >
-                        {rowsPerPageOptions.map((size) => (
-                            <option key={size} value={size}>
-                                {size}
-                            </option>
-                        ))}
-                    </select>
+                    <div>
+                        <label htmlFor="pageSizeSelect">Items per page: </label>
+                        <select
+                            id="pageSizeSelect"
+                            value={paginationModel.pageSize}
+                            onChange={handlePageSizeChange}
+                        >
+                            {rowsPerPageOptions.map((size) => (
+                                <option key={size} value={size}>
+                                    {size}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
             newsletter_subscribers: <NewsletterSubscribers />,
             continent: <Continent />,
             profile: <UserProfileForm initialProfile={userProfile} />,
-            eco: <EconomicInsights />,
+            economic_insights: <EconomicInsights />,
             logout: <LogoutComponent />,
         }),
         [userProfile]

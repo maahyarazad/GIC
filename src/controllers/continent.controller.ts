@@ -48,7 +48,7 @@ export class ContinentController extends Controller {
     try {
       validateRequiredFields(body, ["name", "slug"]);
 
-    const productObjects = body.productObject ?? [];
+    const productObjects = body.productObjects ?? [];
 
 
       const collection = getCollection<Continent>("continents");

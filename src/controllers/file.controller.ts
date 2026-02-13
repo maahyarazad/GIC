@@ -3,7 +3,7 @@ import { getCollection } from "../db";
 import fs from "fs";
 import path from "path";
 import { ObjectId } from "mongodb";
-import { ApiResponse, createSuccessResponse, createErrorResponse , FilterModel} from "../utils/helpers";
+import { ApiResponse, createSuccessResponse, createErrorResponse , FilterModel, escapeRegExp} from "../utils/helpers";
 import mime from "mime-types";
 
 export interface UploadedFileDoc {

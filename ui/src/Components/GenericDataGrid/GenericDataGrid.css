@@ -41,8 +41,7 @@
     display: block;
   }
   .table-wrapper table thead {
-    display: none;
-    /* hide header row */
+    display: none; /* hide header row */
   }
   .table-wrapper table tbody {
     display: block;
@@ -58,14 +57,12 @@
   }
   .table-wrapper table td {
     display: flex;
-    flex-wrap: wrap;
-    /* allow wrapping */
+    flex-wrap: wrap; /* allow wrapping */
     justify-content: flex-start;
     gap: 8px;
     padding: 6px 0;
     border: none;
-    white-space: normal !important;
-    /* override nowrap */
+    white-space: normal !important; /* override nowrap */
     text-align: left;
     position: relative;
     padding-left: 0;
@@ -79,34 +76,5 @@
   .table-wrapper table input[type=text] {
     width: 100%;
     margin-top: 4px;
-  }
-}
-
-.copy-toast {
-  position: fixed;
-  transform: translate(-50%, -120%);
-  background: #111;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  pointer-events: none;
-  animation: fadeUp 3s ease forwards;
-  z-index: 9999;
-  white-space: nowrap;
-}
-
-@keyframes fadeUp {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -100%) scale(0.9);
-  }
-  20% {
-    opacity: 1;
-    transform: translate(-50%, -120%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -160%) scale(0.95);
   }
 }/*# sourceMappingURL=GenericDataGrid.css.map */

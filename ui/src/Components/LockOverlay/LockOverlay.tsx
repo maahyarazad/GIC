@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PadLock from '../../Assets/padlock-svgrepo-com.svg';
 import './LockOverlay.css';
-
+import { useNavigate } from 'react-router-dom';
 const LockOverlay: React.FC = () => {
 
     const [clicked, setClicked] = useState<boolean>(false);
-
+const navigate = useNavigate();
     useEffect(() => {
         if (!clicked) {
             document.body.style.overflow = "hidden";
         } else {
-            document.body.style.overflow = "";
+            navigate("/login");
         }
 
 
@@ -24,7 +24,7 @@ const LockOverlay: React.FC = () => {
             <div className='mb-4 '>
 
                 <h1 className='s-font mb-4 contrast-color logo'>
-                    GIC
+                   
                 </h1>
             </div>
 

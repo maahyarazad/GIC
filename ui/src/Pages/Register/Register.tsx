@@ -9,7 +9,7 @@ import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumbe
 import Button from "../../Components/Button/Button";
 import {EnvContext} from '../../EnvContext.js';
 import {Link } from 'react-router-dom';
-
+import PasswordInput from '@/Components/PasswordInput';
 interface SendOtpBody {
     email?: string;
     mobile_number?: string;
@@ -379,27 +379,25 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         </div>
 
 
-                        <div className="form-group">
-                            <label>Password</label>
-                            <input
-                                name="password"
-                                type="password"
-                                required
-                                value={form.password}
-                                onChange={handleChange}
-                            />
-                        </div>
+                        <PasswordInput
+                            label="Password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Enter your password"
+                            required
+                        />
 
-                        <div className="form-group">
-                            <label>Confirm Password</label>
-                            <input
-                                name="confirmPassword"
-                                type="password"
-                                required
-                                value={form.confirmPassword}
-                                onChange={handleChange}
-                            />
-                        </div>
+
+
+                        <PasswordInput
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            value={form.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Confirm your password"
+                            required
+                        />
 
                         <button
                             type="submit"

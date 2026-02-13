@@ -5,7 +5,7 @@ import Button from "../../Components/Button/Button";
 import MainLoader from '../../Components/MainLoader';
 import { setReady } from '../../features/appSlice'; 
 import {  useDispatch } from "react-redux";
-
+import PasswordInput from '@/Components/PasswordInput';
 
 const ResetPassword: React.FC = () => {
 
@@ -170,27 +170,27 @@ const ResetPassword: React.FC = () => {
         {success && <div className="login-success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label>New Password</label>
-            <input
-              name="password"
-              type="password"
-              required
-              value={form.password}
-              onChange={handleChange}
-            />
-          </div>
+         
+                        <PasswordInput
+                            label="Password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Enter your password"
+                            required
+                        />
 
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              name="confirmPassword"
-              type="password"
-              required
-              value={form.confirmPassword}
-              onChange={handleChange}
-            />
-          </div>
+
+
+                        <PasswordInput
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            value={form.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Confirm your password"
+                            required
+                        />
+
 
           <Button
             type="submit"

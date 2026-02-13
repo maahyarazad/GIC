@@ -189,9 +189,9 @@ export class UserController extends Controller {
   ): Promise<{ user?: Omit<User, "password">; token?: string; error?: any }> {
     try {
       const usersCollection = getCollection<User>("users");
-
+        const email = userData.email.trim().toLocaleLowerCase()
       // Check existing user
-      const existing = await usersCollection.findOne({ email: userData.email });
+      const existing = await usersCollection.findOne({ email: email });
       if (existing) {
         this.setStatus(400);
         return createErrorResponse(
@@ -205,7 +205,7 @@ export class UserController extends Controller {
 
       const newUser: User = {
         name: userData.name,
-        email: userData.email,
+        email: email,
         phone: userData.phone,
         password: hashedPassword,
         role: userData.role || "user",

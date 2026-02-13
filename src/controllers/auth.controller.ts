@@ -285,7 +285,7 @@ export class AuthController extends Controller {
       const user = await usersCollection.findOne({
         $or: [
           { name: userData.userName ?? "" },
-          { email: userData.userEmail ?? "" },
+          { email: userData.userEmail.trim().toLocaleLowerCase() ?? "" },
         ],
       });
 
@@ -385,9 +385,9 @@ export class AuthController extends Controller {
     try {
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
-
+        const email = body.email.trim().toLocaleLowerCase();
       // 1. Check if user exists
-      const existing = await usersCollection.findOne({ email: body.email });
+      const existing = await usersCollection.findOne({ email: email });
 
       if (!existing) {
         this.setStatus(400);

@@ -10,7 +10,7 @@ import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
-import { useRouter } from "reac";
+
 
 // --- Types ---
 type MenuItem =
@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
             newsletter_subscribers: <NewsletterSubscribers />,
             continent: <Continent />,
             profile: <UserProfileForm initialProfile={userProfile} />,
-            economic_insights: <EconomicInsights />,
+            eco: <EconomicInsights />,
             logout: <LogoutComponent />,
         }),
         [userProfile]

@@ -9,6 +9,8 @@ import type { RootState } from "../../store";
 import Button  from "../../Components/Button/Button";
 import { setReady } from '../../features/appSlice'; 
 import { useSelector, useDispatch } from "react-redux";
+import PasswordInput from '@/Components/PasswordInput';
+
 const Login: React.FC = () => {
 
 
@@ -98,15 +100,18 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+        
+
+           <PasswordInput
+                            label="Password"
+                            name="password"
+                            value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter your password"
+                            required
+                        />
+
+
           
       <div className="forgot-password">
         <Link to="/forgot-password">Forgot your password?</Link>

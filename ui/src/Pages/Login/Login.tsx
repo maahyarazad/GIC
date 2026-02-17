@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from "react";
 import { loginUser, LoginModel, refreshToken } from "../../api/auth";
 import "./Login.css";
-
+import { setHasViewedTrue } from "@/features/authSlice";
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
@@ -29,19 +29,19 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
-    const redirectTo = searchParams.get("redirect") || "/dashboard";
+    
     const [error, setError] = useState("");
 
     useEffect(() => {
         
-        // wait until auth check is finished
-        if (loading) return;
+        if (!user) return;
+        
 
-        // user is authenticated and currently on login page
-        if (user && location.pathname === "/login") {
-            navigate(redirectTo || "/", { replace: true });
+         const redirectTo = searchParams.get("redirect") || 'dashbaord';
+        if (redirectTo) {
+            navigate(`/${redirectTo}`);
         }
-    }, [loading, user, location.pathname, navigate, redirectTo]);
+    }, [user]);
 
 
     useEffect(() => {
@@ -70,9 +70,11 @@ const Login: React.FC = () => {
 
 
             if (response.success) {
+                const redirectTo = searchParams.get("redirect") || 'dashbaord';
+                        dispatch(setHasViewedTrue());
                 dispatch(login(response.data));
                 show({ type: "success", message: "Logged in successfully" });
-                navigate(redirectTo, { replace: true });
+                navigate(`/${redirectTo}`);
             }
         } catch (err: any) {
             setError(err.message || "Login failed");

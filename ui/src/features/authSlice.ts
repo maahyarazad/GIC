@@ -10,17 +10,20 @@ interface UserProfile {
   avatar: string;
   createdAt: string; // or Date if the API returns a Date object
   role: string;
+  
 };
 interface AuthState {
   user: User | null;
   loading: boolean;
   error?: string;
+  hasViewed: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   loading: false,
   error: undefined,
+  hasViewed: false
 };
 
 const authSlice = createSlice({
@@ -42,6 +45,9 @@ const authSlice = createSlice({
     setLoadingFalse(state) {
       state.loading = false;
     },
+    setHasViewedTrue(state) {
+      state.hasViewed = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -51,7 +57,7 @@ const authSlice = createSlice({
       })
       .addCase(checkAuthToken.fulfilled, (state, action: PayloadAction<UserProfile>) => {
         // here I need to check the path it is login than I need to redirect the user to main page
-
+        //@ts-ignore
         state.user = action.payload;
         state.loading = false;
       })
@@ -64,5 +70,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, login, setLoadingTrue, setLoadingFalse } = authSlice.actions;
+export const { logout, login, setLoadingTrue, setLoadingFalse, setHasViewedTrue } = authSlice.actions;
 export default authSlice.reducer;

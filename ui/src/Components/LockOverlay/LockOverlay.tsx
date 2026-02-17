@@ -1,47 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import PadLock from '../../Assets/padlock-svgrepo-com.svg';
-import './LockOverlay.css';
-import { useNavigate } from 'react-router-dom';
-import { GoShieldLock } from "react-icons/go";
+import React, { useState, useEffect } from "react";
+import "./LockOverlay.css";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const LockOverlay: React.FC = () => {
+  const userProfile = useSelector((state: any) => state.auth?.user);
+  const navigate = useNavigate();
 
-    const [clicked, setClicked] = useState<boolean>(false);
-const navigate = useNavigate();
-    useEffect(() => {
-        if (!clicked) {
-            document.body.style.overflow = "hidden";
-        } else {
-            navigate("/login");
-        }
+  const [closing, setClosing] = useState(false);
 
+  useEffect(() => {
+    if (!userProfile) {
+      document.body.style.overflow = "hidden";
+      
+    } else {
+      
+      setClosing(true);
 
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [clicked]);
+      const timer = setTimeout(() => {
+        document.body.style.overflow = "";
+      }, 800); 
 
-    return (
-        <div className={`lock-overlay ${clicked ? "hide" : ""}`} onClick={() => setClicked(true)}>
-            <div className='mb-4 '>
+      return () => clearTimeout(timer);
+    }
 
-                <h1 className='s-font mb-4 contrast-color logo'>
-                   
-                </h1>
-            </div>
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [userProfile]);
 
-            {/* <img className="padlock-icon mb-4" src={PadLock} /> */}
-            <i className="padlock-icon mb-4 bi bi-shield-lock-fill"></i>
-            {/* <GoShieldLock size={100}/> */}
-            <h1 className='s-font'>
-                Restricted Access
-            </h1>
-            <h2 className='s-font'>
+  return (
+    <div
+      className={`lock-overlay ${closing ? "hide" : ""} ${closing ? "slide-out" : ""}`}
+      onClick={() => navigate("/login?redirect=boardroom")}>
+      <h1 className="s-font">Restricted Access</h1>
+      <h2 className="s-font">By Invitation Only</h2>
+    </div>
+  );
+};
 
-                By Invitation Only</h2>
-        </div>
-    )
-}
-
-
-export default LockOverlay
+export default LockOverlay;

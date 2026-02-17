@@ -10,10 +10,12 @@
   padding: 0.5rem 0;
   scroll-behavior: smooth;
   white-space: nowrap;
-  scrollbar-width: none;
 }
 .economic-insights .categories .categories-scroll::-webkit-scrollbar {
   display: none;
+}
+.economic-insights .categories .categories-scroll {
+  scrollbar-width: none;
 }
 .economic-insights .categories .categories-scroll .continent {
   flex: 0 0 auto;

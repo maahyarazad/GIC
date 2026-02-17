@@ -128,7 +128,7 @@ const EconomicInsights: React.FC = () => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch (err) {
-            debugger
+            
             show({ type: "error", message: err!.message! });
             console.error(err);
         } finally {

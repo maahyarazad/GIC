@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PadLock from '../../Assets/padlock-svgrepo-com.svg';
 import './LockOverlay.css';
 import { useNavigate } from 'react-router-dom';
+import { GoShieldLock } from "react-icons/go";
+
 const LockOverlay: React.FC = () => {
 
     const [clicked, setClicked] = useState<boolean>(false);
@@ -30,6 +32,7 @@ const navigate = useNavigate();
 
             {/* <img className="padlock-icon mb-4" src={PadLock} /> */}
             <i className="padlock-icon mb-4 bi bi-shield-lock-fill"></i>
+            <GoShieldLock size={100}/>
             <h1 className='s-font'>
                 Restricted Access
             </h1>

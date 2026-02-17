@@ -110,6 +110,7 @@ export interface LoginModel{
   userName: string;
   userEmail: string;
   password: string;
+  rememberMe: boolean;
 }
 
 /* Sorting fields for comments */
@@ -135,3 +136,24 @@ export interface Address extends BaseModel {
 
   isDefault?: boolean;
 }
+
+
+
+
+export interface LoginLogModel {
+  userId: ObjectId;    
+  type: "login" ;
+  createdAt?: Date;    
+  ipAddress?: string; 
+  userAgent?: string;  
+  macAddress?: string;  
+}
+
+
+export interface RefreshTokenModel {
+  userId: ObjectId;
+  token: string;
+  createdAt: Date;
+  expiresAt: Date;
+}
+

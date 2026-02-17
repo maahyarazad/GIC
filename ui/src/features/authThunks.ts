@@ -1,6 +1,7 @@
 // features/authThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
+import {refreshToken} from '../api/auth';
 
 export const checkAuthToken = createAsyncThunk(
   "auth/checkToken",
@@ -8,9 +9,11 @@ export const checkAuthToken = createAsyncThunk(
     
 
     try {
-    
-      const res = await axiosInstance.get("/auth/profile");
         
+        refreshToken();
+
+        
+      const res = await axiosInstance.get("/auth/profile");
       return {
         id: res.data.data._id,
         googleId: res.data.data.googleId,
@@ -29,3 +32,6 @@ export const checkAuthToken = createAsyncThunk(
     }
   }
 );
+
+
+

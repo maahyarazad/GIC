@@ -11,10 +11,6 @@
   transition: all 120ms ease-in-out;
   background-color: black;
   padding: 0;
-  /* Toggle Switch */
-  /* Hamburger Icon */
-  /* Mobile Menu */
-  /* Responsive */
 }
 .navbar .mobile-menu-container {
   display: none;
@@ -131,6 +127,9 @@
   font-weight: bold;
   color: var(--primary-contrast-color);
 }
+.navbar {
+  /* Toggle Switch */
+}
 .navbar .switch {
   position: relative;
   display: inline-block;
@@ -167,6 +166,9 @@
   border-radius: 50%;
   transition: 0.4s;
 }
+.navbar {
+  /* Hamburger Icon */
+}
 .navbar .menu-toggle {
   display: none;
   flex-direction: column;
@@ -189,6 +191,9 @@
 .navbar .menu-toggle:not(.scrolled) .burger-lines::before,
 .navbar .menu-toggle:not(.scrolled) .burger-lines::after {
   background-color: var(--primary-color);
+}
+.navbar {
+  /* Mobile Menu */
 }
 .navbar .mobile-menu {
   position: fixed;
@@ -220,11 +225,10 @@
   align-self: flex-end;
   cursor: pointer;
 }
+.navbar {
+  /* Responsive */
+}
 @media screen and (max-width: 800px) {
-  .navbar {
-    /* Corrected this part: apply justify-content to navbar */
-    justify-content: start;
-  }
   .navbar .mobile-menu-container {
     display: flex;
     justify-content: space-between;
@@ -255,6 +259,10 @@
   .navbar .menu-toggle {
     display: flex;
     margin-right: 1em;
+  }
+  .navbar {
+    /* Corrected this part: apply justify-content to navbar */
+    justify-content: start;
   }
 }
 @media screen and (max-width: 1499px) {

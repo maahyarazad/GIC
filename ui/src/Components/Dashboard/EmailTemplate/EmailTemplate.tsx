@@ -102,7 +102,7 @@ const EmailTemplatesDataGrid = () => {
 
 
     const handleSaveTemplate = async (e: React.FormEvent<HTMLFormElement>) => {
-        debugger;
+        
         e.preventDefault();
 
         if (!templateName || !subject || !html) {

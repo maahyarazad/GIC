@@ -32,7 +32,7 @@ const navigate = useNavigate();
 
             {/* <img className="padlock-icon mb-4" src={PadLock} /> */}
             <i className="padlock-icon mb-4 bi bi-shield-lock-fill"></i>
-            <GoShieldLock size={100}/>
+            {/* <GoShieldLock size={100}/> */}
             <h1 className='s-font'>
                 Restricted Access
             </h1>

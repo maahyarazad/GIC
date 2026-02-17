@@ -316,6 +316,7 @@ export class AuthController extends Controller {
       if (!user) return createErrorResponse("User not found", "USER_NOT_FOUND");
 
       // Issue new access token
+      //@ts-ignore
       const newToken = jwt.sign(
         { userId: user._id.toString(), role: user.role },
         JWT_SECRET,
@@ -402,7 +403,7 @@ export class AuthController extends Controller {
         ipAddress: ip,
         userAgent: req.headers["user-agent"],
       });
-
+        //@ts-ignore
       const token = jwt.sign(
         { userId: user._id.toString(), role: user.role },
         JWT_SECRET,
@@ -427,6 +428,7 @@ export class AuthController extends Controller {
       if (existingRefreshToken) {
         refreshToken = existingRefreshToken.token;
       } else {
+        //@ts-ignore
         refreshToken = jwt.sign(
           { userId: user._id.toString() },
           REFRESH_SECRET,

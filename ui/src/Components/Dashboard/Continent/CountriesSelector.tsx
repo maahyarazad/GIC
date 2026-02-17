@@ -23,7 +23,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
     const fetchProductsByParent = useCallback(async (parentId: string) => {
         try {
             const { data } = await axiosInstance.get(`/products/by-parent/${parentId}`);
-            debugger;
+    
             return data;
         } catch (err) {
             console.error("Failed to fetch products", err);

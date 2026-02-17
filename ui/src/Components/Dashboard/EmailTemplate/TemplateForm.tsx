@@ -37,7 +37,7 @@ const TemplateForm = forwardRef<TemplateFormRef, TemplateFormProps>(({
   // Expose submitForm() method to parent via ref
   useImperativeHandle(ref, () => ({
     submitForm: () => {
-        debugger;
+        
       // This triggers the native form submit event and calls handleSaveTemplate
       formRef.current?.requestSubmit();
     }

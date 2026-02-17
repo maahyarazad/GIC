@@ -13,7 +13,12 @@ import {
 } from "tsoa";
 import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
-import { LoginModel, User } from "../types/user.types";
+import {
+  LoginModel,
+  User,
+  LoginLogModel,
+  RefreshTokenModel,
+} from "../types/user.types";
 import { Collection, ObjectId } from "mongodb";
 import {
   createSuccessResponse,
@@ -26,7 +31,10 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET: string = process.env.JWT_SECRET!;
+const REFRESH_SECRET: string = process.env.REFRESH_SECRET!;
+const REFRESH_EXPIRE: string = process.env.REFRESH_EXPIRE!;
+const ACCESS_EXPIRE: string = process.env.ACCESS_EXPIRE!;
 
 const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
@@ -274,9 +282,80 @@ export class AuthController extends Controller {
     }
   }
 
+  @Post("refresh-token")
+  public async refreshToken(
+    @Request() req: any
+  ): Promise<ApiResponse<{ token: string }>> {
+    try {
+      const refreshCollection =
+        getCollection<RefreshTokenModel>("refresh_tokens");
+
+      const cookies = req.headers.cookie
+        ?.split("; ")
+        .reduce((acc: any, cookie: string) => {
+          const [key, value] = cookie.split("=");
+          acc[key] = value;
+          return acc;
+        }, {});
+
+      const refreshToken = cookies?.refreshToken;
+      if (!refreshToken)
+        return createErrorResponse("No refresh token", "NO_TOKEN");
+
+      const tokenDoc = await refreshCollection.findOne({ token: refreshToken });
+      if (!tokenDoc || tokenDoc.expiresAt < new Date()) {
+        return createErrorResponse("Refresh token expired", "TOKEN_EXPIRED");
+      }
+
+      const payload: any = jwt.verify(refreshToken, REFRESH_SECRET);
+
+      const usersCollection = AuthController.userCollection();
+      const user = await usersCollection.findOne({
+        _id: new ObjectId(payload.userId),
+      });
+      if (!user) return createErrorResponse("User not found", "USER_NOT_FOUND");
+
+      // Issue new access token
+      const newToken = jwt.sign(
+        { userId: user._id.toString(), role: user.role },
+        JWT_SECRET,
+        { expiresIn: ACCESS_EXPIRE }
+      );
+
+      const isProd = process.env.NODE_ENV === "production";
+
+      const cookie = [
+        `token=${newToken}`,
+        "HttpOnly",
+        "Path=/",
+        `Max-Age=${24 * 3600}`,
+        `SameSite=${isProd ? "None" : "Lax"}`,
+        isProd ? "Secure" : "",
+      ]
+        .filter(Boolean)
+        .join("; ");
+
+      this.setHeader("Set-Cookie", cookie);
+      this.setStatus(200);
+
+      return createSuccessResponse(
+        { token: newToken },
+        "Access token refreshed"
+      );
+    } catch (err: any) {
+      console.error(err);
+      this.setStatus(401);
+      return createErrorResponse(
+        err.message || "Invalid refresh token",
+        "INVALID_TOKEN"
+      );
+    }
+  }
+
   @Post("login")
   public async loginUser(
-    @Body() userData: LoginModel
+    @Body() userData: LoginModel,
+    @Request() req: any
   ): Promise<ApiResponse<Omit<User, "password">>> {
     try {
       const usersCollection = AuthController.userCollection();
@@ -312,28 +391,85 @@ export class AuthController extends Controller {
         );
       }
 
-      // 🔑 Sign JWT
+      const loginCollection = getCollection<LoginLogModel>("login_log");
+
+      const ip = req.ip;
+
+      await loginCollection.insertOne({
+        userId: user._id,
+        type: "login",
+        createdAt: new Date(),
+        ipAddress: ip,
+        userAgent: req.headers["user-agent"],
+      });
+
       const token = jwt.sign(
         { userId: user._id.toString(), role: user.role },
         JWT_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: ACCESS_EXPIRE }
       );
+
+      const refreshCollection =
+        getCollection<RefreshTokenModel>("refresh_tokens");
+
+      const refreshExpiryMs = req.body.rememberMe
+        ? 30 * 24 * 60 * 60 * 1000
+        : 24 * 60 * 60 * 1000;
+      const refreshExpirySec = Math.floor(refreshExpiryMs / 1000);
+
+      const existingRefreshToken = await refreshCollection.findOne({
+        userId: user._id,
+        expiresAt: { $gte: new Date() },
+      });
+
+      let refreshToken: string = "";
+
+      if (existingRefreshToken) {
+        refreshToken = existingRefreshToken.token;
+      } else {
+        refreshToken = jwt.sign(
+          { userId: user._id.toString() },
+          REFRESH_SECRET,
+          { expiresIn: REFRESH_EXPIRE }
+        );
+        await refreshCollection.insertOne({
+          userId: user._id,
+          token: refreshToken,
+          createdAt: new Date(),
+          expiresAt: new Date(Date.now() + refreshExpiryMs),
+        });
+      }
 
       const isProd = process.env.NODE_ENV === "production";
 
-      // 🍪 Secure cookie
-      const cookie = [
-        `token=${token}`,
-        "HttpOnly",
-        "Path=/",
-        `Max-Age=${24 * 3600}`,
-        `SameSite=${isProd ? "None" : "Lax"}`,
-        isProd ? "Secure" : "",
-      ]
-        .filter(Boolean)
-        .join("; ");
+      const cookies = [
+        // Access token
+        [
+          `token=${token}`,
+          "HttpOnly",
+          "Path=/",
+          `Max-Age=${24 * 3600}`,
+          `SameSite=${isProd ? "None" : "Lax"}`,
+          isProd ? "Secure" : "",
+        ]
+          .filter(Boolean)
+          .join("; "),
 
-      this.setHeader("Set-Cookie", cookie);
+        // Refresh token
+        [
+          `refreshToken=${refreshToken}`,
+          "HttpOnly",
+          "Path=/", // or /refresh-token if you want restricted path
+          `Max-Age=${refreshExpirySec}`,
+          `SameSite=${isProd ? "None" : "Lax"}`,
+          isProd ? "Secure" : "",
+        ]
+          .filter(Boolean)
+          .join("; "),
+      ];
+
+      // Set both cookies in one header
+      this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
 
       const { password, ...safeUser } = user;
@@ -355,18 +491,33 @@ export class AuthController extends Controller {
       const isProd = process.env.NODE_ENV === "production";
 
       // Clear cookie by setting an expired one
-      const cookie = [
-        `token=`,
-        "HttpOnly",
-        "Path=/",
-        "Max-Age=0",
-        `SameSite=${isProd ? "None" : "Lax"}`,
-        isProd ? "Secure" : "",
-      ]
-        .filter(Boolean)
-        .join("; ");
+      const cookies = [
+        // Access token
+        [
+          `token=`,
+          "HttpOnly",
+          "Path=/",
+          `Max-Age=$`,
+          `SameSite=${isProd ? "None" : "Lax"}`,
+          isProd ? "Secure" : "",
+        ]
+          .filter(Boolean)
+          .join("; "),
 
-      this.setHeader("Set-Cookie", cookie);
+        // Refresh token
+        [
+          `refreshToken=`,
+          "HttpOnly",
+          "Path=/", // or /refresh-token if you want restricted path
+          `Max-Age=`,
+          `SameSite=${isProd ? "None" : "Lax"}`,
+          isProd ? "Secure" : "",
+        ]
+          .filter(Boolean)
+          .join("; "),
+      ];
+
+      this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
 
       return { success: true };
@@ -385,7 +536,7 @@ export class AuthController extends Controller {
     try {
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
-        const email = body.email.trim().toLocaleLowerCase();
+      const email = body.email.trim().toLocaleLowerCase();
       // 1. Check if user exists
       const existing = await usersCollection.findOne({ email: email });
 
@@ -571,8 +722,6 @@ export class AuthController extends Controller {
           "INVALID_TOKEN_PURPOSE"
         );
       }
-      
-      
 
       // If needed, you can return user info or email from payload
       this.setStatus(200);

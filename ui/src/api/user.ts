@@ -91,7 +91,7 @@ export async function getPDFBlob(fileId: string): Promise<PDFResponse> {
     });
     
     const disposition = response.headers["content-disposition"];
-    debugger;
+    
     
     let filename = "";
     

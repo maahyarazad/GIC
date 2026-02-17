@@ -11,7 +11,6 @@
   scrollbar-width: none;
   position: relative;
   max-width: 992px;
-  /* Responsive Fixes */
 }
 .iot-card .iot-card__title_bg {
   position: absolute;
@@ -140,6 +139,9 @@
 }
 .iot-card__link span {
   padding-left: 0.25rem;
+}
+.iot-card {
+  /* Responsive Fixes */
 }
 @media (max-width: 768px) {
   .iot-card .iot-card__text {

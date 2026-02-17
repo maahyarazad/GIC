@@ -197,7 +197,6 @@ const CategoriesDataGrid = () => {
         try {
             const editMode = (continent._id !== null && continent._id !== undefined);
             if (editMode) {
-               debugger;
             
                 await axiosInstance.post(`/continents/update`, continent);
                 show({ type: "success", message: "ContinetViewModel updated!" });

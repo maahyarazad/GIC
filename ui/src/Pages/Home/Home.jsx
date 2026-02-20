@@ -162,16 +162,16 @@ const Home = ({ siteData }) => {
 
             <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.disableSocialLinks} />
 
-<div className='w-100'>
-    <div style={{ padding: 24 }} className=''>
-        <AfricaMiddleEastHoverMap
-            
-            hoverFill="#F97316"
-            hoverStroke="#111827"
-            hoverStrokeWidth={1.5}
-        />
-        </div>
-</div>
+            {/* <div className="pt-lg-4 pt-4" style={{  }}>
+
+                <AfricaMiddleEastHoverMap
+                    hoverFill="#F97316"
+                    hoverStroke="#111827"
+                    hoverStrokeWidth={1.5}
+                />
+
+            </div> */}
+
 
 
 
@@ -187,12 +187,12 @@ const Home = ({ siteData }) => {
                             <h2 ref={_ref1} className={`fs-1 pb-3 slide-down ${_isVisible1 ? "visible" : ""}`} >{siteData.aboutUs.header}</h2>
                             <h3 ref={_ref2} className={`fs-4 pb-3 slide-down  contrast-color ${_isVisible2 ? "visible" : ""}`}>{siteData.aboutUs.title}</h3>
                             <h5 ref={_ref3} className="fs-4 pb-3 slide-down visible" style={{ lineHeight: 2 }}>
-                            {siteData.aboutUs.description.split('\n').map((line, idx) => (
-                                <React.Fragment key={idx}>
-                                {line}
-                                <br />
-                                </React.Fragment>
-                            ))}
+                                {siteData.aboutUs.description.split('\n').map((line, idx) => (
+                                    <React.Fragment key={idx}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
                             </h5>
 
 
@@ -228,14 +228,14 @@ const Home = ({ siteData }) => {
                                 {siteData.advisorySection.header}
                             </h2>
                             <h4 className="fs-2 pb-3">
-                                
-                                                            {siteData.advisorySection.description.split('\n').map((line, idx) => (
-                                <React.Fragment key={idx}>
-                                {line}
-                                <br />
-                                </React.Fragment>
-                            ))}
-                            
+
+                                {siteData.advisorySection.description.split('\n').map((line, idx) => (
+                                    <React.Fragment key={idx}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
+
 
                             </h4>
                         </div>
@@ -284,14 +284,14 @@ const Home = ({ siteData }) => {
                         <h2 className={`contrast-color`} style={{ paddingTop: '20rem', fontSize: '4rem' }}>{siteData.heroSection.header}</h2>
                         <h3 className={`fs-4  text-white pt-5`} style={{ fontWeight: 900 }}>{siteData.heroSection.title}</h3>
                         <h5 className={`fs-4  text-white pt-5`} style={{ lineHeight: 2 }}>
-                            
-                             {siteData.heroSection.description.split('\n').map((line, idx) => (
+
+                            {siteData.heroSection.description.split('\n').map((line, idx) => (
                                 <React.Fragment key={idx}>
-                                {line}
-                                <br />
+                                    {line}
+                                    <br />
                                 </React.Fragment>
                             ))}
-                            </h5>
+                        </h5>
                     </div>
 
                 </div>
@@ -378,13 +378,13 @@ const Home = ({ siteData }) => {
                                 className={`fs-4 pb-3 slide-down ${_isVisible6 ? "visible" : ""}`}
                                 style={{ lineHeight: 2 }}
                             >
-                                
-                                   {siteData.aboutUs_footer.description.split('\n').map((line, idx) => (
-                                <React.Fragment key={idx}>
-                                {line}
-                                <br />
-                                </React.Fragment>
-                            ))}
+
+                                {siteData.aboutUs_footer.description.split('\n').map((line, idx) => (
+                                    <React.Fragment key={idx}>
+                                        {line}
+                                        <br />
+                                    </React.Fragment>
+                                ))}
                             </h5>
                         </div>
 

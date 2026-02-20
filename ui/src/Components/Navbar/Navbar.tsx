@@ -248,7 +248,7 @@ const Navbar = (
         }
         
         if (location.pathname === '/') {
-            setNavbarBg('transparent');
+                        setNavbarBg('transparent');
         } else {
             setNavbarBg('var(--primary-gray-color)');
         }

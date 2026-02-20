@@ -9,10 +9,11 @@ import Carousel from '../../Components/Carousel/Carousel';
 // import TypeWriter from './Components/TypeWriter/TypeWriter';
 // import ShowCases from './Components/ShowCases/ShowCases';
 import UseInView from '../../Hooks/UseInView';
-import FloatingSocialMedia from '../../Components/FloatingSocialMedia/FloatingSocialMedia';
+import FloatingSocialMedia from '@/Components/FloatingSocialMedia/FloatingSocialMedia';
 import { EnvContext } from '../../EnvContext';
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
+import AfricaMiddleEastHoverMap from '@/Components/AfricaMap/AfricaMap';
 import './Home.css';
 
 
@@ -161,7 +162,16 @@ const Home = ({ siteData }) => {
 
             <FloatingSocialMedia size={18} icons={siteData.footer.socialLinks} disable={siteData.footer.disableSocialLinks} />
 
-
+<div className='w-100'>
+    <div style={{ padding: 24 }} className=''>
+        <AfricaMiddleEastHoverMap
+            
+            hoverFill="#F97316"
+            hoverStroke="#111827"
+            hoverStrokeWidth={1.5}
+        />
+        </div>
+</div>
 
 
 

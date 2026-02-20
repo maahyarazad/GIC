@@ -37,9 +37,9 @@ const Login: React.FC = () => {
         if (!user) return;
         
 
-         const redirectTo = searchParams.get("redirect") || 'dashbaord';
+         const redirectTo = searchParams.get("redirect") || '/dashboard';
         if (redirectTo) {
-            navigate(`/${redirectTo}`);
+            navigate(`${redirectTo}`);
         }
     }, [user]);
 
@@ -70,11 +70,11 @@ const Login: React.FC = () => {
 
 
             if (response.success) {
-                const redirectTo = searchParams.get("redirect") || 'dashbaord';
+                const redirectTo = searchParams.get("redirect") || '/dashboard';
                         dispatch(setHasViewedTrue());
                 dispatch(login(response.data));
                 show({ type: "success", message: "Logged in successfully" });
-                navigate(`/${redirectTo}`);
+                navigate(`${redirectTo}`);
             }
         } catch (err: any) {
             setError(err.message || "Login failed");

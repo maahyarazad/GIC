@@ -1,0 +1,74 @@
+// .hero-unveiling {
+//     height: 100dvh;
+//     color: white;
+//     background: linear-gradient(
+//         120deg,
+//         var(--primary-gray-color),
+//         #9e3204,
+//         var(--primary-gray-color)
+//     );
+//     background-size: 200% 200%;
+//     animation: unveilingGradient 6s ease infinite;
+// }
+
+
+@keyframes unveilingGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+.hero-unveiling {
+    position: relative;
+    overflow: hidden;
+    height: 100dvh;
+    color: white;
+
+    background: linear-gradient(
+        120deg,
+        var(--primary-gray-color),
+        #702403,
+        var(--primary-gray-color)
+    );
+
+    background-size: 200% 200%;
+
+   
+    // animation: unveilingGradient 6s ease infinite;
+    // animation-delay: 3.1s; 
+}
+
+
+.hero-unveiling::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: #000;
+    animation: curtainLeft 3s ease forwards;
+    z-index: 2;
+}
+
+
+.hero-unveiling::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: #000;
+    animation: curtainRight 3s ease forwards;
+    z-index: 2;
+}
+
+@keyframes curtainLeft {
+    to { transform: translateX(-100%); }
+}
+
+@keyframes curtainRight {
+    to { transform: translateX(100%); }
+}

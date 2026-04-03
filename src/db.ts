@@ -18,7 +18,8 @@ function buildMongoUri(): string {
     throw new Error("MONGO_USER or MONGO_PASSWORD is not defined.");
   }
 
-  return `mongodb+srv://${user}:${password}@cluster0.ooeuiqe.mongodb.net/?appName=Cluster0`;
+//   return `mongodb+srv://${user}:${password}@cluster0.ooeuiqe.mongodb.net/?appName=Cluster0`;
+  return `mongodb://localhost:27017`;
 }
 
 async function _connectToDatabase(): Promise<Db> {

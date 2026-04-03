@@ -30,7 +30,7 @@ import {
 import dotenv from "dotenv";
 import { mapCreateUserRequestToDb, mapUser, mapUsers, mapUpdateUserRequestToDb } from "../mappers/user.mapper";
 import { UserModel } from "../models/user.model";
-import { LogChangeModel } from "../models/logChange.model';
+import { LogChangeModel } from "../models/logChange.model";
 
 dotenv.config();
 

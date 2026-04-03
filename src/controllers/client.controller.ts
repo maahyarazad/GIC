@@ -1,27 +1,49 @@
-import { Controller, Get, Route, Tags, Put, Body, Path , Middlewares} from "tsoa";
-import { ObjectId } from "mongodb";
-import { getCollection } from "../db";
+import {
+  Controller,
+  Get,
+  Route,
+  Tags,
+  Put,
+  Body,
+  Path,
+  Middlewares,
+} from "tsoa";
+import fs from "fs/promises";
+import path from "path";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
-import {adminAuthMiddleware} from '../middleware/adminauth.middleware';
-
+import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 
 @Route("api/v1/client")
 @Tags("client")
 export class ClientController extends Controller {
+  private get blueprintFilePath(): string {
+    return path.join(process.cwd(), "file_storage", "client_blueprint.json");
+  }
+
+  private async ensureBlueprintFile(): Promise<void> {
+    const filePath = this.blueprintFilePath;
+    const dir = path.dirname(filePath);
+
+    await fs.mkdir(dir, { recursive: true });
+
+    try {
+      await fs.access(filePath);
+    } catch {
+      await fs.writeFile(filePath, JSON.stringify({}, null, 2), "utf-8");
+    }
+  }
+
   @Get("/")
-  
   public async getLargeJson(): Promise<any> {
     try {
-      const collection = getCollection("client_blueprint");
-      const doc = await collection.findOne({});
+      await this.ensureBlueprintFile();
 
-      if (!doc) {
-        this.setStatus(404);
-        return createErrorResponse("JSON file not found");
-      }
+      const filePath = this.blueprintFilePath;
+      const raw = await fs.readFile(filePath, "utf-8");
+      const json = raw.trim() ? JSON.parse(raw) : {};
 
       this.setStatus(200);
-      return createSuccessResponse(doc, "JSON fetched successfully");
+      return createSuccessResponse(json, "JSON fetched successfully");
     } catch (err: any) {
       console.error(err);
       this.setStatus(500);
@@ -29,31 +51,22 @@ export class ClientController extends Controller {
     }
   }
 
-  @Put("/{id}")
+  @Put("/")
   @Middlewares(adminAuthMiddleware)
-  public async updateJsonById(@Path() id: string, @Body() updatedJson: any): Promise<any> {
+  public async updateJson(@Body() updatedJson: any): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
-        this.setStatus(400);
-        return createErrorResponse("Invalid ID");
-      }
+      await this.ensureBlueprintFile();
 
-      const collection = getCollection("client_blueprint");
-      const { _id, ...json } = updatedJson;
+      const { _id, ...json } = updatedJson ?? {};
 
-      
-      const result = await collection.replaceOne(
-        { _id: new ObjectId(id) },
-        json
+      await fs.writeFile(
+        this.blueprintFilePath,
+        JSON.stringify(json, null, 2),
+        "utf-8"
       );
 
-      if (!result) {
-        this.setStatus(404);
-        return createErrorResponse("Document not found");
-      }
-
       this.setStatus(200);
-      return createSuccessResponse(result, "JSON updated successfully");
+      return createSuccessResponse(json, "JSON updated successfully");
     } catch (err: any) {
       console.error(err);
       this.setStatus(500);

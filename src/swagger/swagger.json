@@ -7,307 +7,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"EmailTemplateDoc": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"name",
-					"subject",
-					"html"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"SuccessResponse_EmailTemplateDoc_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"$ref": "#/components/schemas/EmailTemplateDoc"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ErrorResponse": {
-				"properties": {
-					"timestamp": {
-						"type": "string"
-					},
-					"error": {
-						"properties": {
-							"details": {},
-							"code": {
-								"type": "string"
-							},
-							"message": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"message"
-						],
-						"type": "object"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"error",
-					"message",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_EmailTemplateDoc-Array_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"items": {
-							"$ref": "#/components/schemas/EmailTemplateDoc"
-						},
-						"type": "array"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc-Array_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc-Array_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_null_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_null_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_null_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"Partial_EmailTemplateDoc_": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
 			"UserSortKey": {
 				"type": "string",
 				"enum": [
@@ -317,9 +16,13 @@
 					"role"
 				]
 			},
-			"ObjectId": {
+			"UserRole": {
 				"type": "string",
-				"description": "A class representation of the BSON ObjectId type."
+				"enum": [
+					"user",
+					"admin",
+					"superadmin"
+				]
 			},
 			"SocialLink": {
 				"properties": {
@@ -337,42 +40,54 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"UserProfile": {
+				"properties": {
+					"photo": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"socialLinks": {
+						"items": {
+							"$ref": "#/components/schemas/SocialLink"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
 			"Pick_User.Exclude_keyofUser.password__": {
 				"properties": {
 					"name": {
+						"type": "string"
+					},
+					"email": {
 						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"email": {
-						"type": "string"
-					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"user",
-							"admin",
-							"superadmin"
-						]
+						"$ref": "#/components/schemas/UserRole"
 					},
 					"phone": {
 						"type": "string"
 					},
 					"orders": {
 						"items": {
-							"$ref": "#/components/schemas/ObjectId"
+							"type": "string"
 						},
 						"type": "array"
 					},
 					"addresses": {
 						"items": {
-							"$ref": "#/components/schemas/ObjectId"
+							"type": "string"
 						},
 						"type": "array"
 					},
@@ -389,27 +104,14 @@
 						"type": "string"
 					},
 					"profile": {
-						"properties": {
-							"socialLinks": {
-								"items": {
-									"$ref": "#/components/schemas/SocialLink"
-								},
-								"type": "array"
-							},
-							"description": {
-								"type": "string"
-							},
-							"title": {
-								"type": "string"
-							},
-							"photo": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/UserProfile"
 					},
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
@@ -453,25 +155,13 @@
 					"name",
 					"email",
 					"password",
-					"phone",
-					"authorize"
+					"phone"
 				],
 				"type": "object",
 				"additionalProperties": true
 			},
 			"UpdateUserRequest": {
 				"properties": {
-					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"name": {
 						"type": "string"
 					},
@@ -485,99 +175,17 @@
 						"type": "string"
 					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"user",
-							"admin",
-							"superadmin"
-						]
+						"$ref": "#/components/schemas/UserRole"
 					},
 					"authorize": {
 						"type": "boolean"
 					},
 					"profile": {
-						"properties": {
-							"socialLinks": {
-								"items": {
-									"$ref": "#/components/schemas/SocialLink"
-								},
-								"type": "array"
-							},
-							"description": {
-								"type": "string"
-							},
-							"title": {
-								"type": "string"
-							},
-							"photo": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/UserProfile"
 					}
 				},
 				"type": "object",
 				"additionalProperties": true
-			},
-			"SuccessResponse__photoUrl-string__": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"properties": {
-							"photoUrl": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"photoUrl"
-						],
-						"type": "object"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
 			},
 			"ProductContent": {
 				"properties": {
@@ -657,12 +265,24 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ProductImportance": {
+				"type": "string",
+				"enum": [
+					"A",
+					"B",
+					"C",
+					"D"
+				]
+			},
 			"CreateProductRequest": {
 				"properties": {
 					"fileId": {
 						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"code": {
 						"type": "string"
 					},
 					"content": {
@@ -701,15 +321,10 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "number",
-						"format": "double"
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"parent": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ObjectId"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"children": {
@@ -730,12 +345,8 @@
 				"required": [
 					"fileId",
 					"name",
-					"content",
-					"variant",
-					"media",
-					"tags",
-					"children",
-					"recommended"
+					"code",
+					"importance"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -743,7 +354,7 @@
 			"Product": {
 				"properties": {
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -798,20 +409,10 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "string",
-						"enum": [
-							"A",
-							"B",
-							"C",
-							"D"
-						]
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"parent": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ObjectId"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"children": {
@@ -871,6 +472,9 @@
 					"name": {
 						"type": "string"
 					},
+					"code": {
+						"type": "string"
+					},
 					"content": {
 						"$ref": "#/components/schemas/ProductContent"
 					},
@@ -891,11 +495,10 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "number",
-						"format": "double"
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"parent": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"children": {
 						"items": {
@@ -908,14 +511,341 @@
 							"type": "string"
 						},
 						"type": "array"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
 					}
 				},
 				"type": "object",
 				"additionalProperties": true
+			},
+			"EmailTemplate": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_EmailTemplate_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/EmailTemplate"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ErrorResponse": {
+				"properties": {
+					"timestamp": {
+						"type": "string"
+					},
+					"error": {
+						"properties": {
+							"details": {},
+							"code": {
+								"type": "string"
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"error",
+					"message",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_EmailTemplate_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplate_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"CreateEmailTemplateRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_EmailTemplate-Array_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/EmailTemplate"
+						},
+						"type": "array"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_EmailTemplate-Array_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplate-Array_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"UpdateEmailTemplateRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_null_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_null_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_null_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"Record_string.unknown_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
 			},
 			"SuccessResponse__otpSent-boolean__": {
 				"properties": {
@@ -1176,7 +1106,7 @@
 			"NewsletterSubscriber": {
 				"properties": {
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -1262,7 +1192,7 @@
 					}
 				]
 			},
-			"Pick_NewsletterSubscriber.email-or-active_": {
+			"CreateNewsletterSubscriberRequest": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -1272,11 +1202,10 @@
 					}
 				},
 				"required": [
-					"email",
-					"active"
+					"email"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
+				"additionalProperties": true
 			},
 			"ApiResponse_any_": {
 				"anyOf": [
@@ -1287,29 +1216,6 @@
 						"$ref": "#/components/schemas/ErrorResponse"
 					}
 				]
-			},
-			"Partial_NewsletterSubscriber_": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"active": {
-						"type": "boolean"
-					},
-					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
 			},
 			"UploadedFileDoc": {
 				"properties": {
@@ -1425,17 +1331,6 @@
 			},
 			"CreateContinentRequest": {
 				"properties": {
-					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"name": {
 						"type": "string"
 					},
@@ -1448,12 +1343,7 @@
 					},
 					"products": {
 						"items": {
-							"allOf": [
-								{
-									"$ref": "#/components/schemas/ObjectId"
-								}
-							],
-							"nullable": true
+							"type": "string"
 						},
 						"type": "array",
 						"nullable": true
@@ -1511,6 +1401,70 @@
 					"name",
 					"slug"
 				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateContinentRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"products": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"productObjects": {
+						"items": {
+							"$ref": "#/components/schemas/Product"
+						},
+						"type": "array"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"image": {
+						"type": "string"
+					},
+					"imageAlt": {
+						"type": "string"
+					},
+					"seoTitle": {
+						"type": "string"
+					},
+					"seoDescription": {
+						"type": "string"
+					},
+					"seoKeywords": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": true
 			},
@@ -1692,173 +1646,6 @@
 		"contact": {}
 	},
 	"paths": {
-		"/api/v1/email-templates": {
-			"post": {
-				"operationId": "CreateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Create a new template",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/EmailTemplateDoc"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetTemplates",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc-Array_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get all templates",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/email-templates/send-email-template/{id}": {
-			"post": {
-				"operationId": "SendEmail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/v1/email-templates/{id}": {
-			"put": {
-				"operationId": "UpdateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update a template by ID",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete a template by ID",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/api/v1/users": {
 			"get": {
 				"operationId": "GetAllUsers",
@@ -1969,6 +1756,33 @@
 			}
 		},
 		"/api/v1/users/{id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
 			"put": {
 				"operationId": "UpdateUser",
 				"responses": {
@@ -2007,46 +1821,9 @@
 				}
 			}
 		},
-		"/api/v1/users/user-profile/{id}": {
+		"/api/v1/users/{id}/authorize": {
 			"put": {
-				"operationId": "UpdateUserProfile",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UpdateUserRequest"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetUserProfile",
+				"operationId": "AuthorizeUser",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2071,63 +1848,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/v1/users/{id}/upload-photo": {
-			"post": {
-				"operationId": "UploadPhoto",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/ErrorResponse"
-										},
-										{
-											"$ref": "#/components/schemas/SuccessResponse__photoUrl-string__"
-										}
-									]
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									}
-								},
-								"required": [
-									"file"
-								]
-							}
-						}
-					}
-				}
 			}
 		},
 		"/sitemap.xml": {
@@ -2448,6 +2168,198 @@
 				]
 			}
 		},
+		"/api/v1/email-templates": {
+			"post": {
+				"operationId": "CreateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateEmailTemplateRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetTemplates",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/email-templates/{id}": {
+			"get": {
+				"operationId": "GetTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEmailTemplateRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/email-templates/send-email-template/{id}": {
+			"post": {
+				"operationId": "SendEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Record_string.unknown_"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v1/otp/send-email": {
 			"post": {
 				"operationId": "SendOtpEmail",
@@ -2629,7 +2541,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Pick_NewsletterSubscriber.email-or-active_"
+								"$ref": "#/components/schemas/CreateNewsletterSubscriberRequest"
 							}
 						}
 					}
@@ -2681,10 +2593,10 @@
 						"schema": {
 							"type": "string",
 							"enum": [
-								"createdAt",
-								"updatedAt",
 								"email",
+								"createdAt",
 								"_id",
+								"updatedAt",
 								"active"
 							]
 						}
@@ -2713,15 +2625,15 @@
 			}
 		},
 		"/api/v1/newsletter/{id}": {
-			"get": {
-				"operationId": "GetSubscriber",
+			"put": {
+				"operationId": "UpdateSubscriber",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
+									"$ref": "#/components/schemas/ApiResponse_any_"
 								}
 							}
 						}
@@ -2740,91 +2652,32 @@
 							"type": "string"
 						}
 					}
-				]
-			}
-		},
-		"/api/v1/newsletter/email/{email}": {
-			"get": {
-				"operationId": "GetSubscriberByEmail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"newsletter"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "email",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/newsletter/{email}": {
-			"put": {
-				"operationId": "UpsertSubscriber",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"newsletter"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "email",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
 				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Partial_NewsletterSubscriber_"
+								"properties": {
+									"active": {
+										"type": "boolean"
+									}
+								},
+								"type": "object"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/newsletter/unsubscribe/{id}": {
-			"get": {
-				"operationId": "UnSubscribe",
+			},
+			"delete": {
+				"operationId": "DeleteSubscriber",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
+									"$ref": "#/components/schemas/ApiResponse_null_"
 								}
 							}
 						}
@@ -3054,7 +2907,7 @@
 				}
 			},
 			"get": {
-				"operationId": "GetAllCategories",
+				"operationId": "GetAllContinents",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3122,8 +2975,8 @@
 				]
 			}
 		},
-		"/api/v1/continents/update": {
-			"post": {
+		"/api/v1/continents/{id}": {
+			"put": {
 				"operationId": "UpdateContinent",
 				"responses": {
 					"200": {
@@ -3139,25 +2992,59 @@
 					"Continents"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateContinentRequest"
+								"$ref": "#/components/schemas/UpdateContinentRequest"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/continents/{id}": {
+			},
+			"get": {
+				"operationId": "GetContinentById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
 			"delete": {
 				"operationId": "DeleteContinent",
 				"responses": {
 					"200": {
-						"description": "Deleted",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
@@ -3199,11 +3086,9 @@
 				],
 				"security": [],
 				"parameters": []
-			}
-		},
-		"/api/v1/client/{id}": {
+			},
 			"put": {
-				"operationId": "UpdateJsonById",
+				"operationId": "UpdateJson",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3218,16 +3103,7 @@
 					"client"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3236,114 +3112,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/auth/google/url": {
-			"get": {
-				"operationId": "GetGoogleAuthUrl",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"url": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"url"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/auth/google/callback": {
-			"get": {
-				"operationId": "GoogleCallback",
-				"responses": {
-					"302": {
-						"description": "Redirecting"
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "code",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/auth/facebook/url": {
-			"get": {
-				"operationId": "GetFacebookAuthUrl",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"url": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"url"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/auth/facebook/callback": {
-			"get": {
-				"operationId": "FacebookCallback",
-				"responses": {
-					"302": {
-						"description": "Redirecting"
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "code",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		},
 		"/api/v1/auth/profile": {
@@ -3438,179 +3206,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/auth/logout": {
-			"post": {
-				"operationId": "LogoutUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"success": {
-											"type": "boolean"
-										}
-									},
-									"required": [
-										"success"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/auth/forgot-password": {
-			"post": {
-				"operationId": "ResetPassword",
-				"responses": {
-					"200": {
-						"description": "Reset Link Sent",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"error": {}
-									},
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"email": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"email"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/v1/auth/verify-reset-token": {
-			"get": {
-				"operationId": "VerifyResetToken",
-				"responses": {
-					"200": {
-						"description": "Token Valid",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "token",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/auth/reset-password": {
-			"post": {
-				"operationId": "SetNewPassword",
-				"responses": {
-					"200": {
-						"description": "Password Reset Successfully",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"newPassword": {
-										"type": "string"
-									},
-									"token": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"newPassword",
-									"token"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/v1/auth/verify-unsubscribe-token": {
-			"get": {
-				"operationId": "VerifyUnsubscribeResetToken",
-				"responses": {
-					"200": {
-						"description": "Token Valid",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "token",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
 			}
 		}
 	},

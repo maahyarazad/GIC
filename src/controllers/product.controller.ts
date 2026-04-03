@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import {
   Controller,
   Get,
@@ -13,7 +13,6 @@ import {
   Tags,
   Middlewares,
 } from "tsoa";
-import { getCollection } from "../db";
 import {
   Product,
   CreateProductRequest,
@@ -25,16 +24,15 @@ import {
   createErrorResponse,
   createSuccessResponse,
   validateRequiredFields,
-  Sort,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import {
-  ProductDb,
   mapCreateProductRequestToDb,
   mapProduct,
   mapProducts,
   mapUpdateProductRequestToDb,
 } from "../mappers/product.mapper";
+import { ProductModel } from "../models/product.model";
 
 @Route("api/v1/products")
 @Tags("Products")
@@ -52,19 +50,20 @@ export class ProductController extends Controller {
         return createErrorResponse(`Missing required fields: ${missing.join(", ")}`);
       }
 
-      const productCollection = getCollection<ProductDb>("products");
-      const existing = await productCollection.findOne({ fileId: body.fileId });
+      const existing = await ProductModel.findOne({
+        $or: [{ fileId: body.fileId }, { code: body.code }],
+      }).lean();
+
       if (existing) {
         this.setStatus(409);
-        return createErrorResponse(`Product with fileId '${body.fileId}' already exists.`);
+        return createErrorResponse("A product with the same fileId or code already exists.");
       }
 
-      const product = mapCreateProductRequestToDb(body);
-      const insertResult = await productCollection.insertOne(product);
+      const product = await ProductModel.create(mapCreateProductRequestToDb(body));
 
       this.setStatus(201);
       return createSuccessResponse(
-        { product: mapProduct({ ...product, _id: insertResult.insertedId }) },
+        { product: mapProduct(product.toObject()) },
         "Product created successfully"
       );
     } catch (error) {
@@ -85,16 +84,17 @@ export class ProductController extends Controller {
     @Query() importance?: "A" | "B" | "C" | "D",
     @Query() tags?: string
   ): Promise<{ products: Product[]; total: number; limit: number; skip: number }> {
-    const productCollection = getCollection<ProductDb>("products");
-    const sort: Sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
-
     const filter: any = {};
     if (name) filter.name = { $regex: new RegExp(name, "i") };
     if (importance) filter.importance = importance;
     if (tags) filter.tags = { $all: tags.split(",").map((t) => t.trim()) };
 
-    const docs = await productCollection.find(filter).skip(skip).limit(limit).sort(sort).toArray();
-    const total = await productCollection.countDocuments(filter);
+    const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<string, 1 | -1>;
+
+    const [docs, total] = await Promise.all([
+      ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+      ProductModel.countDocuments(filter),
+    ]);
 
     return { products: mapProducts(docs), total, limit, skip };
   }
@@ -103,13 +103,12 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Product fetched successfully")
   public async getProductById(@Path() id: string): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
 
-      const productCollection = getCollection<ProductDb>("products");
-      const product = await productCollection.findOne({ _id: new ObjectId(id) });
+      const product = await ProductModel.findById(id).lean();
 
       if (!product) {
         this.setStatus(404);
@@ -128,13 +127,12 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Products fetched by parent ID successfully")
   public async getProductsByParent(@Path() parentId: string): Promise<{ products: Product[] }> {
     try {
-      if (!ObjectId.isValid(parentId)) {
+      if (!Types.ObjectId.isValid(parentId)) {
         this.setStatus(400);
         return { products: [] };
       }
 
-      const productCollection = getCollection<ProductDb>("products");
-      const products = await productCollection.find({ parent: new ObjectId(parentId) }).toArray();
+      const products = await ProductModel.find({ parent: new Types.ObjectId(parentId) }).lean();
       return { products: mapProducts(products) };
     } catch (error) {
       console.error(error);
@@ -148,26 +146,25 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Product updated successfully")
   public async updateProduct(@Path() id: string, @Body() body: UpdateProductRequest): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
 
-      const productCollection = getCollection<ProductDb>("products");
       const updateData = mapUpdateProductRequestToDb(body);
 
-      const result = await productCollection.findOneAndUpdate(
-        { _id: new ObjectId(id) },
+      const product = await ProductModel.findByIdAndUpdate(
+        id,
         { $set: updateData },
-        { returnDocument: "after" }
+        { new: true, lean: true }
       );
 
-      if (!result) {
+      if (!product) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ product: mapProduct(result) }, "Product updated successfully");
+      return createSuccessResponse({ product: mapProduct(product) }, "Product updated successfully");
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -180,15 +177,13 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Product deleted successfully")
   public async deleteProduct(@Path() id: string): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
 
-      const productCollection = getCollection<ProductDb>("products");
-      const result = await productCollection.deleteOne({ _id: new ObjectId(id) });
-
-      if (result.deletedCount === 0) {
+      const result = await ProductModel.findByIdAndDelete(id).lean();
+      if (!result) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }

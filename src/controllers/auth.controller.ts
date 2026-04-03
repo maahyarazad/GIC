@@ -4,20 +4,18 @@ import {
   Get,
   Tags,
   Body,
-  Query,
   Post,
   SuccessResponse,
   Request,
 } from "tsoa";
 import jwt from "jsonwebtoken";
-import { getCollection } from "../db";
-import { LoginModel, User, LoginLogModel, RefreshTokenModel } from "../types/user.types";
-import { Collection, ObjectId } from "mongodb";
+import { LoginModel, User } from "../types/user.types";
 import { createSuccessResponse, createErrorResponse, ApiResponse } from "../utils/helpers";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
-import { mapLoginLog, mapRefreshToken, mapUser, UserDb } from "../mappers/user.mapper";
+import { mapUser } from "../mappers/user.mapper";
+import { LoginLogModel, RefreshTokenModel, UserModel } from "../models/user.model";
 
 dotenv.config();
 
@@ -29,10 +27,6 @@ const ACCESS_EXPIRE: string = process.env.ACCESS_EXPIRE!;
 @Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
-  private static userCollection(): Collection<UserDb> {
-    return getCollection<UserDb>("users");
-  }
-
   @Get("profile")
   @SuccessResponse("200", "OK")
   public async getProfile(@Request() req: any): Promise<any> {
@@ -42,8 +36,8 @@ export class AuthController extends Controller {
       if (!token) return createErrorResponse("Missing token cookie");
 
       const payload = jwt.verify(token, JWT_SECRET) as any;
-      const users = AuthController.userCollection();
-      const user = await users.findOne({ _id: new ObjectId(payload.userId) }, { projection: { password: 0 } });
+      const user = await UserModel.findById(payload.userId).select("-password").lean();
+
       if (!user) return createErrorResponse("User not found");
       return createSuccessResponse(mapUser(user), "Profile fetched successfully");
     } catch (err) {
@@ -70,7 +64,6 @@ export class AuthController extends Controller {
   @Post("refresh-token")
   public async refreshToken(@Request() req: any): Promise<ApiResponse<{ token: string }>> {
     try {
-      const refreshCollection = getCollection<any>("refresh_tokens");
       const cookies = req.headers.cookie?.split("; ").reduce((acc: any, c: string) => {
         const [key, value] = c.split("=");
         acc[key] = value;
@@ -80,17 +73,16 @@ export class AuthController extends Controller {
       const refreshToken = cookies?.refreshToken;
       if (!refreshToken) return createErrorResponse("No refresh token", "NO_TOKEN");
 
-      const tokenDoc = await refreshCollection.findOne({ token: refreshToken });
+      const tokenDoc = await RefreshTokenModel.findOne({ token: refreshToken }).lean();
       if (!tokenDoc || tokenDoc.expiresAt < new Date()) {
         return createErrorResponse("Refresh token expired", "TOKEN_EXPIRED");
       }
 
       const payload: any = jwt.verify(refreshToken, REFRESH_SECRET);
-      const usersCollection = AuthController.userCollection();
-      const user = await usersCollection.findOne({ _id: new ObjectId(payload.userId) });
+      const user = await UserModel.findById(payload.userId).lean();
       if (!user) return createErrorResponse("User not found", "USER_NOT_FOUND");
 
-      const newToken = jwt.sign({ userId: user._id!.toHexString(), role: user.role }, JWT_SECRET, {
+      const newToken = jwt.sign({ userId: String(user._id), role: user.role }, JWT_SECRET, {
         expiresIn: ACCESS_EXPIRE,
       });
 
@@ -102,9 +94,7 @@ export class AuthController extends Controller {
         `Max-Age=${24 * 3600}`,
         `SameSite=${isProd ? "None" : "Lax"}`,
         isProd ? "Secure" : "",
-      ]
-        .filter(Boolean)
-        .join("; ");
+      ].filter(Boolean).join("; ");
 
       this.setHeader("Set-Cookie", cookieValue);
       this.setStatus(200);
@@ -119,10 +109,9 @@ export class AuthController extends Controller {
   @Post("login")
   public async loginUser(@Body() userData: LoginModel, @Request() req: any): Promise<ApiResponse<Omit<User, "password">>> {
     try {
-      const usersCollection = AuthController.userCollection();
       const normalizedEmail = userData.userEmail?.trim().toLowerCase();
 
-      const user = await usersCollection.findOne({
+      const user = await UserModel.findOne({
         $or: [{ name: userData.userName ?? "" }, { email: normalizedEmail ?? "" }],
       });
 
@@ -145,8 +134,7 @@ export class AuthController extends Controller {
         );
       }
 
-      const loginCollection = getCollection<any>("login_log");
-      await loginCollection.insertOne({
+      await LoginLogModel.create({
         userId: user._id,
         type: "login",
         createdAt: new Date(),
@@ -154,27 +142,27 @@ export class AuthController extends Controller {
         userAgent: req.headers["user-agent"],
       });
 
-      const token = jwt.sign({ userId: user._id!.toHexString(), role: user.role }, JWT_SECRET, {
+      const token = jwt.sign({ userId: String(user._id), role: user.role }, JWT_SECRET, {
         expiresIn: ACCESS_EXPIRE,
       });
 
-      const refreshCollection = getCollection<any>("refresh_tokens");
       const refreshExpiryMs = req.body.rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
       const refreshExpirySec = Math.floor(refreshExpiryMs / 1000);
 
-      const existingRefreshToken = await refreshCollection.findOne({
+      let refreshTokenDoc = await RefreshTokenModel.findOne({
         userId: user._id,
         expiresAt: { $gte: new Date() },
       });
 
       let refreshToken: string;
-      if (existingRefreshToken) {
-        refreshToken = existingRefreshToken.token;
+      if (refreshTokenDoc) {
+        refreshToken = refreshTokenDoc.token;
       } else {
-        refreshToken = jwt.sign({ userId: user._id!.toHexString() }, REFRESH_SECRET, {
+        refreshToken = jwt.sign({ userId: String(user._id) }, REFRESH_SECRET, {
           expiresIn: REFRESH_EXPIRE,
         });
-        await refreshCollection.insertOne({
+
+        refreshTokenDoc = await RefreshTokenModel.create({
           userId: user._id,
           token: refreshToken,
           createdAt: new Date(),
@@ -191,9 +179,7 @@ export class AuthController extends Controller {
           `Max-Age=${24 * 3600}`,
           `SameSite=${isProd ? "None" : "Lax"}`,
           isProd ? "Secure" : "",
-        ]
-          .filter(Boolean)
-          .join("; "),
+        ].filter(Boolean).join("; "),
         [
           `refreshToken=${refreshToken}`,
           "HttpOnly",
@@ -201,14 +187,14 @@ export class AuthController extends Controller {
           `Max-Age=${refreshExpirySec}`,
           `SameSite=${isProd ? "None" : "Lax"}`,
           isProd ? "Secure" : "",
-        ]
-          .filter(Boolean)
-          .join("; "),
+        ].filter(Boolean).join("; "),
       ];
 
       this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
-      const { password, ...safeUser } = user;
+
+      const safeUser = user.toObject();
+      delete (safeUser as any).password;
       return createSuccessResponse(mapUser(safeUser), "Login successful");
     } catch (error: any) {
       console.error(error);

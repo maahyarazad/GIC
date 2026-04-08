@@ -50,13 +50,13 @@ const EconomicInsights: React.FC = () => {
         try {
 
             const res = await axiosInstance.get<Continent[]>("/continents");
-
-            const data = res.data?.data.categories;
-
-            setCategories(data);
-            if (data.length > 0) {
+            const {data} = res;
+            const {continents} = data?.data;
+            
+            setCategories(continents);
+            if (continents.length > 0) {
                 //set default 
-                setSelectedCategory(data[0]);
+                setSelectedCategory(continents[0]);
             }
         } catch (err: any) {
             console.error(err);
@@ -145,7 +145,7 @@ const EconomicInsights: React.FC = () => {
 
 
         <div className="economic-insights">
-            <h3 className="mb-3">Economic Insights</h3>
+            <h3 className="mb">Economic Insights</h3>
 
             <div className="categories row">
                 <div className="col-12">

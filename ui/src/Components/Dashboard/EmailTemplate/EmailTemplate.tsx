@@ -268,7 +268,7 @@ const EmailTemplatesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb-3">Email Templates</h3>
+            <h3 className="mb">Email Templates</h3>
 
 
             <button className={`btn btn-sm dashboard-btn mb-1`}

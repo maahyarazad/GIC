@@ -17,6 +17,7 @@ const HomeBackground = ({ background }) => {
     
   }, [dispatch]);
 
+  console.log(background);
   return (
     <div>
       <video autoPlay loop muted playsInline

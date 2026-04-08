@@ -109,7 +109,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Name */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Name *</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Name *</label>
                     <input
                         type="text"
                         className="form-control"
@@ -121,7 +121,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Slug */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Slug *</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Slug *</label>
                     <input
                         type="text"
                         className="form-control"
@@ -142,7 +142,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Description */}
                 <div className="col-12">
-                    <label className="form-label fw-bold">Description</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Description</label>
                     <textarea
                         className="form-control"
                         rows={3}
@@ -153,7 +153,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Parent */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Parent ID</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Parent ID</label>
                     <input
                         type="text"
                         disabled
@@ -164,7 +164,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Order */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Order</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Order</label>
                     <input
                         type="number"
                         className="form-control"
@@ -188,7 +188,7 @@ const ModifyContinent = forwardRef<
 
                 {/* Image URL and Alt Text side by side */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Image URL</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Image URL</label>
                     <input
                         type="text"
                         className="form-control"
@@ -198,7 +198,7 @@ const ModifyContinent = forwardRef<
                 </div>
 
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold">Image Alt Text</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">Image Alt Text</label>
                     <input
                         type="text"
                         className="form-control"
@@ -209,7 +209,7 @@ const ModifyContinent = forwardRef<
 
                 {/* SEO Title */}
                 <div className="col-12">
-                    <label className="form-label fw-bold">SEO Title</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">SEO Title</label>
                     <input
                         type="text"
                         className="form-control"
@@ -220,7 +220,7 @@ const ModifyContinent = forwardRef<
 
                 {/* SEO Description */}
                 <div className="col-12">
-                    <label className="form-label fw-bold">SEO Description</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">SEO Description</label>
                     <textarea
                         className="form-control"
                         rows={2}
@@ -231,7 +231,7 @@ const ModifyContinent = forwardRef<
 
                 {/* SEO Keywords */}
                 <div className="col-12">
-                    <label className="form-label fw-bold">SEO Keywords (comma separated)</label>
+                    <label className="form-label fw-bold text-dark dark:text-white">SEO Keywords (comma separated)</label>
                     <input
                         type="text"
                         className="form-control"

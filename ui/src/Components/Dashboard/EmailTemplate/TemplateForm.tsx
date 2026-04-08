@@ -61,7 +61,7 @@ const TemplateForm = forwardRef<TemplateFormRef, TemplateFormProps>(({
         <div className="d-flex">
           <div>
             <input type="hidden" value={id ?? ""} />
-            <label className="form-label fw-bold">Template Name *</label>
+            <label className="form-label fw-bold text-dark dark:text-white">Template Name *</label>
             <input
               type="text"
               className="form-control"
@@ -73,7 +73,7 @@ const TemplateForm = forwardRef<TemplateFormRef, TemplateFormProps>(({
           </div>
 
           <div style={{ marginLeft: "1rem" }}>
-            <label className="form-label fw-bold">Subject *</label>
+            <label className="form-label fw-bold text-dark dark:text-white">Subject *</label>
             <input
               type="text"
               className="form-control"
@@ -87,7 +87,7 @@ const TemplateForm = forwardRef<TemplateFormRef, TemplateFormProps>(({
       </div>
 
       <div>
-        <label className="form-label fw-bold">HTML Content *</label>
+        <label className="form-label fw-bold text-dark dark:text-white">HTML Content *</label>
         <HtmlCodeEditor value={html} onChange={setHtml} />
       </div>
     </form>

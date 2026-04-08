@@ -1610,7 +1610,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsClientController_updateJson: Record<string, TsoaRoute.ParameterSchema> = {
                 updatedJson: {"in":"body","name":"updatedJson","required":true,"dataType":"any"},
         };
-        app.put('/api/v1/client',
+        app.put('/api/v1/client/:id',
             ...(fetchMiddlewares<RequestHandler>(ClientController)),
             ...(fetchMiddlewares<RequestHandler>(ClientController.prototype.updateJson)),
 

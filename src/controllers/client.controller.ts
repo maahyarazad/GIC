@@ -51,7 +51,7 @@ export class ClientController extends Controller {
     }
   }
 
-  @Put("/")
+  @Put("/{id}")
   @Middlewares(adminAuthMiddleware)
   public async updateJson(@Body() updatedJson: any): Promise<any> {
     try {

@@ -65,7 +65,7 @@ interface BoardroomProps {
   return (
     <div className="boardroom">
         <LockOverlay/>
-      {siteData.boardroom.map(({ id, imageUrl, title, description }) => (
+      {siteData?.boardroom?.map(({ id, imageUrl, title, description }) => (
         <div className="boardroom__item" key={id}>
           <img src={`${env.VITE_SERVER_API_URL}/uploads/${imageUrl}`} alt={title} className="boardroom__image" />
           <div className="boardroom__overlay">

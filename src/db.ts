@@ -11,12 +11,12 @@ let database: Db | null = null;
 let connect$: Promise<Db> | null = null;
 
 function buildMongoUri(): string {
-  const user = process.env.MONGO_USER;
-  const password = process.env.MONGO_PASSWORD;
+//   const user = process.env.MONGO_USER;
+//   const password = process.env.MONGO_PASSWORD;
 
-  if (!user || !password) {
-    throw new Error("MONGO_USER or MONGO_PASSWORD is not defined.");
-  }
+//   if (!user || !password) {
+//     throw new Error("MONGO_USER or MONGO_PASSWORD is not defined.");
+//   }
 
 //   return `mongodb+srv://${user}:${password}@cluster0.ooeuiqe.mongodb.net/?appName=Cluster0`;
   return `mongodb://localhost:27017`;

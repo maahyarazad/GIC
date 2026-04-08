@@ -78,9 +78,9 @@ const App = () => {
     setLanguage(value);
   };
 
-  if (!isTestGatePassed) {
-    return <TestGate onSuccess={() => setIsTestGatePassed(true)} />;
-  }
+//   if (!isTestGatePassed) {
+//     return <TestGate onSuccess={() => setIsTestGatePassed(true)} />;
+//   }
 
   if (!siteData) {
     return <MainLoader />;
@@ -99,9 +99,9 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<Home siteData={siteData} />} />
+          <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
           <Route path="/services" element={<Services />} />
           <Route path="/contact-us" element={<ContactUs siteData={siteData} />} />
-          <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
@@ -120,7 +120,7 @@ const App = () => {
         </Routes>
 
         <Footer footerData={siteData.footer} />
-        <BackToTop />
+        {/* <BackToTop /> */}
       </AppContainer>
     </BrowserRouter>
   );

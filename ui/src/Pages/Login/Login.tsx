@@ -94,7 +94,7 @@ const Login: React.FC = () => {
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label>Email</label>
+                        <label className='form-label fw-bold text-dark dark:text-white'>Email</label>
                         <input
                             type={email === "admin" ? "text" : "email"}
                             required
@@ -111,14 +111,14 @@ const Login: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
-                        required
+                        required className='form-label fw-bold text-dark dark:text-white'
                     />
 
 
                     <div className="form-group remember-me">
                         <div className=" d-flex justify-content-between align-items-center">
 
-                        <label>
+                        <label className='form-label fw-bold text-dark dark:text-white'>
                             <input className="me-1"
                                 type="checkbox"
                                 checked={rememberMe}
@@ -139,7 +139,7 @@ const Login: React.FC = () => {
 
                 </form>
 
-                <p className="signup-text">
+                <p className="signup-text form-label fw-bold text-dark dark:text-white">
                     Don’t have an account?{" "}
                     <Link to="/register">Sign up</Link>
                 </p>

@@ -235,7 +235,7 @@ export const UserProfilesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb-3">User Profiles</h3>
+            <h3 className="mb">User Profiles</h3>
             {loading ?
                 <Loader/>
 

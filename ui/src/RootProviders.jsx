@@ -7,6 +7,7 @@ import { ModalProvider } from "./Providers/ModalContext";
 import { AuthProvider } from "./Providers/AuthProvider";
 import { SlideMenuProvider } from "./Providers/SlideMenuProvider";
 import { ConfirmDialogProvider } from "./providers/ConfirmDialogProvider.js";
+import { PageProvider } from "./providers/PageContext";
 import MainLoader from "./Components/MainLoader.jsx";
 
 export function RootProviders({ children, preloadedState }) {
@@ -52,6 +53,8 @@ export function RootProviders({ children, preloadedState }) {
 
   return (
     <Provider store={storeRef.current}>
+        <PageProvider>
+
       <SlideMenuProvider>
         <ConfirmDialogProvider>
           <ModalProvider>
@@ -61,6 +64,7 @@ export function RootProviders({ children, preloadedState }) {
           </ModalProvider>
         </ConfirmDialogProvider>
       </SlideMenuProvider>
+        </PageProvider>
     </Provider>
   );
 }

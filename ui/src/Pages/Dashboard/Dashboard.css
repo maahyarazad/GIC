@@ -1,19 +1,20 @@
 .dashboard {
   display: flex;
   height: 92vh;
-  overflow: hidden;
+  overflow: scroll;
 }
-.dashboard nav {
+.dashboard .nav {
   position: relative;
 }
-.dashboard nav ul {
+.dashboard .nav ul {
   list-style: none;
   padding: 0;
+  padding-top: 80px;
   margin: 0;
   text-decoration-line: none;
   position: relative;
 }
-.dashboard nav li {
+.dashboard .nav li {
   padding: 10px 12px;
   cursor: pointer;
   color: #aaa;
@@ -22,7 +23,7 @@
   overflow: hidden;
   transition: color 0.2s ease;
 }
-.dashboard nav li::before {
+.dashboard .nav li::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -33,13 +34,13 @@
   transition: transform 0.25s ease;
   z-index: -1;
 }
-.dashboard nav li.active {
+.dashboard .nav li.active {
   color: var(--primary-contrast-color);
 }
-.dashboard nav li.active::before {
+.dashboard .nav li.active::before {
   transform: scaleX(1);
 }
-.dashboard nav li:hover::before {
+.dashboard .nav li:hover::before {
   transform: scaleX(1);
 }
 
@@ -93,6 +94,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
+    color: #aaa;
     margin: 1rem;
     z-index: 1100;
   }
@@ -100,6 +102,7 @@
 /* Main content takes rest space */
 .main-content {
   flex-grow: 1;
+  margin-top: 70px;
   padding: 1rem;
   height: 100%;
   overflow-y: auto;

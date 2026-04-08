@@ -222,14 +222,14 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                     Loading...
                                 </td>
                             </tr>
-                        ) : rows.length === 0 ? (
+                        ) : rows?.length === 0 ? (
                             <tr>
                                 <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
                                     No data found.
                                 </td>
                             </tr>
                         ) : (
-                            rows.map((row) => (
+                            rows?.map((row) => (
                                 <tr key={row._id?.toString()}>
                                     {columns.map((col, idx) => (
                                         <td className="td-scroll"

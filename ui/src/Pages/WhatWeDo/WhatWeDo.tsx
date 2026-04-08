@@ -1,4 +1,5 @@
 import React from "react";
+
 import { usePage } from '../../providers/PageContext';
 
 
@@ -6,7 +7,7 @@ interface Props {
     siteData: any;
 }
 
-const AboutUs: React.FC<Props> = ({ siteData }) => {
+const WhatWeDo: React.FC<Props> = ({ siteData }) => {
     const { showPage, activePage } = usePage();
 
     return (

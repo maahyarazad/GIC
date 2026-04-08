@@ -22,7 +22,7 @@
   "@animated-burgers/burger-rotate": "^1.1.2",
   "@preact/signals-react": "^3.6.0",
   "@reduxjs/toolkit": "^2.11.1",
-  "axios": "^1.13.2",
+  "axios": "1.14.0",
   "bcrypt": "^6.0.0",
   "bcryptjs": "^3.0.3",
   "bootstrap": "^5.3.8",

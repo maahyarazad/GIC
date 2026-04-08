@@ -173,7 +173,7 @@ const FileManagement = () => {
 
     return (
         <div className="file-manager">
-            <h3 className="mb-3">File Manager</h3>
+            <h3 className="mb">File Manager</h3>
 
             <label className="btn dashboard-btn mb-4">
                 {uploading ? "Uploading..." : "Upload File"}

@@ -152,47 +152,47 @@ const Dashboard: React.FC = () => {
             : null;
 
     return (
-        <div className="dashboard">
-            {/* Sidebar */}
-            <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                <button
-                    className="close-btn"
-                    onClick={toggleSidebar}
-                    aria-label="Close sidebar"
-                >
-                    ×
-                </button>
+      <div className="dashboard">
+    {/* Sidebar */}
+    <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <button
+            className="close-btn"
+            onClick={toggleSidebar}
+            aria-label="Close sidebar"
+        >
+            ×
+        </button>
 
-                <nav>
-                    <ul>
-                        {filteredMenuItems.map((item) => (
-                            <li
-                                key={item}
-                                className={selectedMenu === item ? "active" : ""}
-                                onClick={() => handleMenuClick(item)}
-                                role="button"
-                                tabIndex={0}
-                            >
-                                {menuTitles[item]}
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </aside>
-
-            {/* Main content */}
-            <main className="main-content">
-                <button
-                    className="open-sidebar-btn"
-                    onClick={toggleSidebar}
-                    aria-label="Open sidebar"
-                >
-                    ☰
-                </button>
-
-                {selectedComponent}
-            </main>
+        <div className="nav">
+            <ul>
+                {filteredMenuItems.map((item) => (
+                    <li
+                        key={item}
+                        className={selectedMenu === item ? "active" : ""}
+                        onClick={() => handleMenuClick(item)}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        {menuTitles[item]}
+                    </li>
+                ))}
+            </ul>
         </div>
+    </aside>
+
+    {/* Main content */}
+    <main className="main-content">
+        <button
+            className="open-sidebar-btn"
+            onClick={toggleSidebar}
+            aria-label="Open sidebar"
+        >
+            ☰
+        </button>
+
+        {selectedComponent}
+    </main>
+</div>
     );
 };
 

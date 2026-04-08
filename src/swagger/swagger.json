@@ -3086,7 +3086,9 @@
 				],
 				"security": [],
 				"parameters": []
-			},
+			}
+		},
+		"/api/v1/client/{id}": {
 			"put": {
 				"operationId": "UpdateJson",
 				"responses": {

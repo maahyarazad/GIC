@@ -106,13 +106,14 @@ const CategoriesDataGrid = () => {
             }
 
             if (filterModel && filterModel.length > 0) {
-                params.append("filters", JSON.stringify(filterModel)); g
+                params.append("filters", JSON.stringify(filterModel)); 
             }
 
-            const response = await axiosInstance.get("/continents", { params });
+            const { data } = await axiosInstance.get("/continents", { params });
 
-            setRows(response.data.data.categories);
-            setRowCount(response.data.total ?? response.data.data.categories.length);
+            debugger;
+            setRows(data?.data?.continents ?? []);
+            setRowCount(data?.total ?? data?.data?.continents?.length ?? 0);
         } catch (err) {
             console.error("Failed to fetch categories", err);
         } finally {
@@ -239,7 +240,7 @@ const CategoriesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb-3">Manage Continents</h3>
+            <h3 className="mb">Manage Continents</h3>
 
             <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={onCreate}>

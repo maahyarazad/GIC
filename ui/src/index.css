@@ -72,53 +72,68 @@ body {
    BUTTONS
 ------------------------------------------- */
 .dashboard-btn {
-  background: var(--primary-contrast-color);
-  color: var(--primary-color);
+  background: var(--ora);
+  color: var(--bg);
   padding: 8px 16px;
   border-radius: 8px;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: 0.25s ease;
-  box-shadow: 0 3px 10px rgba(var(--primary-contrast-color-rgb), 0.4);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 3px 10px rgba(200, 84, 26, 0.4);
   font-size: small;
 }
 .dashboard-btn:hover {
-  background: rgba(var(--primary-contrast-color-rgb), 0.85);
-  box-shadow: 0 4px 12px rgba(var(--primary-contrast-color-rgb), 0.6);
+  background: var(--or2);
+  box-shadow: 0 4px 12px rgba(200, 84, 26, 0.6);
 }
 .dashboard-btn:active {
   transform: scale(0.97);
 }
+.dashboard-btn:disabled, .dashboard-btn[disabled] {
+  background: transparent;
+  color: transparent;
+  box-shadow: none;
+  border-color: transparent;
+  pointer-events: none;
+}
 
 .dashboard-btn--delete {
-  background: var(--primary-gray-color);
-  color: var(--primary-color);
+  background: var(--bgp);
+  color: var(--txt);
   padding: 8px 16px;
   border-radius: 8px;
   font-weight: 600;
   border: 2px solid #d11a2a;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
   font-size: small;
   box-shadow: 0 3px 10px rgba(209, 26, 42, 0.35);
 }
 .dashboard-btn--delete:hover {
-  background: rgba(var(--primary-gray-color-rgb), 0.85);
+  background: var(--bgp2);
+  box-shadow: 0 4px 12px rgba(209, 26, 42, 0.55);
 }
 .dashboard-btn--delete:active {
   transform: scale(0.97);
 }
+.dashboard-btn--delete:disabled, .dashboard-btn--delete[disabled] {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
 
 .dashboard-btn--delete-ghost {
   background: transparent;
-  color: var(--primary-contrast-color);
+  color: #d11a2a;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid var(--primary-contrast-color);
+  border: 1px solid #d11a2a;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: background 0.25s ease;
   font-size: small;
 }
 .dashboard-btn--delete-ghost:hover {
@@ -127,29 +142,36 @@ body {
 .dashboard-btn--delete-ghost:active {
   transform: scale(0.97);
 }
+.dashboard-btn--delete-ghost:disabled, .dashboard-btn--delete-ghost[disabled] {
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
 
 .dashboard-btn--ghost-minimal {
   background: transparent;
-  color: var(--primary-contrast-color);
+  color: var(--ora);
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px dashed var(--primary-contrast-color);
+  border: 1px dashed var(--ora);
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease, border-color 0.2s ease;
   font-size: small;
 }
 .dashboard-btn--ghost-minimal:hover {
-  background-color: rgba(var(--primary-contrast-color-rgb), 0.1);
-  border-color: var(--primary-contrast-color);
+  background-color: rgba(200, 84, 26, 0.1);
+  border-color: var(--or2);
 }
 .dashboard-btn--ghost-minimal:active {
   transform: scale(0.97);
 }
 .dashboard-btn--ghost-minimal:disabled, .dashboard-btn--ghost-minimal[disabled] {
-  background-color: transparent;
-  color: rgba(var(--primary-contrast-color-rgb), 0.4);
-  border-color: rgba(var(--primary-contrast-color-rgb), 0.4);
+  background: transparent;
+  color: transparent;
+  border-color: transparent;
   cursor: not-allowed;
   pointer-events: none;
   box-shadow: none;
@@ -228,7 +250,7 @@ body {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--primary-gray-color);
+  background-color: var(--bg);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -239,7 +261,7 @@ body {
   width: 100px;
   height: 100px;
   border: 3px solid;
-  border-color: var(--primary-contrast-color) transparent;
+  border-color: var(--ora) transparent;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;

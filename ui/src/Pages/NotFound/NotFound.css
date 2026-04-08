@@ -6,25 +6,25 @@
   align-items: center;
   text-align: center;
   padding: 2rem;
-  background-color: #f9f9f9;
+  background-color: var(--bg);
 }
 
 .notfound-title {
   font-size: 6rem;
   margin: 0;
-  color: #fa5007;
+  color: var(--ora);
   font-weight: bold;
 }
 
 .notfound-subtitle {
   font-size: 2rem;
   margin: 1rem 0;
-  color: #333;
+  color: var(--txt);
 }
 
 .notfound-message {
   font-size: 1rem;
-  color: #555;
+  color: var(--mu);
   max-width: 400px;
 }
 
@@ -32,12 +32,12 @@
   display: inline-block;
   margin-top: 2rem;
   padding: 0.75rem 1.5rem;
-  background-color: #fa5007;
-  color: #fff;
+  background-color: var(--ora);
+  color: var(--bg);
   text-decoration: none;
   border-radius: 6px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 .notfound-button:hover {
-  background-color: #de4400;
+  background-color: var(--or2);
 }/*# sourceMappingURL=NotFound.css.map */

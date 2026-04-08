@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
                 {filteredMenuItems.map((item) => (
                     <li
                         key={item}
-                        className={selectedMenu === item ? "active" : ""}
+                        className={`${selectedMenu === item ? "active" : ""} fw-bold `}
                         onClick={() => handleMenuClick(item)}
                         role="button"
                         tabIndex={0}

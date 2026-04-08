@@ -81,16 +81,22 @@
       "id": 2
     },
     {
+      "label": "What We Do",
+      "path": "/what-we-do",
+      "type": "link",
+      "id": 3
+    },
+    {
       "label": "Boardroom",
       "path": "/boardroom",
       "type": "link",
-      "id": 3
+      "id": 4
     },
     {
       "label": "Contact Us",
       "path": "/contact-us",
       "type": "link",
-      "id": 4
+      "id": 5
     }
   ],
   "media": {

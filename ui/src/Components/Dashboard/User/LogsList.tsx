@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import ToastOptions from '../../../Providers/ToastContext';
+import ToastOptions from '@/Providers/ToastContext';
 import './LogList.css';
+import { useModal } from "@/Providers/ModalContext";
 
+import { getLogs } from '../../../api/user'
+import Loader from "@/Components/Loader/Loader";
 interface UserDetails {
     name: string;
     role: string;
@@ -20,9 +23,6 @@ interface LogsListProps {
     show: (options: ToastOptions) => void;
 }
 
-import { getLogs } from '../../../api/user'
-import Loader from "@/Components/Loader/Loader";
-
 const LogsList: React.FC<LogsListProps> = ({ userId, show }) => {
 
     // const { show } = useToast();
@@ -34,7 +34,7 @@ const LogsList: React.FC<LogsListProps> = ({ userId, show }) => {
         try {
 
             const response = await getLogs(id);
-            debugger;
+            
             setLogs(response.data.logs);
         } catch (err: any) {
             show({

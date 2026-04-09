@@ -69,11 +69,11 @@ const Navbar = (
 
     // Trigger scroll after route change
     useEffect(() => {
-        
+
         navigate(location.pathname);
         showPage(location.pathname);
-      
-      
+
+
     }, [location.pathname]);
 
     const scrollToForm = () => {
@@ -192,20 +192,20 @@ const Navbar = (
         <>
             {user !== null ? (
                 <li >
-                    <span  className={`span-link ${activePage === '/dashboard' ? 'active' : ''}`} 
-                    onClick={(e) => 
-                        { closeMob();
-                            handleScroll(e, "dashboard", "link", "/dashboard"); 
+                    <span className={`span-link d-none ${activePage === '/dashboard' ? 'active' : ''}`}
+                        onClick={(e) => {
+                            closeMob();
+                            handleScroll(e, "dashboard", "link", "/dashboard");
                         }}
-                        >
-                            Dashboard</span>
+                    >
+                        Dashboard</span>
                 </li>
             ) : (
                 <li >
-                    <span className={`span-link ${activePage === '/login' ? 'active' : ''}`}   onClick={(e) => 
-                        { closeMob();
-                            handleScroll(e, "dashboard", "link", "/dashboard"); 
-                        }}>Sign-in</span>
+                    <span className={`span-link d-none ${activePage === '/login' ? 'active' : ''}`} onClick={(e) => {
+                        closeMob();
+                        handleScroll(e, "dashboard", "link", "/dashboard");
+                    }}>Sign-in</span>
                 </li>
             )}
         </>
@@ -294,7 +294,7 @@ const Navbar = (
                             <li key={link.path} >
                                 {
                                     link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
-                                       
+
                                         onClick={() => {
                                             showPage(link.path);
                                             navigate(link.path);
@@ -308,6 +308,10 @@ const Navbar = (
                                 }
                             </li>
                         ))}
+                        <li><a onClick={() => {
+                            showPage('/contact-us');
+                            navigate('/contact-us');
+                        }} className="nav-cta">Apply Now</a></li>
 
                         {User}
 
@@ -329,27 +333,27 @@ const Navbar = (
                 className={`mob-nav ${isOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
-                 {navbarLinks?.map((link) => (
-                            <li key={link.path} >
-                                {
-                                    link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
-                                       
-                                        onClick={() => {
-                                            closeMob();
-                                            showPage(link.path);
-                                            navigate(link.path);
-                                        }}
-                                    >
-                                        {link.label}
-                                    </span>
-                                }
-                                {
-                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                                }
-                            </li>
-                        ))}
+                {navbarLinks?.map((link) => (
+                    <li key={link.path} >
+                        {
+                            link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
 
-                        {User}
+                                onClick={() => {
+                                    closeMob();
+                                    showPage(link.path);
+                                    navigate(link.path);
+                                }}
+                            >
+                                {link.label}
+                            </span>
+                        }
+                        {
+                            link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                        }
+                    </li>
+                ))}
+
+                {User}
             </div>
         </>
 

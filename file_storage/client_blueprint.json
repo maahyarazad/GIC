@@ -93,10 +93,16 @@
       "id": 4
     },
     {
-      "label": "Contact Us",
-      "path": "/contact-us",
+      "label": "Membership",
+      "path": "/membership",
       "type": "link",
-      "id": 5
+      "id": 4
+    },
+    {
+      "label": "Contact",
+      "path": "/contact",
+      "type": "link",
+      "id": 6
     }
   ],
   "media": {

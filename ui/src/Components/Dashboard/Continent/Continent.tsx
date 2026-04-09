@@ -111,7 +111,7 @@ const CategoriesDataGrid = () => {
 
             const { data } = await axiosInstance.get("/continents", { params });
 
-            debugger;
+            
             setRows(data?.data?.continents ?? []);
             setRowCount(data?.total ?? data?.data?.continents?.length ?? 0);
         } catch (err) {

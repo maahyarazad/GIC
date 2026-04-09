@@ -19,11 +19,15 @@ export const UserProfilesDataGrid = () => {
     
     const handleViewLogs = async (id: string) => { 
         openModal({
+              variant: "default",
                 title: "User Change Logs",
                 content: ( <LogsList userId={id} show={show}/>),
                 cancelText: "Close",
                 onCancel: () => console.log("Cancelled"),
             }); 
+
+
+
         };
 
 

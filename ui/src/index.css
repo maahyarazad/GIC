@@ -2337,18 +2337,19 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 9px;
+  padding: 0;
 }
 .ft-lks a {
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
   font-weight: 300;
-  color: var(--mu);
+  color: var(--mu) !important;
   text-decoration: none;
   cursor: pointer;
   transition: color 0.2s;
 }
 .ft-lks a:hover {
-  color: var(--txt);
+  color: var(--txt) !important;
 }
 
 .ft-addr {

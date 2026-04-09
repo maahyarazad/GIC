@@ -354,10 +354,10 @@ const Navbar = (
 
                 ))}
 
-  <li><a onClick={() => {
-                            showPage('/contact');
-                            navigate('/contact');
-                        }} className="span-cta">Apply Now</a></li>
+                <li><a onClick={() => {
+                    showPage('/contact');
+                    navigate('/contact');
+                }} className="span-cta">Apply Now</a></li>
 
                 {User}
             </div>

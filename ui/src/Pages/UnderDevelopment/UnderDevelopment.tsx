@@ -1,6 +1,12 @@
 import React from "react";
-import './UnderDevelopment.css';
+import { useNavigate, useLocation } from "react-router-dom";
+import "./UnderDevelopment.css";
+
 const UnderDevelopment: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location.pathname); 
+
   return (
     <section className="underdev-page">
       <div className="underdev-card">
@@ -18,16 +24,16 @@ const UnderDevelopment: React.FC = () => {
         </p>
 
         <div className="underdev-actions">
-          <button
+          {/* <button
             className="underdev-btn primary"
-            onClick={() => window.history.back()}
+            onClick={() => navigate(-1)} // go back
           >
             Go Back
-          </button>
+          </button> */}
 
           <button
             className="underdev-btn secondary"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => navigate("/")} // go home
           >
             Go Home
           </button>

@@ -16,6 +16,8 @@ import NotFound from './Pages/NotFound/NotFound';
 import ProtectedRoute from './Pages/ProtectedRoutes';
 import Unsubscribe from './Pages/Unsubscribe/Unsubscribe';
 import UnderDevelopment from './Pages/UnderDevelopment/UnderDevelopment';
+import WhatWeDo from './Pages/WhatWeDo/WhatWeDo';
+import Membership from './Pages/Membership/Membership';
 
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
@@ -101,8 +103,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home siteData={siteData} />} />
           <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
-          <Route path="/what-we-do" element={<UnderDevelopment />} />
-          <Route path="/membership" element={<UnderDevelopment />} />
+          <Route path="/what-we-do" element={<WhatWeDo />} />
+          <Route path="/membership" element={<Membership />} />
           <Route path="/boardroom" element={<UnderDevelopment />} />
           <Route path="/contact" element={<ContactUs siteData={siteData} />} />
           <Route path="/login" element={<Login />} />
@@ -122,7 +124,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
 
-        <Footer footerData={siteData.footer} />
+        <Footer siteData={siteData} />
         {/* <BackToTop /> */}
       </AppContainer>
     </BrowserRouter>

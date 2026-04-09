@@ -1,25 +1,11 @@
-import React, { useEffect, useCallback, useState, useContext } from 'react';
-import HomeBackground from '../../Components/HomeBackground/HomeBackground';
-import FloatingSocialMedia from '@/Components/FloatingSocialMedia/FloatingSocialMedia';
+import { useContext } from 'react';
 import { EnvContext } from '../../EnvContext';
-import { useDispatch } from "react-redux";
 import './Home.css';
 import { usePage } from '../../providers/PageContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 const Home = ({ siteData }) => {
     const { activePage } = usePage();
     const env = useContext(EnvContext);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
-    const [videoLoaded, setVideoLoaded] = useState(false);
-
-    const handleVideoLoaded = useCallback(() => {
-        setVideoLoaded(true);
-
-        dispatch(setReady(true));
-
-    }, [dispatch]);
 
 
     if (!siteData) return null;
@@ -29,13 +15,10 @@ const Home = ({ siteData }) => {
 
     return (
         <>
-            <div id="page-home" className={`page ${activePage === "home" ? "active" : ""}`}>
+            <div id="page-home" className={`page ${activePage === "/" ? "active" : ""}`}>
                 <div className='hero'>
 
-                    <video autoPlay loop muted playsInline className='hero-vid'
-
-                        onLoadedData={handleVideoLoaded}
-                    >
+                    <video autoPlay loop muted playsInline className='hero-vid'>
                         <source src={`${env.VITE_SERVER_API_URL}/uploads/${siteData.media.home_background}`} type="video/mp4" fetchPriority='high' />
                         Your browser does not support the video tag.
                     </video>

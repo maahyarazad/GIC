@@ -3,7 +3,6 @@ import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
 import { Get, Path, Middlewares, Controller, Tags, Route } from "tsoa";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { LogChangeModel } from "../models/logChange.model";
-import { mapLogChange } from "../mappers/log.mapper";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -12,18 +11,24 @@ dotenv.config();
 export class LogController extends Controller {
   @Get("{id}")
   @Middlewares(authMiddleware)
-  public async getUserProfile(@Path() id: string): Promise<any> {
+  public async getLogsByTargetId(@Path() id: string): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
-        return createErrorResponse("Invalid user ID");
+        return createErrorResponse("Invalid target ID");
       }
 
+      const targetObjectId = new Types.ObjectId(id);
+
       const logs = await LogChangeModel.aggregate([
-        { $match: { targetId: new Types.ObjectId(id) } },
+        {
+          $match: {
+            targetId: targetObjectId,
+          },
+        },
         {
           $lookup: {
-            from: "users",
+            from: "users", // change this if your real collection name is different
             localField: "lastModifiedBy",
             foreignField: "_id",
             as: "userDetails",
@@ -43,16 +48,21 @@ export class LogController extends Controller {
             collection: 1,
             message: 1,
             createdAt: 1,
-            "userDetails.name": 1,
-            "userDetails.email": 1,
-            "userDetails.role": 1,
+            userDetails: {
+              _id: "$userDetails._id",
+              name: "$userDetails.name",
+              email: "$userDetails.email",
+              role: "$userDetails.role",
+            },
           },
         },
-        { $sort: { createdAt: -1 } },
+        {
+          $sort: { createdAt: -1 },
+        },
       ]);
 
       return createSuccessResponse(
-        { logs: logs.map(mapLogChange) },
+        { logs },
         "Logs fetched successfully"
       );
     } catch (error) {

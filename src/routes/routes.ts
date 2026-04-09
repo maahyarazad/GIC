@@ -22,6 +22,8 @@ import { FileController } from './../controllers/file.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ContinentController } from './../controllers/continent.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { ContactUsController } from './../controllers/contactus.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ClientController } from './../controllers/client.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/auth.controller';
@@ -589,6 +591,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         const argsUserController_updateUser: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"UpdateUserRequest"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.put('/api/v1/users/:id',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
@@ -1293,25 +1296,25 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsLogController_getUserProfile: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsLogController_getLogsByTargetId: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.get('/api/v1/logs/:id',
             ...(fetchMiddlewares<RequestHandler>(LogController)),
-            ...(fetchMiddlewares<RequestHandler>(LogController.prototype.getUserProfile)),
+            ...(fetchMiddlewares<RequestHandler>(LogController.prototype.getLogsByTargetId)),
 
-            async function LogController_getUserProfile(request: ExRequest, response: ExResponse, next: any) {
+            async function LogController_getLogsByTargetId(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsLogController_getUserProfile, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsLogController_getLogsByTargetId, request, response });
 
                 const controller = new LogController();
 
               await templateService.apiHandler({
-                methodName: 'getUserProfile',
+                methodName: 'getLogsByTargetId',
                 controller,
                 response,
                 next,
@@ -1567,6 +1570,50 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'deleteContinent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContactUsController_createContactUsSubmission: Record<string, TsoaRoute.ParameterSchema> = {
+                fullName: {"in":"formData","name":"fullName","required":true,"dataType":"string"},
+                email: {"in":"formData","name":"email","required":true,"dataType":"string"},
+                industry: {"in":"formData","name":"industry","required":true,"dataType":"string"},
+                meaObjective: {"in":"formData","name":"meaObjective","required":true,"dataType":"string"},
+                company: {"in":"formData","name":"company","dataType":"string"},
+                phone: {"in":"formData","name":"phone","dataType":"string"},
+                countryOfInterest: {"in":"formData","name":"countryOfInterest","dataType":"string"},
+                referredBy: {"in":"formData","name":"referredBy","dataType":"string"},
+                attachment: {"in":"formData","name":"attachment","dataType":"file"},
+        };
+        app.post('/api/v1/contact-us',
+            upload.fields([
+                {
+                    name: "attachment",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(ContactUsController)),
+            ...(fetchMiddlewares<RequestHandler>(ContactUsController.prototype.createContactUsSubmission)),
+
+            async function ContactUsController_createContactUsSubmission(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContactUsController_createContactUsSubmission, request, response });
+
+                const controller = new ContactUsController();
+
+              await templateService.apiHandler({
+                methodName: 'createContactUsSubmission',
                 controller,
                 response,
                 next,

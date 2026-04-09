@@ -24,7 +24,7 @@
   --primary-color-rgb: 255, 255, 255;
   --primary-gray-color: #C8541A;
   --primary-gray-color-rgb: 9, 2, 1;
-  --primary-contrast-color: #fa5007;
+  --primary-contrast-color: #C8541A;
   --primary-contrast-color-rgb: 250, 80, 7;
   --primary-contrast-color-1: #dead26;
   --primary-contrast-color-1-rgb: 222, 173, 38;
@@ -34,10 +34,6 @@
   --secondary-contracts-color-rgb: 6, 214, 160;
   --third-contracts-color: #fa5007;
   --third-contracts-color-rgb: 250, 80, 7;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ------------------------------------------
@@ -46,16 +42,9 @@
 body {
   margin: 0;
   font-family: "Rajdhani", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-weight: 900;
 }
 
-@media (max-width: 600px) {
-  body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
 .contrast-color,
 .contrast-color:link,
 .contrast-color:visited,

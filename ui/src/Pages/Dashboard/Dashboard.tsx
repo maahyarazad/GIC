@@ -10,7 +10,7 @@ import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
-
+import { usePage } from '../../providers/PageContext';
 
 // --- Types ---
 type MenuItem =
@@ -150,9 +150,9 @@ const Dashboard: React.FC = () => {
         filteredMenuItems.includes(selectedMenu)
             ? componentMap[selectedMenu]
             : null;
-
+    const { activePage } = usePage();
     return (
-      <div className="dashboard">
+      <div className={`dashboard  ${activePage === "/dashboard" ? "active" : ""}`}>
     {/* Sidebar */}
     <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <button
@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
                 {filteredMenuItems.map((item) => (
                     <li
                         key={item}
-                        className={`${selectedMenu === item ? "active" : ""} fw-bold `}
+                        className={`${selectedMenu === item ? "active" : ""} `}
                         onClick={() => handleMenuClick(item)}
                         role="button"
                         tabIndex={0}

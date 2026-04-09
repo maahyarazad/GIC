@@ -17,6 +17,7 @@ const Navbar = (
 ) => {
 
     const { showPage, activePage } = usePage();
+
     const env: string = useContext(EnvContext);
     const isReady = useSelector((state: RootState) => state.app.isReady);
 
@@ -68,15 +69,12 @@ const Navbar = (
 
     // Trigger scroll after route change
     useEffect(() => {
-        if (shouldScroll && location.pathname === '/') {
-            const timeout = setTimeout(() => {
-                scrollToForm();
-                setShouldScroll(false); // reset
-            }, 300); // delay (adjust if needed)
-
-            return () => clearTimeout(timeout);
-        }
-    }, [location.pathname, shouldScroll]);
+        
+        navigate(location.pathname);
+        showPage(location.pathname);
+      
+      
+    }, [location.pathname]);
 
     const scrollToForm = () => {
         const element = document.querySelector("section.request-form-section");
@@ -193,12 +191,21 @@ const Navbar = (
     const User: React.ReactNode = (
         <>
             {user !== null ? (
-                <li className={activePage ? 'active' : ''}>
-                    <Link to="/#" onClick={(e) => handleScroll(e, "dashboard", "link", "/dashboard")}>Dashboard</Link>
+                <li >
+                    <span  className={`span-link ${activePage === '/dashboard' ? 'active' : ''}`} 
+                    onClick={(e) => 
+                        { closeMob();
+                            handleScroll(e, "dashboard", "link", "/dashboard"); 
+                        }}
+                        >
+                            Dashboard</span>
                 </li>
             ) : (
-                <li className={activePage ? 'active' : ''}>
-                    <Link to="/#" onClick={(e) => handleScroll(e, "login", "link", "/login")}>Sign-in</Link>
+                <li >
+                    <span className={`span-link ${activePage === '/login' ? 'active' : ''}`}   onClick={(e) => 
+                        { closeMob();
+                            handleScroll(e, "dashboard", "link", "/dashboard"); 
+                        }}>Sign-in</span>
                 </li>
             )}
         </>
@@ -222,7 +229,7 @@ const Navbar = (
     ) : null;
 
     const [theme, setTheme] = useState(
-        document.documentElement.getAttribute("data-theme") || "light"
+        document.documentElement.getAttribute("data-theme")
     );
     const [isOpen, setIsOpen] = useState(false);
 
@@ -273,7 +280,7 @@ const Navbar = (
 
         <>
             <nav>
-                <div className="nav-brand" onClick={() => {showPage('home'); navigate("/");}}>
+                <div className="nav-brand" onClick={() => { showPage(''); navigate("/"); }}>
                     {isReady ?
 
                         <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
@@ -284,9 +291,17 @@ const Navbar = (
                     <ul className="nav-links">
 
                         {navbarLinks?.map((link) => (
-                            <li key={link.path} className={activePage ? "active" : ""}>
+                            <li key={link.path} >
                                 {
-                                    link.type === 'link' && <Link to={link.path}>{link.label}</Link>
+                                    link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
+                                       
+                                        onClick={() => {
+                                            showPage(link.path);
+                                            navigate(link.path);
+                                        }}
+                                    >
+                                        {link.label}
+                                    </span>
                                 }
                                 {
                                     link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
@@ -314,18 +329,27 @@ const Navbar = (
                 className={`mob-nav ${isOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
-                {navbarLinks?.map((link) => (
-                    <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                        {
-                            link.type === 'link' && <Link className={activePage === "about" ? "active" : ""} to={link.path}>{link.label}</Link>
-                        }
-                        {
-                            link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                        }
-                    </li>
-                ))}
+                 {navbarLinks?.map((link) => (
+                            <li key={link.path} >
+                                {
+                                    link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
+                                       
+                                        onClick={() => {
+                                            closeMob();
+                                            showPage(link.path);
+                                            navigate(link.path);
+                                        }}
+                                    >
+                                        {link.label}
+                                    </span>
+                                }
+                                {
+                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
+                                }
+                            </li>
+                        ))}
 
-                {User}
+                        {User}
             </div>
         </>
 

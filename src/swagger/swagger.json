@@ -2701,7 +2701,7 @@
 		},
 		"/api/v1/logs/{id}": {
 			"get": {
-				"operationId": "GetUserProfile",
+				"operationId": "GetLogsByTargetId",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3066,6 +3066,74 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/contact-us": {
+			"post": {
+				"operationId": "CreateContactUsSubmission",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_any_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"contact-us"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"fullName": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"industry": {
+										"type": "string"
+									},
+									"meaObjective": {
+										"type": "string"
+									},
+									"company": {
+										"type": "string"
+									},
+									"phone": {
+										"type": "string"
+									},
+									"countryOfInterest": {
+										"type": "string"
+									},
+									"referredBy": {
+										"type": "string"
+									},
+									"attachment": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"fullName",
+									"email",
+									"industry",
+									"meaObjective"
+								]
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/client": {

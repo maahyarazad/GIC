@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { usePage } from '../../providers/PageContext';
 
 
@@ -9,8 +9,10 @@ interface Props {
 const AboutUs: React.FC<Props> = ({ siteData }) => {
     const { showPage, activePage } = usePage();
 
+
+
     return (
-        <div id="page-about" className={`page ${activePage === "home" ? "active" : ""}`}>
+        <div id="page-about" className={`page ${activePage === "/about-us" ? "active" : ""}`}>
             <div className="ptnav"></div>
 
             <div className="ap-hero">

@@ -6,7 +6,7 @@ import CustomInput from "../CustomInputs/CustomInput";
 import CustomTextarea from "../CustomInputs/CustomTextArea";
 import './ContactUsForm.css';
 import { Paperclip } from 'lucide-react';
-import { useToast } from '../../Providers/ToastContext';
+import { useToast } from '../Providers/ToastContext';
 import { IoMdClose } from "react-icons/io";
 import { EnvContext } from "../../EnvContext";
 

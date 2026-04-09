@@ -25,13 +25,17 @@ import {
   Body,
   SuccessResponse,
   Tags,
-  Middlewares,
+  Middlewares, Request
 } from "tsoa";
 import dotenv from "dotenv";
 import { mapCreateUserRequestToDb, mapUser, mapUsers, mapUpdateUserRequestToDb } from "../mappers/user.mapper";
 import { UserModel } from "../models/user.model";
 import { LogChangeModel } from "../models/logChange.model";
+import { Request as ExpressRequest } from "express";
 
+export interface AuthRequest extends ExpressRequest {
+  user?: User;
+}
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -169,7 +173,11 @@ export class UserController extends Controller {
 
   @Put("{id}")
   @Middlewares(adminAuthMiddleware)
-  public async updateUser(@Path() id: string, @Body() body: UpdateUserRequest): Promise<any> {
+  public async updateUser(
+    @Path() id: string,
+     @Body() body: UpdateUserRequest,
+     @Request() request: AuthRequest
+    ): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
@@ -194,11 +202,21 @@ export class UserController extends Controller {
         { new: true, lean: true, projection: { password: 0 } as any }
       );
 
+
+      const token = request.cookies?.token;
+      
+      
+          
+          const decoded_token = jwt.verify(token, JWT_SECRET) as { userId: string, role: string};
+
+
       await LogChangeModel.create({
         targetId: new Types.ObjectId(id),
-        lastModifiedBy: new Types.ObjectId(id),
+        lastModifiedBy: new Types.ObjectId(decoded_token.userId),
         collection: "users",
-        message: JSON.stringify({ before: mapUser(current), changes: body }),
+        message: body.authorize
+  ? "User has been authorized"
+  : "User access has been revoked",
       });
 
       return createSuccessResponse(mapUser(user), "User updated successfully");

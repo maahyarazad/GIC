@@ -1,1 +1,41 @@
-/*# sourceMappingURL=Navbar.css.map */
+.span-link {
+  font-family: var(--sa);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mu);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 4px 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+.span-link:hover {
+  color: var(--txt);
+  border-bottom-color: var(--ora);
+}
+.span-link.active {
+  color: var(--txt);
+  border-bottom-color: var(--ora);
+}
+
+.mob-nav .span-link {
+  display: block;
+  padding: 14px 28px;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mu);
+  text-decoration: none;
+  cursor: pointer;
+  border-bottom: 1px solid var(--bdr);
+}
+.mob-nav .span-link.active {
+  color: var(--txt);
+  border-bottom-color: var(--ora);
+}/*# sourceMappingURL=Navbar.css.map */

@@ -2713,3 +2713,34 @@ nav {
 
   .rp-cell { padding: 40px 20px; }
 }
+
+
+
+
+.modal-layer.hidden,
+.modal-view.hidden,
+.modal-ov.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-layer.open,
+.modal-view.active,
+.modal-ov.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-layer,
+.modal-view,
+.modal-ov {
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-layer.closing,
+.modal-ov.closing {
+  opacity: 0;
+  pointer-events: none;
+}

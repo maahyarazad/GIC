@@ -15,6 +15,7 @@ import Dashboard from './Pages/Dashboard/Dashboard';
 import NotFound from './Pages/NotFound/NotFound';
 import ProtectedRoute from './Pages/ProtectedRoutes';
 import Unsubscribe from './Pages/Unsubscribe/Unsubscribe';
+import UnderDevelopment from './Pages/UnderDevelopment/UnderDevelopment';
 
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
@@ -100,8 +101,10 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home siteData={siteData} />} />
           <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contact-us" element={<ContactUs siteData={siteData} />} />
+          <Route path="/what-we-do" element={<UnderDevelopment />} />
+          <Route path="/membership" element={<UnderDevelopment />} />
+          <Route path="/boardroom" element={<UnderDevelopment />} />
+          <Route path="/contact" element={<ContactUs siteData={siteData} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route

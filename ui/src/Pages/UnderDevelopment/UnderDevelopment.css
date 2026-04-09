@@ -1,0 +1,135 @@
+.underdev-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(circle at top left, color-mix(in srgb, var(--ora) 12%, transparent), transparent 35%), radial-gradient(circle at bottom right, color-mix(in srgb, var(--or2) 10%, transparent), transparent 30%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+  color: var(--txt);
+  font-family: var(--sa);
+}
+
+.underdev-card {
+  width: 100%;
+  max-width: 620px;
+  padding: 40px 32px;
+  border-radius: 24px;
+  border: 1px solid var(--bdr);
+  background: linear-gradient(180deg, var(--bgp) 0%, var(--bgp2) 100%);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.underdev-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, color-mix(in srgb, var(--ora) 8%, transparent) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+.underdev-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ora) 35%, var(--bdr));
+  background: color-mix(in srgb, var(--ora) 12%, var(--bgp));
+  color: var(--ora);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.underdev-title {
+  margin: 0 0 14px;
+  font-family: var(--se);
+  font-size: clamp(32px, 5vw, 52px);
+  line-height: 1.05;
+  color: var(--txt);
+}
+
+.underdev-text {
+  margin: 0 auto 10px;
+  max-width: 520px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--txt);
+}
+
+.underdev-subtext {
+  margin: 0 0 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--mu);
+}
+
+.underdev-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.underdev-btn {
+  min-width: 140px;
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid var(--bdr);
+  font-family: var(--sa);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.underdev-btn:hover {
+  transform: translateY(-1px);
+}
+
+.underdev-btn.primary {
+  background: linear-gradient(135deg, var(--ora), var(--or2));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--ora) 28%, transparent);
+}
+
+.underdev-btn.primary:hover {
+  filter: brightness(1.04);
+}
+
+.underdev-btn.secondary {
+  background: var(--bg);
+  color: var(--txt);
+  border-color: var(--bdr);
+}
+
+.underdev-btn.secondary:hover {
+  background: var(--bg2);
+  border-color: var(--bdrs);
+}
+
+@media (max-width: 640px) {
+  .underdev-card {
+    padding: 32px 20px;
+    border-radius: 20px;
+  }
+  .underdev-text {
+    font-size: 15px;
+  }
+  .underdev-subtext {
+    font-size: 14px;
+  }
+  .underdev-actions {
+    flex-direction: column;
+  }
+  .underdev-btn {
+    width: 100%;
+  }
+}/*# sourceMappingURL=UnderDevelopment.css.map */

@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import ModalDialog from "../Components/Generic/Dialog/Dialog";
 
-// --- Expert data shape ---
 interface ExpertModalContent {
     init: string;
     name: string;
@@ -44,54 +43,67 @@ export const useModal = () => {
     return ctx;
 };
 
-// --- Standalone Expert modal ---
 const ExpertModal: React.FC<{
-    expert: ExpertModalContent;
+    expert?: ExpertModalContent;
+    visible: boolean;
     exiting: boolean;
     onClose: () => void;
-}> = ({ expert, exiting, onClose }) => {
-
-
-    debugger;
+}> = ({ expert, visible, exiting, onClose }) => {
     return (
-
-        <>
-            <div className="modal-ov open" id="expertModal">
-                <div className="modal-box">
-                    <div className="modal-close" id="modalClose" onClick={onClose}>&#x2715;</div>
-                    <div className="modal-hd">
-                        <div className="modal-port">
-                            <div className="modal-init">{expert.init}</div>
-                        </div>
-                        <div className="modal-hi">
-                            <div className="modal-name">{expert.name}</div>
-                            <div className="modal-role">{expert.role}</div>
-                            <div className="modal-tag">{expert.tag}</div>
-                        </div>
-                    </div>
-                    <div className="modal-bd">
-                        <div className="modal-st">Background</div>
-                        <p className="modal-tx">{expert.bio}</p>
-                        <div className="modal-st">Areas of Expertise</div>
-                        <ul className="modal-ul">
-                            {expert.exp.map((item, i) => (
-                                <li key={i}>{item}</li>
-                            ))}
-                        </ul>
-                        <div className="modal-st">Role in the Club</div>
-                        <p className="modal-tx">{expert.bg}</p>
-                    </div>
+        <div
+            className={[
+                "modal-ov",
+                visible ? "open" : "hidden",
+                exiting ? "closing" : "",
+            ].join(" ")}
+            id="expertModal"
+            aria-hidden={!visible}
+        >
+            <div className="modal-box">
+                <div className="modal-close" onClick={onClose}>
+                    &#x2715;
                 </div>
-            </div>
 
-        </>
+                {expert && (
+                    <>
+                        <div className="modal-hd">
+                            <div className="modal-port">
+                                <div className="modal-init">{expert.init}</div>
+                            </div>
+                            <div className="modal-hi">
+                                <div className="modal-name">{expert.name}</div>
+                                <div className="modal-role">{expert.role}</div>
+                                <div className="modal-tag">{expert.tag}</div>
+                            </div>
+                        </div>
+
+                        <div className="modal-bd">
+                            <div className="modal-st">Background</div>
+                            <p className="modal-tx">{expert.bio}</p>
+
+                            <div className="modal-st">Areas of Expertise</div>
+                            <ul className="modal-ul">
+                                {expert.exp.map((item, i) => (
+                                    <li key={i}>{item}</li>
+                                ))}
+                            </ul>
+
+                            <div className="modal-st">Role in the Club</div>
+                            <p className="modal-tx">{expert.bg}</p>
+                        </div>
+                    </>
+                )}
+            </div>
+        </div>
     );
 };
 
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [exiting, setExiting] = useState(false);
-    const [options, setOptions] = useState<ModalOptions | null>(null);
+    const [options, setOptions] = useState<ModalOptions>({
+        variant: "default",
+    });
 
     useEffect(() => {
         if (!isOpen) return;
@@ -107,61 +119,77 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, [isOpen]);
 
     const openModal = (opts: ModalOptions) => {
-
-        
+        setExiting(false);
         setOptions({
-            variant: opts.variant,
+            variant: "default",
             ...opts,
         });
         setIsOpen(true);
-        setExiting(false);
     };
 
     const closeModal = () => {
         if (!isOpen) return;
 
+        const currentOptions = options;
+
         setExiting(true);
+
         setTimeout(() => {
             setIsOpen(false);
             setExiting(false);
-            options?.onCancel?.();
-            setOptions(null);
+            currentOptions?.onCancel?.();
         }, 300);
     };
 
     const handleConfirm = () => {
+        if (!isOpen) return;
+
+        const currentOptions = options;
+
         setExiting(true);
+
         setTimeout(() => {
             setIsOpen(false);
             setExiting(false);
-            options?.onConfirm?.();
-            setOptions(null);
+            currentOptions?.onConfirm?.();
         }, 300);
     };
+
+    const showDefault = isOpen && options?.variant === "default";
+    const showExpert = isOpen && options?.variant === "expert";
 
     return (
         <ModalContext.Provider value={{ openModal, closeModal }}>
             {children}
 
-            {isOpen && options?.variant === "default" && (
-                <ModalDialog
-                    title={options.title}
-                    content={options.content}
-                    confirmText={options.confirmText}
-                    cancelText={options.cancelText}
-                    onConfirm={handleConfirm}
-                    onCancel={closeModal}
-                    exiting={exiting}
-                />
-            )}
+            <div
+                className={[
+                    "modal-layer",
+                    isOpen ? "open" : "hidden",
+                    exiting ? "closing" : "",
+                ].join(" ")}
+            >
+                <div className={showDefault ? "modal-view active" : "modal-view hidden"}>
+                    <ModalDialog
+                        title={options?.title}
+                        content={options?.content}
+                        confirmText={options?.confirmText}
+                        cancelText={options?.cancelText}
+                        onConfirm={handleConfirm}
+                        onCancel={closeModal}
+                        exiting={exiting}
+                    />
+                </div>
 
-            {isOpen && options?.variant === "expert" && options.expert && (
-                <ExpertModal
-                    expert={options.expert}
-                    exiting={exiting}
-                    onClose={closeModal}
-                />
-            )}
+                <div className={showExpert ? "modal-view active" : "modal-view hidden"}>
+                    <ExpertModal
+                        expert={options?.expert}
+                        visible={showExpert}
+                        exiting={exiting}
+                        onClose={closeModal}
+                    />
+                </div>
+            </div>
         </ModalContext.Provider>
     );
 };

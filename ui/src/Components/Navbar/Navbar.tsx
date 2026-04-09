@@ -309,8 +309,8 @@ const Navbar = (
                             </li>
                         ))}
                         <li><a onClick={() => {
-                            showPage('/contact-us');
-                            navigate('/contact-us');
+                            showPage('/contact');
+                            navigate('/contact');
                         }} className="nav-cta">Apply Now</a></li>
 
                         {User}
@@ -351,7 +351,13 @@ const Navbar = (
                             link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         }
                     </li>
+
                 ))}
+
+  <li><a onClick={() => {
+                            showPage('/contact');
+                            navigate('/contact');
+                        }} className="span-cta">Apply Now</a></li>
 
                 {User}
             </div>

@@ -104,7 +104,7 @@ const ContactUs = ({ siteData }) => {
   return (
     <div
       id="page-contact"
-      className={`page ${activePage === "/contact-us" ? "active" : ""}`}
+      className={`page ${activePage === "/contact" ? "active" : ""}`}
     >
       <div className="co-wrap">
         <div className="co-left">

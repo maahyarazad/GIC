@@ -7,10 +7,10 @@ import React, {
 } from "react";
 import { ContinetViewModel } from "../../../../../src/types/continent.types";
 import slugify from "slugify";
-import CountriesSelector from "./CountriesSelector"; 
-
+import CountriesSelector from "./CountriesSelector";
 
 interface ModifyContinentProps {
+    id?: string;
     continent?: ContinetViewModel;
     handleSaveContinent: (continent: ContinetViewModel) => void;
 }
@@ -18,6 +18,31 @@ interface ModifyContinentProps {
 export interface ModifyContinentRef {
     submitForm: () => void;
 }
+
+const inputStyle: React.CSSProperties = {
+    background: "var(--bg2)",
+    color: "var(--txt)",
+    border: "1px solid var(--bdr)",
+    boxShadow: "none",
+};
+
+const disabledInputStyle: React.CSSProperties = {
+    ...inputStyle,
+    background: "var(--bgp2)",
+    color: "var(--mu)",
+    cursor: "not-allowed",
+    opacity: 1,
+};
+
+const labelStyle: React.CSSProperties = {
+    color: "var(--txt)",
+    fontWeight: 700,
+};
+
+const cardStyle: React.CSSProperties = {
+    background: "var(--bg)",
+    color: "var(--txt)",
+};
 
 const ModifyContinent = forwardRef<
     ModifyContinentRef,
@@ -36,8 +61,6 @@ const ModifyContinent = forwardRef<
         children: [],
         isActive: true,
         order: 0,
-
-        // SEO & image
         image: null,
         imageAlt: "",
         seoTitle: "",
@@ -45,18 +68,16 @@ const ModifyContinent = forwardRef<
         seoKeywords: [],
     });
 
-
-
     useEffect(() => {
         if (continent) {
-            setFormState((prev) => ({
+            setFormState({
                 ...continent,
                 slug: slugify(continent.name, {
                     lower: true,
                     strict: true,
                     locale: "en",
                 }),
-            }));
+            });
         }
     }, [continent]);
 
@@ -66,7 +87,10 @@ const ModifyContinent = forwardRef<
         },
     }));
 
-    const handleChange = <K extends keyof ContinetViewModel>(key: K, value: ContinetViewModel[K]) => {
+    const handleChange = <K extends keyof ContinetViewModel>(
+        key: K,
+        value: ContinetViewModel[K]
+    ) => {
         setFormState((prev) => ({
             ...prev,
             [key]: value,
@@ -80,10 +104,8 @@ const ModifyContinent = forwardRef<
         }));
     };
 
-
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         handleSaveContinent(formState);
     };
 
@@ -92,6 +114,7 @@ const ModifyContinent = forwardRef<
             ref={formRef}
             onSubmit={onSubmit}
             className="d-flex flex-column gap-3"
+            style={cardStyle}
         >
             <button
                 type="submit"
@@ -101,155 +124,196 @@ const ModifyContinent = forwardRef<
                 Save
             </button>
 
-                {/* Hidden Continent ID */}
-                {formState._id && (
+            {formState._id && (
                 <input type="hidden" name="_id" value={formState._id} />
-                )}
-            <div className="row g-3">
+            )}
 
-                {/* Name */}
+            <div className="row g-3">
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Name *</label>
+                    <label className="form-label" style={labelStyle}>
+                        Name *
+                    </label>
                     <input
                         type="text"
                         className="form-control"
+                        style={inputStyle}
                         value={formState.name}
                         onChange={(e) => handleChange("name", e.target.value)}
                         required
                     />
                 </div>
 
-                {/* Slug */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Slug *</label>
+                    <label className="form-label" style={labelStyle}>
+                        Slug *
+                    </label>
                     <input
                         type="text"
                         className="form-control"
+                        style={disabledInputStyle}
                         value={formState.slug}
                         disabled
                         required
                     />
                 </div>
 
-                {/* Countries */}
                 <div className="col-12 col-lg-12">
-                  {/* Countries Selector */}
-                        <CountriesSelector
+                    <CountriesSelector
                         continent={formState}
                         setContinent={setFormState}
-                        />
-                </div>
-
-                {/* Description */}
-                <div className="col-12">
-                    <label className="form-label fw-bold text-dark dark:text-white">Description</label>
-                    <textarea
-                        className="form-control"
-                        rows={3}
-                        value={formState.description}
-                        onChange={(e) => handleChange("description", e.target.value)}
                     />
                 </div>
 
-                {/* Parent */}
+                <div className="col-12">
+                    <label className="form-label" style={labelStyle}>
+                        Description
+                    </label>
+                    <textarea
+                        className="form-control"
+                        style={inputStyle}
+                        rows={3}
+                        value={formState.description}
+                        onChange={(e) =>
+                            handleChange("description", e.target.value)
+                        }
+                    />
+                </div>
+
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Parent ID</label>
+                    <label className="form-label" style={labelStyle}>
+                        Parent ID
+                    </label>
                     <input
                         type="text"
                         disabled
                         className="form-control"
+                        style={disabledInputStyle}
                         value={formState.parent ?? ""}
                     />
                 </div>
 
-                {/* Order */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Order</label>
+                    <label className="form-label" style={labelStyle}>
+                        Order
+                    </label>
                     <input
                         type="number"
                         className="form-control"
+                        style={inputStyle}
                         value={formState.order}
-                        onChange={(e) => handleChange("order", Number(e.target.value))}
+                        onChange={(e) =>
+                            handleChange("order", Number(e.target.value))
+                        }
                     />
                 </div>
 
-                {/* Active */}
                 <div className="col-12">
                     <div className="form-check mt-2">
                         <input
                             type="checkbox"
                             className="form-check-input"
                             checked={formState.isActive}
-                            onChange={(e) => handleChange("isActive", e.target.checked)}
+                            onChange={(e) =>
+                                handleChange("isActive", e.target.checked)
+                            }
+                            style={{
+                                backgroundColor: formState.isActive
+                                    ? "var(--ora)"
+                                    : "var(--bg2)",
+                                borderColor: "var(--bdr)",
+                            }}
                         />
-                        <label className="form-check-label">Active</label>
+                        <label
+                            className="form-check-label"
+                            style={{ color: "var(--txt)" }}
+                        >
+                            Active
+                        </label>
                     </div>
                 </div>
 
-                {/* Image URL and Alt Text side by side */}
                 <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Image URL</label>
+                    <label className="form-label" style={labelStyle}>
+                        Image URL
+                    </label>
                     <input
                         type="text"
                         className="form-control"
+                        style={inputStyle}
                         value={formState.image ?? ""}
-                        onChange={(e) => handleChange("image", e.target.value || null)}
-                    />
-                </div>
-
-                <div className="col-12 col-lg-6">
-                    <label className="form-label fw-bold text-dark dark:text-white">Image Alt Text</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={formState.imageAlt ?? ""}
-                        onChange={(e) => handleChange("imageAlt", e.target.value)}
-                    />
-                </div>
-
-                {/* SEO Title */}
-                <div className="col-12">
-                    <label className="form-label fw-bold text-dark dark:text-white">SEO Title</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={formState.seoTitle ?? ""}
-                        onChange={(e) => handleChange("seoTitle", e.target.value)}
-                    />
-                </div>
-
-                {/* SEO Description */}
-                <div className="col-12">
-                    <label className="form-label fw-bold text-dark dark:text-white">SEO Description</label>
-                    <textarea
-                        className="form-control"
-                        rows={2}
-                        value={formState.seoDescription ?? ""}
-                        onChange={(e) => handleChange("seoDescription", e.target.value)}
-                    />
-                </div>
-
-                {/* SEO Keywords */}
-                <div className="col-12">
-                    <label className="form-label fw-bold text-dark dark:text-white">SEO Keywords (comma separated)</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={formState.seoKeywords?.join(", ") ?? ""}
                         onChange={(e) =>
-                            handleChange(
-                                "seoKeywords",
-                                e.target.value.split(",").map((k) => k.trim())
-                            )
+                            handleChange("image", e.target.value || null)
                         }
                     />
                 </div>
 
+                <div className="col-12 col-lg-6">
+                    <label className="form-label" style={labelStyle}>
+                        Image Alt Text
+                    </label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formState.imageAlt ?? ""}
+                        onChange={(e) =>
+                            handleChange("imageAlt", e.target.value)
+                        }
+                    />
+                </div>
+
+                <div className="col-12">
+                    <label className="form-label" style={labelStyle}>
+                        SEO Title
+                    </label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formState.seoTitle ?? ""}
+                        onChange={(e) =>
+                            handleChange("seoTitle", e.target.value)
+                        }
+                    />
+                </div>
+
+                <div className="col-12">
+                    <label className="form-label" style={labelStyle}>
+                        SEO Description
+                    </label>
+                    <textarea
+                        className="form-control"
+                        style={inputStyle}
+                        rows={2}
+                        value={formState.seoDescription ?? ""}
+                        onChange={(e) =>
+                            handleChange("seoDescription", e.target.value)
+                        }
+                    />
+                </div>
+
+                <div className="col-12">
+                    <label className="form-label" style={labelStyle}>
+                        SEO Keywords (comma separated)
+                    </label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        style={inputStyle}
+                        value={formState.seoKeywords?.join(", ") ?? ""}
+                        onChange={(e) =>
+                            handleChange(
+                                "seoKeywords",
+                                e.target.value
+                                    .split(",")
+                                    .map((k) => k.trim())
+                                    .filter(Boolean)
+                            )
+                        }
+                    />
+                </div>
             </div>
         </form>
-
-
-
     );
 });
 

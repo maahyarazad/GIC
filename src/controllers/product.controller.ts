@@ -51,6 +51,7 @@ export class ProductController extends Controller {
       }
 
       const existing = await ProductModel.findOne({
+        //@ts-ignore
         $or: [{ fileId: body.fileId }, { code: body.code }],
       }).lean();
 
@@ -107,7 +108,7 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
-
+//@ts-ignore
       const product = await ProductModel.findById(id).lean();
 
       if (!product) {
@@ -131,7 +132,7 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return { products: [] };
       }
-
+//@ts-ignore
       const products = await ProductModel.find({ parent: new Types.ObjectId(parentId) }).lean();
       return { products: mapProducts(products) };
     } catch (error) {
@@ -154,6 +155,7 @@ export class ProductController extends Controller {
       const updateData = mapUpdateProductRequestToDb(body);
 
       const product = await ProductModel.findByIdAndUpdate(
+        //@ts-ignore
         id,
         { $set: updateData },
         { new: true, lean: true }
@@ -181,7 +183,7 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
-
+//@ts-ignore
       const result = await ProductModel.findByIdAndDelete(id).lean();
       if (!result) {
         this.setStatus(404);

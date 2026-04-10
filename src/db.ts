@@ -10,17 +10,7 @@ dotenv.config();
 let database: Db | null = null;
 let connect$: Promise<Db> | null = null;
 
-function buildMongoUri(): string {
-//   const user = process.env.MONGO_USER;
-//   const password = process.env.MONGO_PASSWORD;
 
-//   if (!user || !password) {
-//     throw new Error("MONGO_USER or MONGO_PASSWORD is not defined.");
-//   }
-
-//   return `mongodb+srv://${user}:${password}@cluster0.ooeuiqe.mongodb.net/?appName=Cluster0`;
-  return `mongodb://localhost:27017`;
-}
 
 async function _connectToDatabase(): Promise<Db> {
   if (database && mongoose.connection.readyState === 1) {
@@ -32,7 +22,7 @@ async function _connectToDatabase(): Promise<Db> {
     throw new Error("DB_NAME environment variable is not defined.");
   }
 
-  await mongoose.connect(buildMongoUri(), {
+  await mongoose.connect(process.env.MONGO_URI, {
     dbName,
     autoIndex: true,
   });

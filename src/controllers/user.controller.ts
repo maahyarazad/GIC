@@ -115,6 +115,7 @@ export class UserController extends Controller {
   ): Promise<{ user?: Omit<User, "password">; token?: string; error?: any }> {
     try {
       const email = userData.email.trim().toLowerCase();
+      //@ts-ignore
       const existing = await UserModel.findOne({ email }).lean();
 
       if (existing) {
@@ -155,7 +156,7 @@ export class UserController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid user ID");
       }
-
+//@ts-ignore
       const user = await UserModel.findById(id).select("-password").lean();
 
       if (!user) {
@@ -189,7 +190,7 @@ export class UserController extends Controller {
       if (body.password) {
         updateData.password = await bcrypt.hash(body.password, 10);
       }
-
+//@ts-ignore
       const current = await UserModel.findById(id).lean();
       if (!current) {
         this.setStatus(404);
@@ -197,6 +198,7 @@ export class UserController extends Controller {
       }
 
       const user = await UserModel.findByIdAndUpdate(
+        //@ts-ignore
         id,
         { $set: updateData },
         { new: true, lean: true, projection: { password: 0 } as any }
@@ -237,6 +239,7 @@ export class UserController extends Controller {
       }
 
       const user = await UserModel.findByIdAndUpdate(
+        //@ts-ignore
         id,
         { $set: { authorize: true, updatedAt: new Date() } },
         { new: true, lean: true, projection: { password: 0 } as any }

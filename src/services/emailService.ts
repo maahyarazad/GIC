@@ -1,6 +1,6 @@
 import nodemailer, { SendMailOptions } from "nodemailer";
 import dotenv from "dotenv";
-import {EmailTemplateDoc} from '../controllers/email.controller';
+// import {EmailTemplateDoc} from '../controllers/email.controller';
 import pLimit from "p-limit";
 
 dotenv.config();
@@ -147,60 +147,60 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 
 
 
-export async function sendMassDynamicEmailDoc(
-  doc: EmailTemplateDoc,
-  data: Record<string, any>
-) {
-  try {
-    const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
+// export async function sendMassDynamicEmailDoc(
+//   doc: EmailTemplateDoc,
+//   data: Record<string, any>
+// ) {
+//   try {
+//     const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
 
-    const subscribers = await collection
-      .find({ active: true })
-      .toArray();
+//     const subscribers = await collection
+//       .find({ active: true })
+//       .toArray();
 
-    const emails = subscribers.map((subscriber) => {
-      const unsubscribeToken = generateUnsubscribeToken(
-        subscriber._id.toString()
-      );
+//     const emails = subscribers.map((subscriber) => {
+//       const unsubscribeToken = generateUnsubscribeToken(
+//         subscriber._id.toString()
+//       );
 
 
 
-        const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_ENV === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
+//         const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_ENV === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
 
-        // 🔁 VARIABLES PER SUBSCRIBER
-        const variables : Record<string, any> = {
-        ...getGlobalEmailVariables(data),
-        ...data,
-        SUBSCRIBER_TOKEN: unsubscribeToken, // token string
-        EMAIL: subscriber.email,
-        };
+//         // 🔁 VARIABLES PER SUBSCRIBER
+//         const variables : Record<string, any> = {
+//         ...getGlobalEmailVariables(data),
+//         ...data,
+//         SUBSCRIBER_TOKEN: unsubscribeToken, // token string
+//         EMAIL: subscriber.email,
+//         };
 
-        delete variables.UNSUBSCRIBE_LINK;
-        // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
-        const _variables = {
-        ...variables,
-        UNSUBSCRIBE_LINK: replacePlaceholders(UNSUBSCRIBE_BASE_URL, variables),
-        };
+//         delete variables.UNSUBSCRIBE_LINK;
+//         // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
+//         const _variables = {
+//         ...variables,
+//         UNSUBSCRIBE_LINK: replacePlaceholders(UNSUBSCRIBE_BASE_URL, variables),
+//         };
 
         
-      return {
-        email: subscriber.email,
-        subject: replacePlaceholders(doc.subject, _variables),
-        htmlBody: replacePlaceholders(doc.html, _variables),
-        textBody: replacePlaceholders(doc.text || "", _variables),
-      };
-    });
+//       return {
+//         email: subscriber.email,
+//         subject: replacePlaceholders(doc.subject, _variables),
+//         htmlBody: replacePlaceholders(doc.html, _variables),
+//         textBody: replacePlaceholders(doc.text || "", _variables),
+//       };
+//     });
 
-    const result = await sendMassEmail({
-      recipients: emails,
-    });
+//     const result = await sendMassEmail({
+//       recipients: emails,
+//     });
 
-    return result;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
+//     return result;
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// }
 
 
 

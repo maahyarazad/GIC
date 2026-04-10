@@ -13,7 +13,7 @@ import {
   createErrorResponse,
   createSuccessResponse,
 } from "../utils/helpers";
-import { ContactUsModel, mapContactUsSubmission } from "../models/contactUs.model.ts";
+import { ContactUsModel, mapContactUsSubmission } from "../models/contactus.model";
 
 
 @Route("api/v1/contact-us")

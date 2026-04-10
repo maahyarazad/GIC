@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
-import { usePage } from '../../providers/PageContext';
-
+import { usePage } from '@/providers/PageContext';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 interface Props {
     siteData: any;
@@ -8,7 +8,7 @@ interface Props {
 
 const AboutUs: React.FC<Props> = ({ siteData }) => {
     const { showPage, activePage } = usePage();
-
+    const navigate = useNavigate();
 
 
     return (
@@ -112,13 +112,13 @@ const AboutUs: React.FC<Props> = ({ siteData }) => {
                             We assess <strong>relevance, experience, and strategic seriousness.</strong> Not size. Not visibility.
                         </p>
                         <br />
-                        <button
-                            className="btn-p"
-                            style={{ marginTop: "8px", display: "inline-flex" }}
-                            onClick={() => showPage("membership")}
-                        >
-                            Membership Criteria &rarr;
-                        </button>
+
+                           <span  style={{ marginTop: "8px", display: "inline-flex" }} onClick={() => {
+                            showPage('/membership');
+                            navigate('/membership');
+                        }} className="btn-p">  Membership Criteria &rarr;</span>
+
+                      
                     </div>
 
                     <div className="env-facts">

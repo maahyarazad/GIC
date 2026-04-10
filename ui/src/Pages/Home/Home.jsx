@@ -3,13 +3,15 @@ import { EnvContext } from '../../EnvContext';
 import './Home.css';
 import { usePage } from '../../providers/PageContext';
 import { useModal } from "../../providers/ModalContext";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+
+
 const Home = ({ siteData }) => {
-    const { activePage } = usePage();
+        const { showPage, activePage } = usePage();
     const env = useContext(EnvContext);
     const { openModal } = useModal();
     if (!siteData) return null;
-
+    const navigate = useNavigate();
 
     const openExpert = (expertName) => {
         
@@ -62,12 +64,20 @@ const Home = ({ siteData }) => {
                             Bridgebuilding &middot; Research &amp; Analytics &middot; Governmental Access &middot; Market Intelligence
                         </p>
                         <div className="hero-actions">
-                            <Link className="btn-p" onClick={() => showPage("contact-us")}>
-                                Apply for Membership
-                            </Link>
-                            <Link className="btn-g" to='about-us'>
-                                Our Mandate &rarr;
-                            </Link>
+                           
+
+                        <span onClick={() => {
+                            showPage('/contact');
+                            navigate('/contact');
+                        }} className="btn-p">Apply for Membership</span>
+                        <span onClick={() => {
+                            showPage('/about-us');
+                            navigate('/about-us');
+                        }} className="btn-g">  Our Mandate &rarr;</span>
+
+
+                         
+                          
                         </div>
                     </div>
 

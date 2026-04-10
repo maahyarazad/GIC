@@ -97,7 +97,7 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
   const { email, event, otp, message } = reqBody;
 
   try {
-    const templateCollection = getCollection("email_templates");
+    const templateCollection = getCollection("emailtemplates");
     // Fetch template from DB
     const template = await templateCollection.findOne({
       name: "otp_verification",
@@ -208,7 +208,7 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>) {
   try {
     
-        const templateCollection = getCollection("email_templates");
+        const templateCollection = getCollection("emailtemplates");
     // Fetch template from DB
     const template = await templateCollection.findOne({
       name: doc,

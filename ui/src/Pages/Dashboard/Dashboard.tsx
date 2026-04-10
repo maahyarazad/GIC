@@ -72,6 +72,7 @@ const getDefaultTab = (role: string): MenuItem => {
 import { setReady } from '../../features/appSlice';
 import { useDispatch } from "react-redux";
 import UnderDevelopment from "../UnderDevelopment/UnderDevelopment";
+import Events from "@/Components/Dashboard/Events/Events";
 const Dashboard: React.FC = () => {
 
 
@@ -132,7 +133,7 @@ const Dashboard: React.FC = () => {
     const componentMap: Record<MenuItem, React.ReactNode> = useMemo(
         () => ({
             users: <UserProfilesDataGrid />,
-            events: <UnderDevelopment withLockOverlay={false} />,
+            events: <Events/>,
             blog: <UnderDevelopment withLockOverlay={false} />,
             sitedata: <JsonViewer />,
             file_management: <FileManagement />,

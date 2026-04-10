@@ -57,8 +57,8 @@ const EmailTemplatesDataGrid = () => {
     const [filterModel, setFilterModel] = useState<FilterModel<EmailTemplate>[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
-    const { openMenu } = useSlideMenu();
-    const { onClose } = useSlideMenu();
+    const { openMenu, onClose } = useSlideMenu();
+    
 
     const fetchTemplates = useCallback(async () => {
         setLoading(true);
@@ -140,7 +140,7 @@ const EmailTemplatesDataGrid = () => {
             }
 
             // Close modal and reload table
-            setOpen(false);
+            onClose();
             fetchTemplates();
 
         } catch (err: any) {

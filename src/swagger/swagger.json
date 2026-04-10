@@ -1850,6 +1850,26 @@
 				]
 			}
 		},
+		"/api/v1/sso": {
+			"get": {
+				"operationId": "GetSSOToken",
+				"responses": {
+					"200": {
+						"description": "SSO token generated",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/sitemap.xml": {
 			"get": {
 				"operationId": "GetSitemap",

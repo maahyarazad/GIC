@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const LockOverlay: React.FC = () => {
+    
     const userProfile = useSelector((state: any) => state.auth?.user);
     const navigate = useNavigate();
 
     const [closing, setClosing] = useState(false);
-
+    
     useEffect(() => {
         if (!userProfile) {
             document.body.style.overflow = "hidden";

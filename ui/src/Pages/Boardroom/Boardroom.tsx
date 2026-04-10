@@ -60,59 +60,81 @@ const Boardroom: React.FC<Props> = ({ siteData }) => {
 
 
     const [eventCard, setEventCards] = useState<Event[]>([]);
-    
+
     const [_loading, _setLoading] = useState(true);
-    
-const stripHtml = (html: string): string => {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
-};
 
-const fetchEvents = useCallback(async () => {
-    try {
-        _setLoading(true);
-        const response = await axiosInstance.get("/events");
-        if (response) {
-            const { data } = response;
-            const eventCards = data.data.map((x: any) => {
-                const eventDate = new Date(x.event_date);
-                const monthLabel = eventDate.toLocaleDateString("en-US", {
-                    month: "long",
-                    year: "numeric",
+    const stripHtml = (html: string): string => {
+        const tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    };
+
+    const fetchEvents = useCallback(async () => {
+        try {
+            _setLoading(true);
+            const response = await axiosInstance.get("/events");
+            if (response) {
+                const { data } = response;
+                const eventCards = data.data.map((x: any) => {
+                    const eventDate = new Date(x.event_date);
+                    const monthLabel = eventDate.toLocaleDateString("en-US", {
+                        month: "long",
+                        year: "numeric",
+                    });
+
+                    return {
+                        id: x.id,
+                        page: x.page,
+                        city: "Dubai",
+                        day: eventDate.getDate().toString(),
+                        monthLabel,
+                        dateValue: x.event_date,
+                        type: "Upcoming · Members Briefing",
+                        title: x.title,
+                        description: stripHtml(x.description),
+                        meta: [monthLabel, "Members Only", "Register Interest"],
+                        visStyle: {
+                            background: "linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)",
+                        },
+                        dateStyle: { background: "" },
+                        cardStyle: { opacity: 1, cursor: 'pointer' }
+                    };
                 });
-
-                return {
-                    id: x.id,
-                    city: "Dubai",
-                    day: eventDate.getDate().toString(),
-                    monthLabel,
-                    dateValue: x.event_date,
-                    type: "Upcoming · Members Briefing",
-                    title: x.title,
-                    description: stripHtml(x.description),
-                    meta: [monthLabel, "Members Only", "Register Interest"],
-                    visStyle: { background: "background:linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)" },
-                    dateStyle: { background: "" },
-                    cardStyle: { opacity: 1 },
-                };
-            });
-            setEventCards(eventCards);
+                setEventCards(eventCards);
+            }
+        } catch (err) {
+            show({ type: "error", message: "Failed to fetch registration list" });
+            console.error("Failed to fetch registration list", err);
+        } finally {
+            _setLoading(false);
         }
-    } catch (err) {
-        show({ type: "error", message: "Failed to fetch registration list" });
-        console.error("Failed to fetch registration list", err);
-    } finally {
-        _setLoading(false);
-    }
-}, []);
+    }, []);
 
-useEffect(() => {
-    fetchEvents();
-}, [fetchEvents]);
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
 
 
-    
+
+    const handleNavigation = async (page: string) => {
+        try {
+            debugger;
+            const response = await axiosInstance.get("/sso");
+            const data = response.data;
+
+            if (data.data.ssoToken) {
+                window.location.href = `https://services.german-emirates-club.com/registration/${page}?sso=${data.data.ssoToken}&referer=gms`;
+                // window.location.href = `http://localhost:5175/registration/${page}?sso=${data.data.ssoToken}&referer=gms`;
+            }
+        } catch (error) {
+            show({
+                type: "error",
+                message: "SSO token not generated. Please try again.",
+            });
+            console.error("SSO error", error);
+        }
+    };
+
 
 
 
@@ -163,7 +185,7 @@ useEffect(() => {
                     </div>
 
                     {eventCard?.map((event) => (
-                        <EventCard key={event.id} event={event} />
+                        <EventCard key={event.id} event={event} _onClick={(p) => handleNavigation(p)} />
                     ))}
                 </div>
 

@@ -1,11 +1,12 @@
 import React from "react";
 
 type Props = {
-    event: any
+    event: any;
+    _onClick : (page: String) => void
 }
 
-const EventCard : React.FC<Props> = ({ event }) => (
-  <div className="ev-card" style={event.cardStyle}>
+const EventCard : React.FC<Props> = ({ event, _onClick }) => (
+  <div className="ev-card" style={event.cardStyle} onClick={()=> _onClick(event.page)} >
     <div className="ev-vis" style={event.visStyle}>
       <div className="ev-city">{event.city}</div>
       <div className="ev-date" style={event.dateStyle}>

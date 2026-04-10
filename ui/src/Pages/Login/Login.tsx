@@ -140,8 +140,8 @@ const Login: React.FC = () => {
                 </form>
 
                 <p className="signup-text form-label fw-bold text-dark dark:text-white">
-                    Don’t have an account?{" "}
-                    <Link to="/register">Sign up</Link>
+                    {/* Don’t have an account?{" "}
+                    <Link to="/register">Sign up</Link> */}
                 </p>
 
             </div>

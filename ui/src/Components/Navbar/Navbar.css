@@ -38,4 +38,32 @@
 .mob-nav .span-link.active {
   color: var(--txt);
   border-bottom-color: var(--ora);
+}
+
+.user-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--txt);
+}
+.user-link__avatar {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ora);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 1px solid var(--bdr);
+  line-height: 1;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none; /* prevents text selection shifting */
+  letter-spacing: 0; /* removes any inherited spacing */
+  text-indent: 0; /* ensures no indent offset */
 }/*# sourceMappingURL=Navbar.css.map */

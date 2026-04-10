@@ -6,7 +6,7 @@ import type { RootState } from "../../store";
 import { EnvContext } from '../../EnvContext.js'
 import mainLogo from '../../../public/gic-log-main.png';
 import { usePage } from '@/Providers/PageContext';
-
+import useIsMobile from '@/Hooks/useIsMobile'
 
 
 type NavbarProps = {
@@ -17,7 +17,7 @@ const Navbar = (
 ) => {
 
     const { showPage, activePage } = usePage();
-
+  const isMobile = useIsMobile();
     const env: string = useContext(EnvContext);
     const isReady = useSelector((state: RootState) => state.app.isReady);
 
@@ -32,6 +32,7 @@ const Navbar = (
 
 
     const user = useSelector((state: RootState) => state.auth.user);
+    
     function isLinkActive(_linkPath: string) {
         // Normalize by removing leading and trailing slashes
         const normalizePath = (path: string) => path.replace(/^\/+|\/+$/g, '');
@@ -188,28 +189,41 @@ const Navbar = (
     if (!navbarLinks || !companyName) return null
 
 
-    const User: React.ReactNode = (
-        <>
-            {user !== null ? (
-                <li >
-                    <span className={`span-link d-none ${activePage === '/dashboard' ? 'active' : ''}`}
-                        onClick={(e) => {
-                            closeMob();
-                            handleScroll(e, "dashboard", "link", "/dashboard");
-                        }}
-                    >
-                        Dashboard</span>
-                </li>
-            ) : (
-                <li >
-                    <span className={`span-link d-none ${activePage === '/login' ? 'active' : ''}`} onClick={(e) => {
+const User: React.ReactNode = (
+    <>
+        {user !== null ? (
+            <>
+                <span
+                    className={`span-link user-link ${
+                        activePage === "/dashboard" ? "active" : ""
+                    }`}
+                    onClick={(e) => {
                         closeMob();
                         handleScroll(e, "dashboard", "link", "/dashboard");
-                    }}>Sign-in</span>
-                </li>
-            )}
-        </>
-    );
+                    }}
+                >
+                    <span className="user-link__avatar">
+                        {user?.name?.charAt(0)?.toUpperCase()}
+                    </span>
+                </span>
+            </>
+        ) : (
+            <>
+                <span
+                    className={`span-link ${
+                        activePage === "/login" ? "active" : ""
+                    }`}
+                    onClick={(e) => {
+                        closeMob();
+                        handleScroll(e, "login", "link", "/login");
+                    }}
+                >
+                    Sign-in
+                </span>
+            </>
+        )}
+    </>
+);
 
 
 
@@ -308,17 +322,18 @@ const Navbar = (
                                 }
                             </li>
                         ))}
-                        <li><a onClick={() => {
+                        {/* <li><a onClick={() => {
                             showPage('/contact');
                             navigate('/contact');
-                        }} className="nav-cta">Apply Now</a></li>
+                        }} className="nav-cta">Apply Now</a></li> */}
 
-                        {User}
+                      
 
                     </ul>
                 </div>
 
                 <div className="nav-right">
+                          {isMobile ? null : User}
                     <div className="theme-wrap" onClick={toggleTheme}>
                         <span className="theme-lbl" id="themeLbl">{theme === "light" ? "Light" : "Dark"}</span>
                         <div className="theme-tog"></div>
@@ -353,13 +368,13 @@ const Navbar = (
                     </li>
 
                 ))}
-
-                <li><a onClick={() => {
+                {User}
+                {/* <li><a onClick={() => {
                     showPage('/contact');
                     navigate('/contact');
-                }} className="span-cta">Apply Now</a></li>
+                }} className="span-cta">Apply Now</a></li> */}
 
-                {User}
+               
             </div>
         </>
 

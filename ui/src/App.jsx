@@ -108,7 +108,7 @@ const App = () => {
           <Route path="/boardroom" element={<UnderDevelopment />} />
           <Route path="/contact" element={<ContactUs siteData={siteData} />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* <Route path="/register" element={<Register />} /> */}
           <Route
             path="/dashboard"
             element={

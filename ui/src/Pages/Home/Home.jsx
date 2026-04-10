@@ -103,7 +103,7 @@ const Home = ({ siteData }) => {
                     </div>
 
                     <div className="hero-scroll">
-                        <div className="scroll-line"></div>Scroll
+                        <div className="scroll-line"></div><span style={{fontSize : 11}}>Scroll</span>
                     </div>
 
 

@@ -692,7 +692,7 @@ nav {
 
 .hero-eyebrow {
   font-family: "Rajdhani", sans-serif;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.4em;
   text-transform: uppercase;
@@ -735,11 +735,11 @@ nav {
 
 .hero-tag {
   font-family: "Rajdhani", sans-serif;
-  font-size: 9px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(200, 84, 26, 0.65);
+  color: #E8632A;
   margin-bottom: 42px;
 }
 
@@ -774,11 +774,11 @@ nav {
 
 .stat-l {
   font-family: "Rajdhani", sans-serif;
-  font-size: 9px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--mu);
+  color: var(--text);
   margin-top: 3px;
 }
 
@@ -882,7 +882,7 @@ nav {
 
 .slbl {
   font-family: "Rajdhani", sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.44em;
   text-transform: uppercase;
@@ -931,11 +931,11 @@ nav {
 
 .npi {
   font-family: "Rajdhani", sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(200, 84, 26, 0.55);
+  color: #E8632A;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2324,7 +2324,7 @@ nav {
 
 .ft-ct {
   font-family: "Rajdhani", sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.33em;
   text-transform: uppercase;

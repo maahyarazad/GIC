@@ -1,142 +1,142 @@
 .co-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
 }
 
 .co-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .co-label {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.33em;
-  text-transform: uppercase;
-  color: var(--mu);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.33em;
+    text-transform: uppercase;
+    color: var(--mu);
 
-  span {
-    color: var(--ora);
-  }
+    span {
+        color: var(--ora);
+    }
 }
 
 %co-field-base {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 
-  background: var(--bgp);
-  border: 1px solid var(--bdr);
-  border-radius: 0;
-  box-shadow: none;
-
-  color: var(--txt);
-  font-family: var(--se);
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.4;
-
-  padding: 14px 17px;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-
-  &:focus {
-    border-color: var(--ora);
+    background: var(--bgp);
+    border: 1px solid var(--bdr);
+    border-radius: 0;
     box-shadow: none;
-  }
 
-  &::placeholder {
-    color: rgba(246, 246, 246, 0.808);
-    font-style: italic;
-    font-weight: 800;
-    opacity: 1;
-  }
+    color: var(--txt);
+    font-family: var(--se);
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.4;
 
-  [data-theme="light"] &::placeholder {
-    color: rgba(26, 20, 16, 0.25);
-font-weight: 800;
-  }
+    padding: 14px 17px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:focus {
+        border-color: var(--ora);
+        box-shadow: none;
+    }
+
+    &::placeholder {
+        color: rgba(246, 246, 246, 0.808);
+        font-style: italic;
+        font-weight: 800;
+        opacity: 1;
+    }
+
+    [data-theme="light"] &::placeholder {
+        color: rgba(26, 20, 16, 0.25);
+        font-weight: 800;
+    }
 }
 
 .co-field {
-  @extend %co-field-base;
+    @extend %co-field-base;
 }
 
 .co-textarea {
-  @extend %co-field-base;
-  min-height: 125px;
-  resize: vertical;
+    @extend %co-field-base;
+    min-height: 125px;
+    resize: vertical;
 }
 
 .co-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 .co-upload {
-  @extend %co-field-base;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  text-align: left;
-  cursor: pointer;
-  background: var(--bgp);
+    @extend %co-field-base;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    cursor: pointer;
+    background: var(--bgp);
 }
 
 .co-upload__text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .co-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  background: var(--ora);
-  color: var(--bg);
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--ora);
+    color: var(--bg);
 
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  padding: 14px 32px;
-  border: 1px solid var(--ora);
-  cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
-  align-self: flex-start;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    border: 1px solid var(--ora);
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    align-self: flex-start;
 
-  &:hover {
-    background: transparent;
-    color: var(--ora);
-    border-color: var(--ora);
-  }
+    &:hover {
+        background: transparent;
+        color: var(--ora);
+        border-color: var(--ora);
+    }
 
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
 }
 
 .co-note {
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--mu);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--mu);
 }
 
 .co-error {
-  font-size: 14px;
-  color: #ff7a7a;
-  margin-top: 4px;
+    font-size: 14px;
+    color: #ff7a7a;
+    margin-top: 4px;
 }
 
 @media (max-width: 768px) {
-  .co-row {
-    grid-template-columns: 1fr;
-  }
+    .co-row {
+        grid-template-columns: 1fr;
+    }
 }

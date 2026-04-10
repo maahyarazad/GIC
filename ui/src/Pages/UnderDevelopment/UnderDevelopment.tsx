@@ -2,14 +2,22 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./UnderDevelopment.css";
 import LockOverlay from "@/Components/LockOverlay/LockOverlay";
-const UnderDevelopment: React.FC = () => {
+
+
+type Props = {
+    withLockOverlay: Boolean
+}
+
+const UnderDevelopment: React.FC<Props> = ({withLockOverlay}) => {
   const navigate = useNavigate();
   const location = useLocation();
   
 
   return (
     <>
-    <LockOverlay/>
+
+    {withLockOverlay ?     <LockOverlay/>: <></>}
+
     <section className="underdev-page">
       <div className="underdev-card">
         <div className="underdev-badge">Coming Soon</div>

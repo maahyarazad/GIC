@@ -7,11 +7,12 @@ import { EnvContext } from "../EnvContext";
 import { usePage } from "../providers/PageContext";
 import { useToast } from "../Providers/ToastContext";
 
+import useIsMobile from '@/Hooks/useIsMobile'
 const ContactUs = ({ siteData }) => {
   const env = useContext(EnvContext);
   const { activePage } = usePage();
   const { show } = useToast();
-
+const isMobile = useIsMobile();
   const server_endpoint = env.VITE_SERVER_API_URL;
   const fileInputRef = useRef(null);
   const [attachedFileName, setAttachedFileName] = useState("");
@@ -171,7 +172,7 @@ const ContactUs = ({ siteData }) => {
         </div>
 
         <div className="co-right">
-          <div className="slbl" style={{ marginBottom: "32px" }}>
+          <div className="slbl" style={{ marginBottom: "32px" , fontSize: isMobile ? 14 : 20}}>
             Membership Application
           </div>
 

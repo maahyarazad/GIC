@@ -69,7 +69,7 @@ const Home = ({ siteData }) => {
                         <span onClick={() => {
                             showPage('/contact');
                             navigate('/contact');
-                        }} className="btn-p">Apply for Membership</span>
+                        }} className="btn-p">Introduce Yourself</span>
                         <span onClick={() => {
                             showPage('/about-us');
                             navigate('/about-us');

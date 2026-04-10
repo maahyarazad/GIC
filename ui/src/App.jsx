@@ -105,7 +105,7 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
           <Route path="/what-we-do" element={<WhatWeDo />} />
           <Route path="/membership" element={<Membership />} />
-          <Route path="/boardroom" element={<UnderDevelopment />} />
+          <Route path="/boardroom" element={<UnderDevelopment withLockOverlay={true} />} />
           <Route path="/contact" element={<ContactUs siteData={siteData} />} />
           <Route path="/login" element={<Login />} />
           {/* <Route path="/register" element={<Register />} /> */}

@@ -15,6 +15,8 @@ import { usePage } from '../../providers/PageContext';
 // --- Types ---
 type MenuItem =
     | "users"
+    | "events"
+    | "blog"
     | "sitedata"
     | "file_management"
     | "email_management"
@@ -27,6 +29,8 @@ type MenuItem =
 // --- Menu access control ---
 const accessControl: Record<MenuItem, string[]> = {
     users: ["admin"],
+    events: ["user","admin", "procurement"],
+    blog: ["admin", "procurement"],
     sitedata: ["admin", "procurement"],
     file_management: ["admin", "procurement"],
     email_management: ["admin", "procurement"],
@@ -39,12 +43,14 @@ const accessControl: Record<MenuItem, string[]> = {
 
 // --- Menu titles ---
 const menuTitles: Record<MenuItem, string> = {
-    users: "User Profiles",
+    users: "Member Profiles",
+    events: "Events",
+    blog: "Blog",
     sitedata: "Website Data",
     file_management: "File Management",
     email_management: "Email Templates",
     newsletter_subscribers: "Email Subscribers",
-    continent: "Manage Continents",
+    continent: "Manage Countries",
     profile: "Profile",
     economic_insights: "Economic Insights",
     logout: "Logout",
@@ -65,6 +71,7 @@ const getDefaultTab = (role: string): MenuItem => {
 
 import { setReady } from '../../features/appSlice';
 import { useDispatch } from "react-redux";
+import UnderDevelopment from "../UnderDevelopment/UnderDevelopment";
 const Dashboard: React.FC = () => {
 
 
@@ -125,6 +132,8 @@ const Dashboard: React.FC = () => {
     const componentMap: Record<MenuItem, React.ReactNode> = useMemo(
         () => ({
             users: <UserProfilesDataGrid />,
+            events: <UnderDevelopment withLockOverlay={false} />,
+            blog: <UnderDevelopment withLockOverlay={false} />,
             sitedata: <JsonViewer />,
             file_management: <FileManagement />,
             email_management: <EmailTemplatesDataGrid />,

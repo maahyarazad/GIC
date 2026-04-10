@@ -240,7 +240,7 @@ const CategoriesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb">Manage Continents</h3>
+            <h3 className="mb">Manage Country Intelligence</h3>
 
             <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={onCreate}>

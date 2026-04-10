@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  
 }
 
 .co-group {
@@ -11,8 +12,8 @@
 }
 
 .co-label {
-  font-size: 9px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   letter-spacing: 0.33em;
   text-transform: uppercase;
   color: var(--mu);
@@ -35,7 +36,7 @@
   color: var(--txt);
   font-family: var(--se);
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 900;
   line-height: 1.4;
 
   padding: 14px 17px;
@@ -49,13 +50,15 @@
   }
 
   &::placeholder {
-    color: rgba(245, 242, 238, 0.18);
+    color: rgba(246, 246, 246, 0.808);
     font-style: italic;
+    font-weight: 800;
     opacity: 1;
   }
 
   [data-theme="light"] &::placeholder {
     color: rgba(26, 20, 16, 0.25);
+font-weight: 800;
   }
 }
 
@@ -98,7 +101,7 @@
   background: var(--ora);
   color: var(--bg);
 
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.28em;
   text-transform: uppercase;
@@ -127,7 +130,7 @@
 }
 
 .co-error {
-  font-size: 11px;
+  font-size: 14px;
   color: #ff7a7a;
   margin-top: 4px;
 }

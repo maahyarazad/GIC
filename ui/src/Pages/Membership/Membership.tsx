@@ -302,7 +302,7 @@ const Membership: React.FC<Props> = ({ siteData }) => {
             }}
           >
             <a className="btn-p" onClick={() => {showPage("contact");   navigate("/contact");}}>
-              Apply for Membership
+              Introduce Yourself
             </a>
           </div>
         </div>

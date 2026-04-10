@@ -428,7 +428,7 @@ body {
   background: var(--bg);
   color: var(--txt);
   font-family: "Rajdhani", sans-serif;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.02em;
   overflow-x: hidden;
   transition: background 0.3s, color 0.3s;
@@ -712,7 +712,7 @@ nav {
 .hero-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(50px, 6.6vw, 96px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 0.95;
   color: var(--txt);
   margin-bottom: 26px;
@@ -725,7 +725,7 @@ nav {
 .hero-sub {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--mu);
   line-height: 1.65;
@@ -764,7 +764,7 @@ nav {
 .stat-n {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 44px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--txt);
   line-height: 1;
 }
@@ -902,7 +902,7 @@ nav {
 .stit {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(36px, 4.2vw, 58px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.1;
   color: var(--txt);
 }
@@ -961,7 +961,7 @@ nav {
 .about-body {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--bo);
 }
@@ -1022,7 +1022,7 @@ nav {
 .pillar-num {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 48px;
-  font-weight: 300;
+  font-weight: 500;
   color: #E8632A;
   line-height: 1;
   margin-bottom: 14px;
@@ -1039,7 +1039,7 @@ nav {
 .pillar-body {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--mu);
 }
@@ -1096,7 +1096,7 @@ nav {
 .team-init {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 52px;
-  font-weight: 300;
+  font-weight: 500;
   color: rgba(200, 84, 26, 0.18);
 }
 
@@ -1193,7 +1193,7 @@ nav {
 .modal-init {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 52px;
-  font-weight: 300;
+  font-weight: 500;
   color: rgba(200, 84, 26, 0.2);
 }
 
@@ -1248,7 +1248,7 @@ nav {
 .modal-tx {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 18px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.75;
   color: var(--bo);
 }
@@ -1264,7 +1264,7 @@ nav {
   gap: 12px;
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.6;
   color: var(--mu);
 }
@@ -1302,7 +1302,7 @@ nav {
 .ap-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(46px, 5.6vw, 84px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
 }
 .ap-title em {
@@ -1314,7 +1314,7 @@ nav {
 .ap-intro {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--bo);
 }
@@ -1337,7 +1337,7 @@ nav {
 .mfst-q {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(22px, 3vw, 36px);
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.6;
   color: var(--txt);
@@ -1357,7 +1357,7 @@ nav {
 .mfst-sub {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.06em;
   line-height: 1.8;
   color: var(--mu);
@@ -1380,7 +1380,7 @@ nav {
 .env-body {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--bo);
 }
@@ -1416,7 +1416,7 @@ nav {
 .env-ft {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.7;
   color: var(--mu);
 }
@@ -1451,7 +1451,7 @@ nav {
 .wwd-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(46px, 5.6vw, 84px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
   max-width: 680px;
   margin-bottom: 22px;
@@ -1464,7 +1464,7 @@ nav {
 .wwd-sub {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--mu);
   line-height: 1.7;
@@ -1486,7 +1486,7 @@ nav {
 .wwd-hint {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--bo);
 }
@@ -1516,7 +1516,7 @@ nav {
 .wwd-mn {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 26px;
-  font-weight: 300;
+  font-weight: 500;
   color: #E8632A;
   line-height: 1;
   flex-shrink: 0;
@@ -1534,7 +1534,7 @@ nav {
 .wwd-mt span {
   display: block;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--mu);
   margin-top: 3px;
 }
@@ -1582,7 +1582,7 @@ nav {
 .wwd-pb {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--mu);
 }
@@ -1601,7 +1601,7 @@ nav {
 .wwd-tq {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(21px, 2.8vw, 34px);
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.65;
   color: var(--txt);
@@ -1621,7 +1621,7 @@ nav {
 .wwd-ts {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: 0.06em;
   line-height: 1.8;
   color: var(--mu);
@@ -1642,7 +1642,7 @@ nav {
 .focus-intro {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.7;
   color: var(--bo);
@@ -1656,7 +1656,7 @@ nav {
 .focus-q {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 19px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--txt);
   padding: 18px 0;
@@ -1706,7 +1706,7 @@ nav {
 .mem-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(46px, 5.6vw, 84px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
 }
 .mem-title em {
@@ -1718,7 +1718,7 @@ nav {
 .mem-sub {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--bo);
 }
@@ -1748,7 +1748,7 @@ nav {
 .crit-num {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 36px;
-  font-weight: 300;
+  font-weight: 500;
   color: #E8632A;
   line-height: 1;
   margin-bottom: 12px;
@@ -1765,7 +1765,7 @@ nav {
 .crit-body {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--mu);
 }
@@ -1801,7 +1801,7 @@ nav {
 .prin-text {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.7;
   color: var(--bo);
@@ -1820,7 +1820,7 @@ nav {
 .persp-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 30px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--txt);
   margin-bottom: 28px;
   text-align: center;
@@ -1849,7 +1849,7 @@ nav {
 .belief-tx {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   color: var(--bo);
 }
@@ -1897,7 +1897,7 @@ nav {
 .br-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(42px, 5.2vw, 72px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
 }
 
@@ -1947,7 +1947,7 @@ nav {
 .ev-city {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 64px;
-  font-weight: 300;
+  font-weight: 500;
   color: rgba(200, 84, 26, 0.06);
   letter-spacing: -0.02em;
   position: absolute;
@@ -1968,7 +1968,7 @@ nav {
 .ev-day {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 24px;
-  font-weight: 300;
+  font-weight: 500;
   color: #fff;
   line-height: 1;
 }
@@ -2010,7 +2010,7 @@ nav {
 .ev-desc {
   font-family: "Rajdhani", sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--mu);
   max-width: 480px;
@@ -2071,7 +2071,7 @@ nav {
 .ac-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 38px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--txt);
   margin-bottom: 12px;
 }
@@ -2103,7 +2103,7 @@ nav {
 .co-title {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(40px, 4.6vw, 68px);
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
 }
 .co-title em {
@@ -2115,7 +2115,7 @@ nav {
 .co-body {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 19px;
-  font-weight: 300;
+  font-weight: 500;
   font-style: italic;
   line-height: 1.75;
   color: var(--mu);
@@ -2141,7 +2141,7 @@ nav {
 .co-dv {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 18px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--txt);
   line-height: 1.4;
 }
@@ -2172,7 +2172,7 @@ nav {
   gap: 10px;
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.6;
   color: var(--mu);
 }
@@ -2217,7 +2217,7 @@ nav {
   color: var(--txt);
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 500;
   padding: 14px 17px;
   outline: none;
   width: 100%;
@@ -2277,7 +2277,7 @@ nav {
 .fnote {
   font-family: "Rajdhani", sans-serif;
   font-size: 11px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--mu);
   line-height: 1.6;
   opacity: 0.55;
@@ -2317,7 +2317,7 @@ nav {
 .ft-bd {
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.8;
   color: var(--mu);
 }
@@ -2342,7 +2342,7 @@ nav {
 .ft-lks a {
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--mu) !important;
   text-decoration: none;
   cursor: pointer;
@@ -2355,7 +2355,7 @@ nav {
 .ft-addr {
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1.9;
   color: var(--mu);
 }
@@ -2752,4 +2752,42 @@ nav {
 .modal-ov.closing {
   opacity: 0;
   pointer-events: none;
+}
+
+/* ------------------------------------------
+   USER AVATAR NAV LINK
+------------------------------------------- */
+.user-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--txt);
+}
+.user-link__avatar {
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ora);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid var(--bdr);
+  line-height: 1;
+}
+.user-link.active .user-link__avatar {
+  background: var(--or2);
+  border-color: var(--ora);
+}
+
+p,
+.co-label,
+.co-submit,
+.co-note,
+.co-error {
+  font-weight: 700 !important;
 }/*# sourceMappingURL=index.css.map */

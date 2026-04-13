@@ -60,7 +60,7 @@ export class EventController extends Controller {
         sortField = "id",
         sortOrder = "desc",
         filter_event,
-        external_source = "gms",
+        external_source = "gic",
       } = req.query as Record<string, string>;
 
       const external_access_token = jwt.sign(

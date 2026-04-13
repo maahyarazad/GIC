@@ -71,8 +71,8 @@ const Events: React.FC = () => {
             const data = response.data;
 
             if (data.data.ssoToken) {
-                window.location.href = `https://services.german-emirates-club.com/registration/${page}?sso=${data.data.ssoToken}&referer=gms`;
-                // window.location.href = `http://localhost:5175/registration/${page}?sso=${data.data.ssoToken}&referer=gms`;
+                window.location.href = `https://services.german-emirates-club.com/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
+                // window.location.href = `http://localhost:5175/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
             }
         } catch (error) {
             show({

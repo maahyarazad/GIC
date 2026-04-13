@@ -37,6 +37,8 @@ import {
 } from "../mappers/continent.mapper";
 import { mapCreateProductRequestToDb } from "../mappers/product.mapper";
 import { toObjectIdArray } from "../mappers/objectId.mapper";
+import { initializeDatabase } from "../initialize_db";
+
 
 export type ContinentSortKey = "name" | "slug" | "createdAt" | "order" | "isActive";
 
@@ -229,6 +231,21 @@ export class ContinentController extends Controller {
       return createErrorResponse(error.message || "Failed to fetch continent");
     }
   }
+
+@Get("/initialize_db")
+public async initializeDB(): Promise<any> {
+  try {
+    await initializeDatabase();
+
+    return createSuccessResponse(
+      null,
+      "Request Completed"
+    );
+  } catch (error: any) {
+    this.setStatus(500);
+    return createErrorResponse(error.message || "Failed to process request");
+  }
+}
 
   @Delete("{id}")
   @Middlewares(adminAuthMiddleware)

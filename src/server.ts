@@ -19,7 +19,7 @@ import { verifyRequirements } from "./db";
 
 /* ---- JSON IMPORT (REQUIRED ASSERTION) ---- */
 import swaggerDocument from "./swagger/swagger.json";
-
+import {RegisterContactUsRoutes} from './controllers/contactus';
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
 
 const app = express();
@@ -122,6 +122,7 @@ async function startSSR() {
       "/uploads",
       express.static(path.resolve(__dirname, "file_storage"))
     );
+
     app.use(
       "/uploads/photos",
       express.static(path.resolve(__dirname, "uploads/photos"))
@@ -277,6 +278,9 @@ async function startSSR() {
     });
   }
 }
+
+
+RegisterContactUsRoutes(app);
 
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.url}`);

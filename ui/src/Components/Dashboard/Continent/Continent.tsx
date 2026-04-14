@@ -32,14 +32,14 @@ const CategoriesDataGrid = () => {
             headerName: "Active",
             width: "8%",
             renderCell: (params) => (
-                           <div style={{ display: "flex", alignItems: "center" }}>
-                               {params.isActive ? (
-                                   <FaCheck style={{ color: "green", fontSize: "18px" }} />
-                               ) : (
-                                   <FaTimes style={{ color: "red", fontSize: "18px" }} />
-                               )}
-                           </div>
-                       ),
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {params.isActive ? (
+                        <FaCheck style={{ color: "green", fontSize: "18px" }} />
+                    ) : (
+                        <FaTimes style={{ color: "red", fontSize: "18px" }} />
+                    )}
+                </div>
+            ),
         },
         {
             field: "order",
@@ -58,7 +58,7 @@ const CategoriesDataGrid = () => {
             renderCell: (row) => (
                 <div className="btn-group">
                     <button
-                    title="Edit"
+                        title="Edit"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn"
                         onClick={() => onEdit(row)}
@@ -67,7 +67,7 @@ const CategoriesDataGrid = () => {
                     </button>
 
                     <button
-                     title="Delete"
+                        title="Delete"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn--delete-ghost"
                         onClick={() => onDelete(row)}
@@ -106,12 +106,12 @@ const CategoriesDataGrid = () => {
             }
 
             if (filterModel && filterModel.length > 0) {
-                params.append("filters", JSON.stringify(filterModel)); 
+                params.append("filters", JSON.stringify(filterModel));
             }
 
             const { data } = await axiosInstance.get("/continents", { params });
 
-            
+
             setRows(data?.data?.continents ?? []);
             setRowCount(data?.total ?? data?.data?.continents?.length ?? 0);
         } catch (err) {
@@ -140,7 +140,7 @@ const CategoriesDataGrid = () => {
         if (!isConfirmed) return;
 
         try {
-            
+
             await axiosInstance.delete(`/continents/${row._id}`);
             show({ type: "success", message: "ContinetViewModel deleted successfully" });
             fetchCategories();
@@ -155,7 +155,7 @@ const CategoriesDataGrid = () => {
         slug: "",
         description: "",
         products: [],
-          productObjects: [],
+        productObjects: [],
         parent: null,
         children: [],
         isActive: true,
@@ -179,6 +179,10 @@ const CategoriesDataGrid = () => {
         setOpen(true);
     };
 
+    const handleInitializeDb = async () => {
+        await axiosInstance.get('/continents/initialize_db')
+    };
+
     const onEdit = (row: ContinetViewModel) => {
         setHeaderTitle(`Modify ${row.name}`);
         setId(row._id!);
@@ -198,11 +202,11 @@ const CategoriesDataGrid = () => {
         try {
             const editMode = (continent._id !== null && continent._id !== undefined);
             if (editMode) {
-            
-                await axiosInstance.post(`/continents/update`, continent);
+
+                await axiosInstance.put(`/continents/${continent._id}`, continent);
                 show({ type: "success", message: "ContinetViewModel updated!" });
             } else {
-               
+
                 await axiosInstance.post("/continents", continent);
                 show({ type: "success", message: "ContinetViewModel created!" });
             }
@@ -241,7 +245,9 @@ const CategoriesDataGrid = () => {
     return (
         <>
             <h3 className="mb">Manage Country Intelligence</h3>
-
+            <button className={`btn btn-sm dashboard-btn mb-1`}
+                onClick={handleInitializeDb}>
+                Initialize DB</button>
             <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={onCreate}>
                 Add New</button>

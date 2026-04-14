@@ -66,11 +66,11 @@ export default function UserProfileForm({ initialProfile }: any) {
         ...initialProfile,
 
         socialLinks: {
-            facebook: initialProfile.socialLinks?.facebook || "",
-            instagram: initialProfile.socialLinks?.instagram || "",
-            linkedin: initialProfile.socialLinks?.linkedin || "",
-            youtube: initialProfile.socialLinks?.youtube || "",
-            x: initialProfile.socialLinks?.x || "",
+            facebook: initialProfile?.socialLinks?.facebook || "",
+            instagram: initialProfile?.socialLinks?.instagram || "",
+            linkedin: initialProfile?.socialLinks?.linkedin || "",
+            youtube: initialProfile?.socialLinks?.youtube || "",
+            x: initialProfile?.socialLinks?.x || "",
         },
     });
 

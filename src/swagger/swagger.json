@@ -2619,220 +2619,18 @@
 				"type": "object",
 				"description": "Construct a type with a set of properties K of type T"
 			},
-			"CreateContinentRequest": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"code": {
-						"type": "string",
-						"nullable": true
-					},
-					"description": {
-						"type": "string",
-						"nullable": true
-					},
-					"products": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"productCodes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"productObjects": {
-						"items": {
-							"$ref": "#/components/schemas/Product"
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"parent": {
-						"type": "string",
-						"nullable": true
-					},
-					"children": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"order": {
-						"type": "number",
-						"format": "double"
-					},
-					"image": {
-						"type": "string",
-						"nullable": true
-					},
-					"imageAlt": {
-						"type": "string",
-						"nullable": true
-					},
-					"seoTitle": {
-						"type": "string",
-						"nullable": true
-					},
-					"seoDescription": {
-						"type": "string",
-						"nullable": true
-					},
-					"seoKeywords": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array",
-						"nullable": true
-					},
-					"sourceLabel": {
-						"type": "string",
-						"nullable": true
-					},
-					"summary": {
-						"properties": {
-							"notes": {
-								"type": "string",
-								"nullable": true
-							},
-							"chapterCoverage": {
-								"items": {
-									"type": "string"
-								},
-								"type": "array",
-								"nullable": true
-							},
-							"countryCount": {
-								"type": "number",
-								"format": "double",
-								"nullable": true
-							}
-						},
-						"type": "object",
-						"nullable": true
-					}
-				},
-				"required": [
-					"name",
-					"slug"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"UpdateContinentRequest": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"slug": {
-						"type": "string"
-					},
-					"code": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"products": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"productCodes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"productObjects": {
-						"items": {
-							"$ref": "#/components/schemas/Product"
-						},
-						"type": "array"
-					},
-					"parent": {
-						"type": "string"
-					},
-					"children": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"order": {
-						"type": "number",
-						"format": "double"
-					},
-					"image": {
-						"type": "string"
-					},
-					"imageAlt": {
-						"type": "string"
-					},
-					"seoTitle": {
-						"type": "string"
-					},
-					"seoDescription": {
-						"type": "string"
-					},
-					"seoKeywords": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"sourceLabel": {
-						"type": "string"
-					},
-					"summary": {
-						"properties": {
-							"notes": {
-								"type": "string"
-							},
-							"chapterCoverage": {
-								"items": {
-									"type": "string"
-								},
-								"type": "array"
-							},
-							"countryCount": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"type": "object"
-					},
-					"_id": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ContinentSortKey": {
+			"ContactUsSortKey": {
 				"type": "string",
 				"enum": [
-					"name",
-					"slug",
+					"fullName",
+					"company",
+					"email",
+					"industry",
+					"countryOfInterest",
+					"meaObjective",
+					"referredBy",
 					"createdAt",
-					"order",
-					"isActive"
+					"updatedAt"
 				]
 			},
 			"SuccessResponse__token-string__": {
@@ -4314,37 +4112,9 @@
 				}
 			}
 		},
-		"/api/v1/continents": {
-			"post": {
-				"operationId": "CreateContinent",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/CreateContinentRequest"
-							}
-						}
-					}
-				}
-			},
+		"/api/v1/contact-us": {
 			"get": {
-				"operationId": "GetAllContinents",
+				"operationId": "GetAllContactUsSubmissions",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -4356,7 +4126,7 @@
 					}
 				},
 				"tags": [
-					"Continents"
+					"Contact Us"
 				],
 				"security": [],
 				"parameters": [
@@ -4393,7 +4163,7 @@
 						"name": "sortBy",
 						"required": false,
 						"schema": {
-							"$ref": "#/components/schemas/ContinentSortKey"
+							"$ref": "#/components/schemas/ContactUsSortKey"
 						}
 					},
 					{
@@ -4401,7 +4171,7 @@
 						"name": "sortOrder",
 						"required": false,
 						"schema": {
-							"default": "asc",
+							"default": "desc",
 							"type": "string",
 							"enum": [
 								"asc",
@@ -4410,187 +4180,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/v1/continents/{id}": {
-			"put": {
-				"operationId": "UpdateContinent",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UpdateContinentRequest"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetContinentById",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"delete": {
-				"operationId": "DeleteContinent",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/continents/initialize_db": {
-			"get": {
-				"operationId": "InitializeDB",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/contact-us": {
-			"post": {
-				"operationId": "CreateContactUsSubmission",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_any_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"contact-us"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"fullName": {
-										"type": "string"
-									},
-									"email": {
-										"type": "string"
-									},
-									"industry": {
-										"type": "string"
-									},
-									"meaObjective": {
-										"type": "string"
-									},
-									"company": {
-										"type": "string"
-									},
-									"phone": {
-										"type": "string"
-									},
-									"countryOfInterest": {
-										"type": "string"
-									},
-									"referredBy": {
-										"type": "string"
-									},
-									"attachment": {
-										"type": "string",
-										"format": "binary"
-									}
-								},
-								"required": [
-									"fullName",
-									"email",
-									"industry",
-									"meaObjective"
-								]
-							}
-						}
-					}
-				}
 			}
 		},
 		"/api/v1/client": {

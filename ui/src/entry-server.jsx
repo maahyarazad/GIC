@@ -6,39 +6,43 @@ import { EnvContext } from "./EnvContext";
 import { RootProviders } from "./RootProviders";
 
 export async function render(url, env) {
-    let siteData = null;
+  let siteData = null;
 
-    try {
-        siteData = await fetchSiteData(env.language);
-    } catch (err) {
-        console.error("SSR siteData fetch failed", err);
-    }
+  try {
+    siteData = await fetchSiteData(env.language);
+  } catch (err) {
+    console.error("SSR siteData fetch failed", err);
+  }
 
-    const preloadedState = {
-        auth: { isAuthenticated: false, user: null },
-        app: {
-            siteData,
-            loading: false,
-            error: null,
-            isReady: true,
-        },
-    };
+  const preloadedState = {
+    auth: {
+      isAuthenticated: false,
+      user: null,
+      loading: true,
+    },
+    app: {
+      siteData,
+      loading: false,
+      error: null,
+      isReady: true,
+    },
+  };
 
-    const html = renderToString(
-        <EnvContext.Provider value={env}>
-            <StaticRouter location={url}>
-                <RootProviders preloadedState={preloadedState}>
-                    <App />
-                </RootProviders>
-            </StaticRouter>
-        </EnvContext.Provider>
-    );
+  const html = renderToString(
+    <EnvContext.Provider value={env}>
+      <StaticRouter location={url}>
+        <RootProviders preloadedState={preloadedState}>
+          <App />
+        </RootProviders>
+      </StaticRouter>
+    </EnvContext.Provider>
+  );
 
-    return {
-        appHtml: {
-            html,
-            head: "",
-        },
-        preloadedState,
-    };
+  return {
+    appHtml: {
+      html,
+      head: "",
+    },
+    preloadedState,
+  };
 }

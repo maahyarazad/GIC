@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 
 const ContactUsSchema = new Schema(
   {
+    userId: { type: Schema.Types.ObjectId, ref: "User", default: null }, // null = guest/unauthenticated
     fullName: { type: String, required: true, trim: true },
     company: { type: String, default: "", trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
@@ -28,6 +29,7 @@ export const ContactUsModel = model("ContactUs", ContactUsSchema);
 
 export const mapContactUsSubmission = (doc: any) => ({
   id: doc._id?.toString?.() || doc.id,
+  userId: doc.userId?.toString?.() ?? null,
   fullName: doc.fullName,
   company: doc.company,
   email: doc.email,
@@ -43,6 +45,7 @@ export const mapContactUsSubmission = (doc: any) => ({
 
 export interface ContactUsSubmission {
   id: string;
+  userId?: string | null; 
   fullName: string;
   company?: string;
   email: string;

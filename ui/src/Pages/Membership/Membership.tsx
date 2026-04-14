@@ -301,7 +301,10 @@ const Membership: React.FC<Props> = ({ siteData }) => {
               marginTop: "32px",
             }}
           >
-            <a className="btn-p" onClick={() => {showPage("contact");   navigate("/contact");}}>
+            <a className="btn-p" onClick={() => {showPage("contact");   navigate({
+  pathname: "/contact",
+  search: `?redirect=${encodeURIComponent("/somewhere")}`}) 
+  ;}}>
               Introduce Yourself
             </a>
           </div>

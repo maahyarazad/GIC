@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
-  height: 92vh;
-  overflow: scroll;
+  min-height: 92dvh;
+  overflow-x: scroll;
   background-color: var(--bg);
 
   .nav {
@@ -59,6 +59,7 @@
 
 /* Sidebar styles */
 .sidebar {
+      
   background: var(--bg2);
   color: var(--txt);
   border-right: 1px solid var(--bdr);

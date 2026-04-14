@@ -1,10 +1,15 @@
-import React from 'react';
-import './Loader.css'; // Import your CSS here
+interface LoaderProps {
+  size?: number;
+  borderWidth?: number;
+}
 
-const Loader = () => {
+const Loader = ({ size = 20, borderWidth = 3 }: LoaderProps) => {
   return (
     <div className="application-loader">
-      <span className="loader"></span>
+      <span
+        className="loader"
+        style={{ width: size, height: size, borderWidth }}
+      />
     </div>
   );
 };

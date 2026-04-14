@@ -37,41 +37,76 @@ import {
 } from "../mappers/continent.mapper";
 import { mapCreateProductRequestToDb } from "../mappers/product.mapper";
 import { toObjectIdArray } from "../mappers/objectId.mapper";
-import { initializeDatabase } from "../initialize_db";
+import {
+  initializeDatabase,
+  hydrateProductMetadataFromXlsx,
+} from "../initialize_db";
 
-
-export type ContinentSortKey = "name" | "slug" | "createdAt" | "order" | "isActive";
+export type ContinentSortKey =
+  | "name"
+  | "slug"
+  | "createdAt"
+  | "order"
+  | "isActive";
 
 @Route("api/v1/continents")
 @Tags("Continents")
 export class ContinentController extends Controller {
+  @Get("/initialize_db")
+  public async initializeDB(): Promise<any> {
+    try {
+      await initializeDatabase();
+      await hydrateProductMetadataFromXlsx();
+      return createSuccessResponse(null, "Request Completed");
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to process request");
+    }
+  }
+
   @Post("/")
   @Middlewares(adminAuthMiddleware)
   @SuccessResponse("201", "Created")
-  public async createContinent(@Body() body: CreateContinentRequest): Promise<any> {
+  public async createContinent(
+    @Body() body: CreateContinentRequest
+  ): Promise<any> {
     try {
       const missing = validateRequiredFields(body, ["name", "slug"]);
       if (missing.length > 0) {
         this.setStatus(400);
-        return createErrorResponse(`Missing required fields: ${missing.join(", ")}`);
+        return createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        );
       }
-//@ts-ignore
-      const duplicate = await ContinentModel.findOne({ slug: body.slug }).lean();
+      //@ts-ignore
+      const duplicate = await ContinentModel.findOne({
+        slug: body.slug,
+      }).lean();
       if (duplicate) {
         this.setStatus(400);
-        return createErrorResponse(`Continent with slug "${body.slug}" already exists`);
+        return createErrorResponse(
+          `Continent with slug "${body.slug}" already exists`
+        );
       }
 
-      const continent = await ContinentModel.create(mapCreateContinentRequestToDb(body));
+      const continent = await ContinentModel.create(
+        mapCreateContinentRequestToDb(body)
+      );
 
       if (body.productObjects?.length) {
-        const productIds = await this.upsertProductsForContinent(continent._id, body.productObjects);
+        const productIds = await this.upsertProductsForContinent(
+          continent._id,
+          body.productObjects
+        );
         continent.products = productIds;
         await continent.save();
       }
 
       this.setStatus(201);
-      return createSuccessResponse(mapContinent(continent.toObject()), "Continent created successfully");
+      return createSuccessResponse(
+        mapContinent(continent.toObject()),
+        "Continent created successfully"
+      );
     } catch (error: any) {
       this.setStatus(500);
       return createErrorResponse(error.message || "Failed to create continent");
@@ -80,7 +115,10 @@ export class ContinentController extends Controller {
 
   @Put("{id}")
   @Middlewares(adminAuthMiddleware)
-  public async updateContinent(@Path() id: string, @Body() body: UpdateContinentRequest): Promise<any> {
+  public async updateContinent(
+    @Path() id: string,
+    @Body() body: UpdateContinentRequest
+  ): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
@@ -89,36 +127,62 @@ export class ContinentController extends Controller {
 
       if (body.slug) {
         const duplicate = await ContinentModel.findOne({
-            //@ts-ignore
+          //@ts-ignore
           slug: body.slug,
           _id: { $ne: new Types.ObjectId(id) },
         }).lean();
 
         if (duplicate) {
           this.setStatus(400);
-          return createErrorResponse(`Continent with slug "${body.slug}" already exists`);
+          return createErrorResponse(
+            `Continent with slug "${body.slug}" already exists`
+          );
         }
       }
 
       const updateData: any = {
         ...(body.name !== undefined ? { name: body.name } : {}),
         ...(body.slug !== undefined ? { slug: body.slug } : {}),
-        ...(body.description !== undefined ? { description: body.description ?? null } : {}),
-        ...(body.products !== undefined ? { products: toObjectIdArray(body.products) } : {}),
-        ...(body.parent !== undefined ? { parent: body.parent && Types.ObjectId.isValid(body.parent) ? new Types.ObjectId(body.parent) : null } : {}),
-        ...(body.children !== undefined ? { children: toObjectIdArray(body.children) } : {}),
+        ...(body.description !== undefined
+          ? { description: body.description ?? null }
+          : {}),
+        ...(body.products !== undefined
+          ? { products: toObjectIdArray(body.products) }
+          : {}),
+        ...(body.parent !== undefined
+          ? {
+              parent:
+                body.parent && Types.ObjectId.isValid(body.parent)
+                  ? new Types.ObjectId(body.parent)
+                  : null,
+            }
+          : {}),
+        ...(body.children !== undefined
+          ? { children: toObjectIdArray(body.children) }
+          : {}),
         ...(body.isActive !== undefined ? { isActive: body.isActive } : {}),
         ...(body.order !== undefined ? { order: body.order } : {}),
         ...(body.image !== undefined ? { image: body.image ?? null } : {}),
-        ...(body.imageAlt !== undefined ? { imageAlt: body.imageAlt ?? null } : {}),
-        ...(body.seoTitle !== undefined ? { seoTitle: body.seoTitle ?? null } : {}),
-        ...(body.seoDescription !== undefined ? { seoDescription: body.seoDescription ?? null } : {}),
-        ...(body.seoKeywords !== undefined ? { seoKeywords: body.seoKeywords ?? null } : {}),
+        ...(body.imageAlt !== undefined
+          ? { imageAlt: body.imageAlt ?? null }
+          : {}),
+        ...(body.seoTitle !== undefined
+          ? { seoTitle: body.seoTitle ?? null }
+          : {}),
+        ...(body.seoDescription !== undefined
+          ? { seoDescription: body.seoDescription ?? null }
+          : {}),
+        ...(body.seoKeywords !== undefined
+          ? { seoKeywords: body.seoKeywords ?? null }
+          : {}),
         updatedAt: new Date(),
       };
 
       if (body.productObjects?.length) {
-        updateData.products = await this.upsertProductsForContinent(new Types.ObjectId(id), body.productObjects);
+        updateData.products = await this.upsertProductsForContinent(
+          new Types.ObjectId(id),
+          body.productObjects
+        );
       }
 
       const continent = await ContinentModel.findByIdAndUpdate(
@@ -133,7 +197,10 @@ export class ContinentController extends Controller {
         return createErrorResponse("Continent not found");
       }
 
-      return createSuccessResponse(mapContinent(continent), "Continent updated successfully");
+      return createSuccessResponse(
+        mapContinent(continent),
+        "Continent updated successfully"
+      );
     } catch (error: any) {
       console.error("Update continent error:", error);
       this.setStatus(500);
@@ -163,14 +230,27 @@ export class ContinentController extends Controller {
         const filterParts = filters.map(({ field, operator, value }) => {
           switch (operator) {
             case "contains":
-              return { [field]: { $regex: new RegExp(`${escapeRegExp(String(value))}`, "i") } };
+              return {
+                [field]: {
+                  $regex: new RegExp(`${escapeRegExp(String(value))}`, "i"),
+                },
+              };
             case "startsWith":
-              return { [field]: { $regex: new RegExp(`^${escapeRegExp(String(value))}`, "i") } };
+              return {
+                [field]: {
+                  $regex: new RegExp(`^${escapeRegExp(String(value))}`, "i"),
+                },
+              };
             case "endsWith":
-              return { [field]: { $regex: new RegExp(`${escapeRegExp(String(value))}$`, "i") } };
+              return {
+                [field]: {
+                  $regex: new RegExp(`${escapeRegExp(String(value))}$`, "i"),
+                },
+              };
             case "equals":
-                //@ts-ignore
-              if (field === "isActive") return { isActive: value === true || value === "true" };
+              //@ts-ignore
+              if (field === "isActive")
+                return { isActive: value === true || value === "true" };
               return { [field]: value };
             default:
               return {};
@@ -180,7 +260,10 @@ export class ContinentController extends Controller {
         filter = filterParts.length > 0 ? { $and: filterParts } : {};
       }
 
-      const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<string, 1 | -1>;
+      const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
+        string,
+        1 | -1
+      >;
       const [docs, total] = await Promise.all([
         ContinentModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
         ContinentModel.countDocuments(filter),
@@ -203,52 +286,39 @@ export class ContinentController extends Controller {
   }
 
   @Get("{id}")
-public async getContinentById(@Path() id: string): Promise<any> {
-  try {
-    if (!Types.ObjectId.isValid(id)) {
-      this.setStatus(400);
-      return createErrorResponse("Invalid continent ID");
-    }
+  public async getContinentById(@Path() id: string): Promise<any> {
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid continent ID");
+      }
 
-    //@ts-ignore
-    const continent = await ContinentModel.findById(id).lean();
-    if (!continent) {
-      this.setStatus(404);
-      return createErrorResponse("Continent not found");
-    }
-
-    let productDocs: any[] = [];
-    if (continent.products?.length) {
       //@ts-ignore
-      productDocs = await ProductModel.find({ _id: { $in: continent.products } })
-        .select("metadata.conclusion")
-        .lean();
+      const continent = await ContinentModel.findById(id).lean();
+      if (!continent) {
+        this.setStatus(404);
+        return createErrorResponse("Continent not found");
+      }
+
+      let productDocs: any[] = [];
+      if (continent.products?.length) {
+        //@ts-ignore
+        productDocs = await ProductModel.find({
+          _id: { $in: continent.products },
+        })
+          .select("metadata.conclusion")
+          .lean();
+      }
+
+      return createSuccessResponse(
+        mapContinentViewModel(continent, productDocs as any),
+        "Continent fetched successfully"
+      );
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to fetch continent");
     }
-
-    return createSuccessResponse(
-      mapContinentViewModel(continent, productDocs as any),
-      "Continent fetched successfully"
-    );
-  } catch (error: any) {
-    this.setStatus(500);
-    return createErrorResponse(error.message || "Failed to fetch continent");
   }
-}
-
-@Get("/initialize_db")
-public async initializeDB(): Promise<any> {
-  try {
-    await initializeDatabase();
-
-    return createSuccessResponse(
-      null,
-      "Request Completed"
-    );
-  } catch (error: any) {
-    this.setStatus(500);
-    return createErrorResponse(error.message || "Failed to process request");
-  }
-}
 
   @Delete("{id}")
   @Middlewares(adminAuthMiddleware)
@@ -258,21 +328,27 @@ public async initializeDB(): Promise<any> {
         this.setStatus(400);
         return createErrorResponse("Invalid continent ID");
       }
-//@ts-ignore
+      //@ts-ignore
       const continent = await ContinentModel.findByIdAndDelete(id).lean();
       if (!continent) {
         this.setStatus(404);
         return createErrorResponse("Continent not found");
       }
 
-      return createSuccessResponse({ success: true }, "Continent deleted successfully");
+      return createSuccessResponse(
+        { success: true },
+        "Continent deleted successfully"
+      );
     } catch (error: any) {
       this.setStatus(500);
       return createErrorResponse(error.message || "Failed to delete continent");
     }
   }
 
-  private async upsertProductsForContinent(continentId: Types.ObjectId, products: Product[]): Promise<Types.ObjectId[]> {
+  private async upsertProductsForContinent(
+    continentId: Types.ObjectId,
+    products: Product[]
+  ): Promise<Types.ObjectId[]> {
     const ids: Types.ObjectId[] = [];
 
     for (const product of products) {
@@ -305,12 +381,12 @@ public async initializeDB(): Promise<any> {
           createdAt: new Date(),
         },
       };
-//@ts-ignore
+      //@ts-ignore
       const saved = await ProductModel.findOneAndUpdate(query, update, {
         upsert: true,
         new: true,
       });
-//@ts-ignore
+      //@ts-ignore
       ids.push(saved._id);
     }
 

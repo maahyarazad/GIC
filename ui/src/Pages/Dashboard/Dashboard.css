@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
-  height: 92vh;
-  overflow: scroll;
+  min-height: 92dvh;
+  overflow-x: scroll;
   background-color: var(--bg);
 }
 .dashboard .nav {

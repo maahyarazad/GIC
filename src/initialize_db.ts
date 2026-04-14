@@ -117,9 +117,9 @@ const countries = [
   { name: "Qatar", code: "QA", subRegion: "Middle East (Western Asia)" },
   { name: "Saudi Arabia", code: "SA", subRegion: "Middle East (Western Asia)" },
   { name: "Syria", code: "SY", subRegion: "Middle East (Western Asia)" },
-  { name: "United Arab Emirates", code: "AE", subRegion: "Middle East (Western Asia)" },
+  { name: "United Arab Emirates (UAE)", code: "AE", subRegion: "Middle East (Western Asia)" },
   { name: "Yemen", code: "YE", subRegion: "Middle East (Western Asia)" },
-  { name: "Turkey", code: "TR", subRegion: "Middle East (Western Asia)" },
+  { name: "Türkiye", code: "TR", subRegion: "Middle East (Western Asia)" },
 
   // =========================
   // NORTH AFRICA - 6
@@ -137,7 +137,7 @@ const countries = [
   { name: "Benin", code: "BJ", subRegion: "West Africa" },
   { name: "Burkina Faso", code: "BF", subRegion: "West Africa" },
   { name: "Cape Verde", code: "CV", subRegion: "West Africa" },
-  { name: "Cote d'Ivoire", code: "CI", subRegion: "West Africa" },
+  { name: "Côte d'Ivoire", code: "CI", subRegion: "West Africa" },
   { name: "Gambia", code: "GM", subRegion: "West Africa" },
   { name: "Ghana", code: "GH", subRegion: "West Africa" },
   { name: "Guinea", code: "GN", subRegion: "West Africa" },
@@ -162,7 +162,7 @@ const countries = [
   { name: "Democratic Republic of the Congo", code: "CD", subRegion: "Central Africa" },
   { name: "Equatorial Guinea", code: "GQ", subRegion: "Central Africa" },
   { name: "Gabon", code: "GA", subRegion: "Central Africa" },
-  { name: "Sao Tome and Principe", code: "ST", subRegion: "Central Africa" },
+  { name: "São Tomé and Príncipe", code: "ST", subRegion: "Central Africa" },
 
   // =========================
   // EAST AFRICA - 14

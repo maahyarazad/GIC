@@ -161,6 +161,19 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return (
         <ModalContext.Provider value={{ openModal, closeModal }}>
             {children}
+            
+            {isOpen && showDefault && (
+
+                <ModalDialog
+                    title={options?.title}
+                    content={options?.content}
+                    confirmText={options?.confirmText}
+                    cancelText={options?.cancelText}
+                    onConfirm={handleConfirm}
+                    onCancel={closeModal}
+                    exiting={exiting}
+                />
+            )}
 
             <div
                 className={[
@@ -169,17 +182,6 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     exiting ? "closing" : "",
                 ].join(" ")}
             >
-                <div className={showDefault ? "modal-view active" : "modal-view hidden"}>
-                    <ModalDialog
-                        title={options?.title}
-                        content={options?.content}
-                        confirmText={options?.confirmText}
-                        cancelText={options?.cancelText}
-                        onConfirm={handleConfirm}
-                        onCancel={closeModal}
-                        exiting={exiting}
-                    />
-                </div>
 
                 <div className={showExpert ? "modal-view active" : "modal-view hidden"}>
                     <ExpertModal

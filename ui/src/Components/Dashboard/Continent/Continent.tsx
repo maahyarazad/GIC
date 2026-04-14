@@ -9,6 +9,7 @@ import { ContinetViewModel } from '../../../../../src/types/continent.types'
 import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import Button from "@/Components/Button/Button";
 
 const buttonGroupStyle = { fontSize: 14, padding: 5 };
 
@@ -178,9 +179,24 @@ const CategoriesDataGrid = () => {
         });
         setOpen(true);
     };
-
+    const [initializing, setInitializing] = useState(false);
     const handleInitializeDb = async () => {
-        await axiosInstance.get('/continents/initialize_db')
+        setInitializing(true);
+
+        try{
+
+            const response = await axiosInstance.get('/continents/initialize_db');
+            
+//@ts-ignore
+            show({ type: "success", message: response?.data?.message || "Request Completed."});
+
+        }catch(err){
+            //@ts-ignore
+            show({ type: "error", message: err?.message || "Failed to initialize the Db" });
+            console.error(err)
+        }finally{
+setInitializing(false);
+        }
     };
 
     const onEdit = (row: ContinetViewModel) => {
@@ -245,12 +261,17 @@ const CategoriesDataGrid = () => {
     return (
         <>
             <h3 className="mb">Manage Country Intelligence</h3>
-            <button className={`btn btn-sm dashboard-btn mb-1`}
+            <div className="d-flex">
+
+            <button className={`${initializing ? "btn" : "btn btn-sm dashboard-btn mb-1 me-1 " }`}  style={{minWidth: 94}}
                 onClick={handleInitializeDb}>
-                Initialize DB</button>
+                {initializing ? <Loader size={14} />: <>{"Initialize Db"}</>}</button>
+
             <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={onCreate}>
                 Add New</button>
+            </div>
+
             {loading ? (
                 <Loader />
             ) : (

@@ -4328,6 +4328,26 @@
 				}
 			}
 		},
+		"/api/v1/continents/initialize_db": {
+			"get": {
+				"operationId": "InitializeDB",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/v1/continents": {
 			"post": {
 				"operationId": "CreateContinent",
@@ -4517,26 +4537,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/v1/continents/initialize_db": {
-			"get": {
-				"operationId": "InitializeDB",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Continents"
-				],
-				"security": [],
-				"parameters": []
 			}
 		},
 		"/api/v1/contact-us": {

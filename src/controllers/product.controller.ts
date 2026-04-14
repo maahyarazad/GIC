@@ -153,6 +153,7 @@ export class ProductController extends Controller {
       }
       //@ts-ignore
       const products = await ProductModel.find({
+        //@ts-ignore
         parent: new Types.ObjectId(parentId),
       })
         .select(

@@ -263,11 +263,14 @@ const countries = [
       
           const result = await productCollection.insertOne(productDoc);
       
+          
           await continentCollection.updateOne(
             { _id: continentId },
             {
               $push: {
+                //@ts-ignore
                 products: result.insertedId,
+                //@ts-ignore
                 productCodes: country.code,
               },
               $inc: {

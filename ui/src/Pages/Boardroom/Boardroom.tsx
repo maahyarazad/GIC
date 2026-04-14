@@ -118,7 +118,7 @@ const Boardroom: React.FC<Props> = ({ siteData }) => {
 
     const handleNavigation = async (page: string) => {
         try {
-            debugger;
+            
             const response = await axiosInstance.get("/sso");
             const data = response.data;
 

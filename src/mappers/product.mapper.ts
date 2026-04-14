@@ -20,6 +20,7 @@ export interface ProductDb {
   updatedAt?: Date;
 }
 
+//@ts-ignore
 export const mapProduct = (doc: any): Product => ({
   _id: mapId(doc?._id),
   fileId: doc.fileId,

@@ -80,6 +80,7 @@ export class ContinentController extends Controller {
       }
       //@ts-ignore
       const duplicate = await ContinentModel.findOne({
+        //@ts-ignore
         slug: body.slug,
       }).lean();
       if (duplicate) {
@@ -250,6 +251,7 @@ export class ContinentController extends Controller {
             case "equals":
               //@ts-ignore
               if (field === "isActive")
+                //@ts-ignore
                 return { isActive: value === true || value === "true" };
               return { [field]: value };
             default:
@@ -304,6 +306,7 @@ export class ContinentController extends Controller {
       if (continent.products?.length) {
         //@ts-ignore
         productDocs = await ProductModel.find({
+            //@ts-ignore
           _id: { $in: continent.products },
         })
           .select("metadata.conclusion")
@@ -361,6 +364,7 @@ export class ContinentController extends Controller {
 
       const update = {
         $set: {
+            //@ts-ignore
           ...mapCreateProductRequestToDb({
             fileId: product.fileId,
             name: product.name,

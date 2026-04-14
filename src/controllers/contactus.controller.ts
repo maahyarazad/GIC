@@ -1,110 +1,176 @@
 import {
   Controller,
+  Get,
+  Middlewares,
+  Query,
   Route,
   Tags,
-  Post,
-  FormField,
-  UploadedFile,
-  Consumes,
 } from "tsoa";
-import type { File } from "tsoa";
-import {
-  ApiResponse,
-  createErrorResponse,
-  createSuccessResponse,
-} from "../utils/helpers";
 import { ContactUsModel, mapContactUsSubmission } from "../models/contactus.model";
+import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
 
+type FilterOperator = "contains" | "startsWith" | "endsWith" | "equals";
 
-// @Route("api/v1/contact-us")
-// @Tags("contact-us")
-// export class ContactUsController extends Controller {
-//   @Post("/")
-//   @Consumes("multipart/form-data")
-//   public async createContactUsSubmission(
-//     @FormField() fullName: string,
-//     @FormField() email: string,
-//     @FormField() industry: string,
-//     @FormField() meaObjective: string,
-//     @FormField() company?: string,
-//     @FormField() phone?: string,
-//     @FormField() countryOfInterest?: string,
-//     @FormField() referredBy?: string,
-//     @UploadedFile("attachment") attachment?: File
-//   ): Promise<ApiResponse<any>> {
-//     try {
-//       const normalizedFullName = fullName?.trim();
-//       const normalizedEmail = email?.trim().toLowerCase();
-//       const normalizedIndustry = industry?.trim();
-//       const normalizedMeaObjective = meaObjective?.trim();
-//       const normalizedCompany = company?.trim() || "";
-//       const normalizedPhone = phone?.trim() || "";
-//       const normalizedCountryOfInterest = countryOfInterest?.trim() || "";
-//       const normalizedReferredBy = referredBy?.trim() || "";
+interface FilterModel<T> {
+  field: keyof T | string;
+  operator: FilterOperator;
+  value: unknown;
+}
 
-//       if (!normalizedFullName) {
-//         this.setStatus(400);
-//         return createErrorResponse("Full Name is required", "FULL_NAME_REQUIRED");
-//       }
+type ContactUsSortKey =
+  | "fullName"
+  | "company"
+  | "email"
+  | "industry"
+  | "countryOfInterest"
+  | "meaObjective"
+  | "referredBy"
+  | "createdAt"
+  | "updatedAt";
 
-//       if (!normalizedEmail) {
-//         this.setStatus(400);
-//         return createErrorResponse("Email is required", "EMAIL_REQUIRED");
-//       }
+interface ContactUsFilterShape {
+  fullName?: string;
+  company?: string;
+  email?: string;
+  phone?: string;
+  industry?: string;
+  countryOfInterest?: string;
+  meaObjective?: string;
+  referredBy?: string;
+}
 
-//       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//       if (!emailRegex.test(normalizedEmail)) {
-//         this.setStatus(400);
-//         return createErrorResponse("Invalid email address", "INVALID_EMAIL");
-//       }
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-//       if (!normalizedIndustry) {
-//         this.setStatus(400);
-//         return createErrorResponse("Industry / Sector is required", "INDUSTRY_REQUIRED");
-//       }
+@Route("api/v1/contact-us")
+@Tags("Contact Us")
+export class ContactUsController extends Controller {
+  @Get("/")
+  @Middlewares(adminAuthMiddleware)
+  public async getAllContactUsSubmissions(
+    @Query("filters") filtersJson?: string,
+    @Query() limit: number = 20,
+    @Query() skip: number = 0,
+    @Query() sortBy: ContactUsSortKey = "createdAt",
+    @Query() sortOrder: "asc" | "desc" = "desc"
+  ): Promise<any> {
+    try {
+      let filter: any = {};
 
-//       if (!normalizedMeaObjective) {
-//         this.setStatus(400);
-//         return createErrorResponse("Your MEA Objective is required", "MEA_OBJECTIVE_REQUIRED");
-//       }
+      if (filtersJson) {
+        let filters: FilterModel<ContactUsFilterShape>[] = [];
 
-//       let attachmentMeta: any = null;
+        try {
+          filters = JSON.parse(filtersJson);
+        } catch {
+          this.setStatus(400);
+          return createErrorResponse("Invalid filters JSON");
+        }
 
-//       if (attachment) {
-//         attachmentMeta = {
-//           fieldname: attachment.fieldname,
-//           originalname: attachment.originalname,
-//           mimetype: attachment.mimetype,
-//           size: attachment.size,
-//           filename: (attachment as any).filename || null,
-//           path: (attachment as any).path || null,
-//         };
-//       }
+        const allowedFilterFields = [
+          "fullName",
+          "company",
+          "email",
+          "phone",
+          "industry",
+          "countryOfInterest",
+          "meaObjective",
+          "referredBy",
+        ];
 
-//       const submission = await ContactUsModel.create({
-//         fullName: normalizedFullName,
-//         email: normalizedEmail,
-//         industry: normalizedIndustry,
-//         meaObjective: normalizedMeaObjective,
-//         company: normalizedCompany,
-//         phone: normalizedPhone,
-//         countryOfInterest: normalizedCountryOfInterest,
-//         referredBy: normalizedReferredBy,
-//         attachment: attachmentMeta,
-//       });
+        const filterParts = filters
+          .filter(
+            (item) =>
+              item &&
+              typeof item.field === "string" &&
+              allowedFilterFields.includes(item.field) &&
+              item.operator &&
+              item.value !== undefined &&
+              item.value !== null
+          )
+          .map(({ field, operator, value }) => {
+            const safeValue = String(value);
 
-//       this.setStatus(201);
-//       return createSuccessResponse(
-//         mapContactUsSubmission(submission.toObject()),
-//         "Application submitted successfully"
-//       );
-//     } catch (err: any) {
-//       this.setStatus(500);
-//       return createErrorResponse(
-//         "Failed to submit application",
-//         "CREATE_ERROR",
-//         err
-//       );
-//     }
-//   }
-// }
+            switch (operator) {
+              case "contains":
+                return {
+                  [field]: {
+                    $regex: new RegExp(escapeRegExp(safeValue), "i"),
+                  },
+                };
+
+              case "startsWith":
+                return {
+                  [field]: {
+                    $regex: new RegExp(`^${escapeRegExp(safeValue)}`, "i"),
+                  },
+                };
+
+              case "endsWith":
+                return {
+                  [field]: {
+                    $regex: new RegExp(`${escapeRegExp(safeValue)}$`, "i"),
+                  },
+                };
+
+              case "equals":
+                return {
+                  [field]: safeValue,
+                };
+
+              default:
+                return null;
+            }
+          })
+          .filter(Boolean);
+
+        filter = filterParts.length > 0 ? { $and: filterParts } : {};
+      }
+
+      const limitNum = Math.min(Math.max(Number(limit) || 20, 1), 100);
+      const skipNum = Math.max(Number(skip) || 0, 0);
+
+      const allowedSortKeys: ContactUsSortKey[] = [
+        "fullName",
+        "company",
+        "email",
+        "industry",
+        "countryOfInterest",
+        "meaObjective",
+        "referredBy",
+        "createdAt",
+        "updatedAt",
+      ];
+
+      const sortKey: ContactUsSortKey = allowedSortKeys.includes(sortBy)
+        ? sortBy
+        : "createdAt";
+
+      const sort = {
+        [sortKey]: sortOrder === "asc" ? 1 : -1,
+      } as Record<string, 1 | -1>;
+
+      const [submissions, total] = await Promise.all([
+        ContactUsModel.find(filter).sort(sort).limit(limitNum).skip(skipNum).lean(),
+        ContactUsModel.countDocuments(filter),
+      ]);
+
+      this.setStatus(200);
+      return createSuccessResponse(
+        {
+          submissions: submissions.map(mapContactUsSubmission),
+          total,
+          page: Math.floor(skipNum / limitNum) + 1,
+          pages: Math.ceil(total / limitNum),
+        },
+        "Contact us submissions fetched successfully"
+      );
+    } catch (error) {
+      console.error("Error fetching contact us submissions:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch contact us submissions", error);
+    }
+  }
+}

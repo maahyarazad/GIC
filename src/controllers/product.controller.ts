@@ -47,7 +47,9 @@ export class ProductController extends Controller {
 
       if (missing.length > 0) {
         this.setStatus(400);
-        return createErrorResponse(`Missing required fields: ${missing.join(", ")}`);
+        return createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        );
       }
 
       const existing = await ProductModel.findOne({
@@ -57,10 +59,14 @@ export class ProductController extends Controller {
 
       if (existing) {
         this.setStatus(409);
-        return createErrorResponse("A product with the same fileId or code already exists.");
+        return createErrorResponse(
+          "A product with the same fileId or code already exists."
+        );
       }
 
-      const product = await ProductModel.create(mapCreateProductRequestToDb(body));
+      const product = await ProductModel.create(
+        mapCreateProductRequestToDb(body)
+      );
 
       this.setStatus(201);
       return createSuccessResponse(
@@ -84,13 +90,21 @@ export class ProductController extends Controller {
     @Query() name?: string,
     @Query() importance?: "A" | "B" | "C" | "D",
     @Query() tags?: string
-  ): Promise<{ products: Product[]; total: number; limit: number; skip: number }> {
+  ): Promise<{
+    products: Product[];
+    total: number;
+    limit: number;
+    skip: number;
+  }> {
     const filter: any = {};
     if (name) filter.name = { $regex: new RegExp(name, "i") };
     if (importance) filter.importance = importance;
     if (tags) filter.tags = { $all: tags.split(",").map((t) => t.trim()) };
 
-    const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<string, 1 | -1>;
+    const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
+      string,
+      1 | -1
+    >;
 
     const [docs, total] = await Promise.all([
       ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
@@ -108,7 +122,7 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
-//@ts-ignore
+      //@ts-ignore
       const product = await ProductModel.findById(id).lean();
 
       if (!product) {
@@ -116,7 +130,10 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ product: mapProduct(product) }, "Product fetched successfully");
+      return createSuccessResponse(
+        { product: mapProduct(product) },
+        "Product fetched successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -126,15 +143,24 @@ export class ProductController extends Controller {
 
   @Get("/by-parent/{parentId}")
   @SuccessResponse("200", "Products fetched by parent ID successfully")
-  public async getProductsByParent(@Path() parentId: string): Promise<{ products: Product[] }> {
+  public async getProductsByParent(
+    @Path() parentId: string
+  ): Promise<{ products: Product[] }> {
     try {
       if (!Types.ObjectId.isValid(parentId)) {
         this.setStatus(400);
         return { products: [] };
       }
-//@ts-ignore
-      const products = await ProductModel.find({ parent: new Types.ObjectId(parentId) }).lean();
-      return { products: mapProducts(products) };
+      //@ts-ignore
+      const products = await ProductModel.find({
+        parent: new Types.ObjectId(parentId),
+      })
+        .select(
+          "fileId name code content variant media tags downloadCount importance parent children recommended metadata.conclusion createdAt updatedAt"
+        )
+        .lean();
+
+      return { products: products };
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -145,7 +171,10 @@ export class ProductController extends Controller {
   @Put("{id}")
   @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Product updated successfully")
-  public async updateProduct(@Path() id: string, @Body() body: UpdateProductRequest): Promise<any> {
+  public async updateProduct(
+    @Path() id: string,
+    @Body() body: UpdateProductRequest
+  ): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
@@ -166,7 +195,10 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ product: mapProduct(product) }, "Product updated successfully");
+      return createSuccessResponse(
+        { product: mapProduct(product) },
+        "Product updated successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -183,14 +215,17 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
-//@ts-ignore
+      //@ts-ignore
       const result = await ProductModel.findByIdAndDelete(id).lean();
       if (!result) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ success: true }, "Product deleted successfully");
+      return createSuccessResponse(
+        { success: true },
+        "Product deleted successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);

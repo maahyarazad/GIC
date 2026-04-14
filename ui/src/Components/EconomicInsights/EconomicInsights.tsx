@@ -5,25 +5,9 @@ import Loader from "@/Components/Loader/Loader";
 import 'flag-icons/css/flag-icons.min.css';
 import { getPDFBlob } from '@/api/user';
 import { useToast } from "@/providers/ToastContext";
+import  {Product} from "../../../../src/types/product.types"
 
-
-// --- Types ---
-export interface Product {
-    _id: string;
-    fileId: string;
-    name: string;
-    code: string;
-    content?: any | null;
-    variant?: any | null;
-    media?: any | null;
-    tags?: string[] | null;
-    downloadCount: number;
-    importance: "A" | "B" | "C" | "D";
-    parent?: string | null;
-    children?: string[] | null;
-    recommended?: string[] | null;
-}
-
+// --- Types --
 export interface Continent {
     _id: string;
     name: string;
@@ -174,39 +158,43 @@ const EconomicInsights: React.FC = () => {
             ) : products.length === 0 ? (
                 <p>No products found in this category.</p>
             ) : (
-                <div className="products row mt-2">
-                    {products.map((p) => (
+             <div className="products row mt-2">
+    {products.map((p) => (
+        <div key={p._id} className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
+            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}>
+            <div className="card h-100">
+                <div className="card-body text-center">
+                    <h5 className="card-title-d">{p.name}</h5>
 
-                        <div key={p._id} className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
-                            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}>
-                            <div className="card h-100">
-                                <div className="card-body text-center"> {/* center the content */}
-                                    <h5 className="card-title">{p.name}</h5>
+                    <i
+                        className={`fi fi-${p.code.toLowerCase()} flag-icon mb-3`}
+                        aria-hidden="true"
+                    ></i>
 
-                                    {/* Flag icon */}
-                                    <i
-                                        className={`fi fi-${p.code.toLowerCase()} flag-icon mb-3`}
-                                        aria-hidden="true"
-                                    ></i>
+                    <p className="card-text">Downloads: {p.downloadCount}</p>
 
-                                    <p className="card-text">Downloads: {p.downloadCount}</p>
-                                    <p className="card-text">Importance: {p.importance}</p>
-
-                                    {/* Loader overlay */}
-
-
-                                    <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
-                                        <Loader />
-                                    </div>
-
-
-
-                                </div>
-                            </div>
+                    {p.metadata?.conclusion && (
+                        <div className="conclusion mt-2">
+                            <p className="card-text">
+                                Rating: {p.metadata.conclusion.gicStarRating}
+                            </p>
+                            <p className="card-text">
+                                Signal: {p.metadata.conclusion.investmentAttractivenessSignal}
+                            </p>
+                            <p className="card-text small">
+                                {p.metadata.conclusion.rationaleIndustrialInvestability}
+                            </p>
                         </div>
-
-                    ))}
+                    )}
                 </div>
+
+                <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
+                    <Loader />
+                </div>
+            </div>
+        </div>
+    ))}
+</div>
             )}
         </div>
     );

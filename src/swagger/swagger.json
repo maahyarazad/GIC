@@ -2619,6 +2619,222 @@
 				"type": "object",
 				"description": "Construct a type with a set of properties K of type T"
 			},
+			"CreateContinentRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string",
+						"nullable": true
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"products": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"productCodes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"productObjects": {
+						"items": {
+							"$ref": "#/components/schemas/Product"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"parent": {
+						"type": "string",
+						"nullable": true
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"image": {
+						"type": "string",
+						"nullable": true
+					},
+					"imageAlt": {
+						"type": "string",
+						"nullable": true
+					},
+					"seoTitle": {
+						"type": "string",
+						"nullable": true
+					},
+					"seoDescription": {
+						"type": "string",
+						"nullable": true
+					},
+					"seoKeywords": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"sourceLabel": {
+						"type": "string",
+						"nullable": true
+					},
+					"summary": {
+						"properties": {
+							"notes": {
+								"type": "string",
+								"nullable": true
+							},
+							"chapterCoverage": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array",
+								"nullable": true
+							},
+							"countryCount": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name",
+					"slug"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateContinentRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"products": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"productCodes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"productObjects": {
+						"items": {
+							"$ref": "#/components/schemas/Product"
+						},
+						"type": "array"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"image": {
+						"type": "string"
+					},
+					"imageAlt": {
+						"type": "string"
+					},
+					"seoTitle": {
+						"type": "string"
+					},
+					"seoDescription": {
+						"type": "string"
+					},
+					"seoKeywords": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"sourceLabel": {
+						"type": "string"
+					},
+					"summary": {
+						"properties": {
+							"notes": {
+								"type": "string"
+							},
+							"chapterCoverage": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"countryCount": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"type": "object"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ContinentSortKey": {
+				"type": "string",
+				"enum": [
+					"name",
+					"slug",
+					"createdAt",
+					"order",
+					"isActive"
+				]
+			},
 			"ContactUsSortKey": {
 				"type": "string",
 				"enum": [
@@ -4110,6 +4326,217 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/continents": {
+			"post": {
+				"operationId": "CreateContinent",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateContinentRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllContinents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ContinentSortKey"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"default": "asc",
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/continents/{id}": {
+			"put": {
+				"operationId": "UpdateContinent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateContinentRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetContinentById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteContinent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/continents/initialize_db": {
+			"get": {
+				"operationId": "InitializeDB",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/api/v1/contact-us": {

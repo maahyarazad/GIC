@@ -81,7 +81,7 @@
   border-radius: 0.25rem;
   box-shadow: 0 2px 6px var(--bo);
 }
-.economic-insights .products .card .card-body .card-title {
+.economic-insights .products .card .card-body .card-title-d {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,6 +89,7 @@
   margin-bottom: 0.5rem;
   font-weight: 600;
   color: var(--txt);
+  background-color: transparent;
 }
 .economic-insights .products .card .card-body .loader-overlay {
   position: absolute;

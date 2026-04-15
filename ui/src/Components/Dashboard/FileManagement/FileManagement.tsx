@@ -162,7 +162,10 @@ const FileManagement = () => {
         { field: "size", headerName: "Size (KB)", sortable: true , width:"10%", renderCell: (row) => Math.round(row.size / 1024) },
         { field: "createdAt", headerName: "Uploaded At", sortable: true , width:"10%", renderCell: (row) => new Date(row.createdAt).toLocaleString() },
         {
-            headerName: "Actions", width:"10%",
+                       headerName: "Actions",
+            width: "8%",
+            sortable: false,
+            filterable: false,
             renderCell: (row) => (
                 <button type="button" className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
                     Delete

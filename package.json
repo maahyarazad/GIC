@@ -37,6 +37,7 @@
   "express-session": "^1.18.2",
   "flag-icons": "^7.5.0",
   "formik": "^2.4.9",
+  "framer-motion": "^12.38.0",
   "google-auth-library": "^10.5.0",
   "jimp": "^1.6.1",
   "json-edit-react": "^1.29.0",

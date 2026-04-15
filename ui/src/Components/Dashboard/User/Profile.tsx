@@ -113,6 +113,8 @@ export const UserProfilesDataGrid = () => {
         {
             headerName: "Actions",
             width: '15%',
+            sortable: false,
+            filterable: false,
             renderCell: (row) => (
 
 
@@ -128,8 +130,7 @@ export const UserProfilesDataGrid = () => {
 
                 </div>
             ),
-            sortable: false,
-            filterable: false,
+
         }
 
     ];

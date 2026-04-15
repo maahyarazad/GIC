@@ -153,17 +153,17 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
 
     return (
         <>
-        {copyFeedback && (
-  <div
-    className="copy-toast"
-    style={{
-      top: copyFeedback.y,
-      left: copyFeedback.x,
-    }}
-  >
-    Copied ✓
-  </div>
-)}
+            {copyFeedback && (
+                <div
+                    className="copy-toast"
+                    style={{
+                        top: copyFeedback.y,
+                        left: copyFeedback.x,
+                    }}
+                >
+                    Copied ✓
+                </div>
+            )}
             <div className="table-wrapper">
                 <table className="my-table" >
                     <thead>
@@ -186,7 +186,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                 >
                                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                                         <span>{col.headerName}</span>
-                                        {sortModel?.field === col.field && (
+                                        {col.sortable && sortModel?.field === col.field && (
                                             <span>{sortModel?.sort === "asc" ? "▲" : "▼"}</span>
                                         )}
                                     </div>
@@ -237,16 +237,16 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                                 ? String(row[col.field])
                                                 : null)}
                                             onClick={(e) => {
-                                                if (!col.field || col.renderCell) return; 
+                                                if (!col.field || col.renderCell) return;
                                                 if (col.field) {
                                                     copyToClipboard(String(row[col.field]), e)
-                                                    
+
                                                 }
                                             }}
                                             key={String(col.field ?? idx)}
                                             data-label={col.headerName}
                                             style={{ padding: 8, borderBottom: "1px solid #eee" }}
-                                          
+
                                         >
                                             {col.renderCell
                                                 ? col.renderCell(row)
@@ -254,7 +254,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                                     ? String(row[col.field])
                                                     : null}
 
-                                                    
+
                                         </td>
                                     ))}
                                 </tr>

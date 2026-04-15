@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useContext } from "react";
 import {
     GenericDataGrid,
     Column,
@@ -11,11 +11,14 @@ import { useToast } from "../../../providers/ToastContext";
 import { useModal } from "@/Providers/ModalContext";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
+import { EnvContext } from '@/EnvContext.js';
+
 import { ContactUsSubmission } from "../../../../../src/models/contactus.model";
 export const ContactUsRequests = () => {
     const { show } = useToast();
     const { openModal } = useModal();
-
+const env = useContext(EnvContext);
+console.log(env)
     const columns: Column<ContactUsSubmission>[] = [
         {
             field: "fullName",
@@ -91,7 +94,7 @@ export const ContactUsRequests = () => {
                         onClick={() =>
                             window.open(
                                 row.attachment?.path
-                                    ? `${import.meta.env.VITE_API_BASE_URL}/${row.attachment.path}`
+                                    ? `${env.VITE_SERVER_API_URL}/uploads/${row.attachment.filename}`
                                     : "#",
                                 "_blank"
                             )
@@ -105,7 +108,33 @@ export const ContactUsRequests = () => {
         },
         {
             headerName: "Objective",
-            width: "12%",
+            width: "8%",
+            sortable: false,
+            filterable: false,
+            renderCell: (row) => (
+                <button
+                    className="btn btn-sm dashboard-btn"
+                    onClick={() =>
+                        openModal({
+                            variant: "default",
+                            title: `Objective - ${row.fullName}`,
+                            content: (
+                                <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
+                                    {row.meaObjective || "No objective provided"}
+                                </div>
+                            ),
+                            cancelText: "Close",
+                            onCancel: () => { },
+                        })
+                    }
+                >
+                    View
+                </button>
+            ),
+        },
+        {
+            headerName: "Actions",
+            width: "8%",
             sortable: false,
             filterable: false,
             renderCell: (row) => (

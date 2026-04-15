@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { Navigate, useLocation, redirect } from "react-router-dom";
 import type { RootState } from "../store";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,24 +14,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   const redirectTo = `${location.pathname}${location.search}${location.hash}`;
-console.log('pathname:', location.pathname);
-console.log('search:', location.search);
-console.log('hash:', location.hash);
 
   // on the server, just render children (auth is checked client-side)
   if (typeof window === 'undefined') {
     return <>{children}</>;
   }
-
-  
-//   if(!loading){
-
-//       console.log('pathname:', location.pathname);
-//     console.log('search:', location.search);
-//     console.log('hash:', location.hash);
-//   }
-
-  
 
   if (!user) {
     return (

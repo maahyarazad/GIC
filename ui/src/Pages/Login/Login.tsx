@@ -4,7 +4,7 @@ import "./Login.css";
 import { setHasViewedTrue } from "@/features/authSlice";
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation, useSearchParams } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button from "../../Components/Button/Button";
 import { setReady } from "../../features/appSlice";
@@ -14,8 +14,16 @@ import PasswordInput from "@/Components/PasswordInput";
 const Login: React.FC = () => {
   const dispatch = useDispatch();
   const { show } = useToast();
-  const navigate = useNavigate();
-  const location = useLocation();
+
+const [searchParams] = useSearchParams();
+const navigate = useNavigate();
+const location = useLocation();
+const _redirect = searchParams.get('redirect');
+const [redirect, setRedirect] = useState(_redirect);
+
+
+
+
   const user = useSelector((state: RootState) => state.auth.user);
   const loading = useSelector((state: RootState) => state.auth.loading);
 
@@ -24,9 +32,6 @@ const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    dispatch(setReady(true));
-  }, [dispatch]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -38,23 +43,17 @@ const Login: React.FC = () => {
     loginContainer.style.minHeight = `${vh - 80}px`;
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
 
-    const stateRedirect =
-      typeof location.state === "object" &&
-      location.state !== null &&
-      "from" in location.state
-        ? (location.state as { from?: string }).from
-        : null;
 
-    const params = new URLSearchParams(location.search);
-    const queryRedirect = params.get("redirect");
 
-    const target = stateRedirect || queryRedirect || "/dashboard";
+useEffect(() => {
+   
+  if (user) {
+    
+    navigate(decodeURIComponent(redirect ?? '/dashboard'), { replace: true });
+  } 
+}, [user]);
 
-    navigate(target, { replace: true });
-  }, [user, navigate, location.search, location.state]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

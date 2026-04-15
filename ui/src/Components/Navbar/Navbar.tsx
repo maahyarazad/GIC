@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useSelector, UseSelector } from 'react-redux';
+
 import './Navbar.css';
 import type { RootState } from "../../store";
 import { EnvContext } from '../../EnvContext.js'
 import mainLogo from '../../../public/gic-log-main.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
-
+import { useSelector, useDispatch } from 'react-redux';
+import { loadSiteData, setReady } from '../../features/appSlice';
 
 type NavbarProps = {
     companyName: any, navbarLinks: any, siteData: any, onLanguageChange: any, currentlanguage: any
@@ -15,9 +16,9 @@ type NavbarProps = {
 const Navbar = (
     { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
 ) => {
-
+    const dispatch = useDispatch();
     const { showPage, activePage } = usePage();
-  const isMobile = useIsMobile();
+    const isMobile = useIsMobile();
     const env: string = useContext(EnvContext);
     const isReady = useSelector((state: RootState) => state.app.isReady);
 
@@ -32,7 +33,8 @@ const Navbar = (
 
 
     const user = useSelector((state: RootState) => state.auth.user);
-    
+
+
     function isLinkActive(_linkPath: string) {
         // Normalize by removing leading and trailing slashes
         const normalizePath = (path: string) => path.replace(/^\/+|\/+$/g, '');
@@ -137,6 +139,8 @@ const Navbar = (
         }
     }, [location.pathname, pendingScrollKey]);
 
+
+
     const scrollToSection = (key) => {
         const targetElement = document.getElementById(`section-${key}`);
         if (targetElement) {
@@ -189,49 +193,51 @@ const Navbar = (
     if (!navbarLinks || !companyName) return null
 
 
-const User: React.ReactNode = (
-    <>
-        {user !== null ? (
-            <>
-                <span
-                    className={`span-link user-link ${
-                        activePage === "/dashboard" ? "active" : ""
-                    }`}
-                    onClick={(e) => {
-                        closeMob();
-                        handleScroll(e, "dashboard", "link", "/dashboard");
-                    }}
-                >
-                    <span className="user-link__avatar">
-                        {user?.name?.charAt(0)?.toUpperCase()}
+    const User: React.ReactNode = (
+        <>
+            {user !== null ? (
+                <>
+                    <span
+                        className={`span-link user-link ${activePage === "/dashboard" ? "active" : ""
+                            }`}
+                        onClick={(e) => {
+                            closeMob();
+                            handleScroll(e, "dashboard", "link", "/dashboard");
+                        }}
+                    >
+                        <span className="user-link__avatar">
+                            {user?.name?.charAt(0)?.toUpperCase()}
+                        </span>
                     </span>
-                </span>
-            </>
-        ) : (
-            <>
-                <span
-                    className={`span-link ${
-                        activePage === "/login" ? "active" : ""
-                    }`}
-                    onClick={(e) => {
-                        closeMob();
-                        handleScroll(e, "login", "link", "/login");
-                    }}
-                >
-                    Sign-in
-                </span>
-            </>
-        )}
-    </>
-);
+                </>
+            ) : (
+                <>
+                    <span
+                        className={`span-link ${activePage === "/login" ? "active" : ""
+                            }`}
+                        onClick={(e) => {
+                            closeMob();
+                            handleScroll(e, "login", "link", "/login");
+                        }}
+                    >
+                        Sign-in
+                    </span>
+                </>
+            )}
+        </>
+    );
 
 
 
 
 
 
-    useEffect(() => { }, [isReady])
 
+
+
+    useEffect(() => {
+        
+    }, [isReady])
     const NavLogo = isReady ? (
         <>
             <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
@@ -243,7 +249,9 @@ const User: React.ReactNode = (
     ) : null;
 
     const [theme, setTheme] = useState(
-        document.documentElement.getAttribute("data-theme")
+        typeof document !== 'undefined'
+            ? document.documentElement.getAttribute('data-theme')
+            : 'light'
     );
     const [isOpen, setIsOpen] = useState(false);
 
@@ -284,11 +292,15 @@ const User: React.ReactNode = (
 
 
 
+    useEffect(() => {
+
+    }, [isReady])
 
 
 
-
-
+    if (!isReady) {
+        return null
+    }
 
     return (
 
@@ -298,7 +310,7 @@ const User: React.ReactNode = (
                     {isReady ?
 
                         <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-                        : null}
+                        : <></>}
                 </div>
                 <div className='d-flex justify-content-center'>
 
@@ -327,13 +339,13 @@ const User: React.ReactNode = (
                             navigate('/contact');
                         }} className="nav-cta">Apply Now</a></li> */}
 
-                      
+
 
                     </ul>
                 </div>
 
                 <div className="nav-right">
-                          {isMobile ? null : User}
+                    {isMobile ? null : User}
                     <div className="theme-wrap" onClick={toggleTheme}>
                         <span className="theme-lbl" id="themeLbl">{theme === "light" ? "Light" : "Dark"}</span>
                         <div className="theme-tog"></div>
@@ -374,7 +386,7 @@ const User: React.ReactNode = (
                     navigate('/contact');
                 }} className="span-cta">Apply Now</a></li> */}
 
-               
+
             </div>
         </>
 

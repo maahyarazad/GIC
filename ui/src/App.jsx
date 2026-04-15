@@ -1,4 +1,3 @@
-import { BrowserRouter } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -18,7 +17,6 @@ import Unsubscribe from './Pages/Unsubscribe/Unsubscribe';
 import UnderDevelopment from './Pages/UnderDevelopment/UnderDevelopment';
 import WhatWeDo from './Pages/WhatWeDo/WhatWeDo';
 import Membership from './Pages/Membership/Membership';
-
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import BackToTop from './Components/BackToTop/BackToTop';
@@ -27,8 +25,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useScrollRestoration } from './Components/useScrollRestoration';
 import './App.css';
-import { loadSiteData } from './features/appSlice';
-import TestGate from './TestGate';
+import { loadSiteData, setReady } from './features/appSlice';
 
 const AppContainer = ({ children }) => {
   const location = useLocation();
@@ -41,7 +38,6 @@ const AppContainer = ({ children }) => {
       segment.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
     );
     const formattedPath = capitalizedSegments.join(' | ');
-
     document.title = formattedPath ? `GIC | ${formattedPath}` : 'GIC';
   }, [location.pathname]);
 
@@ -52,15 +48,11 @@ const App = () => {
   const dispatch = useDispatch();
   const [language, setLanguage] = useState('EN');
   const [sessionId, setSessionId] = useState(null);
-  const [isTestGatePassed, setIsTestGatePassed] = useState(false);
 
   const siteData = useSelector((state) => state.app.siteData);
+    const isReady = useSelector((state) => state.app.isReady);
 
-  useEffect(() => {
-    if (!siteData) {
-      dispatch(loadSiteData('english'));
-    }
-  }, [dispatch, siteData]);
+
 
   useEffect(() => {
     let guid = localStorage.getItem('session-guid');
@@ -81,53 +73,41 @@ const App = () => {
     setLanguage(value);
   };
 
-//   if (!isTestGatePassed) {
-//     return <TestGate onSuccess={() => setIsTestGatePassed(true)} />;
-//   }
 
-  if (!siteData) {
-    return <MainLoader />;
-  }
+  useEffect(()=>{
+      dispatch(setReady(true))
+      
+  }, [])
 
+  
+  if (!isReady) {
+      return <MainLoader />;
+    }
   return (
-    <BrowserRouter>
-      <AppContainer>
-        <Navbar
-          onLanguageChange={handleLanguageChange}
-          navbarLinks={siteData.navLinks}
-          siteData={siteData}
-          currentlanguage={language}
-          companyName={siteData.companyName}
-        />
-
-        <Routes>
-          <Route path="/" element={<Home siteData={siteData} />} />
-          <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
-          <Route path="/what-we-do" element={<WhatWeDo />} />
-          <Route path="/membership" element={<Membership />} />
-          <Route path="/boardroom" element={<Boardroom />} />
-          <Route path="/contact" element={<ContactUs siteData={siteData} />} />
-          <Route path="/login" element={<Login />} />
-          {/* <Route path="/register" element={<Register />} /> */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/boardroom" element={<Boardroom siteData={siteData} />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/unsubscribe" element={<Unsubscribe />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-
-        <Footer siteData={siteData} />
-        {/* <BackToTop /> */}
-      </AppContainer>
-    </BrowserRouter>
+    <AppContainer>
+      <Navbar
+        onLanguageChange={handleLanguageChange}
+        navbarLinks={siteData.navLinks}
+        siteData={siteData}
+        currentlanguage={language}
+        companyName={siteData.companyName}
+      />
+      <Routes>
+        <Route path="/" element={<Home siteData={siteData} />} />
+        <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
+        <Route path="/what-we-do" element={<WhatWeDo />} />
+        <Route path="/membership" element={<Membership />} />
+        <Route path="/boardroom" element={<Boardroom siteData={siteData} />} />
+        <Route path="/contact" element={<ContactUs siteData={siteData} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/unsubscribe" element={<Unsubscribe />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Footer siteData={siteData} />
+    </AppContainer>
   );
 };
 

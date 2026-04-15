@@ -8,8 +8,11 @@ import { RootProviders } from "./RootProviders";
 export async function render(url, env) {
   let siteData = null;
 
+
   try {
-    siteData = await fetchSiteData(env.language);
+
+    siteData = await fetchSiteData(env);
+    
   } catch (err) {
     console.error("SSR siteData fetch failed", err);
   }
@@ -24,7 +27,7 @@ export async function render(url, env) {
       siteData,
       loading: false,
       error: null,
-      isReady: true,
+      isReady: false,
     },
   };
 

@@ -6,20 +6,23 @@ import axiosInstance from '../../api/axiosInstance';
 import mainLogo from '../../../public/gic-log-main.png';
 import { useNavigate, Link } from 'react-router-dom';
 import { usePage } from '@/Providers/PageContext';
+import { useSelector } from 'react-redux';
+import type { RootState } from "../../store";
 
 interface FooterProps {
     siteData: any;
 }
 
 const Footer: React.FC<FooterProps> = ({ siteData }) => {
+
     const [email, setEmail] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const validationMessageRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const { show } = useToast();
     const { showPage, activePage } = usePage();
-
-    if (!siteData) return null;
+const isReady = useSelector((state: RootState) => state.app.isReady);
+    if (!isReady) return null;
 
     const handleSubmit = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

@@ -119,7 +119,11 @@ const Dashboard: React.FC = () => {
   const filteredMenuItems = useMemo(() => {
     if (!userRole) return [];
     return (Object.keys(componentMap) as MenuItem[]).filter((item) =>
-      accessControl[item]?.includes(userRole)
+    {
+
+        console.log(item);
+      accessControl[item]?.includes(userRole);
+    }
     );
   }, [userRole]);
 
@@ -132,35 +136,31 @@ const Dashboard: React.FC = () => {
       : filteredMenuItems[0] ?? null;
   }, [userRole, filteredMenuItems]);
 
-  const tabFromQuery = searchParams.get("tab");
+  const currentTab = searchParams.get("tab");
 
-  const resolvedTab = useMemo<MenuItem | null>(() => {
-    // do not resolve anything until auth is ready
-    if (authLoading || !userRole) return null;
+  const resolvedTab: MenuItem | null = null;
+const [activeTab, setActiveTab] = useState<MenuItem | null>(null);  
+  const [activeComponent, setActiveComponent] = useState<React.ReactNode>(null);
+useEffect(() => {
+  const currentTab = searchParams.get("tab");
 
-    if (
-      isValidMenuItem(tabFromQuery) &&
-      filteredMenuItems.includes(tabFromQuery)
-    ) {
-      return tabFromQuery;
-    }
+  const isAllowedTab =
+    isValidMenuItem(currentTab) && filteredMenuItems.includes(currentTab as MenuItem);
 
-    return defaultTab;
-  }, [authLoading, userRole, tabFromQuery, filteredMenuItems, defaultTab]);
+  if (isAllowedTab) {
+    setActiveTab(currentTab as MenuItem);
+    setActiveComponent(componentMap[currentTab as MenuItem]);
+  } else if (defaultTab) {
+    // fallback to default if tab is invalid/missing
+    setActiveTab(defaultTab);
+    setActiveComponent(componentMap[defaultTab]);
+  }
+}, [authLoading, filteredMenuItems]); // ✅ add filteredMenuItems as dependency
 
-  useEffect(() => {
-    // never rewrite the URL until auth is fully known
-    if (authLoading || !userRole || !resolvedTab) return;
-
-    const currentTab = searchParams.get("tab");
-    if (currentTab === resolvedTab) return;
-
-    const nextParams = new URLSearchParams(searchParams);
-    nextParams.set("tab", resolvedTab);
-    setSearchParams(nextParams, { replace: true });
-  }, [authLoading, userRole, resolvedTab, searchParams, setSearchParams]);
 
   const handleMenuClick = (item: MenuItem) => {
+    if (item === resolvedTab) return;
+
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set("tab", item);
     setSearchParams(nextParams, { replace: true });
@@ -170,12 +170,11 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // avoid rendering wrong tab while auth is still resolving
-  if (authLoading || !userRole || !resolvedTab) {
+  if (!activeComponent) {
     return null;
   }
 
-  const selectedComponent = componentMap[resolvedTab];
+debugger;  
 
   return (
     <div className={`dashboard ${activePage === "/dashboard" ? "active" : ""}`}>
@@ -191,9 +190,10 @@ const Dashboard: React.FC = () => {
         <div className="nav">
           <ul>
             {filteredMenuItems.map((item) => (
+                
               <li
                 key={item}
-                className={resolvedTab === item ? "active" : ""}
+                className={activeTab === item ? "active" : ""}
                 onClick={() => handleMenuClick(item)}
                 role="button"
                 tabIndex={0}
@@ -214,7 +214,7 @@ const Dashboard: React.FC = () => {
           ☰
         </button>
 
-        {selectedComponent}
+        {activeComponent}
       </main>
     </div>
   );

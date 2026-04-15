@@ -58,7 +58,7 @@ const menuTitles: Record<MenuItem, string> = {
   newsletter_subscribers: "Email Subscribers",
   continent: "Manage Countries",
   profile: "Profile",
-  economic_insights: "Economic Insights",
+  economic_insights: "Country Intelligence",
   logout: "Logout",
 };
 
@@ -118,52 +118,52 @@ const Dashboard: React.FC = () => {
 
   const filteredMenuItems = useMemo(() => {
     if (!userRole) return [];
-    return (Object.keys(componentMap) as MenuItem[]).filter((item) =>
-    {
 
-        console.log(item);
-      accessControl[item]?.includes(userRole);
-    }
+    return (Object.keys(componentMap) as MenuItem[]).filter((item) =>
+      accessControl[item]?.includes(userRole)
     );
   }, [userRole]);
 
   const defaultTab = useMemo<MenuItem | null>(() => {
-    if (!userRole) return null;
+    if (!userRole || filteredMenuItems.length === 0) return null;
 
     const roleDefault = getDefaultTab(userRole);
     return filteredMenuItems.includes(roleDefault)
       ? roleDefault
-      : filteredMenuItems[0] ?? null;
+      : filteredMenuItems[0];
   }, [userRole, filteredMenuItems]);
 
-  const currentTab = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState<MenuItem | null>(null);
 
-  const resolvedTab: MenuItem | null = null;
-const [activeTab, setActiveTab] = useState<MenuItem | null>(null);  
-  const [activeComponent, setActiveComponent] = useState<React.ReactNode>(null);
-useEffect(() => {
-  const currentTab = searchParams.get("tab");
+  useEffect(() => {
+    if (authLoading || !userRole || !defaultTab) return;
 
-  const isAllowedTab =
-    isValidMenuItem(currentTab) && filteredMenuItems.includes(currentTab as MenuItem);
+    const queryTab = searchParams.get("tab");
+    const isAllowedTab =
+      isValidMenuItem(queryTab) && filteredMenuItems.includes(queryTab);
 
-  if (isAllowedTab) {
-    setActiveTab(currentTab as MenuItem);
-    setActiveComponent(componentMap[currentTab as MenuItem]);
-  } else if (defaultTab) {
-    // fallback to default if tab is invalid/missing
-    setActiveTab(defaultTab);
-    setActiveComponent(componentMap[defaultTab]);
-  }
-}, [authLoading, filteredMenuItems]); // ✅ add filteredMenuItems as dependency
+    const nextTab = isAllowedTab ? queryTab : defaultTab;
 
+    setActiveTab(nextTab);
+
+    if (!isAllowedTab) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set("tab", nextTab);
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    authLoading,    
+  ]);
+
+  const activeComponent = activeTab ? componentMap[activeTab] : null;
 
   const handleMenuClick = (item: MenuItem) => {
-    if (item === resolvedTab) return;
+    if (item === activeTab) return;
 
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set("tab", item);
     setSearchParams(nextParams, { replace: true });
+    setActiveTab(item);
 
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       setSidebarOpen(false);
@@ -173,8 +173,6 @@ useEffect(() => {
   if (!activeComponent) {
     return null;
   }
-
-debugger;  
 
   return (
     <div className={`dashboard ${activePage === "/dashboard" ? "active" : ""}`}>
@@ -190,7 +188,6 @@ debugger;
         <div className="nav">
           <ul>
             {filteredMenuItems.map((item) => (
-                
               <li
                 key={item}
                 className={activeTab === item ? "active" : ""}

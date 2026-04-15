@@ -110,7 +110,7 @@ export default function JsonViewer() {
             >
                 Update
             </button>
-            <div className="application-json-editor-continer">
+            <div className="application-json-editor-continer" style={{ position: 'relative', height: '78dvh', overflow: 'scroll'}}>
                 {loading ? (
                     <Loader />
                 ) : (

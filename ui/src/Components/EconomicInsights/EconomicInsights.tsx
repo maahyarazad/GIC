@@ -129,7 +129,7 @@ const EconomicInsights: React.FC = () => {
 
 
         <div className="economic-insights">
-            <h3 className="mb">Economic Insights</h3>
+            <h3 className="mb">Country Intelligence</h3>
 
             <div className="categories row">
                 <div className="col-12">

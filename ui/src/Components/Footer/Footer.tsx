@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaArrowRight } from 'react-icons/fa';
 import { useToast } from '../../providers/ToastContext';
@@ -14,12 +14,9 @@ import { setReady } from '@/features/appSlice';
 const Footer: React.FC = () => {
 
 
-    const isReady = useSelector((state: RootState) => state.app.isReady);
+
     const siteData = useSelector((state: RootState) => state.app.siteData);
 
-
-
-    if (!siteData) return null;
     const [email, setEmail] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const validationMessageRef = useRef<HTMLDivElement>(null);
@@ -27,7 +24,7 @@ const Footer: React.FC = () => {
     const { show } = useToast();
     const { showPage, activePage } = usePage();
 
-    if (!isReady) return null;
+
 
     const handleSubmit = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,9 +56,11 @@ const Footer: React.FC = () => {
     };
 
 
-    if (!isReady) {
-        return null
-    }
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     return (
         <>
@@ -82,16 +81,14 @@ const Footer: React.FC = () => {
                     <div>
                         <div className="ft-ct">Navigation</div>
                         <ul className="ft-lks">
-                            {Array.isArray(siteData?.navLinks) &&
+                            {isMounted && Array.isArray(siteData?.navLinks) &&
                                 siteData.navLinks.map((link: any) => (
                                     <li key={link.path}>
                                         {link.type === "link" && (
-                                            <a
-                                                onClick={() => {
-                                                    showPage(link.path);
-                                                    navigate(link.path);
-                                                }}
-                                            >
+                                            <a onClick={() => {
+                                                showPage(link.path);
+                                                navigate(link.path);
+                                            }}>
                                                 {link.label}
                                             </a>
                                         )}

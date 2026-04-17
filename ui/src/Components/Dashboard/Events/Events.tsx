@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useContext } from "react";
 import { PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import { useToast } from "@/Providers/ToastContext";
-import { EnvContext } from '@/EnvContext.js';
+import { EnvContext } from '@/EnvContext.jsx';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import './Events.css';
 import Loader from "@/Components/Loader/Loader";

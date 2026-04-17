@@ -41,12 +41,15 @@ const AppContainer = ({ children }) => {
 };
 
 const App = () => {
-    const dispatch = useDispatch();
-    const [language, setLanguage] = useState('EN');
-    const [sessionId, setSessionId] = useState(null);
 
+    const [language, setLanguage] = useState('EN');
+
+
+    const [sessionId, setSessionId] = useState(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
+        setIsMounted(true);
         let guid = localStorage.getItem('session-guid');
         if (!guid) {
             guid = uuidv4();
@@ -65,17 +68,7 @@ const App = () => {
         setLanguage(value);
     };
 
-    const isReady = useSelector((state) => state.app.isReady);
-
-
-    React.useEffect(() => {
-        dispatch(setReady(true));
-
-    }, [dispatch])
-
-    if (!isReady) {
-        return <MainLoader />;
-    }
+    if (!isMounted) return null;
 
     return (
         <AppContainer>

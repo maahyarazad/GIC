@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import './Navbar.css';
 import type { RootState } from "../../store";
-import { EnvContext } from '../../EnvContext.js'
+import { EnvContext } from '../../EnvContext.jsx'
 import mainLogo from '../../../public/gic-log-main.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
@@ -18,15 +18,19 @@ const Navbar = (
     { onLanguageChange, currentlanguage }: NavbarProps
 ) => {
 
-
-    const isReady = useSelector((state: RootState) => state.app.isReady);
     const siteData = useSelector((state: RootState) => state.app.siteData);
+    useEffect(()=>{
+        console.log(siteData);
+    }, [siteData])
 
 
+    const _navLinks = useSelector(
+  (state: RootState) => state.app.siteData?.navLinks
+);
 
-
-
-
+useEffect(() => {
+    console.log("background changed:", _navLinks);
+}, [_navLinks]);
 
 
     const navbarLinks = siteData?.navLinks;
@@ -165,11 +169,6 @@ const Navbar = (
         }
     };
 
-    useEffect(() => { }, [companyName, navbarLinks]);
-
-
-
-
 
     useEffect(() => {
         const handleScroll = () => {
@@ -206,8 +205,7 @@ const Navbar = (
         return () => window.removeEventListener('scroll', onScroll);
     }, [])
 
-    if (!navbarLinks || !companyName) return null
-
+    
 
     const User: React.ReactNode = (
         <>
@@ -245,24 +243,14 @@ const Navbar = (
 
 
 
-
-
-
-
-
-
-    useEffect(() => {
-
-    }, [isReady])
-    const NavLogo = isReady ? (
+    const NavLogo = (
         <>
             <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
                 <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
             </div>
 
-
         </>
-    ) : null;
+    );
 
     const [theme, setTheme] = useState(
         typeof document !== 'undefined'
@@ -308,20 +296,13 @@ const Navbar = (
 
 
 
-
-    if (!isReady) {
-        return null
-    }
-
+   
     return (
 
         <>
             <nav>
                 <div className="nav-brand" onClick={() => { showPage(''); navigate("/"); }}>
-                    {isReady ?
-
-                        <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-                        : <></>}
+                    <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
                 </div>
                 <div className='d-flex justify-content-center'>
 

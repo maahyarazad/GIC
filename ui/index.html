@@ -43,9 +43,11 @@
 
 <body>
     <!-- SSR HTML gets injected here -->
-    <div id="root"><!--app-html--></div>
-    <!--preloaded-state-->
-    <!-- Client hydration -->
+  <div id="root"><!--app-html--></div>
+  <!-- PRELOADED STATE (server injects window.__PRELOADED_STATE__) -->
+  <!--preloaded-state-->
+
+  <!-- Client entry -->
     <script type="module" src="/src/entry-client.jsx"></script>
 
 <script defer href="/public/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

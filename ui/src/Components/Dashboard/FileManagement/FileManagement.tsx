@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext, useMemo } from "re
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
-import { EnvContext } from '../../../EnvContext.js';
+import { EnvContext } from '../../../EnvContext.jsx';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";

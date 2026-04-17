@@ -7,7 +7,7 @@ import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
 import Button from "../../Components/Button/Button";
-import {EnvContext} from '../../EnvContext.js';
+import {EnvContext} from '../../EnvContext.jsx';
 import {Link } from 'react-router-dom';
 import PasswordInput from '@/Components/PasswordInput';
 interface SendOtpBody {

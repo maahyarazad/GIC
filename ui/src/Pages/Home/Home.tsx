@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EnvContext } from '@/EnvContext';
 import './Home.css';
 import { usePage } from '@/Providers/PageContext';
@@ -8,14 +8,11 @@ import type { RootState } from "../../store";
 import { setReady } from '../../features/appSlice';
 
 const Home = () => {
-    const dispatch = useDispatch();
-    
-    const siteData = useSelector((state: RootState) => state.app.siteData);
-    const isReady = useSelector((state: RootState) => state.app.isReady);
 
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+    const env = useSelector((state: RootState) => state.app.env);
 
     const { showPage, activePage } = usePage();
-    const env = useContext(EnvContext);
     console.log(env);
     const { openModal } = useModal();
 
@@ -42,17 +39,25 @@ const Home = () => {
         window.location.href = path;
     };
 
-    if (!isReady) return null;
+
+    const [isMounted, setIsMounted] = useState(false);
+
+useEffect(() => {
+    setIsMounted(true);
+}, []);
 
     return (
         <>
-             <div id="page-home" className={`page active`}>
+            <div id="page-home" className={`page active`}>
                 <div className='hero'>
-                    {typeof window !== 'undefined' && (
-                        <video autoPlay loop muted playsInline className='hero-vid'>
-                            <source src={`${env?.VITE_SERVER_API_URL}/uploads/${siteData?.media?.home_background}`} type="video/mp4" />
-                        </video>
-                    )}
+                    <video autoPlay loop muted playsInline className='hero-vid'>
+                        {isMounted && env?.VITE_SERVER_API_URL && (
+        <source
+            src={`${env.VITE_SERVER_API_URL}/uploads/${siteData?.media?.home_background}`}
+            type="video/mp4"
+        />
+    )}
+                    </video>
 
                     <div className="hero-overlay"></div>
 

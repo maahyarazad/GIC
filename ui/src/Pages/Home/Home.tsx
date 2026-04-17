@@ -13,7 +13,7 @@ const Home = () => {
     const env = useSelector((state: RootState) => state.app.env);
 
     const { showPage, activePage } = usePage();
-    console.log(env);
+    
     const { openModal } = useModal();
 
     const openExpert = (expertName: string) => {

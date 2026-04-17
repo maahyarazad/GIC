@@ -19,18 +19,18 @@ const Navbar = (
 ) => {
 
     const siteData = useSelector((state: RootState) => state.app.siteData);
-    useEffect(()=>{
-        console.log(siteData);
+    useEffect(() => {
+
     }, [siteData])
 
 
     const _navLinks = useSelector(
-  (state: RootState) => state.app.siteData?.navLinks
-);
+        (state: RootState) => state.app.siteData?.navLinks
+    );
 
-useEffect(() => {
-    console.log("background changed:", _navLinks);
-}, [_navLinks]);
+    useEffect(() => {
+
+    }, [_navLinks]);
 
 
     const navbarLinks = siteData?.navLinks;
@@ -205,7 +205,7 @@ useEffect(() => {
         return () => window.removeEventListener('scroll', onScroll);
     }, [])
 
-    
+
 
     const User: React.ReactNode = (
         <>
@@ -296,7 +296,7 @@ useEffect(() => {
 
 
 
-   
+
     return (
 
         <>

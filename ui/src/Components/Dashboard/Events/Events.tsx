@@ -115,7 +115,7 @@ const Events: React.FC = () => {
                             eventDate >= new Date() &&
                             eventDate <= new Date(new Date().setDate(new Date().getDate() + 30));
 
-                        console.log(isUpcoming);
+                        
 
                         return (
                             <div

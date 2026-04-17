@@ -12,11 +12,6 @@ import MainLoader from "./Components/MainLoader.jsx";
 
 export function RootProviders({ children, preloadedState }) {
 
-    // console.log('****************************************************************************************')
-    // console.log('****************************************************************************************')
-    // console.log(preloadedState)
-    // console.log('****************************************************************************************')
-    // console.log('****************************************************************************************')
     const storeRef = useRef(null);
 
     if (!storeRef.current) {

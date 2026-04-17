@@ -12,7 +12,7 @@ const env =
 export const EnvContext = React.createContext(env);
 
 export const EnvProvider = ({ children }) => {
-  console.log("ENV:", env);
+  
 
   return (
     <EnvContext.Provider value={env}>

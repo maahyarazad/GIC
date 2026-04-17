@@ -87,18 +87,16 @@ const App = () => {
     <AppContainer>
       <Navbar
         onLanguageChange={handleLanguageChange}
-        navbarLinks={siteData?.navLinks}
-        siteData={siteData}
         currentlanguage={language}
-        companyName={siteData?.companyName}
+        
       />
       <Routes>
-        <Route path="/" element={<Home siteData={siteData} />} />
-        <Route path="/about-us" element={<AboutUs siteData={siteData} />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/about-us" element={<AboutUs/>} />
         <Route path="/what-we-do" element={<WhatWeDo />} />
         <Route path="/membership" element={<Membership />} />
-        <Route path="/boardroom" element={<Boardroom siteData={siteData} />} />
-        <Route path="/contact" element={<ContactUs siteData={siteData} />} />
+        <Route path="/boardroom" element={<Boardroom />} />
+        <Route path="/contact" element={<ContactUs  />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -106,7 +104,7 @@ const App = () => {
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer siteData={siteData} />
+      <Footer />
     </AppContainer>
   );
 };

@@ -9,12 +9,13 @@ import { usePage } from '@/Providers/PageContext';
 import { useSelector } from 'react-redux';
 import type { RootState } from "../../store";
 
-interface FooterProps {
-    siteData: any;
-}
 
-const Footer: React.FC<FooterProps> = ({ siteData }) => {
 
+const Footer: React.FC = () => {
+
+            const siteData = useSelector((state: RootState) => state.app.siteData);
+
+    if (!siteData) return null;
     const [email, setEmail] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const validationMessageRef = useRef<HTMLDivElement>(null);
@@ -74,7 +75,7 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
                     </div>
 
                     {/* Navigation */}
-                    {/* <div>
+                    <div>
                         <div className="ft-ct">Navigation</div>
                         <ul className="ft-lks">
                           {Array.isArray(siteData?.navLinks) &&
@@ -93,7 +94,7 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
     </li>
   ))}
                         </ul>
-                    </div> */}
+                    </div>
 
                     {/* Legal */}
                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a>Privacy Policy</a></li><li><a>Terms &amp; Conditions</a></li><li><a>Sitemap</a></li></ul></div>

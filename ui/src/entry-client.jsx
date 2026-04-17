@@ -8,10 +8,10 @@ const preloadedState = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;
 
 hydrateRoot(
-  document.getElementById("root"),
-  <BrowserRouter>
-  <RootProviders preloadedState={preloadedState}>
-    <App />
-  </RootProviders>
-  </BrowserRouter>
+    document.getElementById("root"),
+    <BrowserRouter>
+        <RootProviders preloadedState={preloadedState}>
+            <App />
+        </RootProviders>
+    </BrowserRouter>
 );

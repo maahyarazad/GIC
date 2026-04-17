@@ -1,37 +1,40 @@
 import { useContext } from 'react';
-import { EnvContext } from '../../EnvContext';
+import { EnvContext } from '@/EnvContext';
 import './Home.css';
-import { usePage } from '../../providers/PageContext';
-import { useModal } from "../../providers/ModalContext";
+import { usePage } from '@/Providers/PageContext';
+import { useModal } from "@/Providers/ModalContext";
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { RootState } from "../../store";
 
+const Home = () => {
+    
+        const siteData = useSelector((state: RootState) => state.app.siteData);
 
-const Home = ({ siteData }) => {
-        const { showPage, activePage } = usePage();
-    const env = useContext(EnvContext);
-    const { openModal } = useModal();
-    const navigate = useNavigate();
-    
-    const openExpert = (expertName) => {
-        
-        const expert = siteData.expertData[expertName];
-        
-        
-        openModal({
-            variant: "expert",
-            expert: {
-                init: expert.init,
-                name: expert.name,
-                role: expert.role,
-                tag: expert.tag,
-                bio: expert.bio,
-                exp: expert.exp,
-                bg: expert.bg,
-            }
-        });
-    }
-    
     if (!siteData) return null;
+    const { showPage, activePage } = usePage();
+const env = useContext(EnvContext);
+const { openModal } = useModal();
+const navigate = useNavigate();
+
+const openExpert = (expertName:string) => {
+    
+    const expert = siteData.expertData[expertName];
+    
+    
+    openModal({
+        variant: "expert",
+        expert: {
+            init: expert.init,
+            name: expert.name,
+            role: expert.role,
+            tag: expert.tag,
+            bio: expert.bio,
+            exp: expert.exp,
+            bg: expert.bg,
+        }
+    });
+}
     return (
         <>
             <div id="page-home" className={`page ${activePage === "/" ? "active" : ""}`}>

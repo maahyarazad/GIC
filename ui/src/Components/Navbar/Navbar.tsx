@@ -11,11 +11,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { loadSiteData, setReady } from '../../features/appSlice';
 
 type NavbarProps = {
-    companyName: any, navbarLinks: any, siteData: any, onLanguageChange: any, currentlanguage: any
+   onLanguageChange: any, currentlanguage: any
 }
 const Navbar = (
-    { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
+    { onLanguageChange, currentlanguage }: NavbarProps
 ) => {
+
+        const siteData = useSelector((state: RootState) => state.app.siteData);
+    
+    if (!siteData) return null;
+    
+    const navbarLinks = siteData?.navLinks;
+    const companyName = siteData?.companyName;
+    
     const dispatch = useDispatch();
     const { showPage, activePage } = usePage();
     const isMobile = useIsMobile();
@@ -319,7 +327,7 @@ const Navbar = (
 
                     <ul className="nav-links">
 
-                        {/* {Array.isArray(navbarLinks) &&
+                        {Array.isArray(navbarLinks) &&
                             navbarLinks.map((link) => (
                                 <li key={link.path}>
                                     {link.type === "link" && (
@@ -345,7 +353,7 @@ const Navbar = (
                                         </Link>
                                     )}
                                 </li>
-                            ))} */}
+                            ))}
                         {/* <li><a onClick={() => {
                             showPage('/contact');
                             navigate('/contact');
@@ -372,7 +380,7 @@ const Navbar = (
                 className={`mob-nav ${isOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
-                {/* {navbarLinks?.map((link) => (
+                {Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
                     <li key={link.path} >
                         {
                             link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
@@ -391,7 +399,7 @@ const Navbar = (
                         }
                     </li>
 
-                ))} */}
+                ))}
                 {User}
                 {/* <li><a onClick={() => {
                     showPage('/contact');

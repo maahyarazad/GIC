@@ -36,11 +36,11 @@ export default function ForgotPassword() {
        
        
        const response = await axiosInstance.post("/auth/forgot-password", _email);
-debugger;
+
       setSuccess(
         response.data?.message || "If this email exists, a reset link was sent."
       );
-      debugger;
+      
     } catch (err: any) {
       setError(
         err.message || "Something went wrong. Try again."

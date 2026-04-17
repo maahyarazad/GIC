@@ -20,6 +20,7 @@ import { verifyRequirements } from "./db";
 /* ---- JSON IMPORT (REQUIRED ASSERTION) ---- */
 import swaggerDocument from "./swagger/swagger.json";
 import {RegisterContactUsRoutes} from './controllers/contactus';
+
 const isProduction = process.env.NODE_ENV === "PRODUCTION";
 
 const app = express();
@@ -257,6 +258,7 @@ async function startSSR() {
         );
 
         const { appHtml, preloadedState } = await render(url, envVars);
+        
         const stateScript = `
             <script>
             window.__PRELOADED_STATE__ = ${JSON.stringify(
@@ -268,7 +270,7 @@ async function startSSR() {
         const html = template
           .replace(`<!--app-head-->`, appHtml.head ?? "")
           .replace(`<!--app-html-->`, appHtml.html ?? "")
-          .replace("</body>", `${stateScript}</body>`);
+          .replace(`<!--preloaded-state-->`, `${stateScript}`);
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e) {

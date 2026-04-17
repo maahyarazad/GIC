@@ -107,6 +107,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     useEffect(() => {
         if (!isOpen) return;
+        if (typeof window === "undefined") return;  // add this
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -161,7 +162,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return (
         <ModalContext.Provider value={{ openModal, closeModal }}>
             {children}
-            
+
             {isOpen && showDefault && (
 
                 <ModalDialog

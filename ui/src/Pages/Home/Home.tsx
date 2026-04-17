@@ -1,57 +1,58 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { EnvContext } from '@/EnvContext';
 import './Home.css';
 import { usePage } from '@/Providers/PageContext';
 import { useModal } from "@/Providers/ModalContext";
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from "../../store";
+import { setReady } from '../../features/appSlice';
 
 const Home = () => {
+    const dispatch = useDispatch();
     
-        const siteData = useSelector((state: RootState) => state.app.siteData);
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+    const isReady = useSelector((state: RootState) => state.app.isReady);
 
-    if (!siteData) return null;
+
     const { showPage, activePage } = usePage();
-const env = useContext(EnvContext);
-const { openModal } = useModal();
-const navigate = useNavigate();
+    const env = useContext(EnvContext);
+    console.log(env);
+    const { openModal } = useModal();
 
-const openExpert = (expertName:string) => {
-    
-    const expert = siteData.expertData[expertName];
-    
-    
-    openModal({
-        variant: "expert",
-        expert: {
-            init: expert.init,
-            name: expert.name,
-            role: expert.role,
-            tag: expert.tag,
-            bio: expert.bio,
-            exp: expert.exp,
-            bg: expert.bg,
-        }
-    });
-}
+    const openExpert = (expertName: string) => {
+        const expert = siteData?.expertData?.[expertName];
+        if (!expert) return;
+        openModal({
+            variant: "expert",
+            expert: {
+                init: expert.init,
+                name: expert.name,
+                role: expert.role,
+                tag: expert.tag,
+                bio: expert.bio,
+                exp: expert.exp,
+                bg: expert.bg,
+            }
+        });
+    };
+
+    const handleNavigate = (path: string) => {
+        if (typeof window === 'undefined') return;
+        showPage(path);
+        window.location.href = path;
+    };
+
+    if (!isReady) return null;
+
     return (
         <>
-            <div id="page-home" className={`page ${activePage === "/" ? "active" : ""}`}>
+             <div id="page-home" className={`page active`}>
                 <div className='hero'>
-
-                    <video autoPlay loop muted playsInline className='hero-vid'>
-                        <source src={`${env.VITE_SERVER_API_URL}/uploads/${siteData.media.home_background}`} type="video/mp4" fetchPriority='high' />
-                        Your browser does not support the video tag.
-                    </video>
-
-
-
-                    {/* <FloatingSocialMedia
-                        size={18}
-                        icons={siteData.footer.socialLinks}
-                        disable={siteData.footer.disableSocialLinks}
-                    /> */}
+                    {typeof window !== 'undefined' && (
+                        <video autoPlay loop muted playsInline className='hero-vid'>
+                            <source src={`${env?.VITE_SERVER_API_URL}/uploads/${siteData?.media?.home_background}`} type="video/mp4" />
+                        </video>
+                    )}
 
                     <div className="hero-overlay"></div>
 
@@ -67,28 +68,14 @@ const openExpert = (expertName:string) => {
                             Bridgebuilding &middot; Research &amp; Analytics &middot; Governmental Access &middot; Market Intelligence
                         </p>
                         <div className="hero-actions">
-                           
-
-                        <span onClick={() => {
-                            showPage('/contact');
-                            navigate('/contact');
-                        }} className="btn-p">Introduce Yourself</span>
-                        <span onClick={() => {
-                            showPage('/about-us');
-                            navigate('/about-us');
-                        }} className="btn-g">  Our Mandate &rarr;</span>
-
-
-                         
-                          
+                            <span onClick={() => handleNavigate('/contact')} className="btn-p">Introduce Yourself</span>
+                            <span onClick={() => handleNavigate('/about-us')} className="btn-g">Our Mandate &rarr;</span>
                         </div>
                     </div>
 
                     <div className="hero-stats">
                         <div>
-                            <div className="stat-n">
-                                15<span>+</span>
-                            </div>
+                            <div className="stat-n">15<span>+</span></div>
                             <div className="stat-l">MEA Markets</div>
                         </div>
                         <div className="stat-div"></div>
@@ -98,34 +85,25 @@ const openExpert = (expertName:string) => {
                         </div>
                         <div className="stat-div"></div>
                         <div>
-                            <div className="stat-n">
-                                C<span>-Suite</span>
-                            </div>
+                            <div className="stat-n">C<span>-Suite</span></div>
                             <div className="stat-l">Members Only</div>
                         </div>
                     </div>
 
                     <div className="hero-scroll">
-                        <div className="scroll-line"></div><span style={{fontSize : 11}}>Scroll</span>
+                        <div className="scroll-line"></div><span style={{ fontSize: 11 }}>Scroll</span>
                     </div>
-
-
-
-
                 </div>
-
-
 
                 <div className="npb">
                     <div className="npi">Pitches</div><div className="npi">Panels</div><div className="npi">Publicity</div>
                     <div className="npi">Generic Networking</div><div className="npi">Mediocrity</div>
                 </div>
 
-
                 <div className="about-strip">
                     <div className="about-txt">
                         <div className="slbl">Who We Are</div>
-                        <h2 className="stit">A Discrete <em>Bridge</em><br></br>to Industrial MEA</h2>
+                        <h2 className="stit">A Discrete <em>Bridge</em><br />to Industrial MEA</h2>
                         <p className="about-body">The GERMAN INDUSTRY CLUB is an <strong>exclusive boutique circle</strong> of German industry executives, entrepreneurs and professional investors dedicated to the Middle East and Africa. Founded on principles of strategic alignment and mutual discretion, we facilitate informed dialogues among leaders who recognise the region's untapped potential.</p>
                         <p className="about-body">We are <strong>not a networking platform.</strong> We curate bridges to key decision-makers in ministries and government bodies of MEA countries &mdash; a strategic interface between established industrial expertise and local regulatory landscapes.</p>
                         <div className="about-tags">
@@ -160,125 +138,58 @@ const openExpert = (expertName:string) => {
                     </div>
                 </div>
 
+                <hr className="divider" />
 
-
-                <>
-                    <hr className="divider" />
-
-                    <div className="sec" style={{ background: "var(--bgp)" }}>
-                        <div className="slbl">What We Do</div>
-                        <h2 className="stit">
-                            Four Core <em>Pillars</em>
-                        </h2>
-                        <div className="pillars-grid">
-                            <div className="pillar">
-                                <div className="pillar-num">01</div>
-                                <div className="pillar-title">Market Arbitrage &amp; Intelligence</div>
-                                <p className="pillar-body">
-                                    Identifying systemic underrepresentation and investment imbalances
-                                    within specific jurisdictions &mdash; where demand exists without
-                                    adequate supply and where growth is limited by structure, not market
-                                    size.
-                                </p>
-                            </div>
-                            <div className="pillar">
-                                <div className="pillar-num">02</div>
-                                <div className="pillar-title">Infrastructure &amp; Localisation</div>
-                                <p className="pillar-body">
-                                    Strategic advisory on establishing regional distribution hubs, local
-                                    packaging facilities, and full-scale production lines. From exporter
-                                    to local market participant.
-                                </p>
-                            </div>
-                            <div className="pillar">
-                                <div className="pillar-num">03</div>
-                                <div className="pillar-title">High-Stake Procurement</div>
-                                <p className="pillar-body">
-                                    Providing a clear line of sight into large-scale tenders and sovereign
-                                    development projects &mdash; early intelligence and structured
-                                    preparation for capital-intensive government opportunities.
-                                </p>
-                            </div>
-                            <div className="pillar">
-                                <div className="pillar-num">04</div>
-                                <div className="pillar-title">G2B Bridgebuilding</div>
-                                <p className="pillar-body">
-                                    Navigating the regulatory landscape through direct conduits to
-                                    ministries and government officials in the MEA region. Always
-                                    prepared, contextualised, and at peer level.
-                                </p>
-                            </div>
+                <div className="sec" style={{ background: "var(--bgp)" }}>
+                    <div className="slbl">What We Do</div>
+                    <h2 className="stit">Four Core <em>Pillars</em></h2>
+                    <div className="pillars-grid">
+                        <div className="pillar">
+                            <div className="pillar-num">01</div>
+                            <div className="pillar-title">Market Arbitrage &amp; Intelligence</div>
+                            <p className="pillar-body">Identifying systemic underrepresentation and investment imbalances within specific jurisdictions &mdash; where demand exists without adequate supply and where growth is limited by structure, not market size.</p>
+                        </div>
+                        <div className="pillar">
+                            <div className="pillar-num">02</div>
+                            <div className="pillar-title">Infrastructure &amp; Localisation</div>
+                            <p className="pillar-body">Strategic advisory on establishing regional distribution hubs, local packaging facilities, and full-scale production lines. From exporter to local market participant.</p>
+                        </div>
+                        <div className="pillar">
+                            <div className="pillar-num">03</div>
+                            <div className="pillar-title">High-Stake Procurement</div>
+                            <p className="pillar-body">Providing a clear line of sight into large-scale tenders and sovereign development projects &mdash; early intelligence and structured preparation for capital-intensive government opportunities.</p>
+                        </div>
+                        <div className="pillar">
+                            <div className="pillar-num">04</div>
+                            <div className="pillar-title">G2B Bridgebuilding</div>
+                            <p className="pillar-body">Navigating the regulatory landscape through direct conduits to ministries and government officials in the MEA region. Always prepared, contextualised, and at peer level.</p>
                         </div>
                     </div>
+                </div>
 
-                    <div className="sec" style={{ background: "var(--bg)" }}>
-                        <div className="slbl">The Circle</div>
-                        <h2 className="stit">
-                            Associate <em>Experts</em>
-                        </h2>
-                        <p
-                            style={{
-                                fontFamily: "var(--se)",
-                                fontSize: "17px",
-                                fontStyle: "italic",
-                                color: "var(--mu)",
-                                marginTop: "12px",
-                                maxWidth: "520px",
-                                lineHeight: 1.7,
-                            }}
-                        >
-                            Click any expert to view their full profile.
-                        </p>
-                        <div className="team-grid">
-                            <div className="team-card" onClick={() => openExpert("jan")}>
-                                <div className="team-img">
-                                    <div className="team-init">JH</div>
-                                </div>
+                <div className="sec" style={{ background: "var(--bg)" }}>
+                    <div className="slbl">The Circle</div>
+                    <h2 className="stit">Associate <em>Experts</em></h2>
+                    <p style={{ fontFamily: "var(--se)", fontSize: "17px", fontStyle: "italic", color: "var(--mu)", marginTop: "12px", maxWidth: "520px", lineHeight: 1.7 }}>
+                        Click any expert to view their full profile.
+                    </p>
+                    <div className="team-grid">
+                        {[
+                            { key: "jan", init: "JH", name: "Jan Hussing", role: "Geopolitics, Geoeconomics & Policy" },
+                            { key: "reg", init: "RA", name: "Regional Advisor", role: "Sovereign Wealth & Investment" },
+                            { key: "leg", init: "LA", name: "Legal Advisor", role: "MEA Regulatory & Compliance" },
+                            { key: "eco", init: "EA", name: "Economic Analyst", role: "Market Intelligence & Research" },
+                        ].map(({ key, init, name, role }) => (
+                            <div className="team-card" key={key} onClick={() => openExpert(key)}>
+                                <div className="team-img"><div className="team-init">{init}</div></div>
                                 <div className="team-info">
-                                    <div className="team-name">Jan Hussing</div>
-                                    <div className="team-role">
-                                        Geopolitics, Geoeconomics &amp; Policy
-                                    </div>
+                                    <div className="team-name">{name}</div>
+                                    <div className="team-role">{role}</div>
                                 </div>
                             </div>
-
-                            <div className="team-card" onClick={() => openExpert("reg")}>
-                                <div className="team-img">
-                                    <div className="team-init">RA</div>
-                                </div>
-                                <div className="team-info">
-                                    <div className="team-name">Regional Advisor</div>
-                                    <div className="team-role">Sovereign Wealth &amp; Investment</div>
-                                </div>
-                            </div>
-
-                            <div className="team-card" onClick={() => openExpert("leg")}>
-                                <div className="team-img">
-                                    <div className="team-init">LA</div>
-                                </div>
-                                <div className="team-info">
-                                    <div className="team-name">Legal Advisor</div>
-                                    <div className="team-role">MEA Regulatory &amp; Compliance</div>
-                                </div>
-                            </div>
-
-                            <div className="team-card" onClick={() => openExpert("eco")}>
-                                <div className="team-img">
-                                    <div className="team-init">EA</div>
-                                </div>
-                                <div className="team-info">
-                                    <div className="team-name">Economic Analyst</div>
-                                    <div className="team-role">Market Intelligence &amp; Research</div>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-                </>
-
-
-
-
-
+                </div>
             </div>
         </>
     );

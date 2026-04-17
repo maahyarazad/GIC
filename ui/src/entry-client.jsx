@@ -4,7 +4,7 @@ import App from "./App";
 import { RootProviders } from "./RootProviders";
 import { BrowserRouter } from "react-router-dom";
 
-const preloadedState = window.__PRELOADED_STATE__;
+const preloadedState = window.__PRELOADED_STATE__ || {};
 delete window.__PRELOADED_STATE__;
 
 hydrateRoot(

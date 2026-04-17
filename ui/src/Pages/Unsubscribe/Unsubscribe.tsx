@@ -15,15 +15,6 @@ import { setReady } from '../../features/appSlice';
 const Unsubscribe: React.FC = () => {
 
 
-
-
-    
-          const dispatch = useDispatch();
-        useEffect(()=>{
-                dispatch(setReady(true));
-               
-        }, [dispatch])
-
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 

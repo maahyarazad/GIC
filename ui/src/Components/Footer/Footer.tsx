@@ -6,14 +6,18 @@ import axiosInstance from '../../api/axiosInstance';
 import mainLogo from '../../../public/gic-log-main.png';
 import { useNavigate, Link } from 'react-router-dom';
 import { usePage } from '@/Providers/PageContext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from "../../store";
-
+import { setReady } from '@/features/appSlice';
 
 
 const Footer: React.FC = () => {
 
-            const siteData = useSelector((state: RootState) => state.app.siteData);
+
+    const isReady = useSelector((state: RootState) => state.app.isReady);
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+
+
 
     if (!siteData) return null;
     const [email, setEmail] = useState('');
@@ -22,7 +26,7 @@ const Footer: React.FC = () => {
     const navigate = useNavigate();
     const { show } = useToast();
     const { showPage, activePage } = usePage();
-const isReady = useSelector((state: RootState) => state.app.isReady);
+
     if (!isReady) return null;
 
     const handleSubmit = async () => {
@@ -55,7 +59,7 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
     };
 
 
-    if(!siteData){
+    if (!isReady) {
         return null
     }
 
@@ -78,26 +82,26 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
                     <div>
                         <div className="ft-ct">Navigation</div>
                         <ul className="ft-lks">
-                          {Array.isArray(siteData?.navLinks) &&
-  siteData.navLinks.map((link: any) => (
-    <li key={link.path}>
-      {link.type === "link" && (
-        <a
-          onClick={() => {
-            showPage(link.path);
-            navigate(link.path);
-          }}
-        >
-          {link.label}
-        </a>
-      )}
-    </li>
-  ))}
+                            {Array.isArray(siteData?.navLinks) &&
+                                siteData.navLinks.map((link: any) => (
+                                    <li key={link.path}>
+                                        {link.type === "link" && (
+                                            <a
+                                                onClick={() => {
+                                                    showPage(link.path);
+                                                    navigate(link.path);
+                                                }}
+                                            >
+                                                {link.label}
+                                            </a>
+                                        )}
+                                    </li>
+                                ))}
                         </ul>
                     </div>
 
                     {/* Legal */}
-                   <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a>Privacy Policy</a></li><li><a>Terms &amp; Conditions</a></li><li><a>Sitemap</a></li></ul></div>
+                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a>Privacy Policy</a></li><li><a>Terms &amp; Conditions</a></li><li><a>Sitemap</a></li></ul></div>
 
                     {/* Headquarters */}
                     <div>

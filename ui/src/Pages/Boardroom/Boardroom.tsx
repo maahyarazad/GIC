@@ -23,13 +23,6 @@ const Boardroom: React.FC<Props> = ({ siteData }) => {
     const env = useContext(EnvContext);
 
 
-    const dispatch = useDispatch();
-    React.useEffect(() => {
-        dispatch(setReady(true));
-
-    }, [dispatch])
-
-
     const { show } = useToast();
 
 

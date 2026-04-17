@@ -265,7 +265,7 @@ export const ContactUsRequests = () => {
             }
 
             const response = await axiosInstance.get("/contact-us", { params });
-            debugger;
+            
             setRows(response.data.data.submissions || []);
             setRowCount(response.data.data.total || 0);
         } catch (err: any) {

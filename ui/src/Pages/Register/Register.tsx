@@ -42,11 +42,7 @@ interface OtpCheckBody {
 import { setReady } from '../../features/appSlice'; 
 import {  useDispatch } from "react-redux";
 const Register: React.FC = () => {
-      const dispatch = useDispatch();
-        React.useEffect(()=>{
-                dispatch(setReady(true));
-               
-        }, [dispatch])
+
 
     useEffect(() => {
     const login = document.querySelector(".login-container") as HTMLElement | null;

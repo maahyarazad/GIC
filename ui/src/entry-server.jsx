@@ -6,12 +6,11 @@ import { EnvContext } from "./EnvContext";
 import { RootProviders } from "./RootProviders";
 
 export async function render(url, env) {
-  let siteData = null;
 
+  let _siteData = null;
 
   try {
-
-    siteData = await fetchSiteData(env);
+    _siteData = await fetchSiteData(env);
     
   } catch (err) {
     console.error("SSR siteData fetch failed", err);
@@ -24,7 +23,7 @@ export async function render(url, env) {
       loading: true,
     },
     app: {
-      siteData,
+      siteData: _siteData,
       loading: false,
       error: null,
       isReady: false,

@@ -32,7 +32,7 @@ const ResetPassword: React.FC = () => {
     };
 
     const verify = useCallback(async () => {
-        debugger;
+        
         if (!token) {
             setError("Invalid reset link.");
             setInvalidToken(true);

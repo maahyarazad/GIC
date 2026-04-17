@@ -8,27 +8,35 @@ import mainLogo from '../../../public/gic-log-main.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useSelector, useDispatch } from 'react-redux';
-import { loadSiteData, setReady } from '../../features/appSlice';
+import { setReady } from '@/features/appSlice';
+
 
 type NavbarProps = {
-   onLanguageChange: any, currentlanguage: any
+    onLanguageChange: any, currentlanguage: any
 }
 const Navbar = (
     { onLanguageChange, currentlanguage }: NavbarProps
 ) => {
 
-        const siteData = useSelector((state: RootState) => state.app.siteData);
-    
-    if (!siteData) return null;
-    
+
+    const isReady = useSelector((state: RootState) => state.app.isReady);
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+
+
+
+
+
+
+
+
     const navbarLinks = siteData?.navLinks;
     const companyName = siteData?.companyName;
-    
-    const dispatch = useDispatch();
+
+
     const { showPage, activePage } = usePage();
     const isMobile = useIsMobile();
     const env: string = useContext(EnvContext);
-    const isReady = useSelector((state: RootState) => state.app.isReady);
+
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -300,14 +308,6 @@ const Navbar = (
 
 
 
-    useEffect(() => {
-
-    }, [isReady])
-
-
-    if(!navbarLinks){
- return null;
-    }
 
     if (!isReady) {
         return null

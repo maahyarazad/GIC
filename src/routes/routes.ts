@@ -72,7 +72,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_User.Exclude_keyofUser.password__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"ref":"UserRole"},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"string"}},"addresses":{"dataType":"array","array":{"dataType":"string"}},"authorize":{"dataType":"boolean","required":true},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"profile":{"ref":"UserProfile"},"_id":{"dataType":"string"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"ref":"UserRole"},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"string"}},"addresses":{"dataType":"array","array":{"dataType":"string"}},"authorize":{"dataType":"boolean","required":true},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"profile":{"ref":"UserProfile"},"remarks":{"dataType":"string"},"requirePasswordChange":{"dataType":"boolean","required":true},"_id":{"dataType":"string"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Omit_User.password_": {
@@ -89,6 +89,7 @@ const models: TsoaRoute.Models = {
             "phone": {"dataType":"string","required":true},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]}]},
             "authorize": {"dataType":"boolean"},
+            "remarks": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": true,
     },
@@ -1810,6 +1811,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getAllContactUsSubmissions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContactUsController_createUser: Record<string, TsoaRoute.ParameterSchema> = {
+                userData: {"in":"body","name":"userData","required":true,"ref":"CreateUserRequest"},
+        };
+        app.post('/api/v1/contact-us/authorize-user',
+            ...(fetchMiddlewares<RequestHandler>(ContactUsController)),
+            ...(fetchMiddlewares<RequestHandler>(ContactUsController.prototype.createUser)),
+
+            async function ContactUsController_createUser(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContactUsController_createUser, request, response });
+
+                const controller = new ContactUsController();
+
+              await templateService.apiHandler({
+                methodName: 'createUser',
                 controller,
                 response,
                 next,

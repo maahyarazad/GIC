@@ -10,12 +10,14 @@ export interface UserDocument {
   orders?: Types.ObjectId[];
   addresses?: Types.ObjectId[];
   authorize: boolean;
+  requirePasswordChange:boolean;
   googleId?: string;
   facebookId?: string;
   avatar?: string;
   profile?: UserProfile;
   createdAt?: Date;
   updatedAt?: Date;
+    remarks?: string | null;
 }
 
 export interface CommentDocument {
@@ -85,10 +87,12 @@ const UserSchema = new Schema<UserDocument>(
     orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
     addresses: [{ type: Schema.Types.ObjectId, ref: "Address" }],
     authorize: { type: Boolean, required: true, default: false },
+    requirePasswordChange: { type: Boolean, required: true, default: true },
     googleId: { type: String, default: undefined, index: true },
     facebookId: { type: String, default: undefined, index: true },
     avatar: { type: String, default: undefined },
     profile: { type: UserProfileSchema, default: undefined },
+    remarks: { type: String, required: false, default: "" },
   },
   {
     timestamps: true,

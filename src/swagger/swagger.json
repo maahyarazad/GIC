@@ -106,6 +106,12 @@
 					"profile": {
 						"$ref": "#/components/schemas/UserProfile"
 					},
+					"remarks": {
+						"type": "string"
+					},
+					"requirePasswordChange": {
+						"type": "boolean"
+					},
 					"_id": {
 						"type": "string"
 					},
@@ -117,7 +123,8 @@
 				"required": [
 					"name",
 					"email",
-					"authorize"
+					"authorize",
+					"requirePasswordChange"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
@@ -149,6 +156,10 @@
 					},
 					"authorize": {
 						"type": "boolean"
+					},
+					"remarks": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -4609,6 +4620,36 @@
 				]
 			}
 		},
+		"/api/v1/contact-us/authorize-user": {
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserRequest"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v1/client": {
 			"get": {
 				"operationId": "GetLargeJson",
@@ -4898,9 +4939,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"error": {}
-									},
+									"properties": {},
 									"type": "object"
 								}
 							}

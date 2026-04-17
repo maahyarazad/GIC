@@ -1,6 +1,6 @@
 import nodemailer, { SendMailOptions } from "nodemailer";
 import dotenv from "dotenv";
-// import {EmailTemplateDoc} from '../controllers/email.controller';
+
 import pLimit from "p-limit";
 
 dotenv.config();
@@ -9,6 +9,16 @@ import { getCollection } from "../db";
 import { generateUnsubscribeToken } from "../utils/helpers";
 
  
+export interface EmailTemplate {
+    _id?: string;
+    name: string;
+    subject: string;
+    html: string;
+    text?: string;
+    variables?: string[];
+    createdAt?: string;
+    updatedAt?: string;
+}
 
 /** Request body for sending OTP */
 export interface EmailOtpRequest {
@@ -147,62 +157,102 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 
 
 
-// export async function sendMassDynamicEmailDoc(
-//   doc: EmailTemplateDoc,
-//   data: Record<string, any>
-// ) {
-//   try {
-//     const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
+export async function sendMassDynamicEmailDoc(
+  doc: EmailTemplate,
+  data: Record<string, any>
+) {
+  try {
+    const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
 
-//     const subscribers = await collection
-//       .find({ active: true })
-//       .toArray();
+    const subscribers = await collection
+      .find({ active: true })
+      .toArray();
 
-//     const emails = subscribers.map((subscriber) => {
-//       const unsubscribeToken = generateUnsubscribeToken(
-//         subscriber._id.toString()
-//       );
+    const emails = subscribers.map((subscriber) => {
+      const unsubscribeToken = generateUnsubscribeToken(
+        subscriber._id.toString()
+      );
 
 
 
-//         const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_ENV === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
+        const UNSUBSCRIBE_BASE_URL = `${process.env.NODE_ENV === "PRODUCTION" ? process.env.CLIENT_ORIGIN_PROD : process.env.CLIENT_ORIGIN_DEV}/unsubscribe?token={{SUBSCRIBER_TOKEN}}`;
 
-//         // 🔁 VARIABLES PER SUBSCRIBER
-//         const variables : Record<string, any> = {
-//         ...getGlobalEmailVariables(data),
-//         ...data,
-//         SUBSCRIBER_TOKEN: unsubscribeToken, // token string
-//         EMAIL: subscriber.email,
-//         };
+        // 🔁 VARIABLES PER SUBSCRIBER
+        const variables : Record<string, any> = {
+        ...getGlobalEmailVariables(data),
+        ...data,
+        SUBSCRIBER_TOKEN: unsubscribeToken, // token string
+        EMAIL: subscriber.email,
+        };
 
-//         delete variables.UNSUBSCRIBE_LINK;
-//         // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
-//         const _variables = {
-//         ...variables,
-//         UNSUBSCRIBE_LINK: replacePlaceholders(UNSUBSCRIBE_BASE_URL, variables),
-//         };
+        delete variables.UNSUBSCRIBE_LINK;
+        // Replace `{{SUBSCRIBER_TOKEN}}` placeholder inside the URL with the actual token
+        const _variables = {
+        ...variables,
+        UNSUBSCRIBE_LINK: replacePlaceholders(UNSUBSCRIBE_BASE_URL, variables),
+        };
 
         
-//       return {
-//         email: subscriber.email,
-//         subject: replacePlaceholders(doc.subject, _variables),
-//         htmlBody: replacePlaceholders(doc.html, _variables),
-//         textBody: replacePlaceholders(doc.text || "", _variables),
-//       };
-//     });
+      return {
+        email: subscriber.email,
+        subject: replacePlaceholders(doc.subject, _variables),
+        htmlBody: replacePlaceholders(doc.html, _variables),
+        textBody: replacePlaceholders(doc.text || "", _variables),
+      };
+    });
 
-//     const result = await sendMassEmail({
-//       recipients: emails,
-//     });
+    const result = await sendMassEmail({
+      recipients: emails,
+    });
 
-//     return result;
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// }
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+interface EmailParam {
+    template_name:string,
+  data: Record<string, any>,
+  email: string
+}
+
+export async function sendDynamicEmailToUser(
+  param : EmailParam
+) {
+  try {
+    
+
+    const templateCollection = getCollection("emailtemplates");
+    // Fetch template from DB
+    const template = await templateCollection.findOne({
+      name: param.template_name,
+    });
+
+if (!template) throw new Error("Email template not found");
+    // 🔁 GLOBAL + CUSTOM VARIABLES
+    const variables: Record<string, any> = {
+      ...getGlobalEmailVariables(param.data),
+      ...param.data,
+    };
 
 
+
+    const payload: SendRawEmailParams = {
+      to : param.email,
+      subject: replacePlaceholders(template.subject, variables),
+      html: replacePlaceholders(template.html, variables),
+    };
+
+    const result = await sendRawEmailWithAttachments(payload);
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 
 export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>) {

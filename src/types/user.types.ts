@@ -28,6 +28,8 @@ export interface User extends BaseModel {
   facebookId?: string;
   avatar?: string;
   profile?: UserProfile;
+  remarks?: string | null;
+  requirePasswordChange:boolean;
 }
 
 export interface CreateUserRequest {
@@ -37,6 +39,7 @@ export interface CreateUserRequest {
   phone: string;
   role?: "user" | "admin";
   authorize?: boolean;
+  remarks?: string | null;
 }
 
 export interface UpdateUserRequest {

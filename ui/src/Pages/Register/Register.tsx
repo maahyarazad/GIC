@@ -280,9 +280,6 @@ const Register: React.FC = () => {
 
 
     const registerUser = async () => {
-
-
-
         setLoading(true);
 
         try {

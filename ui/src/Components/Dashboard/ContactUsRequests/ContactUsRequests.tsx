@@ -12,13 +12,26 @@ import { useModal } from "@/Providers/ModalContext";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
 import { EnvContext } from '@/EnvContext.js';
-
+import { Field } from "formik";
 import { ContactUsSubmission } from "../../../../../src/models/contactus.model";
+
+
+interface RegisterModel {
+    name: string;
+    email: string;
+    password: string | null;
+    phone: string | null;
+    authorize: boolean;
+    remark: string | null;
+    rowId: string;
+}
+
+
 export const ContactUsRequests = () => {
     const { show } = useToast();
     const { openModal } = useModal();
-const env = useContext(EnvContext);
-console.log(env)
+    const env = useContext(EnvContext);
+    const [authorizationMessage, setAuthorizationMessage] = useState("");
     const columns: Column<ContactUsSubmission>[] = [
         {
             field: "fullName",
@@ -78,7 +91,7 @@ console.log(env)
             headerName: "Created At",
             sortable: true,
             filterable: false,
-            width: "10%",
+            width: "8%",
             renderCell: (row) =>
                 row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "—",
         },
@@ -134,31 +147,86 @@ console.log(env)
         },
         {
             headerName: "Actions",
-            width: "8%",
+            width: "12%",
             sortable: false,
             filterable: false,
-            renderCell: (row) => (
-                <button
-                    className="btn btn-sm dashboard-btn"
-                    onClick={() =>
-                        openModal({
-                            variant: "default",
-                            title: `Objective - ${row.fullName}`,
-                            content: (
-                                <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
-                                    {row.meaObjective || "No objective provided"}
-                                </div>
-                            ),
-                            cancelText: "Close",
-                            onCancel: () => { },
-                        })
-                    }
-                >
-                    View
-                </button>
-            ),
+         renderCell: (row) => {
+    if (row.userId) {
+        return (
+            <span className="">Request Approved</span> 
+        );
+    }
+
+    return authorizingRows[row.id] ? (
+        <div className="d-flex justify-content-center align-items-center">
+            <Loader size={15} />
+        </div>
+    ) : (
+        <button
+            className="btn btn-sm dashboard-btn"
+            onClick={() =>
+                openModal({
+                    variant: "default",
+                    title: `Comment for Authorizing Access to This Request - ${row.fullName}`,
+                    content: (
+                        <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
+                            <input
+                                className="co-field"
+                                value={authorizationMessage}
+                                onChange={(e) => setAuthorizationMessage(e.target.value)}
+                            />
+                        </div>
+                    ),
+                    cancelText: "Close",
+                    confirmText: "Authorize User Access",
+                    onCancel: () => {},
+                    onConfirm: () => {
+                        const payload: RegisterModel = {
+                            name: row.fullName,
+                            email: row.email,
+                            password: "",
+                            phone: row.phone?.toString() || "",
+                            authorize: true,
+                            remark: authorizationMessage,
+                            rowId: row.id
+                        };
+                        registerUser(payload);
+                    },
+                })
+            }
+        >
+            Authorize Access
+        </button>
+    );
+}
         },
     ];
+
+    const registerUser = async (payload: RegisterModel) => {
+
+
+        try {
+
+            setAuthorizingRows(prev => ({ ...prev, [payload.rowId]: true }));
+            const response = await axiosInstance.post("/contact-us/authorize-user", payload);
+
+            show({
+                type: "success",
+                message: response?.data?.message,
+            });
+
+
+
+
+        } catch (err: any) {
+            show({ type: "error", message: err!.message })
+
+        } finally {
+            setAuthorizingRows(prev => ({ ...prev, [payload.rowId]: false }));
+        }
+    }
+
+    const [authorizingRows, setAuthorizingRows] = useState<Record<string, boolean>>({});
 
     const [rows, setRows] = useState<ContactUsSubmission[]>([]);
     const [rowCount, setRowCount] = useState(0);
@@ -197,7 +265,7 @@ console.log(env)
             }
 
             const response = await axiosInstance.get("/contact-us", { params });
-
+            debugger;
             setRows(response.data.data.submissions || []);
             setRowCount(response.data.data.total || 0);
         } catch (err: any) {

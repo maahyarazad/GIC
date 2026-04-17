@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Reset Password</title>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f4f4f4">
+    <tbody>
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" border="0"
+            style="background-color: #ffffff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); overflow: hidden; margin: 5px auto; border-top-left-radius:8px; border-top-right-radius:8px;">
+            <tr>
+              <td bgcolor="#C8541A"
+                style="color: #ffffff; text-align: center; padding: 20px; font-size: 22px; font-weight: bold; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                Reset Password
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" border="0"
+            style="background-color: #ffffff; padding: 30px;">
+            <tr>
+              <td style="color: #333333; font-size: 16px; line-height: 1.6; padding: 0 20px;">
+                <p style="color: #333333;">
+                  You have requested to reset your password.
+                </p>
+
+                <p style="color: #333333;">
+                  Please click the button below to set a new password:
+                </p>
+
+                <p style="text-align: center; margin: 30px 0;">
+                  <a href="{{RESET_LINK}}"
+                    style="color: #333333;
+text-decoration: none;
+font-weight: bold;
+padding: 10px;
+border: 1px solid #C8541A;">
+                    Reset Password
+                  </a>
+                </p>
+
+                <p style="color: #333333;">
+                  This link is valid for the next <strong>5 minutes</strong>. Please do not share it with anyone.
+                </p>
+
+                <p style="color: #333333;">
+                  If you did not request this, please ignore this email. Your password will remain unchanged.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="font-size: 13px; color: #777777; text-align: center; padding: 20px; border-top: 1px solid #dddddd;">
+                &copy; {{CURRENT_YEAR}} German Industry Club. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

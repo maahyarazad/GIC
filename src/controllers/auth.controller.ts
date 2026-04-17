@@ -13,7 +13,12 @@ import {
 } from "tsoa";
 import jwt from "jsonwebtoken";
 import { getCollection } from "../db";
-import { LoginModel, User, RefreshTokenModel, LoginLogModel } from "../types/user.types";
+import {
+  LoginModel,
+  User,
+  RefreshTokenModel,
+  LoginLogModel,
+} from "../types/user.types";
 import { Collection, ObjectId } from "mongodb";
 import {
   createSuccessResponse,
@@ -25,9 +30,8 @@ import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 dotenv.config();
-      //@ts-ignore
+//@ts-ignore
 import { authMessages } from "../serverResponseMessages";
-
 
 const JWT_SECRET: string = process.env.JWT_SECRET!;
 const REFRESH_SECRET: string = process.env.REFRESH_SECRET!;
@@ -92,6 +96,7 @@ export class AuthController extends Controller {
     let user = await users.findOne({ googleId: profile.id });
 
     if (!user) {
+    
       const newUser: User = {
         _id: undefined as any,
         googleId: profile.id,
@@ -101,6 +106,7 @@ export class AuthController extends Controller {
         createdAt: new Date(),
         role: "user",
         authorize: false,
+        requirePasswordChange: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -119,9 +125,8 @@ export class AuthController extends Controller {
       "HttpOnly",
       "Path=/",
       `Max-Age=${30 * 24 * 3600}`, // 30 days
-    isProd ? "SameSite=None" : "SameSite=Lax",
+      isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
-      
     ]
       .filter(Boolean)
       .join("; ");
@@ -190,6 +195,7 @@ export class AuthController extends Controller {
         createdAt: new Date(),
         role: "user",
         authorize: false,
+        requirePasswordChange:false
       };
 
       const insert = await users.insertOne(newUser);
@@ -207,9 +213,8 @@ export class AuthController extends Controller {
       "HttpOnly",
       "Path=/",
       `Max-Age=${30 * 24 * 3600}`, // 30 days
-          isProd ? "SameSite=None" : "SameSite=Lax",
+      isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
-      
     ]
       .filter(Boolean)
       .join("; ");
@@ -249,7 +254,11 @@ export class AuthController extends Controller {
       return createSuccessResponse(user, authMessages.success.profileFetched);
     } catch (err) {
       console.error("Profile error:", err);
-      return createErrorResponse(authMessages.errors.invalidToken, "INVALID_TOKEN", err);
+      return createErrorResponse(
+        authMessages.errors.invalidToken,
+        "INVALID_TOKEN",
+        err
+      );
     }
   }
 
@@ -284,8 +293,7 @@ export class AuthController extends Controller {
     }
   }
 
-
-    @Post("refresh-token")
+  @Post("refresh-token")
   public async refreshToken(
     @Request() req: any
   ): Promise<ApiResponse<{ token: string }>> {
@@ -314,7 +322,7 @@ export class AuthController extends Controller {
 
       const usersCollection = AuthController.userCollection();
       const user = await usersCollection.findOne({
-              //@ts-ignore
+        //@ts-ignore
         _id: new ObjectId(payload.userId),
       });
       if (!user) return createErrorResponse("User not found", "USER_NOT_FOUND");
@@ -322,17 +330,20 @@ export class AuthController extends Controller {
       // Issue new access token
       //@ts-ignore
       const newToken = jwt.sign(
-        { userId: user._id.toString(), role: user.role , user_profile: {
+        {
+          userId: user._id.toString(),
+          role: user.role,
+          user_profile: {
             email: user.email,
             phone: user.phone,
             whatsapp: user.phone,
-            firstName: user.name
-        }},
+            firstName: user.name,
+          },
+        },
         JWT_SECRET,
         { expiresIn: ACCESS_EXPIRE }
       );
 
-      
       const isProd = process.env.NODE_ENV === "PRODUCTION";
 
       const cookie = [
@@ -340,9 +351,8 @@ export class AuthController extends Controller {
         "HttpOnly",
         "Path=/",
         `Max-Age=${1 * 3600}`,
-          isProd ? "SameSite=None" : "SameSite=Lax",
+        isProd ? "SameSite=None" : "SameSite=Lax",
         isProd ? "Secure" : "Secure",
-        
       ]
         .filter(Boolean)
         .join("; ");
@@ -364,9 +374,7 @@ export class AuthController extends Controller {
     }
   }
 
-  
-
-    @Post("login")
+  @Post("login")
   public async loginUser(
     @Body() userData: LoginModel,
     @Request() req: any
@@ -384,7 +392,10 @@ export class AuthController extends Controller {
 
       if (!user) {
         this.setStatus(404);
-        return createErrorResponse(authMessages.errors.userNotFound, "USER_NOT_FOUND");
+        return createErrorResponse(
+          authMessages.errors.userNotFound,
+          "USER_NOT_FOUND"
+        );
       }
 
       const isPasswordCorrect = await bcrypt.compare(
@@ -394,7 +405,10 @@ export class AuthController extends Controller {
 
       if (!isPasswordCorrect) {
         this.setStatus(401);
-        return createErrorResponse(authMessages.errors.invalidPassword, "INVALID_PASSWORD");
+        return createErrorResponse(
+          authMessages.errors.invalidPassword,
+          "INVALID_PASSWORD"
+        );
       }
 
       if (!user.authorize) {
@@ -403,6 +417,14 @@ export class AuthController extends Controller {
           authMessages.errors.userNotAuthorized,
           "USER_NOT_AUTHORIZED"
         );
+      }
+
+const { password, ...safeUser } = user;
+
+      if (user.requirePasswordChange) {
+        this.setStatus(200);
+
+        return createSuccessResponse(safeUser, "Password change required");
       }
 
       const loginCollection = getCollection<LoginLogModel>("login_log");
@@ -416,15 +438,19 @@ export class AuthController extends Controller {
         ipAddress: ip,
         userAgent: req.headers["user-agent"],
       });
-        //@ts-ignore
+      //@ts-ignore
 
       const token = jwt.sign(
-        { userId: user._id.toString(), role: user.role , user_profile: {
+        {
+          userId: user._id.toString(),
+          role: user.role,
+          user_profile: {
             email: user.email,
             phone: user.phone,
             whatsapp: user.phone,
-            firstName: user.name
-        }},
+            firstName: user.name,
+          },
+        },
         JWT_SECRET,
         { expiresIn: ACCESS_EXPIRE }
       );
@@ -472,7 +498,6 @@ export class AuthController extends Controller {
           `Max-Age=${1 * 3600}`,
           isProd ? "SameSite=None" : "SameSite=Lax",
           isProd ? "Secure" : "Secure",
-          
         ]
           .filter(Boolean)
           .join("; "),
@@ -494,7 +519,7 @@ export class AuthController extends Controller {
       this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
 
-      const { password, ...safeUser } = user;
+      
 
       return createSuccessResponse(safeUser, "Login successful");
     } catch (error: any) {
@@ -507,14 +532,12 @@ export class AuthController extends Controller {
     }
   }
 
-
-
   @Post("logout")
   public async logoutUser(): Promise<{ success: boolean }> {
     try {
       const isProd = process.env.NODE_ENV === "PRODUCTION";
 
-     const cookies = [
+      const cookies = [
         // Access token
         [
           `token=`,
@@ -523,7 +546,6 @@ export class AuthController extends Controller {
           `Max-Age=$`,
           isProd ? "SameSite=None" : "SameSite=Lax",
           isProd ? "Secure" : "Secure",
-          
         ]
           .filter(Boolean)
           .join("; "),
@@ -556,11 +578,11 @@ export class AuthController extends Controller {
   @Post("/forgot-password")
   public async resetPassword(
     @Body() body: { email: string }
-  ): Promise<{ error?: any }> {
+  ): Promise<{}> {
     try {
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
-        const email = body.email.trim().toLocaleLowerCase();
+      const email = body.email.trim().toLocaleLowerCase();
       // 1. Check if user exists
       const existing = await usersCollection.findOne({ email: email });
 
@@ -600,7 +622,10 @@ export class AuthController extends Controller {
 
       await sendDynamicEmailDoc("reset_password", params);
 
-      this.setStatus(200);
+return createSuccessResponse(
+    null,
+    authMessages.success.resetLinkSent 
+);
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
@@ -617,7 +642,10 @@ export class AuthController extends Controller {
     try {
       if (!token) {
         this.setStatus(400);
-        return createErrorResponse(authMessages.errors.tokenRequired, "MISSING_TOKEN");
+        return createErrorResponse(
+          authMessages.errors.tokenRequired,
+          "MISSING_TOKEN"
+        );
       }
 
       const sessionCollection = getCollection("passwordResetSessions");
@@ -627,19 +655,28 @@ export class AuthController extends Controller {
 
       if (!session) {
         this.setStatus(400);
-        return createErrorResponse(authMessages.errors.invalidResetToken, "INVALID_TOKEN");
+        return createErrorResponse(
+          authMessages.errors.invalidResetToken,
+          "INVALID_TOKEN"
+        );
       }
 
       // Check expiration
       if (new Date(session.expiresAt).getTime() < Date.now()) {
         this.setStatus(400);
-        return createErrorResponse(authMessages.errors.tokenExpired, "TOKEN_EXPIRED");
+        return createErrorResponse(
+          authMessages.errors.tokenExpired,
+          "TOKEN_EXPIRED"
+        );
       }
 
       // Check if already used
       if (session.used) {
         this.setStatus(400);
-        return createErrorResponse(authMessages.errors.tokenAlreadyUsed, "TOKEN_ALREADY_USED");
+        return createErrorResponse(
+          authMessages.errors.tokenAlreadyUsed,
+          "TOKEN_ALREADY_USED"
+        );
       }
 
       // Token valid → return user ID so the frontend can proceed
@@ -669,6 +706,8 @@ export class AuthController extends Controller {
   ): Promise<any> {
     try {
       const { token, newPassword } = body;
+
+      
       if (!token || !newPassword) {
         this.setStatus(400);
         return createErrorResponse(
@@ -693,7 +732,10 @@ export class AuthController extends Controller {
       // 2. Check expiration
       if (resetSession.expiresAt < new Date()) {
         this.setStatus(400);
-        return createErrorResponse(authMessages.errors.tokenExpired, "TOKEN_EXPIRED");
+        return createErrorResponse(
+          authMessages.errors.tokenExpired,
+          "TOKEN_EXPIRED"
+        );
       }
 
       // 3. Hash new password
@@ -714,7 +756,7 @@ export class AuthController extends Controller {
       this.setStatus(200);
       return createSuccessResponse(
         undefined,
-       authMessages.success.passwordResetSuccess
+        authMessages.success.passwordResetSuccess
       );
     } catch (error: any) {
       console.error(error);
@@ -742,11 +784,10 @@ export class AuthController extends Controller {
       if (payload.purpose !== "unsubscribe") {
         this.setStatus(400);
         return createErrorResponse(
-         authMessages.errors.invalidTokenPurpose,
+          authMessages.errors.invalidTokenPurpose,
           "INVALID_TOKEN_PURPOSE"
         );
       }
-      
 
       // If needed, you can return user info or email from payload
       this.setStatus(200);

@@ -28,6 +28,7 @@ import {
   FilterModel,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware";
 import { ContinentModel } from "../models/continent.model";
 import { ProductModel } from "../models/product.model";
 import {
@@ -210,6 +211,7 @@ export class ContinentController extends Controller {
   }
 
   @Get("/")
+  
   public async getAllContinents(
     @Query("filters") filtersJson?: string,
     @Query() limit: number = 20,
@@ -288,6 +290,7 @@ export class ContinentController extends Controller {
   }
 
   @Get("{id}")
+  @Middlewares(adminAuthMiddleware)
   public async getContinentById(@Path() id: string): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {

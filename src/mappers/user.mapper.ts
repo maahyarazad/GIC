@@ -18,6 +18,7 @@ export interface UserDb {
   profile?: User["profile"];
   createdAt?: Date;
   updatedAt?: Date;
+  remarks?: string | null;
 }
 
 export const mapUser = (doc: any): User => ({
@@ -36,6 +37,8 @@ export const mapUser = (doc: any): User => ({
   profile: doc.profile,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt,
+  remarks: doc.remarks,
+requirePasswordChange: doc.requirePasswordChange
 });
 
 export const mapUsers = (docs: any[] = []): User[] => docs.map(mapUser);
@@ -47,6 +50,7 @@ export const mapCreateUserRequestToDb = (body: CreateUserRequest, hashedPassword
   phone: body.phone,
   role: body.role ?? "user",
   authorize: body.authorize ?? false,
+  remarks: body.remarks ?? "", 
   createdAt: new Date(),
 });
 

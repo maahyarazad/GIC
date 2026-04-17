@@ -19,56 +19,57 @@ import Events from "@/Components/Dashboard/Events/Events";
 import type { RootState } from "../../store";
 
 type MenuItem =
-  | "requests"
-  | "users"
+  | "member_requests"
+  | "member_profiles"
   | "events"
   | "blog"
   | "sitedata"
   | "file_management"
   | "email_management"
   | "newsletter_subscribers"
-  | "continent"
+  | "sub_region_management"
   | "profile"
-  | "economic_insights"
+  | "country_intelligence"
   | "logout";
 
 const accessControl: Record<MenuItem, string[]> = {
-  requests: ["admin"],
-  users: ["admin"],
+  member_requests: ["admin"],
+  member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
   blog: ["admin", "procurement"],
   sitedata: ["admin", "procurement"],
   file_management: ["admin", "procurement"],
   email_management: ["admin", "procurement"],
   newsletter_subscribers: ["admin", "procurement"],
-  continent: ["admin", "procurement"],
+  sub_region_management: ["admin", "procurement"],
   profile: ["user"],
-  economic_insights: ["user", "admin", "procurement"],
+  country_intelligence: ["user", "admin", "procurement"],
   logout: ["admin", "user", "procurement"],
 };
 
 const menuTitles: Record<MenuItem, string> = {
-  requests: "Member Requests",
-  users: "Member Profiles",
+  member_requests: "Member Requests",
+  member_profiles: "Member Profiles",
   events: "Events",
   blog: "Blog",
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
   newsletter_subscribers: "Email Subscribers",
-  continent: "Manage Countries",
+  sub_region_management: "Manage Sub Region",
   profile: "Profile",
-  economic_insights: "Country Intelligence",
+  country_intelligence: "Country Intelligence",
   logout: "Logout",
 };
 
 const getDefaultTab = (role: string): MenuItem => {
   switch (role) {
     case "admin":
-      return "continent";
+      return "member_requests";
     case "procurement":
       return "sitedata";
     case "user":
+         return "country_intelligence";
     default:
       return "profile";
   }
@@ -76,15 +77,15 @@ const getDefaultTab = (role: string): MenuItem => {
 
 const isValidMenuItem = (value: string | null): value is MenuItem => {
   return [
-    "requests",
-    "users",
+    "member_requests",
+    "member_profiles",
     "events",
     "blog",
     "sitedata",
     "file_management",
     "email_management",
     "newsletter_subscribers",
-    "continent",
+    "sub_region_management",
     "profile",
     "economic_insights",
     "logout",
@@ -102,17 +103,17 @@ const Dashboard: React.FC = () => {
   const userRole = userProfile?.role;
 
   const componentMap: Record<MenuItem, React.ReactNode> = {
-    requests: <ContactUsRequests />,
-    users: <UserProfilesDataGrid />,
-    events: <Events />,
+    member_requests: <ContactUsRequests />,
+    member_profiles: <UserProfilesDataGrid />,
     blog: <UnderDevelopment withLockOverlay={false} />,
     sitedata: <JsonViewer />,
     file_management: <FileManagement />,
     email_management: <EmailTemplatesDataGrid />,
     newsletter_subscribers: <NewsletterSubscribers />,
-    continent: <Continent />,
+    sub_region_management: <Continent />,
+    country_intelligence: <EconomicInsights />,
+    events: <Events />,
     profile: <UserProfileForm initialProfile={userProfile} />,
-    economic_insights: <EconomicInsights />,
     logout: <LogoutComponent />,
   };
 

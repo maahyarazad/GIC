@@ -236,7 +236,7 @@ const Navbar = (
 
 
     useEffect(() => {
-        
+
     }, [isReady])
     const NavLogo = isReady ? (
         <>
@@ -297,6 +297,9 @@ const Navbar = (
     }, [isReady])
 
 
+    if(!navbarLinks){
+ return null;
+    }
 
     if (!isReady) {
         return null
@@ -316,24 +319,33 @@ const Navbar = (
 
                     <ul className="nav-links">
 
-                        {navbarLinks?.map((link) => (
-                            <li key={link.path} >
-                                {
-                                    link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
+                        {/* {Array.isArray(navbarLinks) &&
+                            navbarLinks.map((link) => (
+                                <li key={link.path}>
+                                    {link.type === "link" && (
+                                        <span
+                                            className={`span-link ${activePage === link.path ? "active" : ""}`}
+                                            onClick={() => {
+                                                showPage(link.path);
+                                                navigate(link.path);
+                                            }}
+                                        >
+                                            {link.label}
+                                        </span>
+                                    )}
 
-                                        onClick={() => {
-                                            showPage(link.path);
-                                            navigate(link.path);
-                                        }}
-                                    >
-                                        {link.label}
-                                    </span>
-                                }
-                                {
-                                    link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                                }
-                            </li>
-                        ))}
+                                    {link.type === "button" && (
+                                        <Link
+                                            to="#"
+                                            onClick={(e) =>
+                                                handleScroll(e, link.id, link.type, link.path)
+                                            }
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))} */}
                         {/* <li><a onClick={() => {
                             showPage('/contact');
                             navigate('/contact');
@@ -360,7 +372,7 @@ const Navbar = (
                 className={`mob-nav ${isOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
-                {navbarLinks?.map((link) => (
+                {/* {navbarLinks?.map((link) => (
                     <li key={link.path} >
                         {
                             link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
@@ -379,7 +391,7 @@ const Navbar = (
                         }
                     </li>
 
-                ))}
+                ))} */}
                 {User}
                 {/* <li><a onClick={() => {
                     showPage('/contact');

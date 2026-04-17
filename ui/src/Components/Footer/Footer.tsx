@@ -53,6 +53,11 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
         }
     };
 
+
+    if(!siteData){
+        return null
+    }
+
     return (
         <>
 
@@ -69,26 +74,26 @@ const isReady = useSelector((state: RootState) => state.app.isReady);
                     </div>
 
                     {/* Navigation */}
-                    <div>
+                    {/* <div>
                         <div className="ft-ct">Navigation</div>
                         <ul className="ft-lks">
-                            {siteData?.navLinks?.map((link: any) => (
-                                <li key={link.path}>
-                                    {link.type === 'link' && (
-                                        <a
-                                           
-                                            onClick={() => {
-                                                showPage(link.path);
-                                                navigate(link.path);
-                                            }}
-                                        >
-                                            {link.label}
-                                        </a>
-                                    )}
-                                </li>
-                            ))}
+                          {Array.isArray(siteData?.navLinks) &&
+  siteData.navLinks.map((link: any) => (
+    <li key={link.path}>
+      {link.type === "link" && (
+        <a
+          onClick={() => {
+            showPage(link.path);
+            navigate(link.path);
+          }}
+        >
+          {link.label}
+        </a>
+      )}
+    </li>
+  ))}
                         </ul>
-                    </div>
+                    </div> */}
 
                     {/* Legal */}
                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a>Privacy Policy</a></li><li><a>Terms &amp; Conditions</a></li><li><a>Sitemap</a></li></ul></div>

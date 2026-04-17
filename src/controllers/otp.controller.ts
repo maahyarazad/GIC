@@ -132,8 +132,8 @@ export class OtpController extends Controller {
         const params: Record<string, any> = {
           email: body.email,
           OTP: otp,
-          event: body.origin || "Registration",
-          message: `To complete your registration for`,
+          event: "access_granted",
+          message: `GIC Access Granted`,
         };
 
         await sendDynamicEmailDoc("otp_verification", params);

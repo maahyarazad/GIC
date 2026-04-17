@@ -10,9 +10,8 @@ const Home = ({ siteData }) => {
         const { showPage, activePage } = usePage();
     const env = useContext(EnvContext);
     const { openModal } = useModal();
-    if (!siteData) return null;
     const navigate = useNavigate();
-
+    
     const openExpert = (expertName) => {
         
         const expert = siteData.expertData[expertName];
@@ -31,7 +30,8 @@ const Home = ({ siteData }) => {
             }
         });
     }
-
+    
+    if (!siteData) return null;
     return (
         <>
             <div id="page-home" className={`page ${activePage === "/" ? "active" : ""}`}>

@@ -87,10 +87,10 @@ const App = () => {
     <AppContainer>
       <Navbar
         onLanguageChange={handleLanguageChange}
-        navbarLinks={siteData.navLinks}
+        navbarLinks={siteData?.navLinks}
         siteData={siteData}
         currentlanguage={language}
-        companyName={siteData.companyName}
+        companyName={siteData?.companyName}
       />
       <Routes>
         <Route path="/" element={<Home siteData={siteData} />} />

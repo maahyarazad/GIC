@@ -26,6 +26,7 @@ import {
   validateRequiredFields,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware";
 import {
   mapCreateProductRequestToDb,
   mapProduct,
@@ -116,6 +117,7 @@ export class ProductController extends Controller {
 
   @Get("{id}")
   @SuccessResponse("200", "Product fetched successfully")
+  @Middlewares(authMiddleware)
   public async getProductById(@Path() id: string): Promise<any> {
     try {
       if (!Types.ObjectId.isValid(id)) {
@@ -142,6 +144,7 @@ export class ProductController extends Controller {
   }
 
   @Get("/by-parent/{parentId}")
+  @Middlewares(authMiddleware)
   @SuccessResponse("200", "Products fetched by parent ID successfully")
   public async getProductsByParent(
     @Path() parentId: string

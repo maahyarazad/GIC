@@ -4,12 +4,13 @@ import "./Login.css";
 import { setHasViewedTrue } from "@/features/authSlice";
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
-import { useNavigate, Link, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate, Link, useLocation, useSearchParams, replace } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button from "../../Components/Button/Button";
 import { setReady } from "../../features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
 import PasswordInput from "@/Components/PasswordInput";
+
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -69,14 +70,24 @@ useEffect(() => {
       };
 
       const response = await loginUser(payload);
+      
 
-      if (response.success) {
-        dispatch(setHasViewedTrue());
-        dispatch(login(response.data));
-        show({ type: "success", message: "Logged in successfully" });
-      } else {
-        setError(response.message || "Login failed");
-      }
+      if
+       (response.success) {
+        const {data} = response;
+
+        if(data.requirePasswordChange) {
+            
+           window.location.assign("/reset-password?token=asdcasdcasdc");
+            return;
+        };
+
+          dispatch(setHasViewedTrue());
+          dispatch(login(response.data));
+          show({ type: "success", message: "Logged in successfully" });
+        } else {
+            setError(response.message || "Login failed");
+        }
     } catch (err: any) {
       setError(err?.message || "Login failed");
     } finally {

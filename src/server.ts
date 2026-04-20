@@ -142,7 +142,7 @@ async function startSSR() {
 
     app.use(vite.middlewares);
 
-    app.use("*", async (req: Request, res: Response, next: NextFunction) => {
+    app.get("*", async (req: Request, res: Response, next: NextFunction) => {
       if (req.path.startsWith("/uploads")) return next();
 
       try {
@@ -200,7 +200,7 @@ async function startSSR() {
     const serverPath = path.resolve(__dirname, "../ui/dist/server/entry-server.js");
     const { render } = await import(serverPath);
 
-    app.use("*", async (req: Request, res: Response) => {
+    app.get("*", async (req: Request, res: Response) => {
       try {
         const url = req.originalUrl;
 

@@ -6,14 +6,15 @@ import { useModal } from "@/Providers/ModalContext";
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from "../../store";
 import { setReady } from '../../features/appSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
 
     const siteData = useSelector((state: RootState) => state.app.siteData);
     const env = useSelector((state: RootState) => state.app.env);
-
+const navigate = useNavigate();
     const { showPage, activePage } = usePage();
-    
+
     const { openModal } = useModal();
 
     const openExpert = (expertName: string) => {
@@ -36,15 +37,15 @@ const Home = () => {
     const handleNavigate = (path: string) => {
         if (typeof window === 'undefined') return;
         showPage(path);
-        window.location.href = path;
+        navigate(path);
     };
 
 
     const [isMounted, setIsMounted] = useState(false);
 
-useEffect(() => {
-    setIsMounted(true);
-}, []);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     return (
         <>
@@ -52,11 +53,11 @@ useEffect(() => {
                 <div className='hero'>
                     <video autoPlay loop muted playsInline className='hero-vid'>
                         {isMounted && env?.VITE_SERVER_API_URL && (
-        <source
-            src={`${env.VITE_SERVER_API_URL}/uploads/${siteData?.media?.home_background}`}
-            type="video/mp4"
-        />
-    )}
+                            <source
+                                src={`${env.VITE_SERVER_API_URL}/uploads/${siteData?.media?.home_background}`}
+                                type="video/mp4"
+                            />
+                        )}
                     </video>
 
                     <div className="hero-overlay"></div>

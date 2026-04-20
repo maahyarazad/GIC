@@ -11,6 +11,13 @@ const Membership: React.FC<Props> = ({ siteData }) => {
         const { showPage, activePage } = usePage();
     const navigate = useNavigate();
 
+        const handleNavigate = (path: string) => {
+        if (typeof window === 'undefined') return;
+        showPage(path);
+        navigate(path);
+    };
+
+
   return (
     <div id="page-membership" className={`page ${activePage === "/membership" ? "active" : ""}`}>
       <div className="ptnav"></div>
@@ -301,10 +308,7 @@ const Membership: React.FC<Props> = ({ siteData }) => {
               marginTop: "32px",
             }}
           >
-            <a className="btn-p" onClick={() => {showPage("contact");   navigate({
-  pathname: "/contact",
-  search: `?redirect=${encodeURIComponent("/somewhere")}`}) 
-  ;}}>
+            <a className="btn-p" onClick={() => handleNavigate("/contact")}>
               Introduce Yourself
             </a>
           </div>

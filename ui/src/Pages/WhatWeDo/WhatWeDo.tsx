@@ -10,7 +10,16 @@ type Props = {
 
 const WhatWeDo: React.FC<Props> = ({ siteData }) => {
     const { showPage, activePage } = usePage();
+
 const navigate = useNavigate();
+
+
+    const handleNavigate = (path: string) => {
+        if (typeof window === 'undefined') return;
+        showPage(path);
+        navigate(path);
+    };
+
     return (
 
   <div id="page-wwd" className={`page ${activePage === "/what-we-do" ? "active" : ""}`}>
@@ -283,7 +292,7 @@ const navigate = useNavigate();
         <br />
         <br />
 
-        <a className="btn-p" onClick={() => {showPage("contact");   navigate("/contact");}}>
+        <a className="btn-p" onClick={() => {handleNavigate('/contact')}}>
           Discuss Your MEA Strategy
         </a>
       </div>

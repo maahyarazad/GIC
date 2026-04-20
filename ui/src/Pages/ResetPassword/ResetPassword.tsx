@@ -34,6 +34,7 @@ const ResetPassword: React.FC = () => {
     const verify = useCallback(async () => {
         
         if (!token) {
+            debugger;
             setError("Invalid reset link.");
             setInvalidToken(true);
             setChecking(false);
@@ -43,7 +44,6 @@ const ResetPassword: React.FC = () => {
         try {
             setChecking(true);
             setError(null);
-
             const result = await axiosInstance.get("/auth/verify-reset-token", {
                 params: { token },
             });
@@ -72,7 +72,7 @@ const ResetPassword: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
+debugger;
         if (!token) {
             setError("Invalid reset link.");
             return;
@@ -141,7 +141,7 @@ const ResetPassword: React.FC = () => {
         <div className="login-container">
             <div className="login-card">
                 <h2 className="login-title">Reset Password</h2>
-                {/* {error && <div className="login-error">{error}</div>} */}
+                <div className={`login-error ${error ? "" : "d-none"}`}>{error}</div>
                 {success && <div className="login-success">{success}</div>}
 
                 <form onSubmit={handleSubmit} className="login-form">

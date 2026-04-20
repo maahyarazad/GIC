@@ -36,6 +36,7 @@ export const authMessages = {
     invalidOrUsedToken: "Invalid or already used token",
     internalError: "Internal server error",
     invalidTokenPurpose: "Invalid token purpose",
+    
   },
   success: {
     loginSuccess: "Login successful",
@@ -44,10 +45,12 @@ export const authMessages = {
     resetLinkSent: "Reset link sent",
     passwordResetSuccess: "Password has been successfully reset",
     unsubscribeTokenValid: "Token is valid",
+    requirePasswordChange: "For your security, a password change is required. Please update your password to continue."
   },
   info: {
     rateLimit: (seconds: number) =>
       `Please wait ${seconds} seconds before requesting another OTP.`,
+
   },
 };
 

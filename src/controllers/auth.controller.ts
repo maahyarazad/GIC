@@ -32,7 +32,7 @@ import dotenv from "dotenv";
 dotenv.config();
 //@ts-ignore
 import { authMessages } from "../serverResponseMessages";
-
+import { createHash, randomBytes } from "crypto";
 const JWT_SECRET: string = process.env.JWT_SECRET!;
 const REFRESH_SECRET: string = process.env.REFRESH_SECRET!;
 const REFRESH_EXPIRE: string = process.env.REFRESH_EXPIRE!;
@@ -96,7 +96,6 @@ export class AuthController extends Controller {
     let user = await users.findOne({ googleId: profile.id });
 
     if (!user) {
-    
       const newUser: User = {
         _id: undefined as any,
         googleId: profile.id,
@@ -195,7 +194,7 @@ export class AuthController extends Controller {
         createdAt: new Date(),
         role: "user",
         authorize: false,
-        requirePasswordChange:false
+        requirePasswordChange: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -419,12 +418,47 @@ export class AuthController extends Controller {
         );
       }
 
-const { password, ...safeUser } = user;
+      const { password, ...safeUser } = user;
 
       if (user.requirePasswordChange) {
-        this.setStatus(200);
+        // 2. Generate secure random token
+        //@ts-ignore
+const sessionCollection = getCollection("passwordResetSessions");
+        const active_session = await sessionCollection.findOne({
+            userId: user._id,
+            used: false,
+            expiresAt: { $gt: new Date() },
+        });
 
-        return createSuccessResponse(safeUser, "Password change required");
+        if(active_session){
+ this.setStatus(200);
+        //@ts-ignore
+        return createSuccessResponse(
+          { user: safeUser, token: active_session.token },
+          authMessages.success.requirePasswordChange
+        );
+        }
+
+        const token = randomBytes(32).toString("hex");
+
+        // 3. Save reset session (valid for 1 hour)
+        
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await sessionCollection.insertOne({
+          userId: user._id,
+          email: user.email,
+          token: token,
+          expiresAt: expiresAt,
+          used: false,
+        });
+
+
+        this.setStatus(200);
+        //@ts-ignore
+        return createSuccessResponse(
+          { user: safeUser, token: token },
+          authMessages.success.requirePasswordChange
+        );
       }
 
       const loginCollection = getCollection<LoginLogModel>("login_log");
@@ -519,8 +553,6 @@ const { password, ...safeUser } = user;
       this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
 
-      
-
       return createSuccessResponse(safeUser, "Login successful");
     } catch (error: any) {
       console.error(error);
@@ -576,9 +608,7 @@ const { password, ...safeUser } = user;
 
   @SuccessResponse("200", "Reset Link Sent")
   @Post("/forgot-password")
-  public async resetPassword(
-    @Body() body: { email: string }
-  ): Promise<{}> {
+  public async resetPassword(@Body() body: { email: string }): Promise<{}> {
     try {
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
@@ -594,8 +624,33 @@ const { password, ...safeUser } = user;
         );
       }
 
+
+        const active_session = await sessionCollection.findOne({
+            userId: existing._id,
+            used: false,
+            expiresAt: { $gt: new Date() },
+        });
+
+        if (active_session){
+let resetLink: string;
+      if (process.env.NODE_ENV === "PRODUCTION") {
+        resetLink = `${process.env.CLIENT_ORIGIN_PROD}/reset-password?token=${active_session.token}`;
+      } else {
+        resetLink = `${process.env.CLIENT_ORIGIN_DEV}/reset-password?token=${active_session.token}`;
+      }
+
+      const params: Record<string, any> = {
+        email: existing.email,
+        RESET_LINK: resetLink,
+        USER_NAME: existing.email,
+      };
+
+      await sendDynamicEmailDoc("reset_password", params);
+
+      return createSuccessResponse(null, authMessages.success.resetLinkSent);
+        }
       // 2. Generate secure random token
-      const token = crypto.randomUUID().toString();
+      const token = randomBytes(32).toString("hex");
 
       // 3. Save reset session (valid for 1 hour)
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
@@ -622,10 +677,7 @@ const { password, ...safeUser } = user;
 
       await sendDynamicEmailDoc("reset_password", params);
 
-return createSuccessResponse(
-    null,
-    authMessages.success.resetLinkSent 
-);
+      return createSuccessResponse(null, authMessages.success.resetLinkSent);
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
@@ -707,7 +759,6 @@ return createSuccessResponse(
     try {
       const { token, newPassword } = body;
 
-      
       if (!token || !newPassword) {
         this.setStatus(400);
         return createErrorResponse(
@@ -715,6 +766,8 @@ return createSuccessResponse(
           "VALIDATION_ERROR"
         );
       }
+
+      
 
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
@@ -744,7 +797,7 @@ return createSuccessResponse(
       // 4. Update user password
       await usersCollection.updateOne(
         { _id: resetSession.userId },
-        { $set: { password: hashedPassword } }
+        { $set: { password: hashedPassword, requirePasswordChange: false } }
       );
 
       // 5. Mark token as used

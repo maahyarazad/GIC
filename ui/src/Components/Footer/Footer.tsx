@@ -106,7 +106,9 @@ const Footer: React.FC = () => {
                         <div className="ft-addr">
                             Building C1, Office 1208<br />
                             Ajman FreeZone, Ajman, UAE<br /><br />
-                            <span style={{ color: 'var(--ora)' }}>info@GIC.com</span>
+                            <a href="mailto:info@german-industry-club.com" style={{ color: 'var(--ora)' }}>
+                                info@german-industry-club.com
+                            </a>
                         </div>
                     </div>
 

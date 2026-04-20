@@ -17,11 +17,11 @@ import Membership from './Pages/Membership/Membership';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import MainLoader from './Components/MainLoader';
-import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route, useLocation } from 'react-router-dom';
+
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useScrollRestoration } from './Components/useScrollRestoration';
 import './App.css';
-import { setReady } from './features/appSlice';
+import { usePage } from '@/Providers/PageContext';
 
 const AppContainer = ({ children }) => {
     const location = useLocation();
@@ -41,9 +41,10 @@ const AppContainer = ({ children }) => {
 };
 
 const App = () => {
-
+    const location = useLocation();
+    const navigate = useNavigate();
     const [language, setLanguage] = useState('EN');
-
+const {showPage} = usePage();
 
     const [sessionId, setSessionId] = useState(null);
     const [isMounted, setIsMounted] = useState(false);
@@ -67,6 +68,13 @@ const App = () => {
     const handleLanguageChange = (value) => {
         setLanguage(value);
     };
+
+    useEffect(() => {
+        if(location.pathname){
+            showPage(location.pathname);
+        }
+
+    }, [location.pathname]);
 
     if (!isMounted) return null;
 

@@ -90,14 +90,7 @@ const Navbar = (
         }
     };
 
-    // Trigger scroll after route change
-    useEffect(() => {
 
-        navigate(location.pathname);
-        showPage(location.pathname);
-
-
-    }, [location.pathname]);
 
     const scrollToForm = () => {
         const element = document.querySelector("section.request-form-section");

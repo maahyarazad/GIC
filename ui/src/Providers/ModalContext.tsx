@@ -6,6 +6,7 @@ import React, {
     useEffect,
 } from "react";
 import ModalDialog from "../Components/Generic/Dialog/Dialog";
+type ModalContent = ReactNode | (() => ReactNode);
 
 interface ExpertModalContent {
     init: string;
@@ -22,17 +23,21 @@ type ModalVariant = "default" | "expert";
 interface ModalOptions {
     variant?: ModalVariant;
     title?: string;
-    content?: ReactNode;
+    content?: ModalContent;  // ✅ can now be a function
     expert?: ExpertModalContent;
     confirmText?: string;
     cancelText?: string;
     onConfirm?: () => void;
     onCancel?: () => void;
+        confirmClassName?: string;
+        disabled?: boolean | (() => boolean);
+
 }
 
 interface ModalContextType {
     openModal: (options: ModalOptions) => void;
     closeModal: () => void;
+    setModalDisabled: (disabled: boolean) => void; 
 }
 
 const ModalContext = createContext<ModalContextType | null>(null);
@@ -101,6 +106,7 @@ const ExpertModal: React.FC<{
 export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [exiting, setExiting] = useState(false);
+    const [modalDisabled, setModalDisabled] = useState(false);
     const [options, setOptions] = useState<ModalOptions>({
         variant: "default",
     });
@@ -159,20 +165,30 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const showDefault = isOpen && options?.variant === "default";
     const showExpert = isOpen && options?.variant === "expert";
 
+
+
+
+
+const renderContent = (content?: ModalContent): ReactNode => {
+    return typeof content === "function" ? content() : content;
+};
+
     return (
-        <ModalContext.Provider value={{ openModal, closeModal }}>
+        <ModalContext.Provider value={{ openModal, closeModal, setModalDisabled }}>
             {children}
 
             {isOpen && showDefault && (
 
                 <ModalDialog
                     title={options?.title}
-                    content={options?.content}
+                    content={renderContent(options?.content)}
                     confirmText={options?.confirmText}
                     cancelText={options?.cancelText}
                     onConfirm={handleConfirm}
                     onCancel={closeModal}
                     exiting={exiting}
+                    confirmClassName={options?.confirmClassName}
+                    disabled={modalDisabled}
                 />
             )}
 

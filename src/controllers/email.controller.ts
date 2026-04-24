@@ -9,10 +9,13 @@ import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import {
   CreateEmailTemplateRequest,
   EmailTemplate,
-  UpdateEmailTemplateRequest,
+  UpdateEmailTemplateRequest,EmailTemplatePayload
 } from "../types/email.types";
 import { EmailTemplateModel } from "../models/emailTemplate.model";
 import { mapEmailTemplate, mapEmailTemplates } from "../mappers/email.mapper";
+import { sendDynamicEmailDoc } from "../services/emailService";
+import {extractTemplateVariables} from '../utils/helpers';
+
 
 @Route("api/v1/email-templates")
 @Tags("email-templates")
@@ -23,7 +26,8 @@ export class EmailTemplateController extends Controller {
     @Body() body: CreateEmailTemplateRequest
   ): Promise<ApiResponse<EmailTemplate>> {
     try {
-                    //@ts-ignore
+                    
+        //@ts-ignore
       const existing = await EmailTemplateModel.findOne({ name: body.name }).lean();
       if (existing) {
         this.setStatus(409);
@@ -111,28 +115,66 @@ export class EmailTemplateController extends Controller {
     }
   }
 
-  @Post("send-email-template/{id}")
-  @Middlewares(adminAuthMiddleware)
-  public async sendEmail(
-    @Path() id: string,
-    @Body() params: Record<string, unknown>
-  ): Promise<ApiResponse<null>> {
-    try {
-                    //@ts-ignore
-      const email = await EmailTemplateModel.findById(id).lean();
-      if (!email) {
-        this.setStatus(404);
-        return createErrorResponse("Template not found", "NOT_FOUND");
-      }
+@Post("/send-email-template/:id")
+@Middlewares(adminAuthMiddleware)
+public async sendEmail(
+  @Path() id: string,
+  @Body() body: { variables: Record<string, string>; email: string }
+): Promise<ApiResponse<null>> {
+  try {
+    //@ts-ignore
+    const template = await EmailTemplateModel.findById(id).lean();
 
-    //   const result = await sendMassDynamicEmailDoc(email, params);
-
-      return createSuccessResponse(
-        null,
-        `All batches processed. Total successful emails: ${null}`
-      );
-    } catch (err: any) {
-      return createErrorResponse("Failed to send email template", "SEND_ERROR", err);
+    if (!template) {
+      this.setStatus(404);
+      return createErrorResponse("Template not found", "NOT_FOUND");
     }
+
+    template.variables = extractTemplateVariables(template.html);
+
+    const { variables = {}, email } = body;
+
+    // Build final params (merge system + user input)
+    const params: Record<string, any> = {
+      email,
+      ...variables,
+    };
+
+    // Inject GLOBAL variables automatically
+    for (const v of template.variables || []) {
+      if (v.type === "G") {
+        if (v.name === "CURRENT_YEAR") {
+          params[v.name] = new Date().getFullYear().toString();
+        }
+
+        if (v.name === "EVENT_NAME") {
+          params[v.name] = "German Industry Club";
+        }
+
+        // fallback support
+        if (!params[v.name] && v.defaultValue) {
+          params[v.name] = v.defaultValue;
+        }
+      }
+    }
+
+    // Ensure required base fields
+    params.USER_NAME = params.USER_NAME || email;
+
+    // Send email using template engine
+    await sendDynamicEmailDoc(template.name, params);
+
+    return createSuccessResponse(
+      null,
+      "Email sent successfully"
+    );
+
+  } catch (err: any) {
+    return createErrorResponse(
+      "Failed to send email template",
+      "SEND_ERROR",
+      err
+    );
   }
+}
 }

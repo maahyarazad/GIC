@@ -167,11 +167,11 @@ font-weight: 900;
 
   &:disabled,
   &[disabled] {
-    background: transparent;
-    color: transparent;
-    box-shadow: none;
-    border-color: transparent;
-    pointer-events: none;
+ background: var(--ora);
+  color: var(--bg);
+  box-shadow: none;
+  cursor: not-allowed;
+  filter: saturate(0.1) brightness(1.1);
   }
 }
 

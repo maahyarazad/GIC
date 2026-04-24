@@ -13,8 +13,8 @@ import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
-import { usePage } from "../../providers/PageContext";
-import UnderDevelopment from "../UnderDevelopment/UnderDevelopment";
+import { usePage } from "@/Providers/PageContext";
+import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
 import type { RootState } from "../../store";
 

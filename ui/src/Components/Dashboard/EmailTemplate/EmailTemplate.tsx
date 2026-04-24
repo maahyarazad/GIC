@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../providers/ToastContext";
-
+import SendTestEmailModal, { SendTestEmailModalHandle } from './SendTestEmailModal';
 
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
 import { useSlideMenu } from "@/Providers/SlideMenuProvider"; // adjust path
 import TemplateForm from "./TemplateForm";
-
+import { useModal } from "@/Providers/ModalContext";
 export interface EmailTemplate {
     _id?: string;
     name: string;
@@ -24,7 +24,7 @@ export interface EmailTemplate {
 const buttonGroupStyle = { fontSize: 10, padding: 5 }
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
-
+    const { openModal, setModalDisabled } = useModal();
     const { confirm } = useConfirm();
 
     const columns: Column<EmailTemplate>[] = [
@@ -58,7 +58,7 @@ const EmailTemplatesDataGrid = () => {
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
     const { openMenu, onClose } = useSlideMenu();
-    
+
 
     const fetchTemplates = useCallback(async () => {
         setLoading(true);
@@ -102,7 +102,7 @@ const EmailTemplatesDataGrid = () => {
 
 
     const handleSaveTemplate = async (e: React.FormEvent<HTMLFormElement>) => {
-        
+
         e.preventDefault();
 
         if (!templateName || !subject || !html) {
@@ -153,10 +153,10 @@ const EmailTemplatesDataGrid = () => {
         setOpen(false); setHtml(""); setTemplateName(""); setSubject(""); setHeaderTitle(""); setId(null);
     }
 
-    const onCreate = () => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("New Email Template"); setId(null);}
+    const onCreate = () => { setOpen(true); setHtml("<div>Hello {{USER_NAME}}</div>"); setTemplateName(""); setSubject(""); setHeaderTitle("New Email Template"); setId(null); }
 
     const onEdit = (row: EmailTemplate) => {
-        
+
         setHeaderTitle(`Modify ${row.name}`)
         setId(row._id!);
         setTemplateName(row.name);
@@ -166,10 +166,6 @@ const EmailTemplatesDataGrid = () => {
 
 
     };
-
-
-
-
 
 
     const onDelete = async (row: EmailTemplate) => {
@@ -192,10 +188,37 @@ const EmailTemplatesDataGrid = () => {
         }
     };
 
-    const onSendTestEmail = async (row: EmailTemplate) => {
-        try {
 
-            var res = await axiosInstance.post(`/email-templates/${row._id}`, row.variables);
+
+    const modalRef = useRef<SendTestEmailModalHandle>(null);
+    const [isModalValid, setIsModalValid] = useState(false);
+
+    const onSendTestEmail = async (row: EmailTemplate) => {
+        openModal({
+
+            variant: "default",
+            title: `Send Test Email - ${row.subject}`,
+            // ✅ Pass the callback so modal can report validity upward
+            content: <SendTestEmailModal
+                ref={modalRef}
+                row={row}
+                onValidityChange={(valid) => setModalDisabled(!valid)}
+            />,
+            confirmText: "Send",
+            disabled: true,   // initialState
+            onConfirm: () => {
+                const { testEmail, variables } = modalRef.current!.getValues();
+                handleSendTestEmail(row, variables, testEmail);
+            },
+        });
+    };
+
+    const handleSendTestEmail = async (row: EmailTemplate, variables: Record<string, string>, email:string) => {
+        try {
+debugger;
+            var res = await axiosInstance.post(`/email-templates/send-email-template/${row._id}`, {
+                variables:variables , email:email
+            });
 
             if (res.data.success) {
                 show({ type: "success", message: res.data.message });
@@ -204,12 +227,9 @@ const EmailTemplatesDataGrid = () => {
         } catch (err: any) {
             show({ type: "error", message: err.message || "Failed to delete template" });
         }
-    };
+    }
 
     const onSendToSubscriber = async (row: EmailTemplate) => {
-
-
-
         const isConfirmed = await confirm({
             title: "Send Email",
             message: `Are you sure you want to send this email template "${row.name}" to subscribers?`,

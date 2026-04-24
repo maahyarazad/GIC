@@ -2624,9 +2624,11 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"Record_string.unknown_": {
+			"Record_string.string_": {
 				"properties": {},
-				"additionalProperties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
 				"type": "object",
 				"description": "Construct a type with a set of properties K of type T"
 			},
@@ -4332,7 +4334,19 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Record_string.unknown_"
+								"properties": {
+									"email": {
+										"type": "string"
+									},
+									"variables": {
+										"$ref": "#/components/schemas/Record_string.string_"
+									}
+								},
+								"required": [
+									"email",
+									"variables"
+								],
+								"type": "object"
 							}
 						}
 					}

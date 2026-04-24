@@ -1,19 +1,23 @@
 import React from "react";
 import './Dialog.css';
 interface ModalDialogProps {
-    title?: string;
-    content: React.ReactNode;
-    confirmText?: string;
-    cancelText?: string;
-    onConfirm?: () => void;
-    onCancel?: () => void;
-    exiting?: boolean;
+        title?: string;
+        content: React.ReactNode;
+        confirmText?: string;
+        confirmClassName?: string;
+        disabled?: boolean;
+        cancelText?: string;
+        onConfirm?: () => void;
+        onCancel?: () => void;
+        exiting?: boolean;
 }
 
 const ModalDialog: React.FC<ModalDialogProps> = ({
     title,
     content,
     confirmText,
+    confirmClassName,
+    disabled,
     cancelText,
     onConfirm,
     onCancel,
@@ -36,11 +40,22 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
                 aria-describedby="dashboard-modal-content"
                 onClick={(e) => e.stopPropagation()}
             >
-                {title && (
-                    <h2 id="dashboard-modal-title" className="dashboard-modal-title">
+                {/* Close Button */}
+        
+        <div className="d-flex justify-content-between">
+
+                    <h2 id="dashboard-modal-title" className={`dashboard-modal-title ${title ? "" : "hidden"}`}>
                         {title}
                     </h2>
-                )}
+               
+        <button
+            className="dashboard-modal-close"
+            onClick={onCancel}
+            aria-label="Close modal"
+        >
+            
+        </button>
+        </div>
 
                 <div id="dashboard-modal-content" className="dashboard-modal-content">
                     {content}
@@ -57,8 +72,8 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
                     )}
 
                     {confirmText && (
-                        <button
-                            className="dashboard-btn dashboard-modal-btn-confirm"
+                        <button disabled={disabled}
+                            className={`dashboard-btn dashboard-modal-btn-confirm ${confirmClassName}`}
                             onClick={onConfirm}
                         >
                             {confirmText}

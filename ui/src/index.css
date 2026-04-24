@@ -80,11 +80,11 @@ body {
   transform: scale(0.97);
 }
 .dashboard-btn:disabled, .dashboard-btn[disabled] {
-  background: transparent;
-  color: transparent;
+  background: var(--ora);
+  color: var(--bg);
   box-shadow: none;
-  border-color: transparent;
-  pointer-events: none;
+  cursor: not-allowed;
+  filter: saturate(0.1) brightness(1.1);
 }
 
 .dashboard-btn--delete {

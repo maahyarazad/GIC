@@ -34,6 +34,45 @@
   color: var(--txt);
 }
 
+.dashboard-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Static X */
+.dashboard-modal-close::before,
+.dashboard-modal-close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  background-color: #333;
+  transform-origin: center;
+}
+
+.dashboard-modal-close::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.dashboard-modal-close::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Optional: simple hover (no animation, just instant change) */
+.dashboard-modal-close:hover::before,
+.dashboard-modal-close:hover::after {
+  background-color: #000;
+}
+
 .dashboard-modal.dashboard-exit {
   animation: dashboard-fadeScaleOut 0.3s ease forwards;
 }

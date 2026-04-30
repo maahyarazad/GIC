@@ -62,6 +62,8 @@ const Footer: React.FC = () => {
         setIsMounted(true);
     }, []);
 
+const navigateToBoardroom = () => {showPage('boardroom');navigate('boardroom');}
+
     return (
         <>
 
@@ -98,7 +100,7 @@ const Footer: React.FC = () => {
                     </div>
 
                     {/* Legal */}
-                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a>Privacy Policy</a></li><li><a>Terms &amp; Conditions</a></li><li><a>Sitemap</a></li></ul></div>
+                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a onClick={navigateToBoardroom}>Privacy Policy</a></li><li><a onClick={navigateToBoardroom}>Terms &amp; Conditions</a></li></ul></div>
 
                     {/* Headquarters */}
                     <div>
@@ -137,8 +139,8 @@ const Footer: React.FC = () => {
                 <div className="ft-bot">
                     <div className="ft-cp">&copy; 2025 German Industry Club MEA.</div>
                     <div className="ft-leg">
-                        <a >Privacy Policy</a>
-                        <a >Terms &amp; Conditions</a>
+                        <a onClick={navigateToBoardroom}>Privacy Policy</a>
+                        <a onClick={navigateToBoardroom}>Terms &amp; Conditions</a>
                     </div>
                 </div>
             </div>

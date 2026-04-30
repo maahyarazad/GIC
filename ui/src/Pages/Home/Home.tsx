@@ -81,7 +81,7 @@ const navigate = useNavigate();
 
                     <div className="hero-stats">
                         <div>
-                            <div className="stat-n">15<span>+</span></div>
+                            <div className="stat-n">69<span>+</span></div>
                             <div className="stat-l">MEA Markets</div>
                         </div>
                         <div className="stat-div"></div>

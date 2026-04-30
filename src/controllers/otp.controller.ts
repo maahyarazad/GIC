@@ -133,7 +133,7 @@ export class OtpController extends Controller {
           email: body.email,
           OTP: otp,
           event: "access_granted",
-          message: `GIC Access Granted`,
+          message: `German Industry Club Access Granted`,
         };
 
         await sendDynamicEmailDoc("otp_verification", params);

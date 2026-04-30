@@ -34,7 +34,7 @@ const AppContainer = ({ children }) => {
             segment.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
         );
         const formattedPath = capitalizedSegments.join(' | ');
-        document.title = formattedPath ? `GIC | ${formattedPath}` : 'GIC';
+        document.title = formattedPath ? `German Industry Club | ${formattedPath}` : 'German Industry Club';
     }, [location.pathname]);
 
     return children;

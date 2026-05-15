@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Login.css";
 import { setHasViewedTrue } from "@/features/authSlice";
-import { useToast } from "../../providers/ToastContext";
+import { useToast } from "../../Providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
 import { useNavigate, Link, useLocation, useSearchParams, replace } from "react-router-dom";
 import type { RootState } from "../../store";

@@ -3,7 +3,7 @@ import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from
 import axiosInstance from "../../../api/axiosInstance";
 import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
 import { updateUser, getLogs } from '../../../api/user'
-import { useToast } from "../../../providers/ToastContext";
+import { useToast } from "../../../Providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import { CiTimer } from "react-icons/ci";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";

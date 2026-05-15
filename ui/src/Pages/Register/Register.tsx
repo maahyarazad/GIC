@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import "./Register.css";
 import axiosInstance from "../../api/axiosInstance";
-import { useToast } from "../../providers/ToastContext";
+import { useToast } from "../../Providers/ToastContext";
 import OtpTimer, {OtpTimerRef} from "../../Components/OTP/OtpTimer";
 import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";

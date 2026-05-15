@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaArrowRight } from 'react-icons/fa';
-import { useToast } from '../../providers/ToastContext';
+import { useToast } from '../../Providers/ToastContext';
 import axiosInstance from '../../api/axiosInstance';
 import mainLogo from '../../../public/gic-log-main.png';
 import { useNavigate, Link } from 'react-router-dom';

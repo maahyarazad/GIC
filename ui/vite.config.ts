@@ -6,24 +6,19 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"), // IMPORTANT
+      "@": path.resolve(__dirname, "src"),
     },
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
   },
-//     server: {
-//     hmr: {
-//       overlay: false, // 🔕 silence violation spam
-//     },
-//   },
-build: {
+  build: {
     rollupOptions: {
       input: "index.html",
     },
     outDir: "dist/client",
   },
-ssr: {
-  noExternal: [
-    "react-router-dom",
-  ],
-  
-}
+  ssr: {
+    noExternal: [
+      "react-router-dom",
+    ],
+  }
 });

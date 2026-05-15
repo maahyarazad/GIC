@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import ConfirmDialog from "@/components/Generic/ConfirmDialog/ConfirmDialog";
+import ConfirmDialog from "../Components/Generic/ConfirmDialog/ConfirmDialog"
 
 interface ConfirmOptions {
   title?: string;

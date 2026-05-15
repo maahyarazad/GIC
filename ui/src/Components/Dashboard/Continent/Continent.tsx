@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
-import { useToast } from "../../../providers/ToastContext";
+import { useToast } from "../../../Providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";

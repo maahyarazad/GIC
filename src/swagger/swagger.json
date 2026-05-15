@@ -2862,6 +2862,195 @@
 					"updatedAt"
 				]
 			},
+			"CreateBlogRequest": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"authorName": {
+						"type": "string"
+					},
+					"excerpt": {
+						"type": "string"
+					},
+					"coverImage": {
+						"type": "string"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"published": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"title",
+					"content",
+					"authorName"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"BlogComment": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"body": {
+						"type": "string"
+					},
+					"authorName": {
+						"type": "string"
+					},
+					"authorEmail": {
+						"type": "string"
+					},
+					"approved": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"body",
+					"authorName",
+					"authorEmail",
+					"approved"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Blog": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"excerpt": {
+						"type": "string",
+						"nullable": true
+					},
+					"authorName": {
+						"type": "string"
+					},
+					"coverImage": {
+						"type": "string",
+						"nullable": true
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"published": {
+						"type": "boolean"
+					},
+					"comments": {
+						"items": {
+							"$ref": "#/components/schemas/BlogComment"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"title",
+					"slug",
+					"content",
+					"authorName",
+					"published",
+					"comments"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateBlogRequest": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"authorName": {
+						"type": "string"
+					},
+					"excerpt": {
+						"type": "string"
+					},
+					"coverImage": {
+						"type": "string"
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"published": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CreateCommentRequest": {
+				"properties": {
+					"body": {
+						"type": "string"
+					},
+					"authorName": {
+						"type": "string"
+					},
+					"authorEmail": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"body",
+					"authorName",
+					"authorEmail"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ApproveCommentRequest": {
+				"properties": {
+					"approved": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"approved"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"SuccessResponse__token-string__": {
 				"properties": {
 					"pagination": {
@@ -4707,6 +4896,317 @@
 					"content": {
 						"application/json": {
 							"schema": {}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/blogs": {
+			"post": {
+				"operationId": "CreateBlog",
+				"responses": {
+					"201": {
+						"description": "Blog created successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateBlogRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetAllBlogs",
+				"responses": {
+					"200": {
+						"description": "Blogs fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"skip": {
+											"type": "number",
+											"format": "double"
+										},
+										"limit": {
+											"type": "number",
+											"format": "double"
+										},
+										"total": {
+											"type": "number",
+											"format": "double"
+										},
+										"blogs": {
+											"items": {
+												"$ref": "#/components/schemas/Blog"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"skip",
+										"limit",
+										"total",
+										"blogs"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "published",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/blogs/{id}": {
+			"get": {
+				"operationId": "GetBlogById",
+				"responses": {
+					"200": {
+						"description": "Blog fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateBlog",
+				"responses": {
+					"200": {
+						"description": "Blog updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateBlogRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteBlog",
+				"responses": {
+					"200": {
+						"description": "Blog deleted successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/blogs/{blogId}/comments": {
+			"post": {
+				"operationId": "AddComment",
+				"responses": {
+					"201": {
+						"description": "Comment added successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "blogId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateCommentRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetComments",
+				"responses": {
+					"200": {
+						"description": "Comments fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "blogId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/blogs/{blogId}/comments/{commentId}/approve": {
+			"put": {
+				"operationId": "ApproveComment",
+				"responses": {
+					"200": {
+						"description": "Comment updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "blogId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "commentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ApproveCommentRequest"
+							}
 						}
 					}
 				}

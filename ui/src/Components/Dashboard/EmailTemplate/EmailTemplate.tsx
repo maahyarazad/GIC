@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
-import { useToast } from "../../../providers/ToastContext";
+import { useToast } from "../../../Providers/ToastContext";
 import SendTestEmailModal, { SendTestEmailModalHandle } from './SendTestEmailModal';
 
 import { useConfirm } from '@/Providers/ConfirmDialogProvider';

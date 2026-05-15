@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePage } from '../../providers/PageContext';
+import { usePage } from '../../Providers/PageContext';
 import {  useNavigate } from 'react-router-dom';
 type Props = {
     siteData: any

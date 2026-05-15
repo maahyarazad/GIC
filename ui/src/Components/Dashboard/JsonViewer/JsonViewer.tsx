@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 
 import axiosInstance from "../../../api/axiosInstance";
 import { updateClientById } from "../../../api/client";
-import { useToast } from "../../../providers/ToastContext";
+import { useToast } from "../../../Providers/ToastContext";
 import { JsonData, JsonEditor } from 'json-edit-react'
 import './JsonViewer.css';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";

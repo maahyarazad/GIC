@@ -4,7 +4,7 @@ import "./EconomicInsights.css"; // optional: for styling tabs/products
 import Loader from "@/Components/Loader/Loader";
 import 'flag-icons/css/flag-icons.min.css';
 import { getPDFBlob } from '@/api/user';
-import { useToast } from "@/providers/ToastContext";
+import { useToast } from "@/Providers/ToastContext";
 import { Product } from "../../../../src/types/product.types"
 
 // --- Types --

@@ -5,7 +5,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import './UserProfileForm.css';
 import { UpdateUserRequest, SocialLink } from "../../../../../src/types/user.types";
 import { updateUserProfile, uploadUserPhoto, checkNewsLetter, getUserProfile, upsertNewsletterSubscriber, getPDFBlob } from "../../../api/user";
-import { useToast } from "@/providers/ToastContext";
+import { useToast } from "@/Providers/ToastContext";
 import { EnvContext } from '@/EnvContext';
 import axiosInstance from '../../../api/axiosInstance';
 // Helper to convert socialLinks array to object keyed by type

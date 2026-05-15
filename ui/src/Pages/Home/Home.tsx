@@ -6,20 +6,40 @@ import { useModal } from "@/Providers/ModalContext";
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from "../../store";
 import { setReady } from '../../features/appSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 
 const Home = () => {
 
     const siteData = useSelector((state: RootState) => state.app.siteData);
     const env = useSelector((state: RootState) => state.app.env);
-const navigate = useNavigate();
-    const { showPage, activePage } = usePage();
+    const user = useSelector((state: RootState) => state.auth.user);
 
-    const { openModal } = useModal();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { showPage, activePage } = usePage();
+    const { openModal, closeModal } = useModal();
 
     const openExpert = (expertName: string) => {
+        if (!user) {
+            // Encode /?expert=jan as the redirect target
+            const returnTo = encodeURIComponent(`/?expert=${expertName}`);
+            navigate(`/login?redirect=${returnTo}`);
+            // navigate(`/contact`);
+            return;
+        }
+
         const expert = siteData?.expertData?.[expertName];
         if (!expert) return;
+
+
+
+        // Add ?expert=jan while keeping the current path intact
+        setSearchParams(
+            { expert: expertName },
+            { replace: false }
+        );
+
         openModal({
             variant: "expert",
             expert: {
@@ -30,9 +50,26 @@ const navigate = useNavigate();
                 bio: expert.bio,
                 exp: expert.exp,
                 bg: expert.bg,
-            }
+            },
+            // Strip the param on close, stay on current path
+            onClose: () => {
+                setSearchParams(
+                    {},
+                    { replace: true, state: location.state }
+                );
+            },
         });
     };
+
+    // On mount/refresh — if ?expert= is in the URL, auto-open it
+    useEffect(() => {
+        const expertParam = searchParams.get('expert');
+        if (!expertParam) return;
+
+        openExpert(expertParam);
+        // Only runs once on mount — openExpert is stable enough here
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleNavigate = (path: string) => {
         if (typeof window === 'undefined') return;
@@ -40,12 +77,14 @@ const navigate = useNavigate();
         navigate(path);
     };
 
-
     const [isMounted, setIsMounted] = useState(false);
+
+    const expertList = siteData?.expertList;
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
+    if (!expertList) return;
 
     return (
         <>
@@ -180,14 +219,18 @@ const navigate = useNavigate();
                         Click any expert to view their full profile.
                     </p>
                     <div className="team-grid">
-                        {[
-                            { key: "jan", init: "JH", name: "Jan Hussing", role: "Geopolitics, Geoeconomics & Policy" },
-                            { key: "reg", init: "RA", name: "Regional Advisor", role: "Sovereign Wealth & Investment" },
-                            { key: "leg", init: "LA", name: "Legal Advisor", role: "MEA Regulatory & Compliance" },
-                            { key: "eco", init: "EA", name: "Economic Analyst", role: "Market Intelligence & Research" },
-                        ].map(({ key, init, name, role }) => (
-                            <div className="team-card" key={key} onClick={() => openExpert(key)}>
-                                <div className="team-img"><div className="team-init">{init}</div></div>
+                        {expertList?.map(({ key, init, name, role, picture_file_id }) => (
+                            <div className={`${user ? "" : "blurry"} team-card`} key={key} onClick={() => openExpert(key)}>
+                                <div className={`team-img`}>
+                                    {picture_file_id
+                                        ? <img
+                                            src={`/uploads/${picture_file_id}`}
+                                            alt={name}
+                                            className="team-img-photo"
+                                        />
+                                        : <div className="team-init">{init}</div>
+                                    }
+                                </div>
                                 <div className="team-info">
                                     <div className="team-name">{name}</div>
                                     <div className="team-role">{role}</div>

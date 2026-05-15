@@ -1,17 +1,47 @@
 {
-  "companyName": "German Industry Club",
+  "companyName": "GIC",
   "companyLogo": "https://cdn.dribbble.com/userupload/18467822/file/original-6dc62fc38015a876784c9dcc98737906.jpg?resize=400x0",
   "getStarted": {
     "getStartedNow": "Get Started Now!",
     "getStarted": "Get Started"
   },
-  "expertData": {
-    "jan": {
+  "expertList": [
+    {
+      "key": "jan-hussing",
       "init": "JH",
-      "name": "Jan Hussing",
-      "role": "Geopolitics, Geoeconomics & Policy",
+      "name": "Jan A. Hussing",
+      "role": "Chairman",
+      "picture_file_id": "6a01c6cb2029403f1a3a6a2e.jpg"
+    },
+    {
+      "key": "dr-ricco-deutscher",
+      "init": "RD",
+      "name": "Dr. Ricco Deutscher",
+      "role": "Club Director",
+      "picture_file_id": "6a01c6cf2029403f1a3a6a2f.jpg"
+    },
+    {
+      "key": "philip-hoelzer",
+      "init": "PH",
+      "name": "Philip Hoelzer",
+      "role": "Chief Strategy Advisor",
+      "picture_file_id": ""
+    },
+    {
+      "key": "eco",
+      "init": "EA",
+      "name": "Economic Analyst",
+      "role": "Market Intelligence & Research",
+      "picture_file_id": ""
+    }
+  ],
+  "expertData": {
+    "jan-hussing": {
+      "init": "JH",
+      "name": "Jan A. Hussing",
+      "role": "Chairmen",
       "tag": "Connecting German industrial leadership to MEA's sovereign and political decision-making landscape.",
-      "bio": "Jan Hussing brings deep expertise in the geopolitical and geoeconomic dynamics of the Middle East and Africa. His work focuses on the intersection of industrial strategy, sovereign investment flows, and governmental policy — providing Club members with analytical clarity on the forces shaping MEA's long-term investment environment.",
+      "bio": "Jan A. Hussing is the founder and president of the German World Club and CEO of the German Emirates Club.\n\nHe spent his childhood in Hamburg, Germany and following his studies in economics, held board member positions e.g. at DaimlerChrysler and ING, in Germany, England, the USA, and South Africa.\n\nIn the fall of 2005, he relocated to Dubai and initially served as a member of the board of directors at Dubai Islamic Bank, responsible for the automotive division and its subsidiaries.\n\nIn the following years he embarked on an entrepreneurial path, founding companies in the automotive, service and entertainment industries. \n\nWith over 20 years of expertise in the MEA region, he leverages a broad and trusted network of entrepreneurs, investors and top-tier decision-makers in both the institutional and corporate sectors across Europe and the Middle East, offering exceptional market understanding and strategic expertise.",
       "exp": [
         "Geopolitical risk assessment across MEA jurisdictions",
         "Sovereign wealth and governmental investment strategies",
@@ -21,12 +51,12 @@
       ],
       "bg": "With extensive experience advising senior executives and institutional investors on MEA market entry and expansion, Jan translates complex geopolitical developments into actionable intelligence for Club members."
     },
-    "reg": {
+    "dr-ricco-deutscher": {
       "init": "RA",
-      "name": "Regional Advisor",
-      "role": "Sovereign Wealth & Investment",
+      "name": "Dr. Ricco Deutscher",
+      "role": "Club Director",
       "tag": "Navigating sovereign capital flows and institutional investment frameworks across the MEA region.",
-      "bio": "Our regional investment advisor specialises in sovereign wealth strategies and institutional investment frameworks across the Gulf and broader MEA, with direct relationships across major sovereign investment authorities.",
+      "bio": "Dr. Ricco Deutscher is a German technology executive, entrepreneur, and physicist with a track record of building and scaling software companies in the European B2B software economy. He is best known as the founder and former CEO of billwerk, a leading platform for subscription management, billing, and payments in Europe.  ￼\n\nDeutscher began his career as a software architect at SAP before moving into strategy consulting at McKinsey, where he developed a strong foundation in enterprise technology and business transformation. He went on to found multiple companies, including Sopera GmbH contributing to the growth of open-source and middleware ecosystems in Europe.  ￼\n\nWith a PhD in theoretical physics and academic experience across Leipzig, Moscow, and Hanover, Deutscher combines deep technical expertise with strategic leadership.",
       "exp": [
         "Sovereign wealth fund strategies and priorities",
         "Public–private partnership structures in MEA",
@@ -36,10 +66,10 @@
       ],
       "bg": "This advisory role draws on deep institutional relationships built over years of engagement with MEA's principal investment authorities. Members benefit from a trusted channel to sovereign capital conversations."
     },
-    "leg": {
+    "philip-hoelzer": {
       "init": "LA",
-      "name": "Legal Advisor",
-      "role": "MEA Regulatory & Compliance",
+      "name": "Philip Hoelzer",
+      "role": "Chief Strategy Advisor",
       "tag": "Protecting German industrial interests through precision regulatory navigation across MEA jurisdictions.",
       "bio": "Our MEA legal advisor provides members with on-the-ground expertise in the regulatory, compliance, and licensing frameworks that govern industrial operations across the region. From free zone structures to bilateral investment treaties.",
       "exp": [

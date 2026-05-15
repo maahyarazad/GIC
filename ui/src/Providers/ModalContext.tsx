@@ -4,6 +4,7 @@ import React, {
     useState,
     ReactNode,
     useEffect,
+    useRef
 } from "react";
 import ModalDialog from "../Components/Generic/Dialog/Dialog";
 type ModalContent = ReactNode | (() => ReactNode);
@@ -29,15 +30,16 @@ interface ModalOptions {
     cancelText?: string;
     onConfirm?: () => void;
     onCancel?: () => void;
-        confirmClassName?: string;
-        disabled?: boolean | (() => boolean);
+    onClose?: () => void;
+    confirmClassName?: string;
+    disabled?: boolean | (() => boolean);
 
 }
 
 interface ModalContextType {
     openModal: (options: ModalOptions) => void;
     closeModal: () => void;
-    setModalDisabled: (disabled: boolean) => void; 
+    setModalDisabled: (disabled: boolean) => void;
 }
 
 const ModalContext = createContext<ModalContextType | null>(null);
@@ -84,7 +86,9 @@ const ExpertModal: React.FC<{
 
                         <div className="modal-bd">
                             <div className="modal-st">Background</div>
-                            <p className="modal-tx">{expert.bio}</p>
+                            <p className="modal-tx" style={{ whiteSpace: "pre-line" }}>
+                                {expert.bio}
+                            </p>
 
                             <div className="modal-st">Areas of Expertise</div>
                             <ul className="modal-ul">
@@ -134,6 +138,8 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setIsOpen(true);
     };
 
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const closeModal = () => {
         if (!isOpen) return;
 
@@ -141,10 +147,14 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
         setExiting(true);
 
-        setTimeout(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+        timeoutRef.current = setTimeout(() => {
             setIsOpen(false);
             setExiting(false);
             currentOptions?.onCancel?.();
+            currentOptions?.onClose?.();
+            timeoutRef.current = null;
         }, 300);
     };
 
@@ -169,9 +179,9 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
 
 
-const renderContent = (content?: ModalContent): ReactNode => {
-    return typeof content === "function" ? content() : content;
-};
+    const renderContent = (content?: ModalContent): ReactNode => {
+        return typeof content === "function" ? content() : content;
+    };
 
     return (
         <ModalContext.Provider value={{ openModal, closeModal, setModalDisabled }}>

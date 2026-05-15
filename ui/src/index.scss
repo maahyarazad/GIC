@@ -470,6 +470,7 @@ background-color: rgba(255, 255, 255, 0.9);
     width: 100%; /* make the toast full width on mobile */
     text-align: center;
   }
+
 }
 
 
@@ -1228,14 +1229,44 @@ nav {
   grid-template-columns: repeat(4, 1fr);
   gap: 2px;
   margin-top: 52px;
-}
 
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr  !important;
+  }
 .team-card {
   background: var(--bgp);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+justify-content: center;
+  &.blurry {
+    cursor: not-allowed;
+
+    &::before {                          // ← use ::before for blur overlay
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.052);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1;
+    }
+
+    &:hover {                            // ← block hover effects when blurry
+      transform: none;
+      box-shadow: none;
+
+      &::after { transform: translateY(100%); }
+    }
+  }
 
   &:hover {
     transform: translateY(-5px);
@@ -1262,18 +1293,30 @@ nav {
     transform: translateY(100%);
     transition: transform 0.25s;
   }
+
+  .team-img {
+    position: relative;
+    width: 100%;
+    background: var(--bgp);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .team-img-photo {
+    width: 100%;
+    min-height: 300px;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+  }
+}
 }
 
-.team-img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  background: var(--bgp2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .team-init {
+     display: flex;
   font-family: $font-serif;
   font-size: 52px;
   font-weight: 500;

@@ -1050,22 +1050,54 @@ nav {
   gap: 2px;
   margin-top: 52px;
 }
-
-.team-card {
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+.team-grid .team-card {
   background: var(--bgp);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.team-card:hover {
+.team-grid .team-card.blurry {
+  cursor: not-allowed;
+}
+.team-grid .team-card.blurry::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.052);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1;
+}
+.team-grid .team-card.blurry:hover {
+  transform: none;
+  box-shadow: none;
+}
+.team-grid .team-card.blurry:hover::after {
+  transform: translateY(100%);
+}
+.team-grid .team-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 40px rgba(200, 84, 26, 0.15);
 }
-.team-card:hover::after {
+.team-grid .team-card:hover::after {
   transform: translateY(0);
 }
-.team-card::after {
+.team-grid .team-card::after {
   content: "View Profile";
   position: absolute;
   bottom: 0;
@@ -1083,17 +1115,26 @@ nav {
   transform: translateY(100%);
   transition: transform 0.25s;
 }
-
-.team-img {
+.team-grid .team-card .team-img {
+  position: relative;
   width: 100%;
-  aspect-ratio: 3/4;
-  background: var(--bgp2);
+  background: var(--bgp);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+.team-grid .team-card .team-img-photo {
+  width: 100%;
+  min-height: 300px;
+  max-height: 300px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  display: block;
 }
 
 .team-init {
+  display: flex;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 52px;
   font-weight: 500;

@@ -1,0 +1,53 @@
+name: Deploy German Industry Club App Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Build & Deploy Server (Vite)
+  # ─────────────────────────────────────────────
+  deploy-client:
+    name: Build & Deploy Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build client
+        run: npm run build
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Clear old build on server
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
+            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "rm -rf ~/german-industry-club/node/german-industry-club.com/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/dist/"
+
+      - name: Upload new build to server
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            dist/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/dist/
+
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
+            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "ls -la ~/german-industry-club/node/german-industry-club.com/dist/"

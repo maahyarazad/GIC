@@ -28,8 +28,12 @@ jobs:
 
       - name: Build client
         working-directory: ui
-        run: npm run build
+        run: npm run build:client
 
+      - name: Build server
+        working-directory: ui
+        run: npm run build:ssr
+        
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 

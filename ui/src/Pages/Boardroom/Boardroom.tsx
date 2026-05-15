@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Boardroom.css";
 import { useSelector, useDispatch } from "react-redux";
-import { useToast } from "../../providers/ToastContext";
+import { useToast } from "../../Providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
@@ -10,7 +10,7 @@ import Button from "../../Components/Button/Button";
 import LockOverlay from '../../Components/LockOverlay/LockOverlay'
 import './Boardroom.css';
 import { setReady } from '../../features/appSlice';
-import { usePage } from '@/providers/PageContext';
+import { usePage } from '@/Providers/PageContext';
 import { EnvContext } from '@/EnvContext';
 import axiosInstance from "@/api/axiosInstance";
 import EventCard from './EventCard';

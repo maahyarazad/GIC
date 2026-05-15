@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import { usePage } from '@/providers/PageContext';
+import { usePage } from '@/Providers/PageContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 interface Props {

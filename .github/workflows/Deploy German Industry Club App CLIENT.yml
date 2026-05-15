@@ -28,8 +28,6 @@ jobs:
 
       - name: Build client
         working-directory: ui
-        env:
-          VITE_SERVERURL: ${{ secrets.VITE_SERVERURL }}
         run: npm run build
 
       - name: Install sshpass

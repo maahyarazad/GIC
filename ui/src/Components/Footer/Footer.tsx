@@ -1,43 +1,34 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Footer.css';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaArrowRight } from 'react-icons/fa';
 import { useToast } from '../../providers/ToastContext';
 import axiosInstance from '../../api/axiosInstance';
 import mainLogo from '../../../public/gic-log-main.png';
-import { useNavigate } from 'react-router-dom';
-import {Link} from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { usePage } from '@/Providers/PageContext';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from "../../store";
+import { setReady } from '@/features/appSlice';
 
-interface SocialLink {
-    platform: string;
-    url: string;
-}
 
-interface NavLink {
-    label: string;
-    path: string;
-}
+const Footer: React.FC = () => {
 
-interface FooterData {
-    socialLinks?: SocialLink[];
-    navLinks: NavLink[];
-}
 
-interface FooterProps {
-    footerData: FooterData | null;
-}
 
-const Footer: React.FC<FooterProps> = ({ footerData }) => {
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+
     const [email, setEmail] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const validationMessageRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const { show } = useToast();
+    const { showPage, activePage } = usePage();
 
-    if (!footerData) return null;
+
 
     const handleSubmit = async () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        // ❌ Invalid email
+
         if (!emailRegex.test(email)) {
             inputRef.current?.classList.add('invalid');
             if (validationMessageRef.current) {
@@ -46,102 +37,114 @@ const Footer: React.FC<FooterProps> = ({ footerData }) => {
             return;
         }
 
-        // Clear validation
         inputRef.current?.classList.remove('invalid');
         if (validationMessageRef.current) {
             validationMessageRef.current.innerHTML = '';
         }
 
         try {
-            const payload = {
-                email: email,
-                active: true,
-            };
+            const response = await axiosInstance.post('/newsletter', { email, active: true });
 
-            // FIX: Must call POST method
-            const response = await axiosInstance.post('/newsletter', payload);
-            
-            if(response.data.success){
-
-                // Clear field
+            if (response.data.success) {
                 if (inputRef.current) inputRef.current.value = '';
                 setEmail('');
-    
-                show({
-                    type: 'success',
-                    message:response.data.message
-                });
+                show({ type: 'success', message: response.data.message });
             }
-
-            
         } catch (error: any) {
-            
-            show({
-                type: 'error',
-                message: error.message,
-            });
+            show({ type: 'error', message: error.message });
         }
     };
 
+
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+const navigateToBoardroom = () => {showPage('boardroom');navigate('boardroom');}
+
     return (
-        <footer className="footer">
+        <>
 
-            {/* Logo + Address */}
-            <div className="row">
-                <div className="col">
-                    <div className="d-flex justify-content-lg-center justify-content-start py-4">
-                        <div className="d-flex flex-column align-items-start align-items-lg-center">
-                            <div onClick={() => navigate("/")} style={{cursor: 'pointer'}} className='main-logo-container'>
-                                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-                            </div>
+            <div className="ft">
+                <div className="ft-top">
 
-                            <div className="footer-text">
-                                Building C1
-                                <br />
-                                Office 1208, Ajman FreeZone, Ajman, UAE
-                            </div>
+                    {/* Brand */}
+                    <div>
+                        <div className="ft-bn">German Industry Club</div>
+                        <div className="ft-bs">MEA</div>
+                        <div className="ft-bd">
+                            An exclusive boutique circle advancing German industrial interests across the Middle East and Africa.
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Divider */}
-            <div className="row">
-                <div className="col d-flex justify-content-center align-items-center">
-                    <div className="divider"></div>
-                </div>
-            </div>
+                    {/* Navigation */}
+                    <div>
+                        <div className="ft-ct">Navigation</div>
+                        <ul className="ft-lks">
+                            {isMounted && Array.isArray(siteData?.navLinks) &&
+                                siteData.navLinks.map((link: any) => (
+                                    <li key={link.path}>
+                                        {link.type === "link" && (
+                                            <a onClick={() => {
+                                                showPage(link.path);
+                                                navigate(link.path);
+                                            }}>
+                                                {link.label}
+                                            </a>
+                                        )}
+                                    </li>
+                                ))}
+                        </ul>
+                    </div>
 
-            {/* Newsletter + Links */}
-            <div className="row mt-4">
-                <div className="col-12 col-lg-6 px-0">
-                    <div className="d-flex justify-content-lg-center justify-content-start">
-                        <div className="footer-input-container px-2 position-relative">
+                    {/* Legal */}
+                    <div><div className="ft-ct">Legal</div><ul className="ft-lks"><li><a onClick={navigateToBoardroom}>Privacy Policy</a></li><li><a onClick={navigateToBoardroom}>Terms &amp; Conditions</a></li></ul></div>
+
+                    {/* Headquarters */}
+                    <div>
+                        <div className="ft-ct">Headquarters</div>
+                        <div className="ft-addr">
+                            Building C1, Office 1208<br />
+                            Ajman FreeZone, Ajman, UAE<br /><br />
+                            <a href="mailto:info@german-industry-club.com" style={{ color: 'var(--ora)' }}>
+                                info@german-industry-club.com
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Newsletter */}
+                    {/* <div>
+                        <div className="ft-ct">Newsletter</div>
+                        <div className="ft-nl">
                             <input
-                                type="text"
-                                placeholder="Subscribe For News"
-                                onChange={(e) => setEmail(e.target.value)}
                                 ref={inputRef}
+                                type="email"
+                                placeholder="Your email address"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                             />
-
-                            <FaArrowRight className="arrow-icon" onClick={handleSubmit} />
-
-                            <div className="px-2 position-absolute text-danger" ref={validationMessageRef}></div>
+                            <button onClick={handleSubmit}>
+                                <FaArrowRight />
+                            </button>
                         </div>
-                    </div>
+                        <div ref={validationMessageRef} className="ft-validation" />
+                    </div> */}
+
                 </div>
 
-                <div className="col-12 col-lg-6 p-lg-0 p-5 mb-4 d-flex align-items-start justify-content-center flex-column">
-                    <div className="d-flex justify-content-lg-center justify-content-start flex-column">
-                        {footerData.navLinks.map((link) => (
-                            <div key={link.label} style={{ marginBottom: '0.5rem' }}>
-                                <Link to={link.path}>{link.label}</Link>
-                            </div>
-                        ))}
+                {/* Bottom bar */}
+                <div className="ft-bot">
+                    <div className="ft-cp">&copy; 2025 German Industry Club MEA.</div>
+                    <div className="ft-leg">
+                        <a onClick={navigateToBoardroom}>Privacy Policy</a>
+                        <a onClick={navigateToBoardroom}>Terms &amp; Conditions</a>
                     </div>
                 </div>
             </div>
-        </footer>
+        </>
     );
 };
 

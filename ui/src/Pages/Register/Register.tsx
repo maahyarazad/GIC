@@ -7,7 +7,7 @@ import OtpInput, { OtpInputRef } from "../../Components/OTP/OtpInput";
 import { useNavigate } from "react-router-dom";
 import { parsePhoneNumberFromString, isPossiblePhoneNumber } from "libphonenumber-js";
 import Button from "../../Components/Button/Button";
-import {EnvContext} from '../../EnvContext.js';
+import {EnvContext} from '../../EnvContext.jsx';
 import {Link } from 'react-router-dom';
 import PasswordInput from '@/Components/PasswordInput';
 interface SendOtpBody {
@@ -42,11 +42,7 @@ interface OtpCheckBody {
 import { setReady } from '../../features/appSlice'; 
 import {  useDispatch } from "react-redux";
 const Register: React.FC = () => {
-      const dispatch = useDispatch();
-        React.useEffect(()=>{
-                dispatch(setReady(true));
-               
-        }, [dispatch])
+
 
     useEffect(() => {
     const login = document.querySelector(".login-container") as HTMLElement | null;
@@ -280,9 +276,6 @@ const Register: React.FC = () => {
 
 
     const registerUser = async () => {
-
-
-
         setLoading(true);
 
         try {
@@ -368,7 +361,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
 
                     <form onSubmit={handleSubmit} className="login-form">
                         <div className="form-group">
-                            <label>Full Name</label>
+                            <label className='form-label fw-bold text-dark dark:text-white'>Full Name</label>
                             <input
                                 name="name"
                                 type="text"
@@ -382,6 +375,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         <PasswordInput
                             label="Password"
                             name="password"
+                            className='form-label fw-bold text-dark dark:text-white'
                             value={form.password}
                             onChange={handleChange}
                             placeholder="Enter your password"
@@ -393,6 +387,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         <PasswordInput
                             label="Confirm Password"
                             name="confirmPassword"
+                            className='form-label fw-bold text-dark dark:text-white'
                             value={form.confirmPassword}
                             onChange={handleChange}
                             placeholder="Confirm your password"
@@ -419,7 +414,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         </button>
                     </form>
 
-                    <p className="signup-text">
+                    <p className="signup-text form-label fw-bold text-dark dark:text-white">
                         Already have an account? <Link to="/login">Login</Link>
                     </p>
                 </div>
@@ -432,7 +427,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
 
 
                         <div className="form-group">
-                            <label>Email</label>
+                            <label className='form-label fw-bold text-dark dark:text-white'>Email</label>
                             <input
                                 disabled={emailVerified}
                                 name="email"
@@ -444,7 +439,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         </div>
 
                         <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
-                            <div className="py-1" ref={statusRefEmail}>{currentResponseStatusEmail}</div>
+                            <div className="py-1 fw-bold text-dark dark:text-white" ref={statusRefEmail}>{currentResponseStatusEmail}</div>
 
 
                             <div className={`${currentResponseStatusEmail === null ? "d-none" : ""}`}>
@@ -477,7 +472,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
 
 
                         <Button loading={loading}
-                            type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast" onClick={() => {
+                            type="button" disabled={!isValidEmail(form.email)} className="btn btn-primary-contrast-inverse" onClick={() => {
 
                                 emailVerified
                                     ? setRegistrationProcess({ currentStep: 2 })
@@ -486,7 +481,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                             {`${emailVerified ? "Next" : "Send OTP"}`}
                         </Button>
 
-                        <button type="button" className="btn btn-primary-contrast-inverse" onClick={() => setRegistrationProcess({ currentStep: 0 })}>
+                        <button type="button" className="btn btn-primary-contrast" onClick={() => setRegistrationProcess({ currentStep: 0 })}>
                             Back
                         </button>
                     </form>
@@ -502,7 +497,7 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
 
 
                         <div className="form-group">
-                            <label>Phone Number</label>
+                            <label className='form-label fw-bold text-dark dark:text-white'>Phone Number</label>
                             <input
                                 type="tel"
                                 disabled={phoneVerified}
@@ -516,9 +511,9 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                         </div>
 
                         <div className={`otp-slide ${showOtpInput ? "show" : ""}`}>
-                            <div className="py-1" ref={statusRefPhone}>{currentResponseStatusPhone}</div>
+                            <div className="py-1 fw-bold text-dark dark:text-white" ref={statusRefPhone}>{currentResponseStatusPhone}</div>
 
-                            <div className={`${currentResponseStatusPhone === null ? "d-none" : ""}`}>
+                            <div className={`${currentResponseStatusPhone === null ? "d-none" : ""} `}>
 
 
                                 <div className={`${phoneVerified ? "d-none" : ""}`}>

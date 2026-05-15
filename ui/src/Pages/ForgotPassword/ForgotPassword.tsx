@@ -4,16 +4,11 @@ import Button from "../../Components/Button/Button";
 import { setReady } from '../../features/appSlice'; 
 import {  useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import './ForgotPassword.css';
+
 export default function ForgotPassword() {
 
 
-
-      const dispatch = useDispatch();
-        useEffect(()=>{
-            
-                dispatch(setReady(true));
-               
-        }, [dispatch])
 
     useEffect(() => {
     const login = document.querySelector(".login-container") as HTMLElement | null;
@@ -45,6 +40,7 @@ export default function ForgotPassword() {
       setSuccess(
         response.data?.message || "If this email exists, a reset link was sent."
       );
+      
     } catch (err: any) {
       setError(
         err.message || "Something went wrong. Try again."

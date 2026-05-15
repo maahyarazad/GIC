@@ -67,7 +67,7 @@ const OtpTimer = forwardRef<OtpTimerRef, OtpTimerProps>((props, ref) => {
   return (
     <div className="mt-2">
       {!expired ? (
-        <span >OTP expires in: <strong className="text-contrast">{formatTime(secondsLeft)}</strong> minutes</span>
+        <span className="fw-bold text-dark dark:text-white">OTP expires in: <strong className="text-contrast">{formatTime(secondsLeft)}</strong> minutes</span>
       ) : (
         <button
           type="button"

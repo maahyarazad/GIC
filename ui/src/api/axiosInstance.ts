@@ -109,15 +109,24 @@ axiosInstance.interceptors.response.use(
 );
 
 
-export async function fetchSiteData(language?: string) {
-  const res = await axiosInstance.get("/client", {
+export async function fetchSiteData(env?: string) {
+    
+    //@ts-ignore
+  const res = await fetch(`${env.VITE_SERVER_API_URL}/api/v1/client`, {
     headers: {
-      "Accept-Language": language,
+      "Content-Type": "application/json",
+      "Accept-Language": "english",
     },
+    credentials: "include",
   });
 
-  return res.data.data;
-}
+  
+  if (!res.ok) {
+    throw new Error(`fetchSiteData failed: ${res.status}`);
+  }
 
+  const json = await res.json();
+  return json.data;
+}
 
 export default axiosInstance;

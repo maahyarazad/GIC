@@ -9,6 +9,8 @@ dist
 *.log
 
 # Environment variables
+*.xlsx
+*.pdf
 .env
 .env.local
 .env.development.local
@@ -55,4 +57,5 @@ database.sqlite
 *.sqlite3
 *.db
 *.bak
+/file_storage
 

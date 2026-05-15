@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import {
   Controller,
   Get,
@@ -10,9 +10,9 @@ import {
   Query,
   Body,
   SuccessResponse,
-  Tags,Middlewares
+  Tags,
+  Middlewares,
 } from "tsoa";
-import { getCollection } from "../db";
 import {
   Product,
   CreateProductRequest,
@@ -24,9 +24,16 @@ import {
   createErrorResponse,
   createSuccessResponse,
   validateRequiredFields,
-  Sort,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware";
+import {
+  mapCreateProductRequestToDb,
+  mapProduct,
+  mapProducts,
+  mapUpdateProductRequestToDb,
+} from "../mappers/product.mapper";
+import { ProductModel } from "../models/product.model";
 
 @Route("api/v1/products")
 @Tags("Products")
@@ -41,41 +48,30 @@ export class ProductController extends Controller {
 
       if (missing.length > 0) {
         this.setStatus(400);
-        return createErrorResponse(`Missing required fields: ${missing.join(", ")}`);
+        return createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        );
       }
 
-      const productCollection = getCollection<Product>("products");
+      const existing = await ProductModel.findOne({
+        //@ts-ignore
+        $or: [{ fileId: body.fileId }, { code: body.code }],
+      }).lean();
 
-      // Optional: check if fileId already exists
-      const existing = await productCollection.findOne({ fileId: body.fileId });
       if (existing) {
         this.setStatus(409);
-        return createErrorResponse(`Product with fileId '${body.fileId}' already exists.`);
+        return createErrorResponse(
+          "A product with the same fileId or code already exists."
+        );
       }
 
-      const product: Product = {
-        fileId: body.fileId,
-        name: body.name,
-         // @ts-ignore
-        code: body.code,
-        downloadCount: 0, // always start at 0
-         // @ts-ignore
-        importance: body.importance,
-        parent: body.parent ?? null,
-        children: body.children ?? [],
-        recommended: body.recommended ?? [],
-        tags: body.tags ?? null,
-        content: null,
-        variant: null,
-        media: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const product = await ProductModel.create(
+        mapCreateProductRequestToDb(body)
+      );
 
-      const insertResult = await productCollection.insertOne(product);
-
+      this.setStatus(201);
       return createSuccessResponse(
-        { product: { ...product, _id: insertResult.insertedId } },
+        { product: mapProduct(product.toObject()) },
         "Product created successfully"
       );
     } catch (error) {
@@ -94,36 +90,52 @@ export class ProductController extends Controller {
     @Query() sortOrder: SortOrder = "desc",
     @Query() name?: string,
     @Query() importance?: "A" | "B" | "C" | "D",
-    @Query() tags?: string // comma-separated string
-  ): Promise<{ products: Product[]; total: number; limit: number; skip: number }> {
-    const productCollection = getCollection<Product>("products");
-
-    const sort: Sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
-
+    @Query() tags?: string
+  ): Promise<{
+    products: Product[];
+    total: number;
+    limit: number;
+    skip: number;
+  }> {
     const filter: any = {};
     if (name) filter.name = { $regex: new RegExp(name, "i") };
     if (importance) filter.importance = importance;
     if (tags) filter.tags = { $all: tags.split(",").map((t) => t.trim()) };
 
-    const products = await productCollection.find(filter).skip(skip).limit(limit).sort(sort).toArray();
-    const total = await productCollection.countDocuments(filter);
+    const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
+      string,
+      1 | -1
+    >;
 
-    return { products, total, limit, skip };
+    const [docs, total] = await Promise.all([
+      ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+      ProductModel.countDocuments(filter),
+    ]);
+
+    return { products: mapProducts(docs), total, limit, skip };
   }
 
   @Get("{id}")
   @SuccessResponse("200", "Product fetched successfully")
+  @Middlewares(authMiddleware)
   public async getProductById(@Path() id: string): Promise<any> {
     try {
-      const productCollection = getCollection<Product>("products");
-      const product = await productCollection.findOne({ _id: new ObjectId(id) });
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid product ID");
+      }
+      //@ts-ignore
+      const product = await ProductModel.findById(id).lean();
 
       if (!product) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ product }, "Product fetched successfully");
+      return createSuccessResponse(
+        { product: mapProduct(product) },
+        "Product fetched successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -132,54 +144,65 @@ export class ProductController extends Controller {
   }
 
   @Get("/by-parent/{parentId}")
-    @SuccessResponse("200", "Products fetched by parent ID successfully")
-    public async getProductsByParent(
+  @Middlewares(authMiddleware)
+  @SuccessResponse("200", "Products fetched by parent ID successfully")
+  public async getProductsByParent(
     @Path() parentId: string
-    ): Promise<{ products: Product[] }> {
+  ): Promise<{ products: Product[] }> {
     try {
-        const productCollection = getCollection<Product>("products");
+      if (!Types.ObjectId.isValid(parentId)) {
+        this.setStatus(400);
+        return { products: [] };
+      }
+      //@ts-ignore
+      const products = await ProductModel.find({
+        //@ts-ignore
+        parent: new Types.ObjectId(parentId),
+      })
+        .select(
+          "fileId name code content variant media tags downloadCount importance parent children recommended metadata.conclusion createdAt updatedAt"
+        )
+        .lean();
 
-        
-        const parentObjectId = typeof parentId === "string" ? new ObjectId(parentId) : parentId;
-
-        const products = await productCollection
-        .find({ parent: parentObjectId })
-        .toArray();
-
-        return { products };
+      return { products: products };
     } catch (error) {
-        console.error(error);
-        this.setStatus(500);
-         // @ts-ignore
-        return createErrorResponse("Failed to fetch products by parent", undefined, error);
+      console.error(error);
+      this.setStatus(500);
+      return { products: [] };
     }
-    }
-
+  }
 
   @Put("{id}")
   @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Product updated successfully")
-  public async updateProduct(@Path() id: string, @Body() body: UpdateProductRequest): Promise<any> {
+  public async updateProduct(
+    @Path() id: string,
+    @Body() body: UpdateProductRequest
+  ): Promise<any> {
     try {
-      const productCollection = getCollection<Product>("products");
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid product ID");
+      }
 
-       // @ts-ignore
-      const updateData: Partial<Product> = {
-        ...body,
-        updatedAt: new Date(),
-      };
+      const updateData = mapUpdateProductRequestToDb(body);
 
-      const result = await productCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updateData }
+      const product = await ProductModel.findByIdAndUpdate(
+        //@ts-ignore
+        id,
+        { $set: updateData },
+        { new: true, lean: true }
       );
 
-      if (result.matchedCount === 0) {
+      if (!product) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ success: true }, "Product updated successfully");
+      return createSuccessResponse(
+        { product: mapProduct(product) },
+        "Product updated successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -192,15 +215,21 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Product deleted successfully")
   public async deleteProduct(@Path() id: string): Promise<any> {
     try {
-      const productCollection = getCollection<Product>("products");
-      const result = await productCollection.deleteOne({ _id: new ObjectId(id) });
-
-      if (result.deletedCount === 0) {
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid product ID");
+      }
+      //@ts-ignore
+      const result = await ProductModel.findByIdAndDelete(id).lean();
+      if (!result) {
         this.setStatus(404);
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse({ success: true }, "Product deleted successfully");
+      return createSuccessResponse(
+        { success: true },
+        "Product deleted successfully"
+      );
     } catch (error) {
       console.error(error);
       this.setStatus(500);

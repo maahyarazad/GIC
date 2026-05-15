@@ -7,307 +7,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"EmailTemplateDoc": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"name",
-					"subject",
-					"html"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"SuccessResponse_EmailTemplateDoc_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"$ref": "#/components/schemas/EmailTemplateDoc"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ErrorResponse": {
-				"properties": {
-					"timestamp": {
-						"type": "string"
-					},
-					"error": {
-						"properties": {
-							"details": {},
-							"code": {
-								"type": "string"
-							},
-							"message": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"message"
-						],
-						"type": "object"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							false
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"error",
-					"message",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_EmailTemplateDoc-Array_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"items": {
-							"$ref": "#/components/schemas/EmailTemplateDoc"
-						},
-						"type": "array"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_EmailTemplateDoc-Array_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_EmailTemplateDoc-Array_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_null_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_null_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_null_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"Partial_EmailTemplateDoc_": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"subject": {
-						"type": "string"
-					},
-					"html": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"variables": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
 			"UserSortKey": {
 				"type": "string",
 				"enum": [
@@ -317,9 +16,13 @@
 					"role"
 				]
 			},
-			"ObjectId": {
+			"UserRole": {
 				"type": "string",
-				"description": "A class representation of the BSON ObjectId type."
+				"enum": [
+					"user",
+					"admin",
+					"superadmin"
+				]
 			},
 			"SocialLink": {
 				"properties": {
@@ -337,42 +40,54 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"UserProfile": {
+				"properties": {
+					"photo": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"socialLinks": {
+						"items": {
+							"$ref": "#/components/schemas/SocialLink"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
 			"Pick_User.Exclude_keyofUser.password__": {
 				"properties": {
 					"name": {
+						"type": "string"
+					},
+					"email": {
 						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
 					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"email": {
-						"type": "string"
-					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"user",
-							"admin",
-							"superadmin"
-						]
+						"$ref": "#/components/schemas/UserRole"
 					},
 					"phone": {
 						"type": "string"
 					},
 					"orders": {
 						"items": {
-							"$ref": "#/components/schemas/ObjectId"
+							"type": "string"
 						},
 						"type": "array"
 					},
 					"addresses": {
 						"items": {
-							"$ref": "#/components/schemas/ObjectId"
+							"type": "string"
 						},
 						"type": "array"
 					},
@@ -389,33 +104,27 @@
 						"type": "string"
 					},
 					"profile": {
-						"properties": {
-							"socialLinks": {
-								"items": {
-									"$ref": "#/components/schemas/SocialLink"
-								},
-								"type": "array"
-							},
-							"description": {
-								"type": "string"
-							},
-							"title": {
-								"type": "string"
-							},
-							"photo": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/UserProfile"
+					},
+					"remarks": {
+						"type": "string"
+					},
+					"requirePasswordChange": {
+						"type": "boolean"
 					},
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
 					}
 				},
 				"required": [
 					"name",
 					"email",
-					"authorize"
+					"authorize",
+					"requirePasswordChange"
 				],
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
@@ -447,31 +156,23 @@
 					},
 					"authorize": {
 						"type": "boolean"
+					},
+					"remarks": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
 					"name",
 					"email",
 					"password",
-					"phone",
-					"authorize"
+					"phone"
 				],
 				"type": "object",
 				"additionalProperties": true
 			},
 			"UpdateUserRequest": {
 				"properties": {
-					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"name": {
 						"type": "string"
 					},
@@ -485,99 +186,17 @@
 						"type": "string"
 					},
 					"role": {
-						"type": "string",
-						"enum": [
-							"user",
-							"admin",
-							"superadmin"
-						]
+						"$ref": "#/components/schemas/UserRole"
 					},
 					"authorize": {
 						"type": "boolean"
 					},
 					"profile": {
-						"properties": {
-							"socialLinks": {
-								"items": {
-									"$ref": "#/components/schemas/SocialLink"
-								},
-								"type": "array"
-							},
-							"description": {
-								"type": "string"
-							},
-							"title": {
-								"type": "string"
-							},
-							"photo": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/UserProfile"
 					}
 				},
 				"type": "object",
 				"additionalProperties": true
-			},
-			"SuccessResponse__photoUrl-string__": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"properties": {
-							"photoUrl": {
-								"type": "string"
-							}
-						},
-						"required": [
-							"photoUrl"
-						],
-						"type": "object"
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
 			},
 			"ProductContent": {
 				"properties": {
@@ -657,12 +276,1215 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ProductImportance": {
+				"type": "string",
+				"enum": [
+					"A",
+					"B",
+					"C",
+					"D"
+				]
+			},
+			"ProductMetadata": {
+				"properties": {
+					"economicFundamentals": {
+						"properties": {
+							"gdpGrowthRate2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"vatOrSalesTaxPct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"importDutyPct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"incomeTaxRate": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"publicDebtPctGdp2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"landSizeSqKm2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"averageAge2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"avgSchooling2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"literacyRate2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"youthUnemploymentRate2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"avgUnemploymentRate2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"averageHdi2023To2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"latestGiniIndex": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"avgAnnualGrowth2019To2024": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"nominalGdpUsdBn": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"demographicsWorkforce": {
+						"properties": {
+							"geographicDistributionNotes": {
+								"type": "string",
+								"nullable": true
+							},
+							"ruralPopulationPct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"urbanPopulationPct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"laborMarketFeatures": {
+								"type": "string",
+								"nullable": true
+							},
+							"tertiaryEducation": {
+								"type": "string",
+								"nullable": true
+							},
+							"skillStatus": {
+								"type": "string",
+								"nullable": true
+							},
+							"deathRatePer1000": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"birthRatePer1000": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"primaryReligion": {
+								"type": "string",
+								"nullable": true
+							},
+							"populationGrowthRatePct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"naturalIndustrialResources": {
+						"properties": {
+							"industrialBaseStrength2024": {
+								"type": "string",
+								"nullable": true
+							},
+							"mainResources": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"currencyFinancialClimate": {
+						"properties": {
+							"interestRatePct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"inflationRatePct": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"paymentSystem2024": {
+								"type": "string",
+								"nullable": true
+							},
+							"bankingSystem2024": {
+								"type": "string",
+								"nullable": true
+							},
+							"averagePriceStandardGoods": {
+								"properties": {
+									"chicken1Kg": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"rice1Kg": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"eggs12": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"breadLoafUsd": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"milk1L": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"currencyStability2024": {
+								"type": "string",
+								"nullable": true
+							},
+							"currencyStrengthAcceptance": {
+								"type": "string",
+								"nullable": true
+							},
+							"currencyCode": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"infrastructureLogistics": {
+						"properties": {
+							"logisticsRanking": {
+								"properties": {
+									"lpiTotalScore": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"deliveryTimes": {
+								"properties": {
+									"portDeliveryTimeDays": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"mainPort": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"portsAirportsCapacity": {
+								"properties": {
+									"cargoCapacityTonnes": {
+										"type": "string",
+										"nullable": true
+									},
+									"airportPassengerCapacity": {
+										"type": "string",
+										"nullable": true
+									},
+									"majorAirports": {
+										"type": "string",
+										"nullable": true
+									},
+									"portCapacity": {
+										"type": "string",
+										"nullable": true
+									},
+									"majorPorts": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"nri2024Score": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"infrastructureReadinessGlobalRank": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							},
+							"infrastructureReadinessIndexScore": {
+								"anyOf": [
+									{
+										"type": "number",
+										"format": "double"
+									},
+									{
+										"type": "string"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"governanceStability": {
+						"properties": {
+							"significantHistoricEvents": {
+								"items": {
+									"properties": {
+										"sourceYear": {
+											"type": "string",
+											"nullable": true
+										},
+										"businessInvestmentImpact": {
+											"type": "string",
+											"nullable": true
+										},
+										"year": {
+											"anyOf": [
+												{
+													"type": "number",
+													"format": "double"
+												},
+												{
+													"type": "string"
+												}
+											],
+											"nullable": true
+										},
+										"historicEvent": {
+											"type": "string",
+											"nullable": true
+										}
+									},
+									"type": "object"
+								},
+								"type": "array",
+								"nullable": true
+							},
+							"warTerrorismRisks": {
+								"properties": {
+									"sourceYear": {
+										"type": "string",
+										"nullable": true
+									},
+									"keyGroupsActors": {
+										"type": "string",
+										"nullable": true
+									},
+									"riskLevel": {
+										"type": "string",
+										"nullable": true
+									},
+									"conflictTerrorismThreats": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"securitySafety": {
+								"properties": {
+									"sourceYear": {
+										"type": "string",
+										"nullable": true
+									},
+									"lawEnforcementReliability": {
+										"type": "string",
+										"nullable": true
+									},
+									"businessSecurityRisk": {
+										"type": "string",
+										"nullable": true
+									},
+									"crimeSafetyLevel": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"internationalRestrictions": {
+								"properties": {
+									"sourceYear": {
+										"type": "string",
+										"nullable": true
+									},
+									"targetedSectorsEntities": {
+										"type": "string",
+										"nullable": true
+									},
+									"issuingAuthority": {
+										"type": "string",
+										"nullable": true
+									},
+									"restrictionsEmbargoes": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"ngoInvolvement": {
+								"properties": {
+									"sourceYear": {
+										"type": "string",
+										"nullable": true
+									},
+									"governmentRelations": {
+										"type": "string",
+										"nullable": true
+									},
+									"mainFocusAreas": {
+										"type": "string",
+										"nullable": true
+									},
+									"ngoPresenceInfluence": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"governmentInPowerPolicies": {
+								"properties": {
+									"sourceYear": {
+										"type": "string",
+										"nullable": true
+									},
+									"keyEconomicIndustrialPoliciesFdi": {
+										"type": "string",
+										"nullable": true
+									},
+									"partyCoalition": {
+										"type": "string",
+										"nullable": true
+									},
+									"governmentInPower2024": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"politicalStability": {
+								"properties": {
+									"source": {
+										"type": "string",
+										"nullable": true
+									},
+									"score": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"businessTradeEnvironment": {
+						"properties": {
+							"tradingTerms": {
+								"properties": {
+									"soeDominancePracticalNotes": {
+										"type": "string",
+										"nullable": true
+									},
+									"localSupplierPreferenceIcv": {
+										"type": "string",
+										"nullable": true
+									},
+									"paymentRiskDelays": {
+										"type": "string",
+										"nullable": true
+									},
+									"publicProcurementOpenness": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"settingUpNewCompany": {
+								"properties": {
+									"roleOfFreeZonesSezsForIndustry": {
+										"type": "string",
+										"nullable": true
+									},
+									"foreignOwnershipLimitsMainland": {
+										"type": "string",
+										"nullable": true
+									},
+									"govFeesLicensingRegistration": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "number",
+												"format": "double"
+											}
+										],
+										"nullable": true
+									},
+									"typicalSetupTime": {
+										"type": "string",
+										"nullable": true
+									},
+									"minCapitalTypicalIndustrialLlc": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "number",
+												"format": "double"
+											}
+										],
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"recruitmentLandscape": {
+								"properties": {
+									"typicalChallengesForForeignIndustrialEmployers": {
+										"type": "string",
+										"nullable": true
+									},
+									"localHiringNationalisationRules": {
+										"type": "string",
+										"nullable": true
+									},
+									"unionisationIntensity": {
+										"type": "string",
+										"nullable": true
+									},
+									"labourAvailabilitySkills": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"visasAndLandPurchaseLaws": {
+								"properties": {
+									"freeZonesIndustrialParksSpecialRules": {
+										"type": "string",
+										"nullable": true
+									},
+									"foreignLandOwnershipCoreRule": {
+										"type": "string",
+										"nullable": true
+									},
+									"residencyInvestorVisa": {
+										"type": "string",
+										"nullable": true
+									},
+									"businessVisaAvailabilityTypical": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"investmentProtectionPolicies": {
+								"properties": {
+									"keyDomesticProtections": {
+										"type": "string",
+										"nullable": true
+									},
+									"isdsAvailability": {
+										"type": "string",
+										"nullable": true
+									},
+									"icsidMembership": {
+										"type": "string",
+										"nullable": true
+									},
+									"bitsWithGermanyOrEu": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"tradeAgreements": {
+								"properties": {
+									"status": {
+										"type": "string",
+										"nullable": true
+									},
+									"otherKeyArrangementsRelevantToIndustry": {
+										"type": "string",
+										"nullable": true
+									},
+									"customsUnionOrRecIndustrialFocus": {
+										"type": "string",
+										"nullable": true
+									},
+									"euFtaAssociationIndustrialGoods": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"easeOfDoingBusiness": {
+								"properties": {
+									"statusNote": {
+										"type": "string",
+										"nullable": true
+									},
+									"year": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"overallScore": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									},
+									"globalRankOf190": {
+										"anyOf": [
+											{
+												"type": "number",
+												"format": "double"
+											},
+											{
+												"type": "string"
+											}
+										],
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"educationResearchHumanCapital": {
+						"properties": {
+							"workforceDevelopmentPrograms": {
+								"properties": {
+									"effectivenessForIndustrialInvestors": {
+										"type": "string",
+										"nullable": true
+									},
+									"multinationalsDonorsInvolved": {
+										"type": "string",
+										"nullable": true
+									},
+									"publicPrivateWorkforceInitiatives": {
+										"type": "string",
+										"nullable": true
+									},
+									"nationalSkillsHumanCapitalStrategy2022To2025": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"trainingVocationalAvailable": {
+								"properties": {
+									"employerInvolvementImplications": {
+										"type": "string",
+										"nullable": true
+									},
+									"governmentDonorTvetPrograms": {
+										"type": "string",
+										"nullable": true
+									},
+									"alignmentWithIndustrialSkills": {
+										"type": "string",
+										"nullable": true
+									},
+									"tvetVocationalSystem": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"universitiesSchoolsQuality": {
+								"properties": {
+									"universityIndustryLinks": {
+										"type": "string",
+										"nullable": true
+									},
+									"researchInternationalCollaboration": {
+										"type": "string",
+										"nullable": true
+									},
+									"stemEngineeringStrength": {
+										"type": "string",
+										"nullable": true
+									},
+									"rankedUniversities2022To2025": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"industrialManufacturingStrengths": {
+						"properties": {
+							"investmentReadiness": {
+								"properties": {
+									"oneSentenceJustification": {
+										"type": "string",
+										"nullable": true
+									},
+									"readiness": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"germanProductsCompanies": {
+								"properties": {
+									"notableGermanBackedProjectsQualifiers": {
+										"type": "string",
+										"nullable": true
+									},
+									"germanProductsCommonlyImportedDirectional": {
+										"type": "string",
+										"nullable": true
+									},
+									"germanOemsIndustrialOperationsExamples": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"governmentIncentives": {
+								"properties": {
+									"exportOrientedIncentives": {
+										"type": "string",
+										"nullable": true
+									},
+									"localContentLocalisation": {
+										"type": "string",
+										"nullable": true
+									},
+									"taxCustomsIncentives": {
+										"type": "string",
+										"nullable": true
+									},
+									"industrialZonesSezs": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"keySectors": {
+								"properties": {
+									"maturityQualifier": {
+										"type": "string",
+										"nullable": true
+									},
+									"secondaryEmergingSectors": {
+										"type": "string",
+										"nullable": true
+									},
+									"primaryManufacturingSectors": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"sustainabilityEnvironment": {
+						"properties": {
+							"futureDevelopmentPlans": {
+								"properties": {
+									"indicativeSources": {
+										"type": "string",
+										"nullable": true
+									},
+									"strategicImplicationsForGermanIndustrialFirms": {
+										"type": "string",
+										"nullable": true
+									},
+									"roleEnvisionedForForeignPrivateInvestors": {
+										"type": "string",
+										"nullable": true
+									},
+									"timeHorizonIndicated": {
+										"type": "string",
+										"nullable": true
+									},
+									"statusOfPlans": {
+										"type": "string",
+										"nullable": true
+									},
+									"sustainabilityLinkedIndustrialDevelopmentPlans": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"environmentalInitiatives": {
+								"properties": {
+									"indicativeSources": {
+										"type": "string",
+										"nullable": true
+									},
+									"relevanceForIndustrialManufacturingInvestors": {
+										"type": "string",
+										"nullable": true
+									},
+									"implementationSignal": {
+										"type": "string",
+										"nullable": true
+									},
+									"circularEconomyResourceEfficiencyInitiatives": {
+										"type": "string",
+										"nullable": true
+									},
+									"carbonClimatePolicyInstrumentsAffectingIndustry": {
+										"type": "string",
+										"nullable": true
+									},
+									"renewableCleanEnergyInitiativesRelevantToIndustry": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							},
+							"wasteManagementPolicies": {
+								"properties": {
+									"indicativeSources": {
+										"type": "string",
+										"nullable": true
+									},
+									"keyGapsConstraints": {
+										"type": "string",
+										"nullable": true
+									},
+									"roleOfPrivateSectorPpps": {
+										"type": "string",
+										"nullable": true
+									},
+									"implementationEnforcementSignal": {
+										"type": "string",
+										"nullable": true
+									},
+									"wasteStreamsExplicitlyAddressed": {
+										"type": "string",
+										"nullable": true
+									},
+									"documentedNationalWasteManagementPolicyStrategy": {
+										"type": "string",
+										"nullable": true
+									}
+								},
+								"type": "object",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"swot": {
+						"properties": {
+							"threats": {
+								"type": "string",
+								"nullable": true
+							},
+							"opportunities": {
+								"type": "string",
+								"nullable": true
+							},
+							"weaknesses": {
+								"type": "string",
+								"nullable": true
+							},
+							"strengths": {
+								"type": "string",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					},
+					"conclusion": {
+						"properties": {
+							"rationaleIndustrialInvestability": {
+								"type": "string",
+								"nullable": true
+							},
+							"investmentAttractivenessSignal": {
+								"type": "string",
+								"nullable": true
+							},
+							"gicStarRating": {
+								"anyOf": [
+									{
+										"type": "string"
+									},
+									{
+										"type": "number",
+										"format": "double"
+									}
+								],
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
 			"CreateProductRequest": {
 				"properties": {
 					"fileId": {
 						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"subRegion": {
 						"type": "string"
 					},
 					"content": {
@@ -701,15 +1523,10 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "number",
-						"format": "double"
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"parent": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ObjectId"
-							}
-						],
+						"type": "string",
 						"nullable": true
 					},
 					"children": {
@@ -725,17 +1542,44 @@
 						},
 						"type": "array",
 						"nullable": true
+					},
+					"metadata": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductMetadata"
+							}
+						],
+						"nullable": true
+					},
+					"sourceFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"sourceSheets": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"fileId",
 					"name",
-					"content",
-					"variant",
-					"media",
-					"tags",
-					"children",
-					"recommended"
+					"slug",
+					"code",
+					"subRegion",
+					"importance"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -743,7 +1587,7 @@
 			"Product": {
 				"properties": {
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -759,8 +1603,20 @@
 					"name": {
 						"type": "string"
 					},
+					"slug": {
+						"type": "string"
+					},
 					"code": {
 						"type": "string"
+					},
+					"subRegion": {
+						"type": "string",
+						"description": "sub-region label"
+					},
+					"parent": {
+						"type": "string",
+						"nullable": true,
+						"description": "sub-region id"
 					},
 					"content": {
 						"allOf": [
@@ -798,21 +1654,7 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "string",
-						"enum": [
-							"A",
-							"B",
-							"C",
-							"D"
-						]
-					},
-					"parent": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/ObjectId"
-							}
-						],
-						"nullable": true
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"children": {
 						"items": {
@@ -827,12 +1669,43 @@
 						},
 						"type": "array",
 						"nullable": true
+					},
+					"metadata": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductMetadata"
+							}
+						],
+						"nullable": true
+					},
+					"sourceFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"sourceSheets": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"required": [
 					"fileId",
 					"name",
+					"slug",
 					"code",
+					"subRegion",
 					"content",
 					"variant",
 					"media",
@@ -850,6 +1723,7 @@
 				"enum": [
 					"fileId",
 					"name",
+					"code",
 					"downloadCount",
 					"importance",
 					"createdAt",
@@ -869,6 +1743,15 @@
 						"type": "string"
 					},
 					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"subRegion": {
 						"type": "string"
 					},
 					"content": {
@@ -891,11 +1774,10 @@
 						"format": "double"
 					},
 					"importance": {
-						"type": "number",
-						"format": "double"
+						"$ref": "#/components/schemas/ProductImportance"
 					},
 					"parent": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"children": {
 						"items": {
@@ -909,13 +1791,70 @@
 						},
 						"type": "array"
 					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
+					"metadata": {
+						"$ref": "#/components/schemas/ProductMetadata"
+					},
+					"sourceFiles": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"sourceSheets": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
 					}
 				},
 				"type": "object",
 				"additionalProperties": true
+			},
+			"ErrorResponse": {
+				"properties": {
+					"timestamp": {
+						"type": "string"
+					},
+					"error": {
+						"properties": {
+							"details": {},
+							"code": {
+								"type": "string"
+							},
+							"message": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"message"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							false
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"error",
+					"message",
+					"success"
+				],
+				"type": "object"
 			},
 			"SuccessResponse__otpSent-boolean__": {
 				"properties": {
@@ -1176,7 +2115,7 @@
 			"NewsletterSubscriber": {
 				"properties": {
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -1262,7 +2201,7 @@
 					}
 				]
 			},
-			"Pick_NewsletterSubscriber.email-or-active_": {
+			"CreateNewsletterSubscriberRequest": {
 				"properties": {
 					"email": {
 						"type": "string"
@@ -1272,11 +2211,10 @@
 					}
 				},
 				"required": [
-					"email",
-					"active"
+					"email"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
+				"additionalProperties": true
 			},
 			"ApiResponse_any_": {
 				"anyOf": [
@@ -1288,28 +2226,71 @@
 					}
 				]
 			},
-			"Partial_NewsletterSubscriber_": {
+			"SuccessResponse_null_": {
 				"properties": {
-					"email": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
 						"type": "string"
 					},
-					"active": {
-						"type": "boolean"
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
 					},
-					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+					"message": {
+						"type": "string"
 					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
 					}
 				},
-				"type": "object",
-				"description": "Make all properties in T optional"
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_null_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_null_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
 			},
 			"UploadedFileDoc": {
 				"properties": {
@@ -1423,10 +2404,10 @@
 					}
 				]
 			},
-			"CreateContinentRequest": {
+			"EmailTemplate": {
 				"properties": {
 					"_id": {
-						"$ref": "#/components/schemas/ObjectId"
+						"type": "string"
 					},
 					"createdAt": {
 						"type": "string",
@@ -1439,8 +2420,229 @@
 					"name": {
 						"type": "string"
 					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_EmailTemplate_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/EmailTemplate"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_EmailTemplate_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplate_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"CreateEmailTemplateRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_EmailTemplate-Array_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/EmailTemplate"
+						},
+						"type": "array"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_EmailTemplate-Array_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_EmailTemplate-Array_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"UpdateEmailTemplateRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"variables": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Record_string.string_": {
+				"properties": {},
+				"additionalProperties": {
+					"type": "string"
+				},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"CreateContinentRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
 					"slug": {
 						"type": "string"
+					},
+					"code": {
+						"type": "string",
+						"nullable": true
 					},
 					"description": {
 						"type": "string",
@@ -1448,12 +2650,14 @@
 					},
 					"products": {
 						"items": {
-							"allOf": [
-								{
-									"$ref": "#/components/schemas/ObjectId"
-								}
-							],
-							"nullable": true
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"productCodes": {
+						"items": {
+							"type": "string"
 						},
 						"type": "array",
 						"nullable": true
@@ -1505,12 +2709,132 @@
 						},
 						"type": "array",
 						"nullable": true
+					},
+					"sourceLabel": {
+						"type": "string",
+						"nullable": true
+					},
+					"summary": {
+						"properties": {
+							"notes": {
+								"type": "string",
+								"nullable": true
+							},
+							"chapterCoverage": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array",
+								"nullable": true
+							},
+							"countryCount": {
+								"type": "number",
+								"format": "double",
+								"nullable": true
+							}
+						},
+						"type": "object",
+						"nullable": true
 					}
 				},
 				"required": [
 					"name",
 					"slug"
 				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateContinentRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"slug": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"products": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"productCodes": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"productObjects": {
+						"items": {
+							"$ref": "#/components/schemas/Product"
+						},
+						"type": "array"
+					},
+					"parent": {
+						"type": "string"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"order": {
+						"type": "number",
+						"format": "double"
+					},
+					"image": {
+						"type": "string"
+					},
+					"imageAlt": {
+						"type": "string"
+					},
+					"seoTitle": {
+						"type": "string"
+					},
+					"seoDescription": {
+						"type": "string"
+					},
+					"seoKeywords": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"sourceLabel": {
+						"type": "string"
+					},
+					"summary": {
+						"properties": {
+							"notes": {
+								"type": "string"
+							},
+							"chapterCoverage": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"countryCount": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"type": "object"
+					},
+					"_id": {
+						"type": "string"
+					}
+				},
 				"type": "object",
 				"additionalProperties": true
 			},
@@ -1522,6 +2846,20 @@
 					"createdAt",
 					"order",
 					"isActive"
+				]
+			},
+			"ContactUsSortKey": {
+				"type": "string",
+				"enum": [
+					"fullName",
+					"company",
+					"email",
+					"industry",
+					"countryOfInterest",
+					"meaObjective",
+					"referredBy",
+					"createdAt",
+					"updatedAt"
 				]
 			},
 			"SuccessResponse__token-string__": {
@@ -1692,173 +3030,6 @@
 		"contact": {}
 	},
 	"paths": {
-		"/api/v1/email-templates": {
-			"post": {
-				"operationId": "CreateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Create a new template",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/EmailTemplateDoc"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetTemplates",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc-Array_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Get all templates",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/email-templates/send-email-template/{id}": {
-			"post": {
-				"operationId": "SendEmail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/v1/email-templates/{id}": {
-			"put": {
-				"operationId": "UpdateTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_EmailTemplateDoc_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Update a template by ID",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Partial_EmailTemplateDoc_"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteTemplate",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_null_"
-								}
-							}
-						}
-					}
-				},
-				"description": "Delete a template by ID",
-				"tags": [
-					"email-templates"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/api/v1/users": {
 			"get": {
 				"operationId": "GetAllUsers",
@@ -1969,6 +3140,33 @@
 			}
 		},
 		"/api/v1/users/{id}": {
+			"get": {
+				"operationId": "GetUserById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
 			"put": {
 				"operationId": "UpdateUser",
 				"responses": {
@@ -2007,46 +3205,9 @@
 				}
 			}
 		},
-		"/api/v1/users/user-profile/{id}": {
+		"/api/v1/users/{id}/authorize": {
 			"put": {
-				"operationId": "UpdateUserProfile",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UpdateUserRequest"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetUserProfile",
+				"operationId": "AuthorizeUser",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -2073,61 +3234,24 @@
 				]
 			}
 		},
-		"/api/v1/users/{id}/upload-photo": {
-			"post": {
-				"operationId": "UploadPhoto",
+		"/api/v1/sso": {
+			"get": {
+				"operationId": "GetSSOToken",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "SSO token generated",
 						"content": {
 							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/ErrorResponse"
-										},
-										{
-											"$ref": "#/components/schemas/SuccessResponse__photoUrl-string__"
-										}
-									]
-								}
+								"schema": {}
 							}
 						}
 					}
 				},
 				"tags": [
-					"Users"
+					"auth"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									}
-								},
-								"required": [
-									"file"
-								]
-							}
-						}
-					}
-				}
+				"parameters": []
 			}
 		},
 		"/sitemap.xml": {
@@ -2629,7 +3753,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Pick_NewsletterSubscriber.email-or-active_"
+								"$ref": "#/components/schemas/CreateNewsletterSubscriberRequest"
 							}
 						}
 					}
@@ -2681,10 +3805,10 @@
 						"schema": {
 							"type": "string",
 							"enum": [
-								"createdAt",
-								"updatedAt",
 								"email",
+								"createdAt",
 								"_id",
+								"updatedAt",
 								"active"
 							]
 						}
@@ -2713,15 +3837,15 @@
 			}
 		},
 		"/api/v1/newsletter/{id}": {
-			"get": {
-				"operationId": "GetSubscriber",
+			"put": {
+				"operationId": "UpdateSubscriber",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
+									"$ref": "#/components/schemas/ApiResponse_any_"
 								}
 							}
 						}
@@ -2740,91 +3864,32 @@
 							"type": "string"
 						}
 					}
-				]
-			}
-		},
-		"/api/v1/newsletter/email/{email}": {
-			"get": {
-				"operationId": "GetSubscriberByEmail",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"newsletter"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "email",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/newsletter/{email}": {
-			"put": {
-				"operationId": "UpsertSubscriber",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"newsletter"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "email",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
 				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Partial_NewsletterSubscriber_"
+								"properties": {
+									"active": {
+										"type": "boolean"
+									}
+								},
+								"type": "object"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/newsletter/unsubscribe/{id}": {
-			"get": {
-				"operationId": "UnSubscribe",
+			},
+			"delete": {
+				"operationId": "DeleteSubscriber",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ApiResponse_NewsletterSubscriber_"
+									"$ref": "#/components/schemas/ApiResponse_null_"
 								}
 							}
 						}
@@ -2848,7 +3913,7 @@
 		},
 		"/api/v1/logs/{id}": {
 			"get": {
-				"operationId": "GetUserProfile",
+				"operationId": "GetLogsByTargetId",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3024,6 +4089,290 @@
 				]
 			}
 		},
+		"/api/v1/events": {
+			"get": {
+				"operationId": "GetEvents",
+				"responses": {
+					"200": {
+						"description": "Events fetched",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/my-events": {
+			"get": {
+				"operationId": "GetMyEvents",
+				"responses": {
+					"200": {
+						"description": "Events fetched",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/my-events/qr": {
+			"get": {
+				"operationId": "GetMyEventQR",
+				"responses": {
+					"200": {
+						"description": "QR fetched",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/email-templates": {
+			"post": {
+				"operationId": "CreateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateEmailTemplateRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetTemplates",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/email-templates/{id}": {
+			"get": {
+				"operationId": "GetTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_EmailTemplate_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEmailTemplateRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTemplate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/email-templates/send-email-template/{id}": {
+			"post": {
+				"operationId": "SendEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"email-templates"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									},
+									"variables": {
+										"$ref": "#/components/schemas/Record_string.string_"
+									}
+								},
+								"required": [
+									"email",
+									"variables"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/continents/initialize_db": {
+			"get": {
+				"operationId": "InitializeDB",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/api/v1/continents": {
 			"post": {
 				"operationId": "CreateContinent",
@@ -3054,7 +4403,7 @@
 				}
 			},
 			"get": {
-				"operationId": "GetAllCategories",
+				"operationId": "GetAllContinents",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3122,8 +4471,8 @@
 				]
 			}
 		},
-		"/api/v1/continents/update": {
-			"post": {
+		"/api/v1/continents/{id}": {
+			"put": {
 				"operationId": "UpdateContinent",
 				"responses": {
 					"200": {
@@ -3139,25 +4488,32 @@
 					"Continents"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CreateContinentRequest"
+								"$ref": "#/components/schemas/UpdateContinentRequest"
 							}
 						}
 					}
 				}
-			}
-		},
-		"/api/v1/continents/{id}": {
-			"delete": {
-				"operationId": "DeleteContinent",
+			},
+			"get": {
+				"operationId": "GetContinentById",
 				"responses": {
 					"200": {
-						"description": "Deleted",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {}
@@ -3179,6 +4535,133 @@
 						}
 					}
 				]
+			},
+			"delete": {
+				"operationId": "DeleteContinent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/contact-us": {
+			"get": {
+				"operationId": "GetAllContactUsSubmissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "filters",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortBy",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/ContactUsSortKey"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sortOrder",
+						"required": false,
+						"schema": {
+							"default": "desc",
+							"type": "string",
+							"enum": [
+								"asc",
+								"desc"
+							]
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/contact-us/authorize-user": {
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Contact Us"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserRequest"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/client": {
@@ -3203,7 +4686,7 @@
 		},
 		"/api/v1/client/{id}": {
 			"put": {
-				"operationId": "UpdateJsonById",
+				"operationId": "UpdateJson",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -3218,16 +4701,7 @@
 					"client"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3479,9 +4953,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"error": {}
-									},
+									"properties": {},
 									"type": "object"
 								}
 							}

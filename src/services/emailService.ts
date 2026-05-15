@@ -1,6 +1,6 @@
 import nodemailer, { SendMailOptions } from "nodemailer";
 import dotenv from "dotenv";
-import {EmailTemplateDoc} from '../controllers/email.controller';
+
 import pLimit from "p-limit";
 
 dotenv.config();
@@ -9,6 +9,16 @@ import { getCollection } from "../db";
 import { generateUnsubscribeToken } from "../utils/helpers";
 
  
+export interface EmailTemplate {
+    _id?: string;
+    name: string;
+    subject: string;
+    html: string;
+    text?: string;
+    variables?: string[];
+    createdAt?: string;
+    updatedAt?: string;
+}
 
 /** Request body for sending OTP */
 export interface EmailOtpRequest {
@@ -97,7 +107,7 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
   const { email, event, otp, message } = reqBody;
 
   try {
-    const templateCollection = getCollection("email_templates");
+    const templateCollection = getCollection("emailtemplates");
     // Fetch template from DB
     const template = await templateCollection.findOne({
       name: "otp_verification",
@@ -148,7 +158,7 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 
 
 export async function sendMassDynamicEmailDoc(
-  doc: EmailTemplateDoc,
+  doc: EmailTemplate,
   data: Record<string, any>
 ) {
   try {
@@ -202,13 +212,53 @@ export async function sendMassDynamicEmailDoc(
   }
 }
 
+interface EmailParam {
+    template_name:string,
+  data: Record<string, any>,
+  email: string
+}
 
+export async function sendDynamicEmailToUser(
+  param : EmailParam
+) {
+  try {
+    
+
+    const templateCollection = getCollection("emailtemplates");
+    // Fetch template from DB
+    const template = await templateCollection.findOne({
+      name: param.template_name,
+    });
+
+if (!template) throw new Error("Email template not found");
+    // 🔁 GLOBAL + CUSTOM VARIABLES
+    const variables: Record<string, any> = {
+      ...getGlobalEmailVariables(param.data),
+      ...param.data,
+    };
+
+
+
+    const payload: SendRawEmailParams = {
+      to : param.email,
+      subject: replacePlaceholders(template.subject, variables),
+      html: replacePlaceholders(template.html, variables),
+    };
+
+    const result = await sendRawEmailWithAttachments(payload);
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
 
 export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>) {
   try {
     
-        const templateCollection = getCollection("email_templates");
+        const templateCollection = getCollection("emailtemplates");
     // Fetch template from DB
     const template = await templateCollection.findOne({
       name: doc,

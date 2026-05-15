@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+
 import { UserProfilesDataGrid } from "@/Components/Dashboard/User/Profile";
+import { ContactUsRequests } from "@/Components/Dashboard/ContactUsRequests/ContactUsRequests";
 import JsonViewer from "@/Components/Dashboard/JsonViewer/JsonViewer";
 import FileManagement from "@/Components/Dashboard/FileManagement/FileManagement";
 import EmailTemplatesDataGrid from "@/Components/Dashboard/EmailTemplate/EmailTemplate";
@@ -10,190 +13,209 @@ import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
+import { usePage } from "@/Providers/PageContext";
+import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
+import Events from "@/Components/Dashboard/Events/Events";
+import type { RootState } from "../../store";
 
-
-// --- Types ---
 type MenuItem =
-    | "users"
-    | "sitedata"
-    | "file_management"
-    | "email_management"
-    | "newsletter_subscribers"
-    | "continent"
-    | "profile"
-    | "economic_insights"
-    | "logout";
+  | "member_requests"
+  | "member_profiles"
+  | "events"
+  | "blog"
+  | "sitedata"
+  | "file_management"
+  | "email_management"
+  | "newsletter_subscribers"
+  | "sub_region_management"
+  | "profile"
+  | "country_intelligence"
+  | "logout";
 
-// --- Menu access control ---
 const accessControl: Record<MenuItem, string[]> = {
-    users: ["admin"],
-    sitedata: ["admin", "procurement"],
-    file_management: ["admin", "procurement"],
-    email_management: ["admin", "procurement"],
-    newsletter_subscribers: ["admin", "procurement"],
-    continent: ["admin", "procurement"],
-    profile: ["user"],
-    economic_insights: ["user","admin", "procurement"],
-    logout: ["admin", "user", "procurement"],
+  member_requests: ["admin"],
+  member_profiles: ["admin"],
+  events: ["user", "admin", "procurement"],
+  blog: ["admin", "procurement"],
+  sitedata: ["admin", "procurement"],
+  file_management: ["admin", "procurement"],
+  email_management: ["admin", "procurement"],
+  newsletter_subscribers: ["admin", "procurement"],
+  sub_region_management: ["admin", "procurement"],
+  profile: ["user"],
+  country_intelligence: ["user", "admin", "procurement"],
+  logout: ["admin", "user", "procurement"],
 };
 
-// --- Menu titles ---
 const menuTitles: Record<MenuItem, string> = {
-    users: "User Profiles",
-    sitedata: "Website Data",
-    file_management: "File Management",
-    email_management: "Email Templates",
-    newsletter_subscribers: "Email Subscribers",
-    continent: "Manage Continents",
-    profile: "Profile",
-    economic_insights: "Economic Insights",
-    logout: "Logout",
+  member_requests: "Member Requests",
+  member_profiles: "Member Profiles",
+  events: "Events",
+  blog: "Blog",
+  sitedata: "Website Data",
+  file_management: "File Management",
+  email_management: "Email Templates",
+  newsletter_subscribers: "Email Subscribers",
+  sub_region_management: "Manage Sub Region",
+  profile: "Profile",
+  country_intelligence: "Country Intelligence",
+  logout: "Logout",
 };
 
-// --- Default tab based on role ---
 const getDefaultTab = (role: string): MenuItem => {
-    switch (role) {
-        case "admin":
-            return "users";
-        case "procurement":
-            return "sitedata";
-        case "user":
-        default:
-            return "profile";
-    }
+  switch (role) {
+    case "admin":
+      return "member_requests";
+    case "procurement":
+      return "sitedata";
+    case "user":
+         return "country_intelligence";
+    default:
+      return "profile";
+  }
 };
 
-import { setReady } from '../../features/appSlice';
-import { useDispatch } from "react-redux";
+const isValidMenuItem = (value: string | null): value is MenuItem => {
+  return [
+    "member_requests",
+    "member_profiles",
+    "events",
+    "blog",
+    "sitedata",
+    "file_management",
+    "email_management",
+    "newsletter_subscribers",
+    "sub_region_management",
+    "profile",
+    "economic_insights",
+    "logout",
+  ].includes(value || "");
+};
+
 const Dashboard: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
+  const userProfile = useSelector((state: RootState) => state.auth?.user);
+  const authLoading = useSelector((state: RootState) => state.auth?.loading);
+  const { activePage } = usePage();
 
-    const dispatch = useDispatch();
-    React.useEffect(() => {
-        dispatch(setReady(true));
+  const userRole = userProfile?.role;
 
-    }, [dispatch])
+  const componentMap: Record<MenuItem, React.ReactNode> = {
+    member_requests: <ContactUsRequests />,
+    member_profiles: <UserProfilesDataGrid />,
+    blog: <UnderDevelopment withLockOverlay={false} />,
+    sitedata: <JsonViewer />,
+    file_management: <FileManagement />,
+    email_management: <EmailTemplatesDataGrid />,
+    newsletter_subscribers: <NewsletterSubscribers />,
+    sub_region_management: <Continent />,
+    country_intelligence: <EconomicInsights />,
+    events: <Events />,
+    profile: <UserProfileForm initialProfile={userProfile} />,
+    logout: <LogoutComponent />,
+  };
 
+  const filteredMenuItems = useMemo(() => {
+    if (!userRole) return [];
 
-    useEffect(() => {
-        const onPopState = () => {
-            const params = new URLSearchParams(window.location.search);
-            const tab = params.get("tab") as MenuItem;
-            if (tab) setSelectedMenu(tab);
-        };
-
-        window.addEventListener("popstate", onPopState);
-        return () => window.removeEventListener("popstate", onPopState);
-    }, []);
-
-    const userProfile = useSelector((state: any) => state.auth?.user);
-    const userRole = userProfile?.role || "user";
-
-
-    // Read initial tab from query param
-    const getTabFromQuery = () => {
-        const params = new URLSearchParams(window.location.search);
-        return (params.get("tab") as MenuItem) || getDefaultTab(userRole);
-    };
-
-
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [selectedMenu, setSelectedMenu] = useState<MenuItem>(getTabFromQuery());
-    const [mounted, setMounted] = useState(false);
-
-    // Prevent hydration mismatch
-    useEffect(() => setMounted(true), []);
-
-    const toggleSidebar = () => setSidebarOpen((prev) => !prev);
-
-    const handleMenuClick = (item: MenuItem) => {
-        setSelectedMenu(item);
-
-        // Only update history if window is available
-        if (typeof window !== "undefined") {
-            const params = new URLSearchParams(window.location.search);
-            params.set("tab", item);
-            window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
-        }
-
-        if (mounted && window.innerWidth < 768) {
-            setSidebarOpen(false);
-        }
-    };
-
-    // --- Component map ---
-    const componentMap: Record<MenuItem, React.ReactNode> = useMemo(
-        () => ({
-            users: <UserProfilesDataGrid />,
-            sitedata: <JsonViewer />,
-            file_management: <FileManagement />,
-            email_management: <EmailTemplatesDataGrid />,
-            newsletter_subscribers: <NewsletterSubscribers />,
-            continent: <Continent />,
-            profile: <UserProfileForm initialProfile={userProfile} />,
-            economic_insights: <EconomicInsights />,
-            logout: <LogoutComponent />,
-        }),
-        [userProfile]
+    return (Object.keys(componentMap) as MenuItem[]).filter((item) =>
+      accessControl[item]?.includes(userRole)
     );
+  }, [userRole]);
 
-    // --- Filter menu items by role ---
-    const filteredMenuItems = useMemo(
-        () =>
-            (Object.keys(componentMap) as MenuItem[]).filter((item) =>
-                accessControl[item]?.includes(userRole)
-            ),
-        [componentMap, userRole]
-    );
+  const defaultTab = useMemo<MenuItem | null>(() => {
+    if (!userRole || filteredMenuItems.length === 0) return null;
 
-    const selectedComponent =
-        filteredMenuItems.includes(selectedMenu)
-            ? componentMap[selectedMenu]
-            : null;
+    const roleDefault = getDefaultTab(userRole);
+    return filteredMenuItems.includes(roleDefault)
+      ? roleDefault
+      : filteredMenuItems[0];
+  }, [userRole, filteredMenuItems]);
 
-    return (
-        <div className="dashboard">
-            {/* Sidebar */}
-            <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                <button
-                    className="close-btn"
-                    onClick={toggleSidebar}
-                    aria-label="Close sidebar"
-                >
-                    ×
-                </button>
+  const [activeTab, setActiveTab] = useState<MenuItem | null>(null);
 
-                <nav>
-                    <ul>
-                        {filteredMenuItems.map((item) => (
-                            <li
-                                key={item}
-                                className={selectedMenu === item ? "active" : ""}
-                                onClick={() => handleMenuClick(item)}
-                                role="button"
-                                tabIndex={0}
-                            >
-                                {menuTitles[item]}
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </aside>
+  useEffect(() => {
+    if (authLoading || !userRole || !defaultTab) return;
 
-            {/* Main content */}
-            <main className="main-content">
-                <button
-                    className="open-sidebar-btn"
-                    onClick={toggleSidebar}
-                    aria-label="Open sidebar"
-                >
-                    ☰
-                </button>
+    const queryTab = searchParams.get("tab");
+    const isAllowedTab =
+      isValidMenuItem(queryTab) && filteredMenuItems.includes(queryTab);
 
-                {selectedComponent}
-            </main>
+    const nextTab = isAllowedTab ? queryTab : defaultTab;
+
+    setActiveTab(nextTab);
+
+    if (!isAllowedTab) {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.set("tab", nextTab);
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [
+    authLoading,    
+  ]);
+
+  const activeComponent = activeTab ? componentMap[activeTab] : null;
+
+  const handleMenuClick = (item: MenuItem) => {
+    if (item === activeTab) return;
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set("tab", item);
+    setSearchParams(nextParams, { replace: true });
+    setActiveTab(item);
+
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
+  if (!activeComponent) {
+    return null;
+  }
+
+  return (
+    <div className={`dashboard ${activePage === "/dashboard" ? "active" : ""}`}>
+      <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <button
+          className="close-btn"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Close sidebar"
+        >
+          ×
+        </button>
+
+        <div className="nav">
+          <ul>
+            {filteredMenuItems.map((item) => (
+              <li
+                key={item}
+                className={activeTab === item ? "active" : ""}
+                onClick={() => handleMenuClick(item)}
+                role="button"
+                tabIndex={0}
+              >
+                {menuTitles[item]}
+              </li>
+            ))}
+          </ul>
         </div>
-    );
+      </aside>
+
+      <main className="main-content">
+        <button
+          className="open-sidebar-btn"
+          onClick={() => setSidebarOpen((prev) => !prev)}
+          aria-label="Open sidebar"
+        >
+          ☰
+        </button>
+
+        {activeComponent}
+      </main>
+    </div>
+  );
 };
 
 export default Dashboard;

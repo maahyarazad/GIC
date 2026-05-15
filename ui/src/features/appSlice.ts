@@ -6,6 +6,7 @@ interface AppState {
   siteData: any | null;
   loading: boolean;
   error: string | null;
+  env: string | null;
 }
 
 const initialState: AppState = {
@@ -13,6 +14,7 @@ const initialState: AppState = {
   siteData: null,
   loading: false,
   error: null,
+  env: null,
 };
 
 // ✅ Async thunk (client-side usage)

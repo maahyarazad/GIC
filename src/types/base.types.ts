@@ -1,29 +1,18 @@
-import { ObjectId } from "mongodb";
-
-/* ============================================================
-   BASE MODEL WITH TIMESTAMPS
-   ============================================================ */
 export interface BaseModel {
-  _id?: ObjectId;
+  _id?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface LogChangeModel{
-      _id?: ObjectId;
-      targetId: ObjectId;
-      lastModifiedBy : ObjectId,
-      collection: string,
-      message: string,
-        createdAt?: Date;
+export interface LogChangeModel extends BaseModel {
+  targetId: string;
+  lastModifiedBy: string;
+  collection: string;
+  message: string;
 }
 
-/* ============================================================
-   SORT MODEL (Global)
-   ============================================================ */
 export type SortOrder = "asc" | "desc";
 
 export type Sort<T = any> = {
   [K in keyof T]?: 1 | -1;
 };
-

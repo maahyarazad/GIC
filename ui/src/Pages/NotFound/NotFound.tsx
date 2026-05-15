@@ -1,20 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./NotFound.css";
-import { setReady } from '../../features/appSlice';
-import { useDispatch } from "react-redux";
 
 const NotFound: React.FC = () => {
 
-
-
-
-
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setReady(true));
-
-    }, [dispatch])
 
     return (
         <div className="notfound-container">

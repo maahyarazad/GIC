@@ -1,23 +1,46 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useSelector, UseSelector } from 'react-redux';
+
 import './Navbar.css';
 import type { RootState } from "../../store";
-import { EnvContext } from '../../EnvContext.js'
-import Burger from '@animated-burgers/burger-rotate'
+import { EnvContext } from '../../EnvContext.jsx'
 import mainLogo from '../../../public/gic-log-main.png';
-import '@animated-burgers/burger-rotate/dist/styles.css'
-
+import { usePage } from '@/Providers/PageContext';
+import useIsMobile from '@/Hooks/useIsMobile'
+import { useSelector, useDispatch } from 'react-redux';
+import { setReady } from '@/features/appSlice';
 
 
 type NavbarProps = {
-    companyName: any, navbarLinks: any, siteData: any, onLanguageChange: any, currentlanguage: any
+    onLanguageChange: any, currentlanguage: any
 }
 const Navbar = (
-    { companyName, navbarLinks, siteData, onLanguageChange, currentlanguage }: NavbarProps
+    { onLanguageChange, currentlanguage }: NavbarProps
 ) => {
+
+    const siteData = useSelector((state: RootState) => state.app.siteData);
+    useEffect(() => {
+
+    }, [siteData])
+
+
+    const _navLinks = useSelector(
+        (state: RootState) => state.app.siteData?.navLinks
+    );
+
+    useEffect(() => {
+
+    }, [_navLinks]);
+
+
+    const navbarLinks = siteData?.navLinks;
+    const companyName = siteData?.companyName;
+
+
+    const { showPage, activePage } = usePage();
+    const isMobile = useIsMobile();
     const env: string = useContext(EnvContext);
-    const isReady = useSelector((state: RootState) => state.app.isReady);
+
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -30,6 +53,8 @@ const Navbar = (
 
 
     const user = useSelector((state: RootState) => state.auth.user);
+
+
     function isLinkActive(_linkPath: string) {
         // Normalize by removing leading and trailing slashes
         const normalizePath = (path: string) => path.replace(/^\/+|\/+$/g, '');
@@ -65,17 +90,7 @@ const Navbar = (
         }
     };
 
-    // Trigger scroll after route change
-    useEffect(() => {
-        if (shouldScroll && location.pathname === '/') {
-            const timeout = setTimeout(() => {
-                scrollToForm();
-                setShouldScroll(false); // reset
-            }, 300); // delay (adjust if needed)
 
-            return () => clearTimeout(timeout);
-        }
-    }, [location.pathname, shouldScroll]);
 
     const scrollToForm = () => {
         const element = document.querySelector("section.request-form-section");
@@ -137,6 +152,8 @@ const Navbar = (
         }
     }, [location.pathname, pendingScrollKey]);
 
+
+
     const scrollToSection = (key) => {
         const targetElement = document.getElementById(`section-${key}`);
         if (targetElement) {
@@ -144,11 +161,6 @@ const Navbar = (
             window.scrollTo({ top: y, behavior: "smooth" });
         }
     };
-
-    useEffect(() => { }, [companyName, navbarLinks]);
-
-
-
 
 
     useEffect(() => {
@@ -186,154 +198,194 @@ const Navbar = (
         return () => window.removeEventListener('scroll', onScroll);
     }, [])
 
-    if (!navbarLinks || !companyName) return null
 
 
     const User: React.ReactNode = (
         <>
             {user !== null ? (
-                <li className={isLinkActive('/dashboard') ? 'active' : ''}>
-                    <Link to="/#" onClick={(e) => handleScroll(e, "dashboard", "link", "/dashboard")}>Dashboard</Link>
-                </li>
+                <>
+                    <span
+                        className={`span-link user-link ${activePage === "/dashboard" ? "active" : ""
+                            }`}
+                        onClick={(e) => {
+                            closeMob();
+                            handleScroll(e, "dashboard", "link", "/dashboard");
+                        }}
+                    >
+                        <span className="user-link__avatar">
+                            {user?.name?.charAt(0)?.toUpperCase()}
+                        </span>
+                    </span>
+                </>
             ) : (
-                <li className={isLinkActive('/login') ? 'active' : ''}>
-                    <Link to="/#" onClick={(e) => handleScroll(e, "login", "link", "/login")}>Sign-in</Link>
-                </li>
+                <>
+                    <span
+                        className={`span-link ${activePage === "/login" ? "active" : ""
+                            }`}
+                        onClick={(e) => {
+                            closeMob();
+                            handleScroll(e, "login", "link", "/login");
+                        }}
+                    >
+                        Sign-in
+                    </span>
+                </>
             )}
         </>
     );
 
 
-    const Links: React.ReactNode = (
-        <div className='col-6 middle'>
-            <ul className="navbar-links desktop-only">
 
-                {navbarLinks?.map((link) => (
-                    <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
+    const NavLogo = (
+        <>
+            <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+            </div>
+
+        </>
+    );
+
+    const [theme, setTheme] = useState(
+        typeof document !== 'undefined'
+            ? document.documentElement.getAttribute('data-theme')
+            : 'light'
+    );
+    const [isOpen, setIsOpen] = useState(false);
+
+    const mobNavRef = useRef(null);
+    const hamburgerRef = useRef(null);
+
+    const toggleTheme = () => {
+        const next = theme === "light" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", next);
+        setTheme(next);
+    };
+
+    const toggleMob = () => {
+        setIsOpen((prev) => !prev);
+    };
+
+    const closeMob = () => {
+        setIsOpen(false);
+    };
+
+    useEffect(() => {
+
+        const handleClickOutside = (e) => {
+            if (
+                isOpen &&
+                mobNavRef.current &&
+                hamburgerRef.current &&
+                !mobNavRef.current.contains(e.target) &&
+                !hamburgerRef.current.contains(e.target)
+            ) {
+                closeMob();
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, [isOpen]);
+
+
+
+
+    return (
+
+        <>
+            <nav>
+                <div className="nav-brand" onClick={() => { showPage(''); navigate("/"); }}>
+                    <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+                </div>
+                <div className='d-flex justify-content-center'>
+
+                    <ul className="nav-links">
+
+                        {Array.isArray(navbarLinks) &&
+                            navbarLinks.map((link) => (
+                                <li key={link.path}>
+                                    {link.type === "link" && (
+                                        <span
+                                            className={`span-link ${activePage === link.path ? "active" : ""}`}
+                                            onClick={() => {
+                                                showPage(link.path);
+                                                navigate(link.path);
+                                            }}
+                                        >
+                                            {link.label}
+                                        </span>
+                                    )}
+
+                                    {link.type === "button" && (
+                                        <Link
+                                            to="#"
+                                            onClick={(e) =>
+                                                handleScroll(e, link.id, link.type, link.path)
+                                            }
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))}
+                        {/* <li><a onClick={() => {
+                            showPage('/contact');
+                            navigate('/contact');
+                        }} className="nav-cta">Apply Now</a></li> */}
+
+
+
+                    </ul>
+                </div>
+
+                <div className="nav-right">
+                    {isMobile ? null : User}
+                    <div className="theme-wrap" onClick={toggleTheme}>
+                        <span className="theme-lbl" id="themeLbl">{theme === "light" ? "Light" : "Dark"}</span>
+                        <div className="theme-tog"></div>
+                    </div>
+                    <div className="hamburger" id="hamburger" onClick={toggleMob}>
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </nav>
+
+            <div
+                className={`mob-nav ${isOpen ? "open" : ""}`}
+                ref={mobNavRef}
+            >
+                {Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
+                    <li key={link.path} >
                         {
-                            link.type === 'link' && <Link to={link.path}>{link.label}</Link>
+                            link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
+
+                                onClick={() => {
+                                    closeMob();
+                                    showPage(link.path);
+                                    navigate(link.path);
+                                }}
+                            >
+                                {link.label}
+                            </span>
                         }
                         {
                             link.type === 'button' && <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
                         }
                     </li>
+
                 ))}
                 {User}
-            </ul>
-        </div>
-    );
-
-    const [navbarBg, setNavbarBg] = useState('var(--primary-gray-color)');
-
+                {/* <li><a onClick={() => {
+                    showPage('/contact');
+                    navigate('/contact');
+                }} className="span-cta">Apply Now</a></li> */}
 
 
-    useEffect(() => { }, [isReady])
-
-    const NavContent = isReady ? (
-        <>
-            <div className="left col-3" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
-                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
             </div>
-            {Links}
-            <div className="right col-3"></div>
         </>
-    ) : null;
 
 
 
-    useEffect(() => {
-        if (scrolled) {
-            setNavbarBg('var(--primary-gray-color)');
-            return;
-        }
-        
-        if (location.pathname === '/') {
-                        setNavbarBg('transparent');
-        } else {
-            setNavbarBg('var(--primary-gray-color)');
-        }
-
-    }, [scrolled, location.pathname]);
-
-    return (
-        <nav className={`navbar ${showNavbar ? 'navbar-scrolled' : ''}`} style={{ backgroundColor: navbarBg }}>
-
-
-            <div className="d-flex justify-content-center flex-column relative w-100" >
-
-                {/* Mobile Menu Button*/}
-                <div className='mobile-menu-container'>
-
-                    <div className='menu-button'>
-
-                        <button className={`menu-toggle ${scrolled ? 'scrolled' : ''}`} aria-label="Toggle menu">
-                            <Burger isOpen={menuOpen} direction="right" onClick={toggleMenu}>
-                            </Burger>
-                        </button>
-
-                    </div>
-                    <div onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
-                        {isReady ?
-
-                            <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-                            : null}
-                    </div>
-                </div>
-
-
-                {/* Desktop Nav Links UnScrolled */}
-                <div className={`navbar-section-middle ${showNavbar ? "d-none" : ""}`}>
-                    {NavContent}
-                </div>
-
-                {/* Desktop Nav Links Scrolled ===> It is a clone with effect */}
-                <div className={`navbar-section-middle ${showNavbar ? "visible" : "hidden"}`} style={{ opacity: showNavbar ? 1 : 0, height: showNavbar ? 'auto' : '0px', pointerEvents: showNavbar ? 'auto' : 'none'}}>
-                    {NavContent}
-                </div>
-
-
-            </div>
-
-
-            {/* Slide-out Mobile Menu */}
-            <div className={`mobile-menu ${menuOpen ? 'open' : ''} ${scrolled ? 'scrolled' : ''}`}
-                style={{
-                    backgroundImage: `
-                        linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 0)),
-                        url(${env.VITE_SERVER_API_URL}/uploads/${siteData.media.mobile_background})
-                    `,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundRepeat: "no-repeat",
-                }}
-
-            >
-                <ul className="mobile-links">
-                    {/* <a href='/' className='s-font absolute gic-logo contrast-color' style={{ fontSize: '4.5em', textDecoration: 'none' }}>GIC</a> */}
-                    {navbarLinks?.map((link) => (
-                        <li key={link.path} className={isLinkActive(link.path) ? "active" : ""}>
-                            <Link to="#" onClick={(e) => handleScroll(e, link.id, link.type, link.path)}>{link.label}</Link>
-                        </li>
-                    ))}
-                    {User}
-                </ul>
-                {/* <div className="mobile-lang-switch">
-                    <label className="switch">
-                        <input type="checkbox" onChange={switchLanguage} checked={language === 'DE'} />
-                        <span className="slider" />
-                    </label>
-                    <span className="lang-label">{language}</span>
-                </div>
-                <button
-                    type="button"
-                    className="get-started mobile"
-                    onClick={GetStarted}
-                >
-                    {siteData.getStartedNow}
-                </button> */}
-            </div>
-
-        </nav>
     );
 };
 

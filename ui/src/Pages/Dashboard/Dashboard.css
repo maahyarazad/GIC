@@ -1,57 +1,64 @@
 .dashboard {
   display: flex;
-  height: 92vh;
-  overflow: hidden;
+  min-height: 92dvh;
+  overflow-x: scroll;
+  background-color: var(--bg);
 }
-.dashboard nav {
+.dashboard .nav {
   position: relative;
 }
-.dashboard nav ul {
+.dashboard .nav ul {
   list-style: none;
   padding: 0;
+  padding-top: 80px;
   margin: 0;
   text-decoration-line: none;
   position: relative;
 }
-.dashboard nav li {
+.dashboard .nav li {
   padding: 10px 12px;
   cursor: pointer;
-  color: #aaa;
+  color: var(--mu);
   position: relative;
   border-radius: 6px;
   overflow: hidden;
   transition: color 0.2s ease;
 }
-.dashboard nav li::before {
+.dashboard .nav li::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--bdr);
   border-radius: 6px;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.25s ease;
   z-index: -1;
 }
-.dashboard nav li.active {
-  color: var(--primary-contrast-color);
+.dashboard .nav li.active {
+  color: var(--ora);
 }
-.dashboard nav li.active::before {
+.dashboard .nav li.active::before {
+  background-color: var(--bdrs);
   transform: scaleX(1);
 }
-.dashboard nav li:hover::before {
+.dashboard .nav li:hover {
+  color: var(--txt);
+}
+.dashboard .nav li:hover::before {
   transform: scaleX(1);
 }
 
 /* Sidebar styles */
 .sidebar {
-  background: #222;
-  color: white;
+  background: var(--bg2);
+  color: var(--txt);
+  border-right: 1px solid var(--bdr);
   width: 200px;
   min-width: 200px;
   padding: 1rem;
   box-sizing: border-box;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease, border-color 0.3s ease;
   z-index: 999;
 }
 
@@ -66,7 +73,7 @@
     display: none;
   }
 }
-/* Mobile/tablet: sidebar is hidden by default, slides in */
+/* Mobile/tablet: sidebar hidden by default, slides in */
 @media (max-width: 767px) {
   .sidebar {
     position: fixed;
@@ -83,26 +90,39 @@
   .close-btn {
     background: transparent;
     border: none;
-    color: white;
+    color: var(--txt);
     font-size: 2rem;
     cursor: pointer;
     margin-bottom: 1rem;
+    transition: color 0.2s ease;
+  }
+  .close-btn:hover {
+    color: var(--ora);
   }
   .open-sidebar-btn {
     font-size: 2rem;
     background: transparent;
     border: none;
     cursor: pointer;
+    color: var(--mu);
     margin: 1rem;
     z-index: 1100;
+    transition: color 0.2s ease;
+  }
+  .open-sidebar-btn:hover {
+    color: var(--txt);
   }
 }
 /* Main content takes rest space */
 .main-content {
   flex-grow: 1;
+  margin-top: 70px;
   padding: 1rem;
   height: 100%;
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  background-color: var(--bg);
+  color: var(--txt);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }/*# sourceMappingURL=Dashboard.css.map */

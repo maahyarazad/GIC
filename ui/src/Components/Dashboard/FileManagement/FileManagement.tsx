@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useContext, useMemo } from "re
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
-import { EnvContext } from '../../../EnvContext.js';
+import { EnvContext } from '../../../EnvContext.jsx';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
@@ -162,7 +162,10 @@ const FileManagement = () => {
         { field: "size", headerName: "Size (KB)", sortable: true , width:"10%", renderCell: (row) => Math.round(row.size / 1024) },
         { field: "createdAt", headerName: "Uploaded At", sortable: true , width:"10%", renderCell: (row) => new Date(row.createdAt).toLocaleString() },
         {
-            headerName: "Actions", width:"10%",
+                       headerName: "Actions",
+            width: "8%",
+            sortable: false,
+            filterable: false,
             renderCell: (row) => (
                 <button type="button" className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
                     Delete
@@ -173,7 +176,7 @@ const FileManagement = () => {
 
     return (
         <div className="file-manager">
-            <h3 className="mb-3">File Manager</h3>
+            <h3 className="mb">File Manager</h3>
 
             <label className="btn dashboard-btn mb-4">
                 {uploading ? "Uploading..." : "Upload File"}

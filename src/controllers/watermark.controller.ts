@@ -34,6 +34,7 @@ export function RegisterFileDownloadRoutes(app: Application) {
 
       const usersCollection = getCollection<User>("users");
       const user = await usersCollection.findOne({
+                    //@ts-ignore
         _id: new ObjectId(decoded.userId),
       });
 
@@ -69,6 +70,7 @@ export function RegisterFileDownloadRoutes(app: Application) {
       };
 
       const result = await productCollection.updateOne(
+                    //@ts-ignore
         { _id: new ObjectId(product._id) },
         { $set: updateData }
       );
@@ -76,7 +78,9 @@ export function RegisterFileDownloadRoutes(app: Application) {
       const logCollection = getCollection<LogChangeModel>("log_change");
       
         await logCollection.insertOne({
+            //@ts-ignore
             targetId: new ObjectId(product._id),
+            //@ts-ignore
             lastModifiedBy: new ObjectId(decoded.userId),
             collection: "products",
             message: `${JSON.stringify(product)}`,

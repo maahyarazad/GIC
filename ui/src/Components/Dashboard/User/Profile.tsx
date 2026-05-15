@@ -19,11 +19,15 @@ export const UserProfilesDataGrid = () => {
     
     const handleViewLogs = async (id: string) => { 
         openModal({
+              variant: "default",
                 title: "User Change Logs",
                 content: ( <LogsList userId={id} show={show}/>),
                 cancelText: "Close",
                 onCancel: () => console.log("Cancelled"),
             }); 
+
+
+
         };
 
 
@@ -109,6 +113,8 @@ export const UserProfilesDataGrid = () => {
         {
             headerName: "Actions",
             width: '15%',
+            sortable: false,
+            filterable: false,
             renderCell: (row) => (
 
 
@@ -124,8 +130,7 @@ export const UserProfilesDataGrid = () => {
 
                 </div>
             ),
-            sortable: false,
-            filterable: false,
+
         }
 
     ];
@@ -235,7 +240,7 @@ export const UserProfilesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb-3">User Profiles</h3>
+            <h3 className="mb">User Profiles</h3>
             {loading ?
                 <Loader/>
 

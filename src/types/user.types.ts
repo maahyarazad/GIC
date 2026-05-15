@@ -1,65 +1,57 @@
-import { ObjectId } from "mongodb";
-import { BaseModel, SortOrder, Sort } from "./base.types";
+import { BaseModel, Sort, SortOrder } from "./base.types";
 
 export interface SocialLink {
-  platform: string; // e.g., "facebook", "linkedin", "twitter"
+  platform: string;
   url: string;
 }
 
+export interface UserProfile {
+  photo?: string;
+  title?: string;
+  description?: string;
+  socialLinks?: SocialLink[];
+}
+
+export type UserRole = "user" | "admin" | "superadmin";
 export type UserSortKey = "name" | "email" | "createdAt" | "role";
-/* ============================================================
-   USER DOCUMENT
-   ============================================================ */
+
 export interface User extends BaseModel {
   name: string;
   email: string;
-  password?: string; 
+  password?: string;
   phone?: string;
-  role?: "user" | "admin" | "superadmin";
-  orders?: ObjectId[];    
-  addresses?: ObjectId[]; 
+  role?: UserRole;
+  orders?: string[];
+  addresses?: string[];
   authorize: boolean;
-  // Social login fields
   googleId?: string;
   facebookId?: string;
-
-  // Optional avatar
   avatar?: string;
-  profile?: {
-    photo?: string;           // profile picture URL
-    title?: string;           // professional / personal title
-    description?: string;     // bio or description
-    socialLinks?: SocialLink[]; // array of social links
-  };
-
+  profile?: UserProfile;
+  remarks?: string | null;
+  requirePasswordChange:boolean;
 }
 
-/* API REQUEST TYPES (USER) */
 export interface CreateUserRequest {
   name: string;
   email: string;
   password: string;
   phone: string;
   role?: "user" | "admin";
-    authorize: boolean;
+  authorize?: boolean;
+  remarks?: string | null;
 }
 
-export interface UpdateUserRequest extends BaseModel{
+export interface UpdateUserRequest {
   name?: string;
   email?: string;
   password?: string;
-    phone?: string;
-    role?: "user" | "admin" | "superadmin";
-    authorize?: boolean;
-     profile?: {
-    photo?: string;           // profile picture URL
-    title?: string;           // professional / personal title
-    description?: string;     // bio or description
-    socialLinks?: SocialLink[]; // array of social links
-  };
+  phone?: string;
+  role?: UserRole;
+  authorize?: boolean;
+  profile?: UserProfile;
 }
 
-/* Auth Returned User */
 export interface AuthUser {
   _id: string;
   name: string;
@@ -68,7 +60,6 @@ export interface AuthUser {
   token: string;
 }
 
-/* User search query */
 export type RawUserSearchQuery = {
   q?: string;
   role?: string;
@@ -79,24 +70,19 @@ export type RawUserSearchQuery = {
   sortOrder?: SortOrder;
 };
 
-/* MongoDB filter for users */
 export type UserFilter = {
   $text?: { $search: string };
   role?: string;
   email?: { $regex: RegExp };
-  name?: { $regex: RegExp };  // Add this line for name filtering
+  name?: { $regex: RegExp };
 };
 
-/* ============================================================
-   COMMENT DOCUMENT
-   ============================================================ */
 export interface Comment extends BaseModel {
-  userId: ObjectId;
+  userId: string;
   text: string;
   date: Date;
 }
 
-/* Aggregation response with user info */
 export interface CommentInfo {
   _id?: string;
   userName: string;
@@ -105,55 +91,41 @@ export interface CommentInfo {
   date: Date;
 }
 
-
-export interface LoginModel{
+export interface LoginModel {
   userName: string;
   userEmail: string;
   password: string;
   rememberMe: boolean;
 }
 
-/* Sorting fields for comments */
 export type CommentSortKey = "date" | "userId";
-
-export type CommentSort = Sort<{
-  date: Date;
-  userId: ObjectId;
-}>;
-
+export type CommentSort = Sort<{ date: Date; userId: string }>;
 
 export interface Address extends BaseModel {
-  userId: ObjectId;
+  userId: string;
   fullName: string;
   phone: string;
-
   addressLine1: string;
   addressLine2?: string;
   city: string;
   state?: string;
   postalCode?: string;
   country: string;
-
   isDefault?: boolean;
 }
 
-
-
-
 export interface LoginLogModel {
-  userId: ObjectId;    
-  type: "login" ;
-  createdAt?: Date;    
-  ipAddress?: string; 
-  userAgent?: string;  
-  macAddress?: string;  
+  userId: string;
+  type: "login";
+  createdAt?: Date;
+  ipAddress?: string;
+  userAgent?: string;
+  macAddress?: string;
 }
 
-
 export interface RefreshTokenModel {
-  userId: ObjectId;
+  userId: string;
   token: string;
   createdAt: Date;
   expiresAt: Date;
 }
-

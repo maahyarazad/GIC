@@ -1,55 +1,78 @@
 import { BaseModel } from "./base.types";
 import { Product } from "./product.types";
-import { ObjectId } from "mongodb";
+
 export interface Continent extends BaseModel {
   name: string;
   slug: string;
-
+  code?: string | null;
   description?: string | null;
 
-  // Continent now stores full Product objects
-    products?: (ObjectId | null)[];
+  /**
+   * country ids under this sub-region
+   */
+  products?: string[] | null;
 
-  parent: string | null;      // parent continent
-  children: string[] | null;  // child continent IDs
+  /**
+   * optional country codes under this sub-region
+   */
+  productCodes?: string[] | null;
 
+  parent: string | null;
+  children: string[] | null;
   isActive: boolean;
   order?: number;
-  image?: string | null;             
-  imageAlt?: string | null;             
-  seoTitle?: string | null;          
-  seoDescription?: string | null;    
-  seoKeywords?: string[] | null;     
+
+  image?: string | null;
+  imageAlt?: string | null;
+
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string[] | null;
+
+  /**
+   * original label from source files
+   */
+  sourceLabel?: string | null;
+
+  /**
+   * region-level summary
+   */
+  summary?: {
+    countryCount?: number | null;
+    chapterCoverage?: string[] | null;
+    notes?: string | null;
+  } | null;
 }
 
-
-export interface ContinetViewModel extends Continent{
-    productObjects?: Product[],
+export interface ContinentViewModel extends Continent {
+  productObjects?: Product[];
 }
 
-// Request when creating a continent
-export interface CreateContinentRequest extends BaseModel {
+export interface CreateContinentRequest {
   name: string;
   slug: string;
+  code?: string | null;
   description?: string | null;
-
-  // Accept full product objects now
-products?: (ObjectId | null)[] | null;
-productObjects?: Product[] | null;
+  products?: string[] | null;
+  productCodes?: string[] | null;
+  productObjects?: Product[] | null;
   parent?: string | null;
   children?: string[] | null;
-
   isActive?: boolean;
   order?: number;
-
   image?: string | null;
   imageAlt?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   seoKeywords?: string[] | null;
+  sourceLabel?: string | null;
+  summary?: {
+    countryCount?: number | null;
+    chapterCoverage?: string[] | null;
+    notes?: string | null;
+  } | null;
 }
 
-// Request when updating a continent
 export interface UpdateContinentRequest extends Partial<CreateContinentRequest> {
-  updatedAt?: Date;
+  _id?: string;
 }

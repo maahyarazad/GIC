@@ -1,83 +1,93 @@
-import React, { useState, useEffect, } from "react";
-import { loginUser, LoginModel, refreshToken } from "../../api/auth";
+import React, { useState, useEffect } from "react";
+import { loginUser, LoginModel } from "../../api/auth";
 import "./Login.css";
 import { setHasViewedTrue } from "@/features/authSlice";
 import { useToast } from "../../providers/ToastContext";
 import { login, setLoadingFalse, setLoadingTrue } from "../../features/authSlice";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation, useSearchParams, replace } from "react-router-dom";
 import type { RootState } from "../../store";
 import Button from "../../Components/Button/Button";
-import { setReady } from '../../features/appSlice';
+import { setReady } from "../../features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
-import PasswordInput from '@/Components/PasswordInput';
+import PasswordInput from "@/Components/PasswordInput";
+
 
 const Login: React.FC = () => {
-
-
     const dispatch = useDispatch();
     const { show } = useToast();
-    const navigate = useNavigate();
+
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const redirect = searchParams.get('redirect');
+
+
+
+
+
     const user = useSelector((state: RootState) => state.auth.user);
     const loading = useSelector((state: RootState) => state.auth.loading);
-
-    React.useEffect(() => {
-        dispatch(setReady(true));
-
-    }, [dispatch])
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
-    
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        
-        if (!user) return;
-        
 
-         const redirectTo = searchParams.get("redirect") || '/dashboard';
-        if (redirectTo) {
-            navigate(`${redirectTo}`);
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const loginContainer = document.querySelector(".login-container") as HTMLElement | null;
+        if (!loginContainer) return;
+
+        const vh = window.innerHeight;
+        loginContainer.style.minHeight = `${vh - 80}px`;
+    }, []);
+
+
+
+
+    useEffect(() => {
+
+        if (user) {
+
+            navigate(decodeURIComponent(redirect ?? '/dashboard'), { replace: true });
         }
     }, [user]);
 
 
-    useEffect(() => {
-        const login = document.querySelector(".login-container") as HTMLElement | null;
-        if (!login) return;
-
-        const vh = window.innerHeight;
-        login.style.minHeight = `${vh - 80}px`;
-    }, []);
-
     const handleSubmit = async (e: React.FormEvent) => {
-
         e.preventDefault();
         setError("");
         dispatch(setLoadingTrue());
+
         try {
             const payload: LoginModel = {
                 userName: email,
                 userEmail: email,
-                password: password,
-                rememberMe:rememberMe
+                password,
+                rememberMe,
             };
-
 
             const response = await loginUser(payload);
 
+            if(response.success) {
+                const { data } = response;
+                
+                if (data?.user && data?.user?.requirePasswordChange) {
+                    show({ type: "success", message: response.message });
+                    navigate(`/reset-password?token=${data.token}`, { state:  response.message});
+                    return;
+                };
 
-            if (response.success) {
-                const redirectTo = searchParams.get("redirect") || '/dashboard';
-                        dispatch(setHasViewedTrue());
+                dispatch(setHasViewedTrue());
                 dispatch(login(response.data));
                 show({ type: "success", message: "Logged in successfully" });
-                navigate(`${redirectTo}`);
+            } else {
+                setError(response.message || "Login failed");
             }
         } catch (err: any) {
-            setError(err.message || "Login failed");
+            setError(err?.message || "Login failed");
         } finally {
             dispatch(setLoadingFalse());
         }
@@ -85,16 +95,14 @@ const Login: React.FC = () => {
 
     return (
         <div className="login-container">
-
             <div className="login-card">
-
                 <h2 className="login-title">Welcome Back</h2>
 
                 {error && <div className="login-error">{error}</div>}
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
-                        <label>Email</label>
+                        <label className="form-label fw-bold text-dark dark:text-white">Email</label>
                         <input
                             type={email === "admin" ? "text" : "email"}
                             required
@@ -103,8 +111,6 @@ const Login: React.FC = () => {
                         />
                     </div>
 
-
-
                     <PasswordInput
                         label="Password"
                         name="password"
@@ -112,38 +118,40 @@ const Login: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                         required
+                        className="form-label fw-bold text-dark dark:text-white"
                     />
 
-
                     <div className="form-group remember-me">
-                        <div className=" d-flex justify-content-between align-items-center">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <label className="form-label fw-bold text-dark dark:text-white">
+                                <input
+                                    className="me-1"
+                                    type="checkbox"
+                                    checked={rememberMe}
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                                Remember Me
+                            </label>
 
-                        <label>
-                            <input className="me-1"
-                                type="checkbox"
-                                checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
-                            />
-                            Remember Me
-                        </label>
-                        <div className="forgot-password">
-                            <Link to="/forgot-password">Forgot your password?</Link>
-                        </div>
+                            <div className="forgot-password">
+                                <Link to="/forgot-password">Forgot your password?</Link>
+                            </div>
                         </div>
                     </div>
 
-
-                    <Button type="submit" disabled={loading} className="btn btn-primary-contrast" loading={loading}>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="btn btn-primary-contrast"
+                        loading={loading}
+                    >
                         Login
                     </Button>
-
                 </form>
 
-                <p className="signup-text">
-                    Don’t have an account?{" "}
-                    <Link to="/register">Sign up</Link>
+                <p className="signup-text form-label fw-bold text-dark dark:text-white">
+                    {/* Don’t have an account? <Link to="/register">Sign up</Link> */}
                 </p>
-
             </div>
         </div>
     );

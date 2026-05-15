@@ -1,5 +1,11 @@
-.jer-editor-container {
-    max-width: 88% !important;
-    width: 88% !important;
+
+
+.application-json-editor-continer{
+    padding: 0 !important;
+    margin: 0 !important;
+    .jer-editor-container {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
 }
 

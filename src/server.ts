@@ -1,6 +1,5 @@
 import "dotenv/config";
 
-import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import path from "path";
@@ -12,28 +11,45 @@ import swaggerUi from "swagger-ui-express";
 import { pathToFileURL } from "url";
 import { createServer as createViteServer } from "vite";
 
-/* ---- LOCAL IMPORTS (ESM-safe) ---- */
 import { RegisterRoutes } from "./routes/routes";
 import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller";
 import { verifyRequirements } from "./db";
 
-/* ---- JSON IMPORT (REQUIRED ASSERTION) ---- */
 import swaggerDocument from "./swagger/swagger.json";
+import { RegisterContactUsRoutes } from "./controllers/contactus";
 
-const isProduction = process.env.NODE_ENV === "PRODUCTION";
+// ✅ Fix 1: case-insensitive comparison
+const isProduction = process.env.NODE_ENV?.toLowerCase() === "production";
 
 const app = express();
 const PORT = process.env.PORT ?? 5173;
+
+// ✅ Fix 2: envVars uses correct isProduction flag now
+const envVars = {
+  VITE_SERVER_API_URL: isProduction
+    ? process.env.CLIENT_ORIGIN_PROD
+    : process.env.CLIENT_ORIGIN_DEV,
+  SERVICES_SERVER_ORIGIN: isProduction
+    ? process.env.SERVICES_SERVER_ORIGIN_PROD
+    : process.env.SERVICES_SERVER_ORIGIN_DEV,
+  VITE_SERVER_ACCOUNT_REGISTER_SUCCESS:
+    process.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
+};
+
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("isProduction:", isProduction);
+console.log("envVars:", envVars);
 
 /* ---------------------- Middleware ---------------------- */
 const allowedOrigins = [
   process.env.CLIENT_ORIGIN_DEV,
   process.env.CLIENT_ORIGIN_PROD,
 ];
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow requests like curl or same-origin
+      if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
         return callback(new Error(msg), false);
@@ -46,7 +62,6 @@ app.use(
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(
   session({
     name: "sid",
@@ -55,20 +70,19 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       maxAge: 15 * 60 * 1000,
     },
   })
 );
-
 app.use(express.json());
 
-/* ---------------------- Routes (TSOA) ---------------------- */
+/* ---------------------- Routes ---------------------- */
 RegisterRoutes(app);
 RegisterFileDownloadRoutes(app);
-//
+RegisterContactUsRoutes(app);
 
-/* ---------------------- Swagger Docs ---------------------- */
+/* ---------------------- Swagger ---------------------- */
 if (!isProduction) {
   app.use(
     "/api-docs",
@@ -79,11 +93,8 @@ if (!isProduction) {
 
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain");
-  res.send(`User-agent: *
-Allow: /`);
+  res.send(`User-agent: *\nAllow: /`);
 });
-
-/* ---------------------- Static uploads ---------------------- */
 
 /* ---------------------- Startup Checks ---------------------- */
 async function startServer() {
@@ -96,41 +107,22 @@ async function startServer() {
 }
 startServer();
 
-/* ---------------------- SSR + Static Handling ---------------------- */
-
-const envVars = {
-  VITE_SERVER_API_URL: isProduction
-    ? process.env.CLIENT_ORIGIN_PROD
-    : process.env.CLIENT_ORIGIN_DEV,
-
-  VITE_SERVER_ACCOUNT_REGISTER_SUCCESS:
-    process.env.VITE_SERVER_ACCOUNT_REGISTER_SUCCESS,
-};
-
+/* ---------------------- SSR ---------------------- */
 async function startSSR() {
   if (!isProduction) {
+    /* ---- DEV ---- */
     const __dirname = path.resolve();
-    app.use(
-      "/uploads",
-      express.static(path.resolve(__dirname, "file_storage"))
-    );
-    app.use(
-      "/uploads/photos",
-      express.static(path.resolve(__dirname, "uploads/photos"))
-    );
+
+    app.use("/uploads", express.static(path.resolve(__dirname, "file_storage")));
+    app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));
 
     const vite = await createViteServer({
-      // root: process.cwd(),
       root: path.resolve(__dirname, "ui"),
-      server: {
-        middlewareMode: true,
-      },
+      server: { middlewareMode: true },
       appType: "custom",
       base: process.env.CLIENT_ORIGIN_DEV,
       resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "ui/src"),
-        },
+        alias: { "@": path.resolve(__dirname, "ui/src") },
       },
       optimizeDeps: {
         include: [
@@ -145,60 +137,45 @@ async function startSSR() {
           "json-edit-react",
         ],
       },
-      ssr: {
-        noExternal: ["react-router-dom"], // Add this line to fix SSR import issues
-      },
+      ssr: { noExternal: ["react-router-dom"] },
     });
 
-    // Serve Vite's HMR, transforms, etc.
     app.use(vite.middlewares);
 
-    // SSR handler
-    app.use("*", async (req: Request, res: Response, next: NextFunction) => {
-      if (req.path.startsWith("/uploads")) {
-        return next(); // Let express.static handle this
-      }
+    app.get("*", async (req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith("/uploads")) return next();
 
       try {
         const url = req.originalUrl;
-
-        // Build absolute file URL for ssrLoadModule (required for files outside root)
         const ssrEntryPath = path.resolve(__dirname, "ui/src/entry-server.jsx");
-
         const ssrEntryFileUrl = pathToFileURL(ssrEntryPath).href;
 
-        let template = fs.readFileSync(
-          path.resolve(__dirname, "ui/index.html"),
-          "utf-8"
-        );
+        let template = fs.readFileSync(path.resolve(__dirname, "ui/index.html"), "utf-8");
 
-        // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
         template = template.replace(
           "<!--env-->",
-          `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(
-            /</g,
-            "\\u003c"
-          )};</script>`
+          `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(/</g, "\\u003c")};</script>`
         );
 
         template = await vite.transformIndexHtml(url, template);
-        // Load the SSR renderer
+
         const { render } = await vite.ssrLoadModule(ssrEntryFileUrl);
 
-        const { appHtml, preloadedState } = await render(url, envVars);
+        // ✅ Fix 3: load clientData in dev too
+        const clientDataPath = path.resolve(__dirname, "file_storage/client_blueprint.json");
+        const rawDev = fs.existsSync(clientDataPath)
+          ? fs.readFileSync(clientDataPath, "utf-8")
+          : "{}";
+        const clientData = rawDev.trim() ? JSON.parse(rawDev) : {};
 
-        const stateScript = `
-            <script>
-            window.__PRELOADED_STATE__ = ${JSON.stringify(
-              preloadedState
-            ).replace(/</g, "\\u003c")}
-            </script>
-            `;
+        const { appHtml, preloadedState } = await render(url, envVars, clientData);
+
+        const stateScript = `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, "\\u003c")}</script>`;
 
         const html = template
           .replace(`<!--app-head-->`, appHtml.head ?? "")
           .replace(`<!--app-html-->`, appHtml.html ?? "")
-          .replace("</body>", `${stateScript}</body>`);
+          .replace(`<!--preloaded-state-->`, stateScript);
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
       } catch (e: any) {
@@ -208,28 +185,22 @@ async function startSSR() {
       }
     });
   } else {
-    /*  PRODUCTION — serve built client and SSR entry */
-    app.use(
-      "/uploads",
-      express.static(path.resolve(__dirname, "../file_storage"))
-    );
-    app.use(
-      "/uploads/photos",
-      express.static(path.resolve(__dirname, "uploads/photos"))
-    );
-    const serverPath = path.resolve(
-      __dirname,
-      "../ui/dist/server/entry-server.js"
-    );
+    /* ---- PRODUCTION ---- */
+    app.use("/uploads", express.static(path.resolve(__dirname, "../file_storage")));
+    app.use("/uploads/photos", express.static(path.resolve(__dirname, "uploads/photos")));
 
     const compression = (await import("compression")).default;
     app.use(compression());
-    // Serve static assets
-    app.use(express.static(path.resolve(__dirname, "../ui/dist/client")));
 
+    // ✅ Fix 4: static BEFORE the SSR catch-all, but after /uploads
+    app.use(express.static(path.resolve(__dirname, "../ui/dist/client"), {
+        index: false  // ✅ don't serve index.html automatically
+    }));
+
+    const serverPath = path.resolve(__dirname, "../ui/dist/server/entry-server.js");
     const { render } = await import(serverPath);
 
-    app.use("*", async (req: Request, res: Response) => {
+    app.get("*", async (req: Request, res: Response) => {
       try {
         const url = req.originalUrl;
 
@@ -238,33 +209,34 @@ async function startSSR() {
           "utf-8"
         );
 
-        // Replace a placeholder (e.g. <!--env-->) in your HTML with a global JS variable
         template = template.replace(
           "<!--env-->",
-          `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(
-            /</g,
-            "\\u003c"
-          )};</script>`
+          `<script>window.__ENV__ = ${JSON.stringify(envVars).replace(/</g, "\\u003c")};</script>`
         );
 
-        const { appHtml, preloadedState } = await render(url, envVars);
-        const stateScript = `
-            <script>
-            window.__PRELOADED_STATE__ = ${JSON.stringify(
-              preloadedState
-            ).replace(/</g, "\\u003c")}
-            </script>
-            `;
+        // ✅ Fix 5: readFileSync (not readFile) — this was the main production bug
+        const blueprintPath = path.join(process.cwd(), "file_storage", "client_blueprint.json");
+        const raw = fs.existsSync(blueprintPath)
+          ? fs.readFileSync(blueprintPath, "utf-8")
+          : "{}";
+        const clientData = raw.trim() ? JSON.parse(raw) : {};
+
+        console.log("clientData keys:", Object.keys(clientData));
+        console.log("envVars:", envVars);
+
+        const { appHtml, preloadedState } = await render(url, envVars, clientData);
+
+        const stateScript = `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, "\\u003c")}</script>`;
 
         const html = template
           .replace(`<!--app-head-->`, appHtml.head ?? "")
           .replace(`<!--app-html-->`, appHtml.html ?? "")
-          .replace("</body>", `${stateScript}</body>`);
+          .replace(`<!--preloaded-state-->`, stateScript);
 
         res.status(200).set({ "Content-Type": "text/html" }).end(html);
-      } catch (e) {
+      } catch (e: any) {
         console.error(e);
-        res.status(500).end(e.message);
+        res.status(500).end(e?.message || "SSR Error");
       }
     });
   }
@@ -275,8 +247,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 
 startSSR();

@@ -113,7 +113,7 @@ export const NewsletterSubscribers = () => {
 
     return (
         <>
-            <h3 className="mb-3">Newsletter Subscribers</h3>
+            <h3 className="mb">Newsletter Subscribers</h3>
               {loading ?
                 <Loader/>
 

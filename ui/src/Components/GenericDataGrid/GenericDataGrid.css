@@ -1,12 +1,20 @@
 .table-wrapper {
   max-width: 100%;
+  background: var(--bg);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  color: var(--txt);
+  border: 1px solid var(--bdr);
 }
 .table-wrapper table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  background: var(--bg);
+  color: var(--txt);
+}
+.table-wrapper table tbody tr:hover td {
+  background: var(--bgp);
 }
 .table-wrapper table th,
 .table-wrapper table td {
@@ -16,6 +24,8 @@
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--txt);
+  background: var(--bg);
 }
 .table-wrapper table th .td-scroll,
 .table-wrapper table td .td-scroll {
@@ -31,9 +41,23 @@
           user-select: none;
 }
 .table-wrapper table input[type=text] {
+  background: var(--bg);
+  color: var(--txt);
+  border: 1px solid var(--bdr);
   width: 90%;
   padding: 4px;
   box-sizing: border-box;
+}
+.table-wrapper table input[type=text]::-moz-placeholder {
+  color: var(--mu);
+}
+.table-wrapper table input[type=text]::placeholder {
+  color: var(--mu);
+}
+.table-wrapper table input[type=text]:focus,
+.table-wrapper table input[type=text]:focus-visible {
+  border-color: var(--ora);
+  outline: none;
 }
 .table-wrapper table {
   /* MOBILE STYLES */
@@ -50,12 +74,12 @@
     display: block;
   }
   .table-wrapper table tr {
+    border: 1px solid var(--bdr);
+    background-color: var(--bg2);
     display: block;
     margin-bottom: 1rem;
-    border: 1px solid #ccc;
     border-radius: 8px;
     padding: 12px 10px;
-    background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   .table-wrapper table td {
@@ -76,7 +100,7 @@
     content: attr(data-label);
     font-weight: 600;
     flex-basis: 40%;
-    color: #444;
+    color: var(--mu);
   }
   .table-wrapper table input[type=text] {
     width: 100%;

@@ -6,15 +6,15 @@ import CustomInput from "../CustomInputs/CustomInput";
 import CustomTextarea from "../CustomInputs/CustomTextArea";
 import './ContactUsForm.css';
 import { Paperclip } from 'lucide-react';
-import { useToast } from '../../Providers/ToastContext';
+import { useToast } from '../Providers/ToastContext';
 import { IoMdClose } from "react-icons/io";
 import { EnvContext } from "../../EnvContext";
 
 const ContactForm = ({ siteData, sectionId }) => {
-    
-      const env = useContext(EnvContext);
+
+    const env = useContext(EnvContext);
     const server_endpoint = env.VITE_SERVER_API_URL;
-    const {show} = useToast();
+    const { show } = useToast();
     const fileInputRef = useRef(null);
     const [attachedFileName, setAttachedFileName] = useState("");
     const initialValues = {
@@ -57,7 +57,7 @@ const ContactForm = ({ siteData, sectionId }) => {
         }
 
         try {
-            
+
 
             const response = await axios.post(`${server_endpoint}/api/contact-us`, form, {
                 headers: {
@@ -65,7 +65,7 @@ const ContactForm = ({ siteData, sectionId }) => {
                 },
             });
 
-            show({type:"success", message: response.data.message});
+            show({ type: "success", message: response.data.message });
             setAttachedFileName("");;
             resetForm();
         } catch (error) {
@@ -78,131 +78,126 @@ const ContactForm = ({ siteData, sectionId }) => {
                 error?.message ||
                 "Something went wrong. Please try again.";
 
-                show({type:"error", message: errorMessage});
-            
+            show({ type: "error", message: errorMessage });
+
         } finally {
             setSubmitting(false);
         }
     };
 
     return (
-        <div style={{paddingTop: 50, paddingBottom: 50, color: 'dark'}}>
-
-            <section className="container py-5 request-form-section" id={sectionId} >
-
-                <div className="row">
-                    <div className="col-12 col-md-6 p-lg-4 p-2">
-
-                        <h2 className="h3 fw-bold mb-2 lets-start">{siteData.h2}</h2>
-                        <p className="fw-semibold mb-3">{siteData.p}</p>
-                        <div className="mb-4 ps-3 list-unstyled">
-                            {siteData.steps.map((step, index) => (
-                            <p key={index}>{step}</p>
-                            ))}
-                            
-                        </div>
-
-                        <p className="mb-4">
-                            {siteData.questionText}
-                            <a href="mailto:hallo@palm-x.com" className="ms-1 text-decoration-underline text-primary">
-                                info@GIC.com
-                            </a>
-                        </p>
+        <div id="page-contact" className={`page ${activePage === "home" ? "active" : ""}`}>
+            <div className="co-wrap">
+                <div className="co-left">
+                    <div>
+                        <div className="slbl">Get in Touch</div>
+                        <h1 className="co-title">
+                            Request<br />
+                            <em>Access.</em>
+                        </h1>
                     </div>
-                    <div className="col-12 col-md-6 p-2">
+                    <p className="co-body">
+                        Membership is by invitation and application only. We assess each request individually &mdash; based on industry relevance, seniority, and alignment with the Club's strategic mandate.
+                    </p>
 
-                        <Formik
-                            initialValues={initialValues}
-                            validationSchema={validationSchema}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ setFieldValue, isSubmitting }) => (
-                                <Form className="mb-5">
+                    <div className="co-dets">
+                        <div>
+                            <div className="co-dl">Email</div>
+                            <div className="co-dv">
+                                <span style={{ color: "var(--ora)" }}>info&#64;GIC.com</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="co-dl">Headquarters</div>
+                            <div className="co-dv">
+                                Building C1, Office 1208<br />
+                                Ajman FreeZone, Ajman, UAE
+                            </div>
+                        </div>
+                        <div>
+                            <div className="co-dl">Response Time</div>
+                            <div className="co-dv">Within 5 business days</div>
+                        </div>
+                    </div>
 
-                                    <CustomInput name="name" type="text" label={siteData.form.nameLabel} placeholder="John Smith" required={true}/>
-
-                                    <CustomInput name="email" type="email" label={siteData.form.emailLabel} placeholder="name@company.com" required={true}/>
-
-                                    <CustomInput name="phone" type="phone" label={siteData.form.phone} placeholder={siteData.form.phone} />
-
-                                    <CustomTextarea name="message" rows={3} label={siteData.form.messageLabel} placeholder={siteData.form.messageLabel} required={true}/>
-
-                                    <div className="d-flex justify-content-between mb-3">
-                                        {/* <label htmlFor="attachment" className="form-label">Attach Files</label> */}
-
-                                        <input
-                                            ref={fileInputRef}
-                                            type="file"
-                                            id="attachment"
-                                            name="attachment"
-                                            className="d-none"
-                                            accept=".pdf, .doc, .docx, .xls, .xlsx, .csv, .ppt, .pptx, .md, .txt, .odt, .ods, .odp, .rtf"
-
-                                            onChange={(e) => handleFileChange(e, setFieldValue)}
-                                        />
-
-
-                                        <div onClick={triggerFileInput}
-                                            className="attachment-button">
-                                            <Paperclip size={18} />
-                                            {siteData.form.attachFile}
-
-                                        </div>
-
-
-                                        <ErrorMessage name="attachment" component="span" className="text-danger d-block mt-1" />
-
-                                        <button type="submit" className="btn btn-primary-contrast" disabled={isSubmitting}>
-                                            {isSubmitting ? "Sending..." : siteData.sendYourRequest}
-                                        </button>
-                                    </div>
-
-                                    <div className="d-flex justify-content-between" style={{ minHeight: '40px' }}>
-                                        {attachedFileName && (
-                                            <div className="attached-file-name text-white d-flex align-items-center" style={{ marginTop: "0.5em" }}>
-                                                <span>
-                                                <strong> Selected File: {attachedFileName}</strong>
-                                                </span>
-                                                
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-sm text-white btn-primary-contrast "
-                                                    style={{ minHeight: '28px' }}
-                                                    onClick={() => {
-                                                        setAttachedFileName("");
-                                                        if (fileInputRef.current) {
-                                                            fileInputRef.current.value = "";
-                                                        }
-                                                        setFieldValue("attachment", null);
-                                                    }}
-                                                >
-                                                    <IoMdClose size={20} />
-                                                </button>
-
-                                            </div>
-                                        )}
-
-
-                                    </div>
-
-                                    <p className="form-text mt-3">
-                                        {siteData.privacy}
-                                        {/* <a
-                                            onClick={()=> console.log()}
-                                            href=""
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-decoration-underline">
-                                            
-                                        </a>. */}
-                                    </p>
-                                </Form>
-                            )}
-                        </Formik>
+                    <div className="co-crit">
+                        <div className="co-ct">Typical Admission Profiles</div>
+                        <div className="co-ci">
+                            <div className="co-cm">C-Suite executives of DACH industrial companies with active or planned MEA operations</div>
+                            <div className="co-cm">DACH family business principals with MEA strategic focus</div>
+                            <div className="co-cm">Professional investors with a MEA infrastructure or industrial mandate</div>
+                            <div className="co-cm">Brand owners seeking to correct MEA market share deficits</div>
+                            <div className="co-cm">Individuals referred by existing Club members in good standing</div>
+                        </div>
                     </div>
                 </div>
 
-            </section>
+                <div className="co-right">
+                    <div className="slbl" style={{ marginBottom: "32px" }}>Membership Application</div>
+                    <div className="co-form">
+                        <div className="frow">
+                            <div className="fg">
+                                <label className="fl">
+                                    Full Name <span>*</span>
+                                </label>
+                                <input className="fi" type="text" placeholder="Dr. Max Mustermann" />
+                            </div>
+                            <div className="fg">
+                                <label className="fl">Company</label>
+                                <input className="fi" type="text" placeholder="Mustermann GmbH" />
+                            </div>
+                        </div>
+
+                        <div className="frow">
+                            <div className="fg">
+                                <label className="fl">
+                                    Email <span>*</span>
+                                </label>
+                                <input className="fi" type="email" placeholder="m.mustermann@company.com" />
+                            </div>
+                            <div className="fg">
+                                <label className="fl">Phone</label>
+                                <input className="fi" type="tel" placeholder="+49 / +971" />
+                            </div>
+                        </div>
+
+                        <div className="fg">
+                            <label className="fl">
+                                Industry / Sector <span>*</span>
+                            </label>
+                            <input className="fi" type="text" placeholder="e.g. Manufacturing, Energy, Logistics" />
+                        </div>
+
+                        <div className="fg">
+                            <label className="fl">Country of Primary MEA Interest</label>
+                            <input className="fi" type="text" placeholder="e.g. UAE, Saudi Arabia, Egypt, Nigeria" />
+                        </div>
+
+                        <div className="fg">
+                            <label className="fl">
+                                Your MEA Objective <span>*</span>
+                            </label>
+                            <textarea
+                                className="fta"
+                                placeholder="Briefly describe your strategic interest in the MEA region and what you hope to achieve through Club membership"
+                            ></textarea>
+                        </div>
+
+                        <div className="fg">
+                            <label className="fl">Referred by (if applicable)</label>
+                            <input className="fi" type="text" placeholder="Name of referring Club member" />
+                        </div>
+
+                        <div>
+                            <button className="fsub">Submit Application &rarr;</button>
+                        </div>
+
+                        <p className="fnote">
+                            By submitting, you consent to the collection of your details for membership evaluation. All enquiries are treated with strict confidentiality.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

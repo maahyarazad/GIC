@@ -1,180 +1,180 @@
-import {
-  Controller,
-  Route,
-  Tags,
-  Post,
-  Get,
-  Put,
-  Delete,
-  Body,
-  Path,
-  Middlewares,
-} from "tsoa";
-import { getCollection } from "../db";
-import { ObjectId, Collection } from "mongodb";
+import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Path, Middlewares } from "tsoa";
 import {
   ApiResponse,
   createSuccessResponse,
   createErrorResponse,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+// import { sendMassDynamicEmailDoc } from "../services/emailService";
 import {
-  sendDynamicEmailDoc,
-  sendMassDynamicEmailDoc,
-} from "../services/emailService";
+  CreateEmailTemplateRequest,
+  EmailTemplate,
+  UpdateEmailTemplateRequest,EmailTemplatePayload
+} from "../types/email.types";
+import { EmailTemplateModel } from "../models/emailTemplate.model";
+import { mapEmailTemplate, mapEmailTemplates } from "../mappers/email.mapper";
+import { sendDynamicEmailDoc } from "../services/emailService";
+import {extractTemplateVariables} from '../utils/helpers';
 
-// Interface for Email Template
-export interface EmailTemplateDoc {
-  name: string; // Unique identifier
-  subject: string; // Subject with placeholders
-  html: string; // HTML content
-  text?: string; // Optional text version
-  variables?: string[]; // Expected placeholders
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 @Route("api/v1/email-templates")
 @Tags("email-templates")
 export class EmailTemplateController extends Controller {
-  private static collection(): Collection<EmailTemplateDoc> {
-    return getCollection<EmailTemplateDoc>("email_templates");
-  }
-
-  /** Create a new template */
   @Post("/")
   @Middlewares(adminAuthMiddleware)
   public async createTemplate(
-    @Body() body: EmailTemplateDoc
-  ): Promise<ApiResponse<EmailTemplateDoc>> {
+    @Body() body: CreateEmailTemplateRequest
+  ): Promise<ApiResponse<EmailTemplate>> {
     try {
-      const collection = EmailTemplateController.collection();
+                    
+        //@ts-ignore
+      const existing = await EmailTemplateModel.findOne({ name: body.name }).lean();
+      if (existing) {
+        this.setStatus(409);
+        return createErrorResponse("Template name already exists", "DUPLICATE_TEMPLATE");
+      }
 
-      const now = new Date();
-      const doc: EmailTemplateDoc = {
-        ...body,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      const result = await collection.insertOne(doc);
+      const doc = await EmailTemplateModel.create(body);
 
       return createSuccessResponse(
-        { ...doc, _id: result.insertedId.toHexString() },
+        mapEmailTemplate(doc.toObject()),
         "Template created successfully"
       );
     } catch (err: any) {
-      return createErrorResponse(
-        "Failed to create template",
-        "CREATE_ERROR",
-        err
-      );
+      return createErrorResponse("Failed to create template", "CREATE_ERROR", err);
     }
   }
 
-  /** Get all templates */
   @Get("/")
   @Middlewares(adminAuthMiddleware)
-  public async getTemplates(): Promise<ApiResponse<EmailTemplateDoc[]>> {
+  public async getTemplates(): Promise<ApiResponse<EmailTemplate[]>> {
     try {
-      const collection = EmailTemplateController.collection();
-
-      const templates = await collection.find().toArray();
-      const sanitized = templates.map((t) => ({
-        _id: t._id.toHexString(),
-        name: t.name,
-        subject: t.subject,
-        html: t.html,
-        text: t.text,
-        variables: t.variables,
-        createdAt: t.createdAt,
-        updatedAt: t.updatedAt,
-      }));
-
-      return createSuccessResponse(sanitized, "Templates fetched successfully");
+      const templates = await EmailTemplateModel.find().sort({ createdAt: -1 }).lean();
+      return createSuccessResponse(mapEmailTemplates(templates), "Templates fetched successfully");
     } catch (err: any) {
-      return createErrorResponse(
-        "Failed to fetch templates",
-        "FETCH_ERROR",
-        err
-      );
+      return createErrorResponse("Failed to fetch templates", "FETCH_ERROR", err);
     }
   }
 
-  @Post("send-email-template/{id}")
+  @Get("{id}")
   @Middlewares(adminAuthMiddleware)
-  public async sendEmail(
-    @Path() id: string,
-    @Body() params: Partial<EmailTemplateDoc>
-  ): Promise<ApiResponse<null>> {
+  public async getTemplate(@Path() id: string): Promise<ApiResponse<EmailTemplate>> {
     try {
-      const collection = EmailTemplateController.collection();
-      const email = await collection.findOne({ _id: new ObjectId(id) });
-
-      const result = await sendMassDynamicEmailDoc(email, params);
-
-      return createSuccessResponse(
-        null,
-        `All batches processed. Total successful emails: ${result}`
-      );
-    } catch (err: any) {
-      return createErrorResponse(
-        "Failed to fetch templates",
-        "FETCH_ERROR",
-        err
-      );
-    }
-  }
-
-  /** Update a template by ID */
-  @Put("/{id}")
-  @Middlewares(adminAuthMiddleware)
-  public async updateTemplate(
-    @Path() id: string,
-    @Body() body: Partial<EmailTemplateDoc>
-  ): Promise<ApiResponse<EmailTemplateDoc>> {
-    try {
-      const collection = EmailTemplateController.collection();
-      const updateDoc = { ...body, updatedAt: new Date() };
-
-      const result = await collection.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: updateDoc },
-        { returnDocument: "after" }
-      );
-
-      if (!result) {
+                    //@ts-ignore
+      const template = await EmailTemplateModel.findById(id).lean();
+      if (!template) {
+        this.setStatus(404);
         return createErrorResponse("Template not found", "NOT_FOUND");
       }
 
-      return createSuccessResponse(undefined, "Template updated successfully");
+      return createSuccessResponse(mapEmailTemplate(template), "Template fetched successfully");
     } catch (err: any) {
-      return createErrorResponse(
-        "Failed to update template",
-        "UPDATE_ERROR",
-        err
-      );
+      return createErrorResponse("Failed to fetch template", "FETCH_ERROR", err);
     }
   }
 
-  /** Delete a template by ID */
-  @Delete("/{id}")
+  @Put("{id}")
+  @Middlewares(adminAuthMiddleware)
+  public async updateTemplate(
+    @Path() id: string,
+    @Body() body: UpdateEmailTemplateRequest
+  ): Promise<ApiResponse<EmailTemplate>> {
+    try {
+      const template = await EmailTemplateModel.findByIdAndUpdate(
+                    //@ts-ignore
+        id,
+        { $set: { ...body, updatedAt: new Date() } },
+        { new: true, lean: true }
+      );
+
+      if (!template) {
+        this.setStatus(404);
+        return createErrorResponse("Template not found", "NOT_FOUND");
+      }
+
+      return createSuccessResponse(mapEmailTemplate(template), "Template updated successfully");
+    } catch (err: any) {
+      return createErrorResponse("Failed to update template", "UPDATE_ERROR", err);
+    }
+  }
+
+  @Delete("{id}")
+  @Middlewares(adminAuthMiddleware)
   public async deleteTemplate(@Path() id: string): Promise<ApiResponse<null>> {
     try {
-      const collection = EmailTemplateController.collection();
-      const result = await collection.deleteOne({ _id: new ObjectId(id) });
-
-      if (result.deletedCount === 0) {
+                    //@ts-ignore
+      const template = await EmailTemplateModel.findByIdAndDelete(id).lean();
+      if (!template) {
+        this.setStatus(404);
         return createErrorResponse("Template not found", "NOT_FOUND");
       }
 
       return createSuccessResponse(null, "Template deleted successfully");
     } catch (err: any) {
-      return createErrorResponse(
-        "Failed to delete template",
-        "DELETE_ERROR",
-        err
-      );
+      return createErrorResponse("Failed to delete template", "DELETE_ERROR", err);
     }
   }
+
+@Post("/send-email-template/:id")
+@Middlewares(adminAuthMiddleware)
+public async sendEmail(
+  @Path() id: string,
+  @Body() body: { variables: Record<string, string>; email: string }
+): Promise<ApiResponse<null>> {
+  try {
+    //@ts-ignore
+    const template = await EmailTemplateModel.findById(id).lean();
+
+    if (!template) {
+      this.setStatus(404);
+      return createErrorResponse("Template not found", "NOT_FOUND");
+    }
+
+    template.variables = extractTemplateVariables(template.html);
+
+    const { variables = {}, email } = body;
+
+    // Build final params (merge system + user input)
+    const params: Record<string, any> = {
+      email,
+      ...variables,
+    };
+
+    // Inject GLOBAL variables automatically
+    for (const v of template.variables || []) {
+      if (v.type === "G") {
+        if (v.name === "CURRENT_YEAR") {
+          params[v.name] = new Date().getFullYear().toString();
+        }
+
+        if (v.name === "EVENT_NAME") {
+          params[v.name] = "German Industry Club";
+        }
+
+        // fallback support
+        if (!params[v.name] && v.defaultValue) {
+          params[v.name] = v.defaultValue;
+        }
+      }
+    }
+
+    // Ensure required base fields
+    params.USER_NAME = params.USER_NAME || email;
+
+    // Send email using template engine
+    await sendDynamicEmailDoc(template.name, params);
+
+    return createSuccessResponse(
+      null,
+      "Email sent successfully"
+    );
+
+  } catch (err: any) {
+    return createErrorResponse(
+      "Failed to send email template",
+      "SEND_ERROR",
+      err
+    );
+  }
+}
 }

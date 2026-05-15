@@ -21,16 +21,17 @@
   flex: 0 0 auto;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  background: #f5f5f5;
+  background: var(--bgp);
+  color: var(--txt);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .economic-insights .categories .categories-scroll .continent:hover {
-  background: #e0e0e0;
+  background: var(--bgp2);
 }
 .economic-insights .categories .categories-scroll .continent.active {
-  background: #111;
-  color: #fff;
+  background: var(--ora);
+  color: var(--bg);
 }
 .economic-insights .categories::before, .economic-insights .categories::after {
   content: "";
@@ -43,51 +44,63 @@
 }
 .economic-insights .categories::before {
   left: 0;
-  background: linear-gradient(to right, white, transparent);
+  background: linear-gradient(to right, var(--bg), transparent);
 }
 .economic-insights .categories::after {
   right: 0;
-  background: linear-gradient(to left, white, transparent);
+  background: linear-gradient(to left, var(--bg), transparent);
 }
-.economic-insights .products .card {
-  border: 1px solid #dee2e6;
-  height: 100%;
+.economic-insights ._products ._card {
+  border: 1px solid var(--bdr);
+  background-color: var(--bgp);
+  color: var(--txt);
+  min-height: 180px;
   transition: transform 0.2s, box-shadow 0.2s;
+  flex-direction: column;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
-.economic-insights .products .card:hover {
+.economic-insights ._products ._card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 25px var(--bo);
 }
-.economic-insights .products .card .card-img-top {
+.economic-insights ._products ._card .card-img-top {
   -o-object-fit: cover;
      object-fit: cover;
   height: 200px;
 }
-.economic-insights .products .card .card-body {
+.economic-insights ._products ._card .card-body {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
-.economic-insights .products .card .card-body .flag-icon {
+.economic-insights ._products ._card .card-body .flag-icon {
   font-size: 3rem;
+  margin: 0px;
+  padding: 0px;
   display: inline-block;
-  margin-bottom: 0.5rem;
   border-radius: 0.25rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px var(--bo);
 }
-.economic-insights .products .card .card-body .card-title {
+.economic-insights ._products ._card .card-body ._card-title-d {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 60px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
   font-weight: 600;
+  color: var(--txt);
+  background-color: transparent;
 }
-.economic-insights .products .card .card-body .loader-overlay {
+.economic-insights ._products ._card .card-body .loader-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: color-mix(in srgb, var(--bgp) 70%, transparent);
   display: flex;
   justify-content: center;
   align-items: center;

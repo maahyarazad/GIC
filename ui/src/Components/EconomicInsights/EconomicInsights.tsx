@@ -5,25 +5,9 @@ import Loader from "@/Components/Loader/Loader";
 import 'flag-icons/css/flag-icons.min.css';
 import { getPDFBlob } from '@/api/user';
 import { useToast } from "@/providers/ToastContext";
+import { Product } from "../../../../src/types/product.types"
 
-
-// --- Types ---
-export interface Product {
-    _id: string;
-    fileId: string;
-    name: string;
-    code: string;
-    content?: any | null;
-    variant?: any | null;
-    media?: any | null;
-    tags?: string[] | null;
-    downloadCount: number;
-    importance: "A" | "B" | "C" | "D";
-    parent?: string | null;
-    children?: string[] | null;
-    recommended?: string[] | null;
-}
-
+// --- Types --
 export interface Continent {
     _id: string;
     name: string;
@@ -50,13 +34,13 @@ const EconomicInsights: React.FC = () => {
         try {
 
             const res = await axiosInstance.get<Continent[]>("/continents");
+            const { data } = res;
+            const { continents } = data?.data;
 
-            const data = res.data?.data.categories;
-
-            setCategories(data);
-            if (data.length > 0) {
+            setCategories(continents);
+            if (continents.length > 0) {
                 //set default 
-                setSelectedCategory(data[0]);
+                setSelectedCategory(continents[0]);
             }
         } catch (err: any) {
             console.error(err);
@@ -128,7 +112,7 @@ const EconomicInsights: React.FC = () => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch (err) {
-            
+
             show({ type: "error", message: err!.message! });
             console.error(err);
         } finally {
@@ -145,7 +129,7 @@ const EconomicInsights: React.FC = () => {
 
 
         <div className="economic-insights">
-            <h3 className="mb-3">Economic Insights</h3>
+            <h3 className="mb">Country Intelligence</h3>
 
             <div className="categories row">
                 <div className="col-12">
@@ -174,37 +158,70 @@ const EconomicInsights: React.FC = () => {
             ) : products.length === 0 ? (
                 <p>No products found in this category.</p>
             ) : (
-                <div className="products row mt-2">
+                <div className="_products row mt-2">
                     {products.map((p) => (
+                        <div
+                            key={p._id}
+                            className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
+                            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}
+                        >
+                            <div className="_card h-100">
+                                <div className="_card-body">
+                                    <h5 className="_card-title-d text-center">{p.name}</h5>
 
-                        <div key={p._id} className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
-                            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}>
-                            <div className="card h-100">
-                                <div className="card-body text-center"> {/* center the content */}
-                                    <h5 className="card-title">{p.name}</h5>
+                                    {/* Row: flag + downloads on left, rating + signal on right */}
+                                    <div className="d-flex align-items-center justify-content-between gap-2 my-2">
+                                        <div className="d-flex align-items-center gap-2 ps-4">
+                                            <i
+                                                className={`fi fi-${p.code.toLowerCase()} flag-icon`}
+                                                aria-hidden="true"
+                                            />
+                                            <span className="_card-text small">Downloads: {p.downloadCount}</span>
+                                        </div>
 
-                                    {/* Flag icon */}
-                                    <i
-                                        className={`fi fi-${p.code.toLowerCase()} flag-icon mb-3`}
-                                        aria-hidden="true"
-                                    ></i>
+                                        <div style={{ width: '1px', alignSelf: 'stretch', backgroundColor: '#dee2e6', margin: '0 8px' }} />
 
-                                    <p className="card-text">Downloads: {p.downloadCount}</p>
-                                    <p className="card-text">Importance: {p.importance}</p>
+                                        {p.metadata?.conclusion && (
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }} className="pe-4">
+                                                {/* Left: Rating & Signal */}
+                                                <div className="text-start">
+                                                    <p className="_card-text p-0 m-0 small">
+                                                        Rating:
+                                                    </p>
+                                                    <p className="_card-text p-0 m-0 small">
+                                                        Signal:
+                                                    </p>
+                                                </div>
 
-                                    {/* Loader overlay */}
-
-
-                                    <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
-                                        <Loader />
+                                                {/* Right: remaining content */}
+                                                <div className="text-end">
+                                                    <p className="_card-text p-0 m-0 small">
+                                                        {p.metadata.conclusion.gicStarRating}
+                                                    </p>
+                                                    <p className="_card-text p-0 m-0">
+                                                        {p.metadata.conclusion.investmentAttractivenessSignal === '⚖' ? "⚖️" : p.metadata.conclusion.investmentAttractivenessSignal}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
 
+                                    <hr style={{ borderColor: '#dee2e6', margin: '8px 0' }} />
 
+                                    {/* Rationale below */}
+                                    {p.metadata?.conclusion?.rationaleIndustrialInvestability && (
+                                        <p className="_card-text small text-center mt-1 p-0 m-0">
+                                            {p.metadata.conclusion.rationaleIndustrialInvestability}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
+                                    <Loader />
                                 </div>
                             </div>
                         </div>
-
                     ))}
                 </div>
             )}

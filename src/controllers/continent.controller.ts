@@ -1,10 +1,8 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import {
   Controller,
   Route,
   Post,
-  Put,
-  Path,
   Body,
   SuccessResponse,
   Tags,
@@ -12,12 +10,14 @@ import {
   Query,
   Get,
   Delete,
+  Put,
+  Path,
 } from "tsoa";
-import { getCollection } from "../db";
 import {
   Continent,
   CreateContinentRequest,
   UpdateContinentRequest,
+  ContinentViewModel,
 } from "../types/continent.types";
 import { Product } from "../types/product.types";
 import {
@@ -28,6 +28,20 @@ import {
   FilterModel,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { ContinentModel } from "../models/continent.model";
+import { ProductModel } from "../models/product.model";
+import {
+  mapContinent,
+  mapContinentViewModel,
+  mapCreateContinentRequestToDb,
+} from "../mappers/continent.mapper";
+import { mapCreateProductRequestToDb } from "../mappers/product.mapper";
+import { toObjectIdArray } from "../mappers/objectId.mapper";
+import {
+  initializeDatabase,
+  hydrateProductMetadataFromXlsx,
+} from "../initialize_db";
 
 export type ContinentSortKey =
   | "name"
@@ -39,6 +53,18 @@ export type ContinentSortKey =
 @Route("api/v1/continents")
 @Tags("Continents")
 export class ContinentController extends Controller {
+  @Get("/initialize_db")
+  public async initializeDB(): Promise<any> {
+    try {
+      await initializeDatabase();
+      await hydrateProductMetadataFromXlsx();
+      return createSuccessResponse(null, "Request Completed");
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to process request");
+    }
+  }
+
   @Post("/")
   @Middlewares(adminAuthMiddleware)
   @SuccessResponse("201", "Created")
@@ -46,13 +72,18 @@ export class ContinentController extends Controller {
     @Body() body: CreateContinentRequest
   ): Promise<any> {
     try {
-      validateRequiredFields(body, ["name", "slug"]);
-
-    const productObjects = body.productObjects ?? [];
-
-
-      const collection = getCollection<Continent>("continents");
-      const duplicate = await collection.findOne({ slug: body.slug });
+      const missing = validateRequiredFields(body, ["name", "slug"]);
+      if (missing.length > 0) {
+        this.setStatus(400);
+        return createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        );
+      }
+      //@ts-ignore
+      const duplicate = await ContinentModel.findOne({
+        //@ts-ignore
+        slug: body.slug,
+      }).lean();
       if (duplicate) {
         this.setStatus(400);
         return createErrorResponse(
@@ -60,111 +91,128 @@ export class ContinentController extends Controller {
         );
       }
 
-      const now = new Date();
+      const continent = await ContinentModel.create(
+        mapCreateContinentRequestToDb(body)
+      );
 
-      const Continent: Continent = {
-        _id: new ObjectId(),
-        name: body.name,
-        slug: body.slug,
-        description: body.description ?? null,
-        products: [],
-        parent: body.parent ?? null,
-        children: body.children ?? null,
-        isActive: body.isActive ?? true,
-        order: body.order,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      const result = await collection.insertOne(Continent);
-
-      if (productObjects && productObjects.length > 0) {
-        // Upsert or link products
-        const productIds = await this.createProductsForContinent(
-          result.insertedId,
-          productObjects
+      if (body.productObjects?.length) {
+        const productIds = await this.upsertProductsForContinent(
+          continent._id,
+          body.productObjects
         );
-
-        // Update the continent with product IDs
-        await collection.updateOne(
-          { _id: result.insertedId },
-          { $set: { products: productIds } }
-        );
-
-        // Update local object to return
-        Continent.products = productIds;
+        continent.products = productIds;
+        await continent.save();
       }
 
       this.setStatus(201);
-      return createSuccessResponse(Continent);
+      return createSuccessResponse(
+        mapContinent(continent.toObject()),
+        "Continent created successfully"
+      );
     } catch (error: any) {
-      return createErrorResponse(error.message || "Failed to create Continent");
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to create continent");
     }
   }
 
-@Post("/update")
-@Middlewares(adminAuthMiddleware)
-public async updateContinent(
-  
-  @Body() body: CreateContinentRequest
-): Promise<any> {
-  try {
-    const collection = getCollection<Continent>("continents");
-    const _id = new ObjectId(body._id);
-
-    // Check duplicate slug
-    if (body.slug) {
-      const duplicate = await collection.findOne({
-        slug: body.slug,
-        _id: { $ne: _id },
-      });
-
-      if (duplicate) {
+  @Put("{id}")
+  @Middlewares(adminAuthMiddleware)
+  public async updateContinent(
+    @Path() id: string,
+    @Body() body: UpdateContinentRequest
+  ): Promise<any> {
+    try {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
-        return createErrorResponse(
-          `Continent with slug "${body.slug}" already exists`
+        return createErrorResponse("Invalid continent ID");
+      }
+
+      if (body.slug) {
+        const duplicate = await ContinentModel.findOne({
+          //@ts-ignore
+          slug: body.slug,
+          _id: { $ne: new Types.ObjectId(id) },
+        }).lean();
+
+        if (duplicate) {
+          this.setStatus(400);
+          return createErrorResponse(
+            `Continent with slug "${body.slug}" already exists`
+          );
+        }
+      }
+
+      const updateData: any = {
+        ...(body.name !== undefined ? { name: body.name } : {}),
+        ...(body.slug !== undefined ? { slug: body.slug } : {}),
+        ...(body.description !== undefined
+          ? { description: body.description ?? null }
+          : {}),
+        ...(body.products !== undefined
+          ? { products: toObjectIdArray(body.products) }
+          : {}),
+        ...(body.parent !== undefined
+          ? {
+              parent:
+                body.parent && Types.ObjectId.isValid(body.parent)
+                  ? new Types.ObjectId(body.parent)
+                  : null,
+            }
+          : {}),
+        ...(body.children !== undefined
+          ? { children: toObjectIdArray(body.children) }
+          : {}),
+        ...(body.isActive !== undefined ? { isActive: body.isActive } : {}),
+        ...(body.order !== undefined ? { order: body.order } : {}),
+        ...(body.image !== undefined ? { image: body.image ?? null } : {}),
+        ...(body.imageAlt !== undefined
+          ? { imageAlt: body.imageAlt ?? null }
+          : {}),
+        ...(body.seoTitle !== undefined
+          ? { seoTitle: body.seoTitle ?? null }
+          : {}),
+        ...(body.seoDescription !== undefined
+          ? { seoDescription: body.seoDescription ?? null }
+          : {}),
+        ...(body.seoKeywords !== undefined
+          ? { seoKeywords: body.seoKeywords ?? null }
+          : {}),
+        updatedAt: new Date(),
+      };
+
+      if (body.productObjects?.length) {
+        updateData.products = await this.upsertProductsForContinent(
+          new Types.ObjectId(id),
+          body.productObjects
         );
       }
-    }
 
-    let continentProductIds: ObjectId[] = [];
-
-
-    const productObjects = body.productObjects ?? [];
-
-    // Upsert products
-    if (productObjects && productObjects.length > 0) {
-      continentProductIds = await this.upsertProductsForContinent(
-        _id,
-       productObjects
+      const continent = await ContinentModel.findByIdAndUpdate(
+        //@ts-ignore
+        id,
+        { $set: updateData },
+        { new: true, lean: true }
       );
+
+      if (!continent) {
+        this.setStatus(404);
+        return createErrorResponse("Continent not found");
+      }
+
+      return createSuccessResponse(
+        mapContinent(continent),
+        "Continent updated successfully"
+      );
+    } catch (error: any) {
+      console.error("Update continent error:", error);
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to update continent");
     }
-
-    delete body.productObjects;
-    delete body._id;
-    // Update continent data (add products)
-    const updateData: Partial<Continent> = {
-      ...body,
-      products: continentProductIds,
-      updatedAt: new Date(),
-    };
-
-    await collection.updateOne(
-      { _id }, // correct filter
-      { $set: updateData }
-    );
-
-    return createSuccessResponse("Continent updated successfully");
-  } catch (error: any) {
-    console.error("Update continent error:", error);
-    this.setStatus(500);
-    return createErrorResponse(error.message || "Failed to update Continent");
   }
-}
-
 
   @Get("/")
-  public async getAllCategories(
+  
+  public async getAllContinents(
     @Query("filters") filtersJson?: string,
     @Query() limit: number = 20,
     @Query() skip: number = 0,
@@ -172,14 +220,10 @@ public async updateContinent(
     @Query() sortOrder: "asc" | "desc" = "asc"
   ): Promise<any> {
     try {
-      const categoriesCollection = getCollection("continents");
-
       let filter: any = {};
 
-      // 🔹 Handle Filters
       if (filtersJson) {
         let filters: FilterModel<Continent>[] = [];
-
         try {
           filters = JSON.parse(filtersJson);
         } catch {
@@ -194,29 +238,24 @@ public async updateContinent(
                   $regex: new RegExp(`${escapeRegExp(String(value))}`, "i"),
                 },
               };
-
             case "startsWith":
               return {
                 [field]: {
                   $regex: new RegExp(`^${escapeRegExp(String(value))}`, "i"),
                 },
               };
-
             case "endsWith":
               return {
                 [field]: {
                   $regex: new RegExp(`${escapeRegExp(String(value))}$`, "i"),
                 },
               };
-
             case "equals":
-              // Special handling for boolean fields
-              if (field === "isActive") {
-                return { isActive: value === "true" || value === 1 || Boolean(value) };
-              }
-
+              //@ts-ignore
+              if (field === "isActive")
+                //@ts-ignore
+                return { isActive: value === true || value === "true" };
               return { [field]: value };
-
             default:
               return {};
           }
@@ -225,153 +264,139 @@ public async updateContinent(
         filter = filterParts.length > 0 ? { $and: filterParts } : {};
       }
 
-      // 🔹 Clamp pagination
-      const limitNum = Math.min(Math.max(limit, 1), 100);
-      const skipNum = Math.max(skip, 0);
-
-      // 🔹 Safe sorting
-      const allowedSortKeys: ContinentSortKey[] = [
-        "name",
-        "slug",
-        "createdAt",
-        "order",
-        "isActive",
-      ];
-
-      const sortKey: ContinentSortKey = allowedSortKeys.includes(sortBy)
-        ? sortBy
-        : "name";
-
-      const sort = { [sortKey]: sortOrder === "asc" ? 1 : -1 };
-
-      // 🔹 Total count
-      const total = await categoriesCollection.countDocuments(filter);
-
-      // 🔹 Query data
-      const categories = await categoriesCollection
-        .find(filter)
-        .sort(sort as any)
-        .limit(limitNum)
-        .skip(skipNum)
-        .toArray();
+      const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
+        string,
+        1 | -1
+      >;
+      const [docs, total] = await Promise.all([
+        ContinentModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+        ContinentModel.countDocuments(filter),
+      ]);
 
       return createSuccessResponse(
         {
-          categories,
+          continents: docs.map(mapContinent),
           total,
-          page: Math.floor(skipNum / limitNum) + 1,
-          pages: Math.ceil(total / limitNum),
+          page: Math.floor(skip / limit) + 1,
+          pages: Math.ceil(total / limit),
         },
-        "Categories fetched successfully"
+        "Continents fetched successfully"
       );
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      return createErrorResponse("Failed to fetch categories", error);
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to fetch continents");
     }
   }
 
-  @Delete("/{id}")
+  @Get("{id}")
   @Middlewares(adminAuthMiddleware)
-  @SuccessResponse("200", "Deleted")
-  public async deleteContinent(@Path() id: string): Promise<any> {
+  public async getContinentById(@Path() id: string): Promise<any> {
     try {
-      const collection = getCollection<Continent>("continents");
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid continent ID");
+      }
 
-      const _id = new ObjectId(id);
-
-      const result = await collection.deleteOne({ _id });
-
-      if (result.deletedCount === 0) {
+      //@ts-ignore
+      const continent = await ContinentModel.findById(id).lean();
+      if (!continent) {
         this.setStatus(404);
         return createErrorResponse("Continent not found");
       }
 
-      return createSuccessResponse({
-        message: "Continent deleted successfully",
-      });
+      let productDocs: any[] = [];
+      if (continent.products?.length) {
+        //@ts-ignore
+        productDocs = await ProductModel.find({
+            //@ts-ignore
+          _id: { $in: continent.products },
+        })
+          .select("metadata.conclusion")
+          .lean();
+      }
+
+      return createSuccessResponse(
+        mapContinentViewModel(continent, productDocs as any),
+        "Continent fetched successfully"
+      );
     } catch (error: any) {
       this.setStatus(500);
-      return createErrorResponse(error.message || "Failed to delete Continent");
+      return createErrorResponse(error.message || "Failed to fetch continent");
     }
   }
 
-  private async createProductsForContinent(
-    continentId: ObjectId,
-    products: Product[]
-  ): Promise<ObjectId[]> {
-    const productsCollection = getCollection<Product>("products");
-    const continentProductIds: ObjectId[] = [];
+  @Delete("{id}")
+  @Middlewares(adminAuthMiddleware)
+  public async deleteContinent(@Path() id: string): Promise<any> {
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid continent ID");
+      }
+      //@ts-ignore
+      const continent = await ContinentModel.findByIdAndDelete(id).lean();
+      if (!continent) {
+        this.setStatus(404);
+        return createErrorResponse("Continent not found");
+      }
 
-    for (const p of products) {
-      const newProduct: Product = {
-        ...p,
-        parent: continentId,
-        children: p.children ?? [],
-        recommended: p.recommended ?? [],
-        downloadCount: p.downloadCount ?? 0,
-        importance: p.importance ?? "A",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      const result = await productsCollection.insertOne(newProduct);
-
-      continentProductIds.push(result.insertedId);
+      return createSuccessResponse(
+        { success: true },
+        "Continent deleted successfully"
+      );
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to delete continent");
     }
-
-    return continentProductIds;
   }
 
   private async upsertProductsForContinent(
-    continentId: ObjectId,
+    continentId: Types.ObjectId,
     products: Product[]
-  ): Promise<ObjectId[]> {
-    const productsCollection = getCollection<Product>("products");
-    const resultIds: ObjectId[] = [];
+  ): Promise<Types.ObjectId[]> {
+    const ids: Types.ObjectId[] = [];
 
-    for (const p of products) {
-      if (p._id) {
-        // Existing product → update
-        const updateResult = await productsCollection.updateOne(
-          { _id: new ObjectId(p._id) },
-          {
-            $set: {
-              name: p.name,
-              code: p.code,
-              fileId: p.fileId,
-              importance: p.importance ?? "A",
-              recommended: p.recommended ?? [],
-              children: p.children ?? [],
-              downloadCount: p.downloadCount ?? 0,
-              updatedAt: new Date(),
-            },
-          }
-        );
+    for (const product of products) {
+      const query =
+        product._id && Types.ObjectId.isValid(product._id)
+          ? { _id: new Types.ObjectId(product._id) }
+          : product.code
+          ? { code: product.code }
+          : { fileId: product.fileId };
 
-        if (updateResult.modifiedCount > 0) {
-          resultIds.push(p._id);
-        } else {
-          // If nothing was modified, still include the _id
-          resultIds.push(p._id);
-        }
-      } else {
-        // New product → create
-        const newProduct: Product = {
-          ...p,
-          parent: continentId,
-          children: p.children ?? [],
-          recommended: p.recommended ?? [],
-          downloadCount: p.downloadCount ?? 0,
-          importance: p.importance ?? "A",
-          createdAt: new Date(),
+      const update = {
+        $set: {
+            //@ts-ignore
+          ...mapCreateProductRequestToDb({
+            fileId: product.fileId,
+            name: product.name,
+            code: product.code,
+            content: product.content,
+            variant: product.variant,
+            media: product.media,
+            tags: product.tags,
+            downloadCount: product.downloadCount,
+            importance: product.importance,
+            parent: continentId.toHexString(),
+            children: product.children ?? [],
+            recommended: product.recommended ?? [],
+          }),
           updatedAt: new Date(),
-        };
-
-        const insertResult = await productsCollection.insertOne(newProduct);
-        resultIds.push(insertResult.insertedId);
-      }
+        },
+        $setOnInsert: {
+          createdAt: new Date(),
+        },
+      };
+      //@ts-ignore
+      const saved = await ProductModel.findOneAndUpdate(query, update, {
+        upsert: true,
+        new: true,
+      });
+      //@ts-ignore
+      ids.push(saved._id);
     }
 
-    return resultIds;
+    return ids;
   }
 }

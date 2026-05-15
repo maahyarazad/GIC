@@ -1,13 +1,21 @@
 .table-wrapper {
     max-width: 100%;
-
+    background: var(--bg);
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    color: var(--txt);
+    border: 1px solid var(--bdr);
 
     table {
         width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
+        background: var(--bg);
+        color: var(--txt);
+
+          tbody tr:hover td {
+    background: var(--bgp);
+  }
 
         th,
         td {
@@ -17,6 +25,8 @@
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--txt);
+            background: var(--bg);
 
             .td-scroll {
                 max-width: 100%;
@@ -33,10 +43,24 @@
         }
 
         input[type='text'] {
+            background: var(--bg);
+            color: var(--txt);
+            border: 1px solid var(--bdr);
             width: 90%;
             padding: 4px;
             box-sizing: border-box;
         }
+
+
+        input[type="text"]::placeholder {
+            color: var(--mu);
+        }
+input[type="text"]:focus,
+input[type="text"]:focus-visible {
+    border-color: var(--ora);
+    outline: none;              // remove default browser outline
+
+}
 
         /* MOBILE STYLES */
         @media (max-width: 600px) {
@@ -52,12 +76,14 @@
             }
 
             tr {
+                border: 1px solid var(--bdr);
+                background-color: var(--bg2);
                 display: block;
                 margin-bottom: 1rem;
-                border: 1px solid #ccc;
+
                 border-radius: 8px;
                 padding: 12px 10px;
-                background-color: white;
+
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
@@ -79,7 +105,7 @@
                     content: attr(data-label);
                     font-weight: 600;
                     flex-basis: 40%;
-                    color: #444;
+                    color: var(--mu);
                 }
             }
 
@@ -92,30 +118,32 @@
 }
 
 .copy-toast {
-  position: fixed;
-  transform: translate(-50%, -120%);
-  background: #111;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  pointer-events: none;
-  animation: fadeUp 3s ease forwards;
-  z-index: 9999;
-  white-space: nowrap;
+    position: fixed;
+    transform: translate(-50%, -120%);
+    background: #111;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    pointer-events: none;
+    animation: fadeUp 3s ease forwards;
+    z-index: 9999;
+    white-space: nowrap;
 }
 
 @keyframes fadeUp {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -100%) scale(0.9);
-  }
-  20% {
-    opacity: 1;
-    transform: translate(-50%, -120%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -160%) scale(0.95);
-  }
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(0.9);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -120%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -160%) scale(0.95);
+    }
 }

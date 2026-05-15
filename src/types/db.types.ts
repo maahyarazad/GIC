@@ -1,17 +1,14 @@
-// models/db.types.ts (internal only - NEVER used in controllers)
 import { ObjectId } from "mongodb";
 
-export interface BaseModel {
+export interface BaseDbModel {
   _id?: ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface LogChangeModel {
-  _id?: ObjectId;
+export interface LogChangeDbModel extends BaseDbModel {
   targetId: ObjectId;
   lastModifiedBy: ObjectId;
   collection: string;
   message: string;
-  createdAt?: Date;
 }

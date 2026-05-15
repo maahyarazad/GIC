@@ -1,22 +1,9 @@
-import { useContext, useState, useCallback } from "react";
-    import { useDispatch } from "react-redux";
-import { setReady } from '../../features/appSlice'; // adjust path
+import { useContext } from "react";
 import { EnvContext } from '../../EnvContext';
 import ArrowDown from '@/Components/ArrowDown/ArrowDown';
 
 const HomeBackground = ({ background }) => {
   const env = useContext(EnvContext);
-  const dispatch = useDispatch();
-
-  const [videoLoaded, setVideoLoaded] = useState(false);
-
-  const handleVideoLoaded = useCallback(() => {
-    setVideoLoaded(true);
-    
-    dispatch(setReady(true));
-    
-  }, [dispatch]);
-
   return (
     <div>
       <video autoPlay loop muted playsInline

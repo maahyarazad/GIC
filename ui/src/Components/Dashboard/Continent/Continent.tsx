@@ -9,6 +9,7 @@ import { ContinetViewModel } from '../../../../../src/types/continent.types'
 import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import Button from "@/Components/Button/Button";
 
 const buttonGroupStyle = { fontSize: 14, padding: 5 };
 
@@ -32,14 +33,14 @@ const CategoriesDataGrid = () => {
             headerName: "Active",
             width: "8%",
             renderCell: (params) => (
-                           <div style={{ display: "flex", alignItems: "center" }}>
-                               {params.isActive ? (
-                                   <FaCheck style={{ color: "green", fontSize: "18px" }} />
-                               ) : (
-                                   <FaTimes style={{ color: "red", fontSize: "18px" }} />
-                               )}
-                           </div>
-                       ),
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {params.isActive ? (
+                        <FaCheck style={{ color: "green", fontSize: "18px" }} />
+                    ) : (
+                        <FaTimes style={{ color: "red", fontSize: "18px" }} />
+                    )}
+                </div>
+            ),
         },
         {
             field: "order",
@@ -58,7 +59,7 @@ const CategoriesDataGrid = () => {
             renderCell: (row) => (
                 <div className="btn-group">
                     <button
-                    title="Edit"
+                        title="Edit"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn"
                         onClick={() => onEdit(row)}
@@ -67,7 +68,7 @@ const CategoriesDataGrid = () => {
                     </button>
 
                     <button
-                     title="Delete"
+                        title="Delete"
                         style={buttonGroupStyle}
                         className="btn btn-sm dashboard-btn--delete-ghost"
                         onClick={() => onDelete(row)}
@@ -106,13 +107,14 @@ const CategoriesDataGrid = () => {
             }
 
             if (filterModel && filterModel.length > 0) {
-                params.append("filters", JSON.stringify(filterModel)); g
+                params.append("filters", JSON.stringify(filterModel));
             }
 
-            const response = await axiosInstance.get("/continents", { params });
+            const { data } = await axiosInstance.get("/continents", { params });
 
-            setRows(response.data.data.categories);
-            setRowCount(response.data.total ?? response.data.data.categories.length);
+
+            setRows(data?.data?.continents ?? []);
+            setRowCount(data?.total ?? data?.data?.continents?.length ?? 0);
         } catch (err) {
             console.error("Failed to fetch categories", err);
         } finally {
@@ -139,7 +141,7 @@ const CategoriesDataGrid = () => {
         if (!isConfirmed) return;
 
         try {
-            
+
             await axiosInstance.delete(`/continents/${row._id}`);
             show({ type: "success", message: "ContinetViewModel deleted successfully" });
             fetchCategories();
@@ -154,7 +156,7 @@ const CategoriesDataGrid = () => {
         slug: "",
         description: "",
         products: [],
-          productObjects: [],
+        productObjects: [],
         parent: null,
         children: [],
         isActive: true,
@@ -177,6 +179,25 @@ const CategoriesDataGrid = () => {
         });
         setOpen(true);
     };
+    const [initializing, setInitializing] = useState(false);
+    const handleInitializeDb = async () => {
+        setInitializing(true);
+
+        try{
+
+            const response = await axiosInstance.get('/continents/initialize_db');
+            
+//@ts-ignore
+            show({ type: "success", message: response?.data?.message || "Request Completed."});
+
+        }catch(err){
+            //@ts-ignore
+            show({ type: "error", message: err?.message || "Failed to initialize the Db" });
+            console.error(err)
+        }finally{
+setInitializing(false);
+        }
+    };
 
     const onEdit = (row: ContinetViewModel) => {
         setHeaderTitle(`Modify ${row.name}`);
@@ -197,11 +218,11 @@ const CategoriesDataGrid = () => {
         try {
             const editMode = (continent._id !== null && continent._id !== undefined);
             if (editMode) {
-            
-                await axiosInstance.post(`/continents/update`, continent);
+
+                await axiosInstance.put(`/continents/${continent._id}`, continent);
                 show({ type: "success", message: "ContinetViewModel updated!" });
             } else {
-               
+
                 await axiosInstance.post("/continents", continent);
                 show({ type: "success", message: "ContinetViewModel created!" });
             }
@@ -239,11 +260,18 @@ const CategoriesDataGrid = () => {
 
     return (
         <>
-            <h3 className="mb-3">Manage Continents</h3>
+            <h3 className="mb">Manage Country Intelligence</h3>
+            <div className="d-flex">
+
+            <button className={`${initializing ? "btn" : "btn btn-sm dashboard-btn mb-1 me-1 " }`}  style={{minWidth: 94}}
+                onClick={handleInitializeDb}>
+                {initializing ? <Loader size={14} />: <>{"Initialize Db"}</>}</button>
 
             <button className={`btn btn-sm dashboard-btn mb-1`}
                 onClick={onCreate}>
                 Add New</button>
+            </div>
+
             {loading ? (
                 <Loader />
             ) : (

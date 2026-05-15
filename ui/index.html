@@ -5,14 +5,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="preload" as="image" href="./public/gic-log-main.png" />
-    <link
+    <link rel="preconnect" as="image" href="./public/gic-log-main.png" />
+    <!-- <link
   rel="preload"
   href="./public/IvyMode-Light.woff2"
   as="font"
   type="font/woff2"
   crossorigin
-/>
+/> -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/public/bootstrap/dist/css/bootstrap.min.css">
 
 
@@ -30,9 +32,9 @@
     <meta name="robots" content="index, follow" />
 
     <meta name="description"
-        content="We are a society in the UAE helping major German, Swiss, and Austrian corporations acquire invaluable information for business development and investment opportunities in the UAE." />
+        content="We are the business society in the MEA region, supporting major German, Swiss, and Austrian corporations to acquire invaluable information for business development and investment opportunities in the MEA." />
 
-    <title>GIC</title>
+    <title>German Industry Club</title>
 
     <!-- SSR -->
     <!--app-head-->
@@ -41,9 +43,11 @@
 
 <body>
     <!-- SSR HTML gets injected here -->
-    <div id="root"><!--app-html--></div>
-<!--preloaded-state-->
-    <!-- Client hydration -->
+  <div id="root"><!--app-html--></div>
+  <!-- PRELOADED STATE (server injects window.__PRELOADED_STATE__) -->
+  <!--preloaded-state-->
+
+  <!-- Client entry -->
     <script type="module" src="/src/entry-client.jsx"></script>
 
 <script defer href="/public/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

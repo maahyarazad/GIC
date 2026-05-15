@@ -1,23 +1,18 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import {
   User,
   UserSortKey,
-  UserFilter,
-  RawUserSearchQuery,
   CreateUserRequest,
   UpdateUserRequest,
 } from "../types/user.types";
 import {
-  Sort,
   createSuccessResponse,
   createErrorResponse,
   escapeRegExp,
   FilterModel,
 } from "../utils/helpers";
-import { getCollection } from "../db";
-import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import {
   Controller,
@@ -30,21 +25,20 @@ import {
   Body,
   SuccessResponse,
   Tags,
-  Middlewares,
-  UploadedFile,
-  FormField,
+  Middlewares, Request
 } from "tsoa";
-import { sendDynamicEmailDoc } from "../services/emailService";
-import { authMiddleware } from "../middleware/auth.middleware";
-import path from "path";
-import fs from "fs/promises";
-import { cwd } from "process";
 import dotenv from "dotenv";
-import { Request } from "tsoa";
-import {LogChangeModel} from '../types/base.types';
+import { mapCreateUserRequestToDb, mapUser, mapUsers, mapUpdateUserRequestToDb } from "../mappers/user.mapper";
+import { UserModel } from "../models/user.model";
+import { LogChangeModel } from "../models/logChange.model";
+import { Request as ExpressRequest } from "express";
+
+export interface AuthRequest extends ExpressRequest {
+  user?: User;
+}
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 @Route("api/v1/users")
 @Tags("Users")
@@ -59,8 +53,6 @@ export class UserController extends Controller {
     @Query() sortOrder: "asc" | "desc" = "asc"
   ): Promise<any> {
     try {
-      const usersCollection = getCollection("users");
-
       let filter: any = {};
 
       if (filtersJson) {
@@ -71,72 +63,39 @@ export class UserController extends Controller {
           return createErrorResponse("Invalid filters JSON");
         }
 
-        // Build filter object dynamically
         const filterParts = filters.map(({ field, operator, value }) => {
           switch (operator) {
             case "contains":
-              // Case-insensitive regex match
-              return {
-                [field]: {
-                  $regex: new RegExp(`${escapeRegExp(String(value))}`, "i"),
-                },
-              };
-
+              return { [field]: { $regex: new RegExp(`${escapeRegExp(String(value))}`, "i") } };
             case "startsWith":
-              return {
-                [field]: {
-                  $regex: new RegExp(`^${escapeRegExp(String(value))}`, "i"),
-                },
-              };
-
+              return { [field]: { $regex: new RegExp(`^${escapeRegExp(String(value))}`, "i") } };
             case "endsWith":
-              return {
-                [field]: {
-                  $regex: new RegExp(`${escapeRegExp(String(value))}$`, "i"),
-                },
-              };
-
+              return { [field]: { $regex: new RegExp(`${escapeRegExp(String(value))}$`, "i") } };
             case "equals":
               return { [field]: value };
-
             default:
               return {};
           }
         });
 
-        // Combine all filters with $and (all must match)
         filter = filterParts.length > 0 ? { $and: filterParts } : {};
       }
 
-      // Clamp limit and skip
       const limitNum = Math.min(Math.max(limit, 1), 100);
       const skipNum = Math.max(skip, 0);
 
-      const allowedSortKeys: UserSortKey[] = [
-        "name",
-        "email",
-        "createdAt",
-        "role",
-      ];
-      const sortKey: UserSortKey = allowedSortKeys.includes(sortBy)
-        ? sortBy
-        : "name";
+      const allowedSortKeys: UserSortKey[] = ["name", "email", "createdAt", "role"];
+      const sortKey: UserSortKey = allowedSortKeys.includes(sortBy) ? sortBy : "name";
+      const sort = { [sortKey]: sortOrder === "asc" ? 1 : -1 } as Record<string, 1 | -1>;
 
-      const sort = { [sortKey]: sortOrder === "asc" ? 1 : -1 };
-
-      const total = await usersCollection.countDocuments(filter);
-
-      const users = await usersCollection
-        .find(filter)
-        .sort(sort as any)
-        .limit(limitNum)
-        .skip(skipNum)
-        .project<Omit<User, "password">>({ password: 0 })
-        .toArray();
+      const [users, total] = await Promise.all([
+        UserModel.find(filter).select("-password").sort(sort).limit(limitNum).skip(skipNum).lean(),
+        UserModel.countDocuments(filter),
+      ]);
 
       return createSuccessResponse(
         {
-          users,
+          users: mapUsers(users),
           total,
           page: Math.floor(skipNum / limitNum) + 1,
           pages: Math.ceil(total / limitNum),
@@ -149,49 +108,16 @@ export class UserController extends Controller {
     }
   }
 
-  //   @Get("/{id}")
-  //   public async getUserById(
-  //     @Path() id: string
-  //   ): Promise<Omit<User, "password">> {
-  //     try {
-  //       // Validate ObjectId
-  //       if (!ObjectId.isValid(id)) {
-  //         this.setStatus(400);
-  //         throw new Error("Invalid user ID");
-  //       }
-
-  //       const usersCollection = getCollection<User>("users");
-
-  //       // Find user without password
-  //       const user = await usersCollection.findOne(
-  //         { _id: new ObjectId(id) },
-  //         { projection: { password: 0 } }
-  //       );
-
-  //       if (!user) {
-  //         this.setStatus(404);
-  //         throw new Error("User not found");
-  //       }
-
-  //       this.setStatus(200);
-  //       return user as Omit<User, "password">;
-  //     } catch (error: any) {
-  //       console.error(error);
-  //       this.setStatus(this.getStatus() ?? 500); // keep previous or set 500
-  //       throw new Error(error.message || "Failed to fetch user");
-  //     }
-  //   }
-
   @SuccessResponse("201", "Created")
   @Post("/")
   public async createUser(
     @Body() userData: CreateUserRequest
   ): Promise<{ user?: Omit<User, "password">; token?: string; error?: any }> {
     try {
-      const usersCollection = getCollection<User>("users");
-        const email = userData.email.trim().toLocaleLowerCase()
-      // Check existing user
-      const existing = await usersCollection.findOne({ email: email });
+      const email = userData.email.trim().toLowerCase();
+      //@ts-ignore
+      const existing = await UserModel.findOne({ email }).lean();
+
       if (existing) {
         this.setStatus(400);
         return createErrorResponse(
@@ -200,267 +126,135 @@ export class UserController extends Controller {
         );
       }
 
-      // Hash password
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-
-      const newUser: User = {
-        name: userData.name,
-        email: email,
-        phone: userData.phone,
-        password: hashedPassword,
-        role: userData.role || "user",
-        createdAt: new Date(),
-        authorize: false,
-      };
-
-      // Insert user
-      const result = await usersCollection.insertOne(newUser);
-
-      // Fetch created user without password
-      const createdUser = await usersCollection.findOne(
-        { _id: result.insertedId },
-        { projection: { password: 0 } }
+      const newUser = await UserModel.create(
+        mapCreateUserRequestToDb({ ...userData, email }, hashedPassword)
       );
 
-      if (!createdUser) {
-        this.setStatus(500);
-        return createErrorResponse(
-          "Failed to fetch created user",
-          "FETCH_FAILED"
-        );
-      }
-
-      // Generate JWT
       const token = jwt.sign(
-        { userId: result.insertedId, email: newUser.email },
+        { userId: newUser._id.toString(), email: newUser.email },
         JWT_SECRET,
         { expiresIn: "7d" }
       );
 
       this.setStatus(201);
-      return { user: createdUser as Omit<User, "password">, token };
+      const safeUser = newUser.toObject();
+      delete (safeUser as any).password;
+      return { user: mapUser(safeUser) as Omit<User, "password">, token };
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
-      return createErrorResponse(
-        error.message || "Failed to create user",
-        "INTERNAL_ERROR"
-      );
+      return createErrorResponse(error.message || "Failed to create user", "INTERNAL_ERROR");
     }
   }
 
-  @Put("/{id}")
+  @Get("{id}")
   @Middlewares(adminAuthMiddleware)
-  public async updateUser(
-    @Request() req: Express.Request,
-    @Path() id: string,
-    @Body() updateData: UpdateUserRequest
-  ): Promise<any> {
+  public async getUserById(@Path() id: string): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid user ID");
       }
-
-      const usersCollection = getCollection<User>("users");
-
-      // Hash new password if provided
-      if (updateData.password) {
-        updateData.password = await bcrypt.hash(updateData.password, 10);
-      }
-
-      updateData.updatedAt = new Date();
-
-
-
-
-      const result = await usersCollection.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        {
-          $set: {...updateData},
-        },
-        {
-          returnDocument: "after",
-          projection: { password: 0 },
-        }
-      );
-
-      if (!result) {
-        this.setStatus(404);
-        return createErrorResponse("User not found");
-      }
-
-      // Log Collection
-    const token = (req as any).cookies?.token;
-
-      const decoded = jwt.verify(token, JWT_SECRET) as {
-        userId: string;
-        role: string;
-      };
-      
-      const logCollection = getCollection<LogChangeModel>("log_change");
-
-        await logCollection.insertOne({
-            targetId: new ObjectId(id),
-            lastModifiedBy: new ObjectId(decoded.userId),
-            collection: "users",
-            message: `User Activation Updated => ${updateData.authorize ? "Authorized" :  "Unauthorized"}`,
-            createdAt: new Date(),
-        });
-
-      if (updateData.authorize) {
-        let login_link: string;
-        if (process.env.NODE_ENV === "PRODUCTION") {
-          login_link = `${process.env.CLIENT_ORIGIN_PROD}/login`;
-        } else {
-          login_link = `${process.env.CLIENT_ORIGIN_DEV}/login`;
-        }
-
-        const params: Record<string, any> = {
-          USER_NAME: updateData.email,
-          LOGIN_LINK: login_link,
-          email: updateData.email,
-        };
-
-        await sendDynamicEmailDoc("account_activated", params);
-      }
-
-      this.setStatus(200);
-      return createSuccessResponse<{ user: Omit<User, "password"> }>(
-        { user: result as Omit<User, "password"> },
-        "User updated successfully"
-      );
-    } catch (error) {
-      console.error(error);
-      this.setStatus(500);
-      return createErrorResponse("Failed to update user", undefined, error);
-    }
-  }
-
-  @Put("user-profile/{id}")
-  @Middlewares(authMiddleware)
-  public async updateUserProfile(
-    @Path() id: string,
-    @Body() updateData: UpdateUserRequest
-  ): Promise<any> {
-    try {
-      if (!ObjectId.isValid(id)) {
-        this.setStatus(400);
-        return createErrorResponse("Invalid user ID");
-      }
-
-      const usersCollection = getCollection<User>("users");
-
-      // Hash new password if provided
-      if (updateData.password) {
-        updateData.password = await bcrypt.hash(updateData.password, 10);
-      }
-
-      updateData.updatedAt = new Date();
-
-      const result = await usersCollection.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { $set: updateData },
-        {
-          returnDocument: "after",
-          projection: { password: 0 },
-        }
-      );
-
-      if (!result) {
-        this.setStatus(404);
-        return createErrorResponse("User not found");
-      }
-
-      this.setStatus(200);
-      return createSuccessResponse<{ user: Omit<User, "password"> }>(
-        { user: result as Omit<User, "password"> },
-        "User Profile updated successfully"
-      );
-    } catch (error) {
-      console.error(error);
-      this.setStatus(500);
-      return createErrorResponse("Failed to update user", undefined, error);
-    }
-  }
-
-  @Get("user-profile/{id}")
-  @Middlewares(authMiddleware)
-  public async getUserProfile(@Path() id: string): Promise<any> {
-    try {
-      if (!ObjectId.isValid(id)) {
-        this.setStatus(400);
-        return createErrorResponse("Invalid user ID");
-      }
-
-      const usersCollection = getCollection<User>("users");
-
-      const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+//@ts-ignore
+      const user = await UserModel.findById(id).select("-password").lean();
 
       if (!user) {
         this.setStatus(404);
         return createErrorResponse("User not found");
       }
 
-      this.setStatus(200);
-      return createSuccessResponse<{ user: Omit<User, "password"> }>({
-        user: user as Omit<User, "password">,
-      });
-    } catch (error) {
+      return createSuccessResponse(mapUser(user), "User fetched successfully");
+    } catch (error: any) {
       console.error(error);
       this.setStatus(500);
-      return createErrorResponse("Failed to update user", undefined, error);
+      return createErrorResponse(error.message || "Failed to fetch user");
     }
   }
 
-
-  @Post("/{id}/upload-photo")
-  public async uploadPhoto(
+  @Put("{id}")
+  @Middlewares(adminAuthMiddleware)
+  public async updateUser(
     @Path() id: string,
-    @UploadedFile("file") file: Express.Multer.File
-  ) {
+     @Body() body: UpdateUserRequest,
+     @Request() request: AuthRequest
+    ): Promise<any> {
     try {
-      if (!ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id)) {
         this.setStatus(400);
         return createErrorResponse("Invalid user ID");
       }
 
-      if (!file) {
-        this.setStatus(400);
-        return createErrorResponse("No file uploaded");
+      const updateData = mapUpdateUserRequestToDb(body);
+
+      if (body.password) {
+        updateData.password = await bcrypt.hash(body.password, 10);
+      }
+//@ts-ignore
+      const current = await UserModel.findById(id).lean();
+      if (!current) {
+        this.setStatus(404);
+        return createErrorResponse("User not found");
       }
 
-      // Define where to save the file
-      const uploadDir = path.resolve(process.cwd(), "./uploads/photos");
-      await fs.mkdir(uploadDir, { recursive: true });
-
-      // Generate unique file name or use original file name
-      const filename = `${id}-${Date.now()}-${file.originalname}`;
-      const filepath = path.join(uploadDir, filename);
-
-      // Save the file from buffer (assuming multer stores it in memory)
-      await fs.writeFile(filepath, file.buffer);
-
-      // Update user's photo URL in DB (adjust URL based on your server config)
-      const usersCollection = getCollection<User>("users");
-      const photoUrl = `/uploads/photos/${filename}`; // Adjust base URL as needed
-
-      const updateResult = await usersCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { "profile.photo": photoUrl, updatedAt: new Date() } }
+      const user = await UserModel.findByIdAndUpdate(
+        //@ts-ignore
+        id,
+        { $set: updateData },
+        { new: true, lean: true, projection: { password: 0 } as any }
       );
 
-      if (updateResult.modifiedCount === 0) {
-        this.setStatus(404);
-        return createErrorResponse("User not found or photo not updated");
-      }
 
-      this.setStatus(200);
-      return createSuccessResponse({ photoUrl }, "Photo uploaded successfully");
-    } catch (error) {
+      const token = request.cookies?.token;
+      
+      
+          
+          const decoded_token = jwt.verify(token, JWT_SECRET) as { userId: string, role: string};
+
+
+      await LogChangeModel.create({
+        targetId: new Types.ObjectId(id),
+        lastModifiedBy: new Types.ObjectId(decoded_token.userId),
+        collection: "users",
+        message: body.authorize
+  ? "User has been authorized"
+  : "User access has been revoked",
+      });
+
+      return createSuccessResponse(mapUser(user), "User updated successfully");
+    } catch (error: any) {
       console.error(error);
       this.setStatus(500);
-      return createErrorResponse("Failed to upload photo", undefined, error);
+      return createErrorResponse(error.message || "Failed to update user");
+    }
+  }
+
+  @Put("{id}/authorize")
+  @Middlewares(adminAuthMiddleware)
+  public async authorizeUser(@Path() id: string): Promise<any> {
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid user ID");
+      }
+
+      const user = await UserModel.findByIdAndUpdate(
+        //@ts-ignore
+        id,
+        { $set: { authorize: true, updatedAt: new Date() } },
+        { new: true, lean: true, projection: { password: 0 } as any }
+      );
+
+      if (!user) {
+        this.setStatus(404);
+        return createErrorResponse("User not found");
+      }
+
+      return createSuccessResponse(mapUser(user), "User authorized successfully");
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to authorize user");
     }
   }
 }

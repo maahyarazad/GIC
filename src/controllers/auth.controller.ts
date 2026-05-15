@@ -16,8 +16,8 @@ import { getCollection } from "../db";
 import {
   LoginModel,
   User,
-  LoginLogModel,
   RefreshTokenModel,
+  LoginLogModel,
 } from "../types/user.types";
 import { Collection, ObjectId } from "mongodb";
 import {
@@ -30,7 +30,9 @@ import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 dotenv.config();
-
+//@ts-ignore
+import { authMessages } from "../serverResponseMessages";
+import { createHash, randomBytes } from "crypto";
 const JWT_SECRET: string = process.env.JWT_SECRET!;
 const REFRESH_SECRET: string = process.env.REFRESH_SECRET!;
 const REFRESH_EXPIRE: string = process.env.REFRESH_EXPIRE!;
@@ -40,6 +42,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
 const FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET!;
 const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
+
 @Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
@@ -102,6 +105,7 @@ export class AuthController extends Controller {
         createdAt: new Date(),
         role: "user",
         authorize: false,
+        requirePasswordChange: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -114,13 +118,13 @@ export class AuthController extends Controller {
     });
 
     // 5. Set token cookie
-    const isProd = process.env.NODE_ENV === "production";
+    const isProd = process.env.NODE_ENV === "PRODUCTION";
     const cookie = [
       `token=${token}`,
       "HttpOnly",
       "Path=/",
       `Max-Age=${30 * 24 * 3600}`, // 30 days
-      `SameSite=${isProd ? "None" : "Lax"}`,
+      isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
     ]
       .filter(Boolean)
@@ -190,6 +194,7 @@ export class AuthController extends Controller {
         createdAt: new Date(),
         role: "user",
         authorize: false,
+        requirePasswordChange: false,
       };
 
       const insert = await users.insertOne(newUser);
@@ -201,13 +206,13 @@ export class AuthController extends Controller {
       expiresIn: "30d",
     });
 
-    const isProd = process.env.NODE_ENV === "production";
+    const isProd = process.env.NODE_ENV === "PRODUCTION";
     const cookie = [
       `token=${token}`,
       "HttpOnly",
       "Path=/",
       `Max-Age=${30 * 24 * 3600}`, // 30 days
-      `SameSite=${isProd ? "None" : "Lax"}`,
+      isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
     ]
       .filter(Boolean)
@@ -232,22 +237,27 @@ export class AuthController extends Controller {
       const token = cookies.token; // name of your cookie
 
       if (!token) {
-        return createErrorResponse("Missing token cookie");
+        return createErrorResponse(authMessages.errors.missingToken);
       }
 
       const payload = jwt.verify(token, JWT_SECRET) as any;
 
       const users = AuthController.userCollection();
+      //@ts-ignore
       const user = await users.findOne({ _id: new ObjectId(payload.userId) });
 
       if (!user) {
         return createErrorResponse("User not found");
       }
 
-      return createSuccessResponse(user, "Profile fetched successfully");
+      return createSuccessResponse(user, authMessages.success.profileFetched);
     } catch (err) {
       console.error("Profile error:", err);
-      return createErrorResponse("Invalid token", "INVALID_TOKEN", err);
+      return createErrorResponse(
+        authMessages.errors.invalidToken,
+        "INVALID_TOKEN",
+        err
+      );
     }
   }
 
@@ -260,7 +270,7 @@ export class AuthController extends Controller {
       if (!authHeader) {
         return {
           success: false,
-          message: "Missing Authorization header",
+          message: authMessages.errors.missingAuthorizationHeader,
         };
       }
 
@@ -276,7 +286,7 @@ export class AuthController extends Controller {
       console.error("Token verification error:", err);
       return {
         success: false,
-        message: "Invalid token",
+        message: authMessages.errors.invalidToken,
         error: err,
       };
     }
@@ -311,6 +321,7 @@ export class AuthController extends Controller {
 
       const usersCollection = AuthController.userCollection();
       const user = await usersCollection.findOne({
+        //@ts-ignore
         _id: new ObjectId(payload.userId),
       });
       if (!user) return createErrorResponse("User not found", "USER_NOT_FOUND");
@@ -318,20 +329,29 @@ export class AuthController extends Controller {
       // Issue new access token
       //@ts-ignore
       const newToken = jwt.sign(
-        { userId: user._id.toString(), role: user.role },
+        {
+          userId: user._id.toString(),
+          role: user.role,
+          user_profile: {
+            email: user.email,
+            phone: user.phone,
+            whatsapp: user.phone,
+            firstName: user.name,
+          },
+        },
         JWT_SECRET,
         { expiresIn: ACCESS_EXPIRE }
       );
 
-      const isProd = process.env.NODE_ENV === "production";
+      const isProd = process.env.NODE_ENV === "PRODUCTION";
 
       const cookie = [
         `token=${newToken}`,
         "HttpOnly",
         "Path=/",
-        `Max-Age=${24 * 3600}`,
-        `SameSite=${isProd ? "None" : "Lax"}`,
-        isProd ? "Secure" : "",
+        `Max-Age=${1 * 3600}`,
+        isProd ? "SameSite=None" : "SameSite=Lax",
+        isProd ? "Secure" : "Secure",
       ]
         .filter(Boolean)
         .join("; ");
@@ -371,7 +391,10 @@ export class AuthController extends Controller {
 
       if (!user) {
         this.setStatus(404);
-        return createErrorResponse("User not found", "USER_NOT_FOUND");
+        return createErrorResponse(
+          authMessages.errors.userNotFound,
+          "USER_NOT_FOUND"
+        );
       }
 
       const isPasswordCorrect = await bcrypt.compare(
@@ -381,14 +404,60 @@ export class AuthController extends Controller {
 
       if (!isPasswordCorrect) {
         this.setStatus(401);
-        return createErrorResponse("Invalid password", "INVALID_PASSWORD");
+        return createErrorResponse(
+          authMessages.errors.invalidPassword,
+          "INVALID_PASSWORD"
+        );
       }
 
       if (!user.authorize) {
         this.setStatus(401);
         return createErrorResponse(
-          "User has not been authorized by the administration. Please wait for the activation email.",
+          authMessages.errors.userNotAuthorized,
           "USER_NOT_AUTHORIZED"
+        );
+      }
+
+      const { password, ...safeUser } = user;
+
+      if (user.requirePasswordChange) {
+        // 2. Generate secure random token
+        //@ts-ignore
+const sessionCollection = getCollection("passwordResetSessions");
+        const active_session = await sessionCollection.findOne({
+            userId: user._id,
+            used: false,
+            expiresAt: { $gt: new Date() },
+        });
+
+        if(active_session){
+ this.setStatus(200);
+        //@ts-ignore
+        return createSuccessResponse(
+          { user: safeUser, token: active_session.token },
+          authMessages.success.requirePasswordChange
+        );
+        }
+
+        const token = randomBytes(32).toString("hex");
+
+        // 3. Save reset session (valid for 1 hour)
+        
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+        await sessionCollection.insertOne({
+          userId: user._id,
+          email: user.email,
+          token: token,
+          expiresAt: expiresAt,
+          used: false,
+        });
+
+
+        this.setStatus(200);
+        //@ts-ignore
+        return createSuccessResponse(
+          { user: safeUser, token: token },
+          authMessages.success.requirePasswordChange
         );
       }
 
@@ -403,9 +472,19 @@ export class AuthController extends Controller {
         ipAddress: ip,
         userAgent: req.headers["user-agent"],
       });
-        //@ts-ignore
+      //@ts-ignore
+
       const token = jwt.sign(
-        { userId: user._id.toString(), role: user.role },
+        {
+          userId: user._id.toString(),
+          role: user.role,
+          user_profile: {
+            email: user.email,
+            phone: user.phone,
+            whatsapp: user.phone,
+            firstName: user.name,
+          },
+        },
         JWT_SECRET,
         { expiresIn: ACCESS_EXPIRE }
       );
@@ -442,7 +521,7 @@ export class AuthController extends Controller {
         });
       }
 
-      const isProd = process.env.NODE_ENV === "production";
+      const isProd = process.env.NODE_ENV === "PRODUCTION";
 
       const cookies = [
         // Access token
@@ -450,9 +529,9 @@ export class AuthController extends Controller {
           `token=${token}`,
           "HttpOnly",
           "Path=/",
-          `Max-Age=${24 * 3600}`,
-          `SameSite=${isProd ? "None" : "Lax"}`,
-          isProd ? "Secure" : "",
+          `Max-Age=${1 * 3600}`,
+          isProd ? "SameSite=None" : "SameSite=Lax",
+          isProd ? "Secure" : "Secure",
         ]
           .filter(Boolean)
           .join("; "),
@@ -463,8 +542,8 @@ export class AuthController extends Controller {
           "HttpOnly",
           "Path=/", // or /refresh-token if you want restricted path
           `Max-Age=${refreshExpirySec}`,
-          `SameSite=${isProd ? "None" : "Lax"}`,
-          isProd ? "Secure" : "",
+          isProd ? "SameSite=None" : "SameSite=Lax",
+          isProd ? "Secure" : "Secure",
         ]
           .filter(Boolean)
           .join("; "),
@@ -474,14 +553,12 @@ export class AuthController extends Controller {
       this.setHeader("Set-Cookie", cookies);
       this.setStatus(200);
 
-      const { password, ...safeUser } = user;
-
       return createSuccessResponse(safeUser, "Login successful");
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
       return createErrorResponse(
-        error.message || "Login failed",
+        error.message || authMessages.errors.loginFailed,
         "INTERNAL_ERROR"
       );
     }
@@ -490,9 +567,8 @@ export class AuthController extends Controller {
   @Post("logout")
   public async logoutUser(): Promise<{ success: boolean }> {
     try {
-      const isProd = process.env.NODE_ENV === "production";
+      const isProd = process.env.NODE_ENV === "PRODUCTION";
 
-      // Clear cookie by setting an expired one
       const cookies = [
         // Access token
         [
@@ -500,8 +576,8 @@ export class AuthController extends Controller {
           "HttpOnly",
           "Path=/",
           `Max-Age=$`,
-          `SameSite=${isProd ? "None" : "Lax"}`,
-          isProd ? "Secure" : "",
+          isProd ? "SameSite=None" : "SameSite=Lax",
+          isProd ? "Secure" : "Secure",
         ]
           .filter(Boolean)
           .join("; "),
@@ -512,8 +588,8 @@ export class AuthController extends Controller {
           "HttpOnly",
           "Path=/", // or /refresh-token if you want restricted path
           `Max-Age=`,
-          `SameSite=${isProd ? "None" : "Lax"}`,
-          isProd ? "Secure" : "",
+          isProd ? "SameSite=None" : "SameSite=Lax",
+          isProd ? "Secure" : "Secure",
         ]
           .filter(Boolean)
           .join("; "),
@@ -532,9 +608,7 @@ export class AuthController extends Controller {
 
   @SuccessResponse("200", "Reset Link Sent")
   @Post("/forgot-password")
-  public async resetPassword(
-    @Body() body: { email: string }
-  ): Promise<{ error?: any }> {
+  public async resetPassword(@Body() body: { email: string }): Promise<{}> {
     try {
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
@@ -545,13 +619,38 @@ export class AuthController extends Controller {
       if (!existing) {
         this.setStatus(400);
         return createErrorResponse(
-          "The user does not exist. Please check the email and try again.",
+          authMessages.errors.userExists,
           "USER_NOT_FOUND"
         );
       }
 
+
+        const active_session = await sessionCollection.findOne({
+            userId: existing._id,
+            used: false,
+            expiresAt: { $gt: new Date() },
+        });
+
+        if (active_session){
+let resetLink: string;
+      if (process.env.NODE_ENV === "PRODUCTION") {
+        resetLink = `${process.env.CLIENT_ORIGIN_PROD}/reset-password?token=${active_session.token}`;
+      } else {
+        resetLink = `${process.env.CLIENT_ORIGIN_DEV}/reset-password?token=${active_session.token}`;
+      }
+
+      const params: Record<string, any> = {
+        email: existing.email,
+        RESET_LINK: resetLink,
+        USER_NAME: existing.email,
+      };
+
+      await sendDynamicEmailDoc("reset_password", params);
+
+      return createSuccessResponse(null, authMessages.success.resetLinkSent);
+        }
       // 2. Generate secure random token
-      const token = crypto.randomUUID().toString();
+      const token = randomBytes(32).toString("hex");
 
       // 3. Save reset session (valid for 1 hour)
       const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
@@ -578,12 +677,12 @@ export class AuthController extends Controller {
 
       await sendDynamicEmailDoc("reset_password", params);
 
-      this.setStatus(200);
+      return createSuccessResponse(null, authMessages.success.resetLinkSent);
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
       return createErrorResponse(
-        error.message || "Failed to initiate password reset",
+        error.message || authMessages.errors.internalError,
         "INTERNAL_ERROR"
       );
     }
@@ -595,7 +694,10 @@ export class AuthController extends Controller {
     try {
       if (!token) {
         this.setStatus(400);
-        return createErrorResponse("Token is required", "MISSING_TOKEN");
+        return createErrorResponse(
+          authMessages.errors.tokenRequired,
+          "MISSING_TOKEN"
+        );
       }
 
       const sessionCollection = getCollection("passwordResetSessions");
@@ -605,19 +707,28 @@ export class AuthController extends Controller {
 
       if (!session) {
         this.setStatus(400);
-        return createErrorResponse("Invalid reset token", "INVALID_TOKEN");
+        return createErrorResponse(
+          authMessages.errors.invalidResetToken,
+          "INVALID_TOKEN"
+        );
       }
 
       // Check expiration
       if (new Date(session.expiresAt).getTime() < Date.now()) {
         this.setStatus(400);
-        return createErrorResponse("Token has expired", "TOKEN_EXPIRED");
+        return createErrorResponse(
+          authMessages.errors.tokenExpired,
+          "TOKEN_EXPIRED"
+        );
       }
 
       // Check if already used
       if (session.used) {
         this.setStatus(400);
-        return createErrorResponse("Token already used", "TOKEN_ALREADY_USED");
+        return createErrorResponse(
+          authMessages.errors.tokenAlreadyUsed,
+          "TOKEN_ALREADY_USED"
+        );
       }
 
       // Token valid → return user ID so the frontend can proceed
@@ -628,13 +739,13 @@ export class AuthController extends Controller {
           userId: session.userId,
           email: session.email,
         },
-        "Token is valid"
+        authMessages.success.tokenValid
       );
     } catch (error: any) {
       console.error("Token verification failed:", error);
       this.setStatus(500);
       return createErrorResponse(
-        error.message || "Failed to verify token",
+        error.message || authMessages.errors.internalError,
         "INTERNAL_ERROR"
       );
     }
@@ -647,13 +758,16 @@ export class AuthController extends Controller {
   ): Promise<any> {
     try {
       const { token, newPassword } = body;
+
       if (!token || !newPassword) {
         this.setStatus(400);
         return createErrorResponse(
-          "Token and new password are required",
+          authMessages.errors.validationError,
           "VALIDATION_ERROR"
         );
       }
+
+      
 
       const usersCollection = AuthController.userCollection();
       const sessionCollection = getCollection("passwordResetSessions");
@@ -663,7 +777,7 @@ export class AuthController extends Controller {
       if (!resetSession || resetSession.used) {
         this.setStatus(400);
         return createErrorResponse(
-          "Invalid or already used token",
+          authMessages.errors.invalidOrUsedToken,
           "INVALID_TOKEN"
         );
       }
@@ -671,7 +785,10 @@ export class AuthController extends Controller {
       // 2. Check expiration
       if (resetSession.expiresAt < new Date()) {
         this.setStatus(400);
-        return createErrorResponse("Token has expired", "TOKEN_EXPIRED");
+        return createErrorResponse(
+          authMessages.errors.tokenExpired,
+          "TOKEN_EXPIRED"
+        );
       }
 
       // 3. Hash new password
@@ -680,7 +797,7 @@ export class AuthController extends Controller {
       // 4. Update user password
       await usersCollection.updateOne(
         { _id: resetSession.userId },
-        { $set: { password: hashedPassword } }
+        { $set: { password: hashedPassword, requirePasswordChange: false } }
       );
 
       // 5. Mark token as used
@@ -692,13 +809,13 @@ export class AuthController extends Controller {
       this.setStatus(200);
       return createSuccessResponse(
         undefined,
-        "Password has been reset successfully"
+        authMessages.success.passwordResetSuccess
       );
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
       return createErrorResponse(
-        error.message || "Failed to reset password",
+        error.message || authMessages.errors.internalError,
         "INTERNAL_ERROR"
       );
     }
@@ -720,7 +837,7 @@ export class AuthController extends Controller {
       if (payload.purpose !== "unsubscribe") {
         this.setStatus(400);
         return createErrorResponse(
-          "Invalid token purpose",
+          authMessages.errors.invalidTokenPurpose,
           "INVALID_TOKEN_PURPOSE"
         );
       }
@@ -733,7 +850,7 @@ export class AuthController extends Controller {
           subscription_id: payload.sub, // assuming sub contains user ID
           email: payload.email, // if included in token
         },
-        "Token is valid"
+        authMessages.success.tokenValid
       );
     } catch (error: any) {
       this.setStatus(400);

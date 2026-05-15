@@ -46,7 +46,7 @@ export default function JsonViewer() {
         try {
             setLoading(true);
             const response = await updateClientById(data._id, data);
-
+            
             if (response.success) {
 
                 setData(data);
@@ -101,25 +101,26 @@ export default function JsonViewer() {
 
 
     return (
-        <>
-            <h3 className="mb-3">Email Template</h3>
-            <button className="btn dashboard-btn mb-2" onClick={updateClient}>
-                Update Sitedata
+        <div style={{ position: 'relative' }}>
+            <h3 className="mb">Website Key Values</h3>
+            <button
+                className="btn dashboard-btn mb-2"
+                onClick={updateClient}
+                style={{ position: 'sticky', top: 0, left: 0, paddingTop: 10, zIndex: 100 }}
+            >
+                Update
             </button>
-            <div className="application-json-editor-continer">
-
-                {loading ?
+            <div className="application-json-editor-continer" style={{ position: 'relative', height: '78dvh', overflow: 'scroll'}}>
+                {loading ? (
                     <Loader />
-
-                    :
+                ) : (
                     <JsonEditor
-                        
                         data={data}
                         key={editorKey}
                         setData={handleChange}
                     />
-                }
+                )}
             </div>
-        </>
+        </div>
     );
 }

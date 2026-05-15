@@ -15,15 +15,6 @@ import { setReady } from '../../features/appSlice';
 const Unsubscribe: React.FC = () => {
 
 
-
-
-    
-          const dispatch = useDispatch();
-        useEffect(()=>{
-                dispatch(setReady(true));
-               
-        }, [dispatch])
-
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
@@ -48,7 +39,6 @@ const Unsubscribe: React.FC = () => {
             if (res.data.success) {
 
                 setUser(res.data.data);
-                console.log(res.data.data);
                 setInvalidToken(false);
 
 
@@ -109,7 +99,7 @@ const Unsubscribe: React.FC = () => {
 
 
     useEffect(() => {
-        console.log("useEffect user:", user);
+        
         if (!user) {
             return;
         }

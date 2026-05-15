@@ -16,6 +16,7 @@ import "./Dashboard.css";
 import { usePage } from "@/Providers/PageContext";
 import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
+import Blog from "@/Components/Dashboard/Blog/Blog";
 import type { RootState } from "../../store";
 
 type MenuItem =
@@ -105,7 +106,7 @@ const Dashboard: React.FC = () => {
   const componentMap: Record<MenuItem, React.ReactNode> = {
     member_requests: <ContactUsRequests />,
     member_profiles: <UserProfilesDataGrid />,
-    blog: <UnderDevelopment withLockOverlay={false} />,
+    blog: <Blog />,
     sitedata: <JsonViewer />,
     file_management: <FileManagement />,
     email_management: <EmailTemplatesDataGrid />,

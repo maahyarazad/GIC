@@ -1,0 +1,71 @@
+name: Deploy German Industry Club App CLIENT
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Build & Deploy Client (Vite)
+  # ─────────────────────────────────────────────
+  deploy-client:
+    name: Build & Deploy Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy Build files to server
+        run: |
+          sudo apt-get install -y sshpass
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
+          --exclude='dist/' \
+          --exclude='public/bootstrap' \
+          --exclude='src/' \
+          --exclude='node_modules/' \
+          -e "ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+          ui/ \
+          ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/ui/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ui/package.json
+
+      - name: Install dependencies
+        working-directory: ui
+        run: npm install
+
+      - name: Build client
+        working-directory: ui
+        env:
+          VITE_SERVERURL: ${{ secrets.VITE_SERVERURL }}
+        run: npm run build
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Clear old build on server
+        run: |
+            ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/ui/dist/"
+
+      - name: Upload new build to server
+        run: |
+            rsync -avz \
+            -e "ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }}" \
+            ui/dist/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/ui/dist/
+
+
+
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "ls -la ~/german-industry-club/node/german-industry-club.com/ui/dist/"

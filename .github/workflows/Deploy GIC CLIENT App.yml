@@ -1,0 +1,50 @@
+name: Deploy GIC CLIENT App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-client:
+    name: Build & Deploy Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ui/package.json
+
+      - name: Install dependencies
+        working-directory: ui
+        run: npm install
+
+      - name: Build client
+        working-directory: ui
+        run: npm run build:client
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Clear old dist & upload new build
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
+            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist"
+
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
+            ui/dist/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/ui/dist/
+
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
+            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "ls -la ~/german-industry-club/node/german-industry-club.com/ui/dist/"

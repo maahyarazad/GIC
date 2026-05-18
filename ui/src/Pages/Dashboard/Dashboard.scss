@@ -132,6 +132,53 @@
   }
 }
 
+// ─── Shared Dashboard Section Styles ────────────────────────────────
+// Matches Blog section patterns; use these classes across all sections
+// for consistent UI/UX.
+
+.dash-section {
+  padding: 1.5rem 0;
+  font-family: var(--sa);
+}
+
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--bdr);
+
+  h3 {
+    margin: 0;
+    font-family: var(--se);
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--txt);
+    letter-spacing: 0.02em;
+  }
+}
+
+.dash-header-count {
+  font-family: var(--sa);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mu);
+  margin-left: 10px;
+}
+
+.dash-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 5rem 0;
+  color: var(--mu);
+  font-size: 0.95rem;
+}
+
+// ────────────────────────────────────────────────────────────────────
+
 /* Main content takes rest space */
 .main-content {
   flex-grow: 1;

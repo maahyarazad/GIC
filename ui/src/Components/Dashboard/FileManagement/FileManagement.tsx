@@ -175,14 +175,14 @@ const FileManagement = () => {
     ];
 
     return (
-        <div className="file-manager">
-            <h3 className="mb">File Manager</h3>
-
-            <label className="btn dashboard-btn mb-4">
-                {uploading ? "Uploading..." : "Upload File"}
-                <input type="file" onChange={handleFileUpload} hidden />
-            </label>
-
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>File Manager</h3>
+                <label className="dashboard-btn" style={{ cursor: "pointer" }}>
+                    {uploading ? "Uploading…" : "Upload File"}
+                    <input type="file" onChange={handleFileUpload} hidden />
+                </label>
+            </div>
 
             {loading ?
                 <Loader/>

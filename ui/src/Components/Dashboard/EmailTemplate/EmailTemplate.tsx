@@ -287,13 +287,13 @@ debugger;
 
 
     return (
-        <>
-            <h3 className="mb">Email Templates</h3>
-
-
-            <button className={`btn btn-sm dashboard-btn mb-1`}
-                onClick={onCreate}>
-                Add New</button>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Email Templates</h3>
+                <button className="dashboard-btn" onClick={onCreate}>
+                    Add New
+                </button>
+            </div>
 
 
             {loading ?
@@ -316,7 +316,7 @@ debugger;
                     getRowId={(row) => row._id!}
                 />
             }
-        </>
+        </div>
     );
 };
 

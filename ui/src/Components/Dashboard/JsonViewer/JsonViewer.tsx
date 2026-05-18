@@ -101,15 +101,13 @@ export default function JsonViewer() {
 
 
     return (
-        <div style={{ position: 'relative' }}>
-            <h3 className="mb">Website Key Values</h3>
-            <button
-                className="btn dashboard-btn mb-2"
-                onClick={updateClient}
-                style={{ position: 'sticky', top: 0, left: 0, paddingTop: 10, zIndex: 100 }}
-            >
-                Update
-            </button>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Website Key Values</h3>
+                <button className="dashboard-btn" onClick={updateClient}>
+                    Update
+                </button>
+            </div>
             <div className="application-json-editor-continer" style={{ position: 'relative', height: '78dvh', overflow: 'scroll'}}>
                 {loading ? (
                     <Loader />

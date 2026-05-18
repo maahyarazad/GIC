@@ -293,8 +293,10 @@ export const ContactUsRequests = () => {
     }, [debouncedFetch]);
 
     return (
-        <>
-            <h3 className="mb">Contact Us Submissions</h3>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Member Requests</h3>
+            </div>
 
             {loading ? (
                 <Loader />
@@ -314,6 +316,6 @@ export const ContactUsRequests = () => {
                     getRowId={(row) => row.id}
                 />
             )}
-        </>
+        </div>
     );
 };

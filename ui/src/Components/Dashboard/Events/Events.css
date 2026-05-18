@@ -1,5 +1,5 @@
 .economic-insights .products .card {
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--bdr);
   min-height: 300px;
   transition: transform 0.2s, box-shadow 0.2s;
   position: relative;
@@ -7,7 +7,7 @@
 }
 .economic-insights .products .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 25px var(--bo);
 }
 .economic-insights .products .card .card-bg-image,
 .economic-insights .products .card .card-video-bg {

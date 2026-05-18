@@ -134,3 +134,71 @@ This enhancement aims to redesign and unify these authentication pages so they m
 - All pages are responsive on major screen sizes
 - No broken layouts, overflow issues, or unreadable text in either theme
 - Existing authentication functionality remains unchanged
+
+
+# Feature Ticket 4 — Dashboard UI Consistency & GenericDataGrid Refactor
+
+## Title
+Unify Dashboard UI Styling and Migrate Blog Table to GenericDataGrid
+
+## Description
+The Dashboard currently has inconsistent UI across sections. The `Blog` section has the most refined styling (fonts, table headers, layout) and should serve as the reference. This ticket covers three sequential tasks: propagating the Blog section's UI to all other Dashboard sections, applying the `TableHeaderRow` style to the `GenericDataGrid` component, and finally replacing the Blog section's own table with `GenericDataGrid`.
+
+## Requirements
+
+### Task 1 — Apply Blog Section Styling Across Dashboard
+- Use the same font and styling from the `Blog` section as the design reference
+- Apply consistent UI/UX to all other sections in the Dashboard
+- Ensure typography, spacing, table appearance, and layout are unified
+
+### Task 2 — Refactor GenericDataGrid with TableHeaderRow Styling
+- Reuse the `TableHeaderRow` styling from the Blog table
+- Apply it to the `GenericDataGrid` component
+- Ensure consistent table appearance and behavior across all uses of `GenericDataGrid`
+
+### Task 3 — Replace Blog Table with GenericDataGrid
+- After Tasks 1 and 2 are complete, replace the existing Blog table implementation with the `GenericDataGrid` component
+- Preserve all current Blog table functionality (columns, actions, pagination, etc.)
+
+## Acceptance Criteria
+- All Dashboard sections share the same font and UI styling as the Blog section
+- `GenericDataGrid` uses `TableHeaderRow` styling consistently
+- The Blog table is fully replaced by `GenericDataGrid` with no loss of functionality
+- No visual regressions in other sections that use `GenericDataGrid`
+
+
+# Feature Ticket 5 — Dashboard UI Styling Consistency
+
+## Title
+Apply Blog Section Styling Consistently Across All Remaining Dashboard Components
+
+## Description
+The `Blog` section (referred to as `Blog(1)`) currently has the most refined and consistent styling in the Dashboard — including font family, typography, spacing, and overall layout. This ticket ensures that the same design language is applied uniformly to all remaining Dashboard components that have not yet been updated.
+
+## Requirements
+
+Apply the same font family, typography, spacing, and overall styling from the `Blog(1)` section to each of the following Dashboard components:
+
+- `UserProfilesDataGrid` (`member_profiles`)
+- `JsonViewer` (`sitedata`)
+- `FileManagement` (`file_management`)
+- `EmailTemplatesDataGrid` (`email_management`)
+- `Continent` (`sub_region_management`)
+- `EconomicInsights` (`country_intelligence`)
+- `Events` (`events`)
+- `UserProfileForm` (`profile`)
+- `LogoutComponent` (`logout`)
+
+### Design Reference
+Use the `Blog(1)` section as the single source of truth for:
+- Font family and typography scale
+- Spacing and padding conventions
+- Table/list header and row styling
+- Button and action styles
+- Layout and alignment patterns
+
+## Acceptance Criteria
+- All listed components visually match the `Blog(1)` section in font, typography, spacing, and layout
+- No regressions introduced in any updated component's functionality
+- Styling changes are consistent and do not use one-off overrides
+- Dashboard feels visually unified across all sections

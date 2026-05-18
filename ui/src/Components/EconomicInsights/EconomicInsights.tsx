@@ -126,10 +126,10 @@ const EconomicInsights: React.FC = () => {
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
-
-
-        <div className="economic-insights">
-            <h3 className="mb">Country Intelligence</h3>
+        <div className="dash-section economic-insights">
+            <div className="dash-header">
+                <h3>Country Intelligence</h3>
+            </div>
 
             <div className="categories row">
                 <div className="col-12">
@@ -179,7 +179,7 @@ const EconomicInsights: React.FC = () => {
                                             <span className="_card-text small">Downloads: {p.downloadCount}</span>
                                         </div>
 
-                                        <div style={{ width: '1px', alignSelf: 'stretch', backgroundColor: '#dee2e6', margin: '0 8px' }} />
+                                        <div style={{ width: '1px', alignSelf: 'stretch', backgroundColor: 'var(--bdr)', margin: '0 8px' }} />
 
                                         {p.metadata?.conclusion && (
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }} className="pe-4">
@@ -207,7 +207,7 @@ const EconomicInsights: React.FC = () => {
                                     </div>
 
 
-                                    <hr style={{ borderColor: '#dee2e6', margin: '8px 0' }} />
+                                    <hr style={{ borderColor: 'var(--bdr)', margin: '8px 0' }} />
 
                                     {/* Rationale below */}
                                     {p.metadata?.conclusion?.rationaleIndustrialInvestability && (

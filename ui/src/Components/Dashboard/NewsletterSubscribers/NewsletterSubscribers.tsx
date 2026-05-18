@@ -112,27 +112,29 @@ export const NewsletterSubscribers = () => {
 
 
     return (
-        <>
-            <h3 className="mb">Newsletter Subscribers</h3>
-              {loading ?
-                <Loader/>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Newsletter Subscribers</h3>
+            </div>
 
-             : 
-            <GenericDataGrid<NewsletterSubscriber>
-                rows={rows}
-                prevButtonClassName="dashboard-btn--ghost-minimal"
-                nextButtonClassName="dashboard-btn--ghost-minimal"
-                columns={columns}
-                rowCount={rowCount}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                sortModel={sortModel}
-                onSortModelChange={setSortModel}
-                filterModel={filterModel}
-                onFilterModelChange={setFilterModel}
-                getRowId={(row) => row._id!.toString()}
-            />
-             }
-        </>
+            {loading ? (
+                <Loader />
+            ) : (
+                <GenericDataGrid<NewsletterSubscriber>
+                    rows={rows}
+                    prevButtonClassName="dashboard-btn--ghost-minimal"
+                    nextButtonClassName="dashboard-btn--ghost-minimal"
+                    columns={columns}
+                    rowCount={rowCount}
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    sortModel={sortModel}
+                    onSortModelChange={setSortModel}
+                    filterModel={filterModel}
+                    onFilterModelChange={setFilterModel}
+                    getRowId={(row) => row._id!.toString()}
+                />
+            )}
+        </div>
     );
 };

@@ -172,10 +172,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                 <th
                                     key={String(col.field ?? col.headerName)}
                                     style={{
-                                        borderBottom: "1px solid #ccc",
-                                        padding: 8,
                                         cursor: col.sortable ? "pointer" : "default",
-                                        userSelect: "none",
                                         width: col.width,
                                     }}
                                     onClick={() => {
@@ -218,13 +215,13 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
+                                <td colSpan={columns.length} className="td-center">
                                     Loading...
                                 </td>
                             </tr>
                         ) : rows?.length === 0 ? (
                             <tr>
-                                <td colSpan={columns.length} style={{ padding: 20, textAlign: "center" }} className="td-scroll">
+                                <td colSpan={columns.length} className="td-center">
                                     No data found.
                                 </td>
                             </tr>
@@ -240,13 +237,10 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                                                 if (!col.field || col.renderCell) return;
                                                 if (col.field) {
                                                     copyToClipboard(String(row[col.field]), e)
-
                                                 }
                                             }}
                                             key={String(col.field ?? idx)}
                                             data-label={col.headerName}
-                                            style={{ padding: 8, borderBottom: "1px solid #eee" }}
-
                                         >
                                             {col.renderCell
                                                 ? col.renderCell(row)
@@ -266,24 +260,16 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                 </table>
 
                 {/* Pagination Controls */}
-                <div
-                    style={{
-                        marginTop: 10,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <div>
+                <div className="grid-pagination">
+                    <span>
                         Page {paginationModel.page} of {totalPages} ({rowCount} items)
-                    </div>
+                    </span>
 
-                    <div>
+                    <div className="grid-pagination-controls">
                         <button
                             className={prevButtonClassName}
                             onClick={() => handlePageChange(paginationModel.page - 1)}
                             disabled={paginationModel.page <= 1}
-                            style={{ marginRight: 10 }}
                         >
                             Previous
                         </button>
@@ -297,8 +283,8 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                         </button>
                     </div>
 
-                    <div>
-                        <label htmlFor="pageSizeSelect">Items per page: </label>
+                    <div className="grid-pagination-size">
+                        <label htmlFor="pageSizeSelect">Rows per page:</label>
                         <select
                             id="pageSizeSelect"
                             value={paginationModel.pageSize}

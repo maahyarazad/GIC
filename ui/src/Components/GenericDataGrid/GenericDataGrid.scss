@@ -17,16 +17,33 @@
     background: var(--bgp);
   }
 
-        th,
+        th {
+            background: var(--bgp2);
+            color: var(--mu);
+            font-family: var(--sa);
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--bdr);
+            white-space: nowrap;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            user-select: none;
+        }
+
         td {
-            padding: 8px;
-            border-bottom: 1px solid #ccc;
-            white-space: nowrap; // for desktop
+            padding: 13px 14px;
+            border-bottom: 1px solid var(--bdr);
+            white-space: nowrap;
             text-align: left;
             overflow: hidden;
             text-overflow: ellipsis;
             color: var(--txt);
             background: var(--bg);
+            vertical-align: middle;
 
             .td-scroll {
                 max-width: 100%;
@@ -34,12 +51,10 @@
                 white-space: nowrap;
                 display: block;
             }
-
         }
 
         th.sortable {
             cursor: pointer;
-            user-select: none;
         }
 
         input[type='text'] {
@@ -113,6 +128,60 @@ input[type="text"]:focus-visible {
                 width: 100%;
                 margin-top: 4px;
             }
+        }
+    }
+}
+
+.td-center {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--mu);
+    font-family: var(--sa);
+    font-size: 0.9rem;
+}
+
+.grid-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--bdr);
+    font-family: var(--sa);
+    font-size: 0.8rem;
+    color: var(--mu);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.grid-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.grid-pagination-size {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+        color: var(--mu);
+        font-family: var(--sa);
+        font-size: 0.8rem;
+    }
+
+    select {
+        background: var(--bgp);
+        border: 1px solid var(--bdr);
+        color: var(--txt);
+        font-family: var(--sa);
+        font-size: 0.8rem;
+        padding: 3px 6px;
+        cursor: pointer;
+
+        &:focus {
+            border-color: var(--ora);
+            outline: none;
         }
     }
 }

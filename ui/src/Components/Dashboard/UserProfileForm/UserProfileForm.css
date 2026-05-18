@@ -7,7 +7,8 @@
   gap: 1rem;
 }
 .profile-form input.disabled {
-  background-color: #dcdcdc;
+  background-color: var(--bgp2);
+  color: var(--mu);
 }
 .profile-form .form-group {
   display: flex;
@@ -15,22 +16,41 @@
   gap: 10px;
 }
 .profile-form .form-group label {
+  font-family: var(--sa);
+  font-size: 0.68rem;
   font-weight: 600;
-  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mu);
 }
 .profile-form .form-group input[type=text],
 .profile-form .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ccc;
+  background: var(--bgp);
+  border: 1px solid var(--bdr);
   border-radius: 6px;
-  font-size: 14px;
+  font-family: var(--sa);
+  font-size: 0.9rem;
+  color: var(--txt);
   outline: none;
-  transition: border 0.2s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .profile-form .form-group input[type=text]:focus,
 .profile-form .form-group textarea:focus {
-  border-color: #007bff;
+  background: var(--bgp2);
+  border-color: var(--ora);
+  box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.15);
+}
+.profile-form .form-group input[type=text]::-moz-placeholder,
+.profile-form .form-group textarea::-moz-placeholder {
+  color: var(--mu);
+  opacity: 0.6;
+}
+.profile-form .form-group input[type=text]::placeholder,
+.profile-form .form-group textarea::placeholder {
+  color: var(--mu);
+  opacity: 0.6;
 }
 .profile-form .form-group textarea {
   min-height: 120px;
@@ -38,6 +58,9 @@
 }
 .profile-form .form-group input[type=file] {
   cursor: pointer;
+  color: var(--mu);
+  font-family: var(--sa);
+  font-size: 0.85rem;
 }
 .profile-form .form-group .preview-image {
   margin-top: 10px;
@@ -46,8 +69,8 @@
   -o-object-fit: cover;
      object-fit: cover;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px var(--bo);
+  border: 1px solid var(--bdr);
 }
 .profile-form .social-link-row {
   display: flex;
@@ -62,10 +85,10 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: var(--bgp);
+  border: 1px solid var(--bdr);
   font-size: 20px;
-  color: #333;
+  color: var(--txt);
 }
 .profile-form .social-link-row .icon-preview svg {
   width: 20px;

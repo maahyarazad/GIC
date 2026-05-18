@@ -259,17 +259,22 @@ setInitializing(false);
 
 
     return (
-        <>
-            <h3 className="mb">Manage Country Intelligence</h3>
-            <div className="d-flex">
-
-            <button className={`${initializing ? "btn" : "btn btn-sm dashboard-btn mb-1 me-1 " }`}  style={{minWidth: 94}}
-                onClick={handleInitializeDb}>
-                {initializing ? <Loader size={14} />: <>{"Initialize Db"}</>}</button>
-
-            <button className={`btn btn-sm dashboard-btn mb-1`}
-                onClick={onCreate}>
-                Add New</button>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Manage Country Intelligence</h3>
+                <div className="d-flex gap-2">
+                    <button
+                        className="dashboard-btn"
+                        style={{ minWidth: 94 }}
+                        onClick={handleInitializeDb}
+                        disabled={initializing}
+                    >
+                        {initializing ? <Loader size={14} /> : "Initialize Db"}
+                    </button>
+                    <button className="dashboard-btn" onClick={onCreate}>
+                        Add New
+                    </button>
+                </div>
             </div>
 
             {loading ? (
@@ -290,7 +295,7 @@ setInitializing(false);
                     getRowId={(row) => row._id!}
                 />
             )}
-        </>
+        </div>
     );
 };
 

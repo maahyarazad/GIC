@@ -43,40 +43,8 @@
 }
 
 /* ──────────────────────────────────────
-   TABLE
+   TABLE CELLS (used via GenericDataGrid renderCell)
 ────────────────────────────────────── */
-.blog-table-wrapper {
-  overflow-x: auto;
-}
-.blog-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-.blog-table thead th {
-  background: var(--bgp2);
-  color: var(--mu);
-  font-family: var(--sa);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--bdr);
-  white-space: nowrap;
-}
-.blog-table tbody tr {
-  border-bottom: 1px solid var(--bdr);
-  transition: background 0.15s ease;
-}
-.blog-table tbody tr:hover {
-  background: var(--bgp);
-}
-.blog-table tbody td {
-  color: var(--txt);
-  padding: 13px 14px;
-  vertical-align: middle;
-}
 .blog-title-cell {
   max-width: 240px;
   white-space: nowrap;

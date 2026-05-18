@@ -25,5 +25,12 @@ export default function LogoutComponent() {
         handleLogout(); // call once on mount
     }, [handleLogout]);
 
-    return <p>Logging out...</p>;
+    return (
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Logging Out</h3>
+            </div>
+            <p style={{ color: "var(--mu)", fontFamily: "var(--sa)" }}>Logging out…</p>
+        </div>
+    );
 }

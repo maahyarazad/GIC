@@ -226,9 +226,14 @@ export default function UserProfileForm({ initialProfile }: any) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="profile-form">
-           
-            <button type="submit" className="btn dashboard-btn">Save Profile</button>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Profile</h3>
+                <button type="button" form="profile-form" onClick={handleSubmit} className="dashboard-btn">
+                    Save Profile
+                </button>
+            </div>
+        <form id="profile-form" onSubmit={handleSubmit} className="profile-form">
             <div className="form-group">
 
                 <div className="d-lg-flex mb-2">
@@ -340,5 +345,6 @@ export default function UserProfileForm({ initialProfile }: any) {
 
 
         </form>
+        </div>
     );
 }

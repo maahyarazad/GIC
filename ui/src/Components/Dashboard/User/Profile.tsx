@@ -239,12 +239,14 @@ export const UserProfilesDataGrid = () => {
 
 
     return (
-        <>
-            <h3 className="mb">User Profiles</h3>
+        <div className="dash-section">
+            <div className="dash-header">
+                <h3>Member Profiles</h3>
+            </div>
             {loading ?
                 <Loader/>
 
-             : 
+             :
                 <GenericDataGrid<User>
                     rows={rows}
                     columns={columns}
@@ -260,6 +262,6 @@ export const UserProfilesDataGrid = () => {
                     getRowId={(row) => row._id!.toString()}
                 />
              }
-        </>
+        </div>
     );
 };

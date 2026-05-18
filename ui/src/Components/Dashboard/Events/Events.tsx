@@ -86,9 +86,10 @@ const Events: React.FC = () => {
 
 
     return (
-        <div className="economic-insights">
-
-            <h3 className="mb-3">Events</h3>
+        <div className="dash-section economic-insights">
+            <div className="dash-header">
+                <h3>Events</h3>
+            </div>
 
             {loading ? (
                 <Loader />

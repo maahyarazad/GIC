@@ -4,6 +4,7 @@ import { useToast } from "@/Providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import Loader from "@/Components/Loader/Loader";
 import { Blog as BlogType, BlogComment } from "../../../../../src/types/blog.types";
+import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
 import "./Blog.css";
 
 type View = "list" | "form" | "comments";
@@ -44,6 +45,7 @@ const Blog: React.FC = () => {
   const [selectedBlog, setSelectedBlog] = useState<BlogType | null>(null);
   const [comments, setComments] = useState<BlogComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
+  const [paginationModel, setPaginationModel] = useState<PaginationModel>({ page: 1, pageSize: 10 });
 
   const fetchBlogs = useCallback(async () => {
     try {
@@ -405,69 +407,92 @@ const Blog: React.FC = () => {
             Create the first post
           </button>
         </div>
-      ) : (
-        <div className="blog-table-wrapper">
-          <table className="blog-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Status</th>
-                <th>Tags</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {blogs.map((blog) => (
-                <tr key={blog._id}>
-                  <td className="blog-title-cell">{blog.title}</td>
-                  <td>{blog.authorName}</td>
-                  <td>
-                    {blog.published ? (
-                      <span className="blog-badge blog-badge--published">Published</span>
-                    ) : (
-                      <span className="blog-badge blog-badge--draft">Draft</span>
-                    )}
-                  </td>
-                  <td>
-                    {(blog.tags ?? []).slice(0, 3).map((t) => (
-                      <span key={t} className="blog-tag-chip">{t}</span>
-                    ))}
-                  </td>
-                  <td className="blog-date-cell">
-                    {blog.createdAt
-                      ? new Date(blog.createdAt).toLocaleDateString()
-                      : "—"}
-                  </td>
-                  <td>
-                    <div className="blog-row-actions">
-                      <button
-                        className="dashboard-btn--ghost-minimal"
-                        onClick={() => openEdit(blog)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="dashboard-btn--ghost-minimal"
-                        onClick={() => openComments(blog)}
-                      >
-                        Comments
-                      </button>
-                      <button
-                        className="dashboard-btn--delete-ghost"
-                        onClick={() => handleDelete(blog)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      ) : (() => {
+        const start = (paginationModel.page - 1) * paginationModel.pageSize;
+        const pageBlogs = blogs.slice(start, start + paginationModel.pageSize);
+
+        const columns: Column<BlogType>[] = [
+          {
+            headerName: "Title",
+            field: "title",
+            width: "28%",
+            sortable: true,
+            filterable: true,
+            renderCell: (blog) => (
+              <span className="blog-title-cell" title={blog.title}>{blog.title}</span>
+            ),
+          },
+          {
+            headerName: "Author",
+            field: "authorName",
+            width: "15%",
+            sortable: true,
+          },
+          {
+            headerName: "Status",
+            field: "published",
+            width: "10%",
+            renderCell: (blog) =>
+              blog.published ? (
+                <span className="blog-badge blog-badge--published">Published</span>
+              ) : (
+                <span className="blog-badge blog-badge--draft">Draft</span>
+              ),
+          },
+          {
+            headerName: "Tags",
+            width: "17%",
+            renderCell: (blog) => (
+              <>
+                {(blog.tags ?? []).slice(0, 3).map((t) => (
+                  <span key={t} className="blog-tag-chip">{t}</span>
+                ))}
+              </>
+            ),
+          },
+          {
+            headerName: "Date",
+            field: "createdAt",
+            width: "10%",
+            sortable: true,
+            renderCell: (blog) => (
+              <span className="blog-date-cell">
+                {blog.createdAt ? new Date(blog.createdAt).toLocaleDateString() : "—"}
+              </span>
+            ),
+          },
+          {
+            headerName: "Actions",
+            width: "20%",
+            renderCell: (blog) => (
+              <div className="blog-row-actions">
+                <button className="dashboard-btn--ghost-minimal" onClick={() => openEdit(blog)}>
+                  Edit
+                </button>
+                <button className="dashboard-btn--ghost-minimal" onClick={() => openComments(blog)}>
+                  Comments
+                </button>
+                <button className="dashboard-btn--delete-ghost" onClick={() => handleDelete(blog)}>
+                  Delete
+                </button>
+              </div>
+            ),
+          },
+        ];
+
+        return (
+          <GenericDataGrid<BlogType>
+            rows={pageBlogs}
+            columns={columns}
+            rowCount={total}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            prevButtonClassName="dashboard-btn--ghost-minimal"
+            nextButtonClassName="dashboard-btn--ghost-minimal"
+            getRowId={(blog) => String(blog._id)}
+          />
+        );
+      })()}
     </div>
   );
 };

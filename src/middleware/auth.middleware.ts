@@ -23,14 +23,8 @@ export const authMiddleware = async (
       return res.status(401).json({ message: "No token provided" });
     }
 
-
     // Verify token
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, role: string };
-
-
-
-
-
     
     next();
   } catch (error) {

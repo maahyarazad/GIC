@@ -17,6 +17,7 @@ import { verifyRequirements } from "./db";
 
 import swaggerDocument from "./swagger/swagger.json";
 import { RegisterContactUsRoutes } from "./controllers/contactus";
+import { RegisterBlogRoutes } from "./controllers/blog"
 
 // ✅ Fix 1: case-insensitive comparison
 const isProduction = process.env.NODE_ENV?.toLowerCase() === "production";
@@ -81,6 +82,7 @@ app.use(express.json());
 RegisterRoutes(app);
 RegisterFileDownloadRoutes(app);
 RegisterContactUsRoutes(app);
+RegisterBlogRoutes(app);
 
 /* ---------------------- Swagger ---------------------- */
 if (!isProduction) {

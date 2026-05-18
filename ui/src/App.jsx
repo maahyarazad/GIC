@@ -14,6 +14,8 @@ import ProtectedRoute from './Pages/ProtectedRoutes';
 import Unsubscribe from './Pages/Unsubscribe/Unsubscribe';
 import WhatWeDo from './Pages/WhatWeDo/WhatWeDo';
 import Membership from './Pages/Membership/Membership';
+import BlogPosts from './Pages/Blog/BlogPosts';
+import BlogDetail from './Pages/Blog/BlogDetail';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import MainLoader from './Components/MainLoader';
@@ -97,6 +99,8 @@ const {showPage} = usePage();
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
+                <Route path="/blog" element={<ProtectedRoute><BlogPosts /></ProtectedRoute>} />
+                <Route path="/blog/:slug" element={<ProtectedRoute><BlogDetail /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />

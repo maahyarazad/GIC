@@ -133,6 +133,12 @@
       "path": "/contact",
       "type": "link",
       "id": 6
+    },
+    {
+      "label": "Blog",
+      "path": "/blog",
+      "type": "link",
+      "id": 7
     }
   ],
   "media": {

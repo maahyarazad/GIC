@@ -5099,6 +5099,35 @@
 				]
 			}
 		},
+		"/api/v1/blogs/by-slug/{slug}": {
+			"get": {
+				"operationId": "GetBlogBySlug",
+				"responses": {
+					"200": {
+						"description": "Blog fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Blogs"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "slug",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/blogs/{blogId}/comments": {
 			"post": {
 				"operationId": "AddComment",

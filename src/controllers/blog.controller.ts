@@ -35,6 +35,7 @@ import {
 } from "../mappers/blog.mapper";
 import { BlogModel } from "../models/blog.model";
 
+
 @Route("api/v1/blogs")
 @Tags("Blogs")
 export class BlogController extends Controller {
@@ -171,6 +172,31 @@ export class BlogController extends Controller {
     }
   }
 
+
+
+  @Get("by-slug/{slug}")
+  @SuccessResponse("200", "Blog fetched successfully")
+  public async getBlogBySlug(@Path() slug: string): Promise<any> {
+    try {
+      //@ts-ignore
+      const blog = await BlogModel.findOne({ slug, published: true }).lean();
+      if (!blog) {
+        this.setStatus(404);
+        return createErrorResponse("Blog not found");
+      }
+      //@ts-ignore
+      const approvedComments = (blog.comments ?? []).filter((c: any) => c.approved).map(mapComment);
+      return createSuccessResponse(
+        { blog: { ...mapBlog(blog), comments: approvedComments } },
+        "Blog fetched successfully"
+      );
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch blog", undefined, error);
+    }
+  }
+
   @Post("{blogId}/comments")
   @SuccessResponse("201", "Comment added successfully")
   public async addComment(
@@ -225,7 +251,6 @@ export class BlogController extends Controller {
   }
 
   @Get("{blogId}/comments")
-  @Middlewares(adminAuthMiddleware)
   @SuccessResponse("200", "Comments fetched successfully")
   public async getComments(@Path() blogId: string): Promise<any> {
     try {
@@ -292,3 +317,5 @@ export class BlogController extends Controller {
     }
   }
 }
+
+

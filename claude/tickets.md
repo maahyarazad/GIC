@@ -202,3 +202,47 @@ Use the `Blog(1)` section as the single source of truth for:
 - No regressions introduced in any updated component's functionality
 - Styling changes are consistent and do not use one-off overrides
 - Dashboard feels visually unified across all sections
+
+
+# Feature Ticket 6 — Blog Pages & Protected Blog Viewing
+
+## Title
+Implement Blog Posts Page and Blog Details Page with SEO Support and Authorization
+
+## Description
+Two new public-facing Blog pages need to be designed and implemented: a `Blog Posts` listing page and a dynamic `Blog Details` page with SEO-friendly URLs. Both pages must be protected and accessible only to authorized users, integrating with the existing `BlogController` and `appState`.
+
+## Requirements
+
+### Task 1 — Blog Posts Page
+- Create a dedicated `Blog Posts` page following the existing site design system and color palette
+- Display blog posts in a clean, responsive layout consistent with the rest of the application
+- Support both light and dark themes
+- Fetch blog data from the `BlogController`; add any required additional endpoints for listing, filtering, pagination, or metadata retrieval
+- Restrict access to authorized users only
+
+### Task 2 — Blog Details Page
+- Create a dynamic Blog Details page with a slug-based route for SEO-friendly URLs
+- Full SEO support:
+  - Dynamic page title
+  - Meta description
+  - Open Graph tags
+  - Structured metadata where applicable
+- Fetch blog data from the `BlogController`; add any required endpoints for fetching by slug and retrieving related comments
+- Display the full blog content
+- Display all related comments below the blog content
+- Responsive and consistent UI/UX with the rest of the platform
+- Support both light and dark themes
+
+### Authorization
+- Both pages must be protected and accessible only to authorized users
+- Validate the authenticated user using `appState`
+- Redirect or block unauthorized users from accessing either page
+
+## Acceptance Criteria
+- `Blog Posts` page is accessible, responsive, and lists blogs correctly in both themes
+- `Blog Details` page renders full content and comments, with a slug in the URL
+- All SEO tags (title, description, OG) are dynamic and correctly populated
+- Both pages redirect unauthorized users
+- All new API endpoints required by the pages are implemented and working
+- UI/UX is consistent with the existing site design system

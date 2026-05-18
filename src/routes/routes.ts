@@ -2144,6 +2144,36 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBlogController_getBlogBySlug: Record<string, TsoaRoute.ParameterSchema> = {
+                slug: {"in":"path","name":"slug","required":true,"dataType":"string"},
+        };
+        app.get('/api/v1/blogs/by-slug/:slug',
+            ...(fetchMiddlewares<RequestHandler>(BlogController)),
+            ...(fetchMiddlewares<RequestHandler>(BlogController.prototype.getBlogBySlug)),
+
+            async function BlogController_getBlogBySlug(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBlogController_getBlogBySlug, request, response });
+
+                const controller = new BlogController();
+
+              await templateService.apiHandler({
+                methodName: 'getBlogBySlug',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsBlogController_addComment: Record<string, TsoaRoute.ParameterSchema> = {
                 blogId: {"in":"path","name":"blogId","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"CreateCommentRequest"},

@@ -51,7 +51,7 @@ const Events: React.FC = () => {
 
     const getEventImageUrl = (p?: Event) => {
 
-        const fallback = "https://services.german-emirates-club.com/uploads/GECBackground.webp";
+        const fallback = "https://www.german-emirates-club.com/v2/static/media/GECBackground.369835c3b111bdc2a4e8.png";
 
         if (!p?.Image) return fallback;
 

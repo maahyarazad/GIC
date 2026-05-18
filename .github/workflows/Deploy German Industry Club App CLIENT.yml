@@ -33,6 +33,13 @@ jobs:
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
+      - name: Clear old build on server
+        run: |
+            sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
+            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/ui/dist/"
+
       - name: Copy Build files to server
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
@@ -44,12 +51,6 @@ jobs:
             ui/ \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/ui/
 
-      - name: Clear old build on server
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
-            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/ui/dist/"
 
       - name: Upload new build to server
         run: |

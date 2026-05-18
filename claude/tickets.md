@@ -83,3 +83,54 @@ Implement an admin moderation section where admins can:
 - Only approved comments are publicly visible
 - Required types/models are implemented
 - CRUD APIs are working correctly
+
+
+# Feature Ticket 3 — Authentication Pages Redesign
+
+## Title
+UI Enhancement – Redesign Authentication Pages to Match Landing Page Design Language
+
+## Description
+The current authentication pages (`Login`, `ForgetPassword`, and `ResetPassword`) are visually inconsistent with the rest of the application. Their styling, spacing, layout, and overall UI experience do not align with the design language used in the landing page (`Home` component).
+
+This enhancement aims to redesign and unify these authentication pages so they match the modern styling and UI patterns of the landing page while maintaining responsiveness and accessibility standards. All authentication-related pages must fully support both Light Mode and Dark Mode themes.
+
+## Requirements
+
+### Pages to Update
+- `Login`
+- `ForgetPassword`
+- `ResetPassword`
+
+### Design Alignment with `Home` Component
+- Typography
+- Color palette
+- Button styles
+- Card/container styling
+- Input fields
+- Shadows and border radius
+- Spacing and layout consistency
+- Animations/transitions (if applicable)
+
+### Light/Dark Theme Support
+- Ensure all text remains readable in both themes
+- Support theme-aware backgrounds and surfaces
+- Ensure buttons, inputs, alerts, and links adapt correctly
+- Avoid hardcoded colors where possible
+
+### Responsiveness
+- Desktop
+- Tablet
+- Mobile devices
+
+### Accessibility
+- Proper contrast ratios
+- Focus states
+- Keyboard navigation compatibility
+
+## Acceptance Criteria
+- Authentication pages visually match the style of the landing page (`Home` component)
+- Light and Dark themes are fully supported without UI inconsistencies
+- All pages are responsive on major screen sizes
+- No broken layouts, overflow issues, or unreadable text in either theme
+- Existing authentication functionality remains unchanged

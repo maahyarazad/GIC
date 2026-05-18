@@ -34,7 +34,6 @@ const ResetPassword: React.FC = () => {
     const verify = useCallback(async () => {
         
         if (!token) {
-            debugger;
             setError("Invalid reset link.");
             setInvalidToken(true);
             setChecking(false);
@@ -72,7 +71,6 @@ const ResetPassword: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-debugger;
         if (!token) {
             setError("Invalid reset link.");
             return;
@@ -126,7 +124,7 @@ debugger;
             <div className="login-container">
                 <div className="login-card">
                     <div className="form-group">
-                        <h2 className="text-black">Reset Password</h2>
+                        <h2 className="login-title">Reset Password</h2>
                         {error && <div className="login-error">{error}</div>}
                         <a className="mt-3 d-block" href="/forgot-password">
                             Request a new reset link

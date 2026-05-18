@@ -10,6 +10,7 @@ import { store } from './store.js'
 import { ModalProvider } from './Providers/ModalContext.js';
 import MainLoader from "./Components/MainLoader.jsx";
 import '../public/bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 
 const Root = () => {

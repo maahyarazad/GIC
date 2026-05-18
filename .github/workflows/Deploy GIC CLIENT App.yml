@@ -1,12 +1,9 @@
-name: Deploy German Industry Club App CLIENT
+name: Deploy GIC CLIENT App
 
 on:
   workflow_dispatch:
 
 jobs:
-  # ─────────────────────────────────────────────
-  # JOB 1: Build & Deploy Client (Vite)
-  # ─────────────────────────────────────────────
   deploy-client:
     name: Build & Deploy Client
     runs-on: ubuntu-latest
@@ -28,31 +25,18 @@ jobs:
 
       - name: Build client
         working-directory: ui
-        run: npm run build
-        
+        run: npm run build:client
+
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
 
-      - name: Copy Build files to server
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
-            --exclude='dist/' \
-            --exclude='public/bootstrap' \
-            --exclude='src/' \
-            --exclude='node_modules/' \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
-            ui/ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/ui/
-
-      - name: Clear old build on server
+      - name: Clear old dist & upload new build
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
             -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/ui/dist/"
+            "rm -rf ~/german-industry-club/node/german-industry-club.com/ui/dist"
 
-      - name: Upload new build to server
-        run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
             -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
             ui/dist/ \

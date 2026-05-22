@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import { useToast } from "@/Providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import Loader from "@/Components/Loader/Loader";
+
+const QuillEditor = lazy(() => import("@/Components/QuillEditor/QuillEditor"));
 import { Blog as BlogType, BlogComment } from "../../../../../src/types/blog.types";
 import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
 import "./Blog.css";
@@ -118,13 +120,17 @@ const Blog: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.content || form.content === "<p><br></p>") {
+      show({ type: "error", message: "Content cannot be empty." });
+      return;
+    }
     setSubmitting(true);
 
     const payload = {
       title: form.title.trim(),
       authorName: form.authorName.trim(),
       excerpt: form.excerpt.trim() || undefined,
-      content: form.content.trim(),
+      content: form.content,
       coverImage: form.coverImage.trim() || undefined,
       tags: form.tags
         ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
@@ -172,6 +178,16 @@ const Blog: React.FC = () => {
     const target = e.target as HTMLInputElement;
     const value = target.type === "checkbox" ? target.checked : target.value;
     setForm((prev) => ({ ...prev, [target.name]: value }));
+  };
+
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await axiosInstance.post("/files", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    const { fileId, extension } = res.data.data;
+    return `/uploads/${fileId}.${extension}`;
   };
 
   /* ── Form view ── */
@@ -222,14 +238,13 @@ const Blog: React.FC = () => {
 
             <div className="col-12">
               <label className="form-label">Content *</label>
-              <textarea
-                name="content"
-                className="form-control"
-                value={form.content}
-                onChange={handleField}
-                required
-                rows={12}
-              />
+              <Suspense fallback={<Loader />}>
+                <QuillEditor
+                  value={form.content}
+                  onChange={(html) => setForm((prev) => ({ ...prev, content: html }))}
+                  onImageUpload={handleImageUpload}
+                />
+              </Suspense>
             </div>
 
             <div className="col-md-8">

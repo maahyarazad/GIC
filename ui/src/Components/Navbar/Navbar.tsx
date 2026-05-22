@@ -4,7 +4,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import type { RootState } from "../../store";
 import { EnvContext } from '../../EnvContext.jsx'
-import mainLogo from '../../../public/gic-log-main.png';
+import mainLogo from '../../../public/gic-logo-main.png';
+import mainLogoLight from  '../../../public/gic-logo-main-light.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useSelector, useDispatch } from 'react-redux';
@@ -200,6 +201,14 @@ const Navbar = (
 
 
 
+      useEffect(()=> {
+      console.log(activePage);
+      console.log(/^\/blog(\/.*)?$/.test(activePage));
+      }, [activePage])
+      
+      const isBlogPage = /^\/blog(\/.*)?$/.test(activePage);
+
+
     const User: React.ReactNode = (
         <>
             {user !== null ? (
@@ -236,20 +245,25 @@ const Navbar = (
 
 
 
-    const NavLogo = (
-        <>
-            <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
-                <img src={mainLogo} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-            </div>
-
-        </>
-    );
-
     const [theme, setTheme] = useState(
         typeof document !== 'undefined'
             ? document.documentElement.getAttribute('data-theme')
             : 'light'
     );
+
+const logoSrc = theme === "light" ? mainLogoLight : mainLogo;
+
+
+    const NavLogo = (
+        <>
+            <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+                {/* in light theme the logo should change */}
+                <img src={logoSrc} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+            </div>
+
+        </>
+    );
+
     const [isOpen, setIsOpen] = useState(false);
 
     const mobNavRef = useRef(null);
@@ -295,7 +309,7 @@ const Navbar = (
         <>
             <nav>
                 <div className="nav-brand" onClick={() => { showPage(''); navigate("/"); }}>
-                    <img src={mainLogo} className={theme === "light" ? "nav-logo dark" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
+                    <img src={logoSrc} className={theme === "light" ? "nav-logo" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
                 </div>
                 <div className='d-flex justify-content-center'>
 
@@ -306,7 +320,7 @@ const Navbar = (
                                 <li key={link.path}>
                                     {link.type === "link" && (
                                         <span
-                                            className={`span-link ${activePage === link.path ? "active" : ""}`}
+                                            className={`span-link ${(link.path === '/blog' ? isBlogPage : activePage === link.path) ? "active" : ""}`}
                                             onClick={() => {
                                                 showPage(link.path);
                                                 navigate(link.path);
@@ -357,7 +371,7 @@ const Navbar = (
                 {Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
                     <li key={link.path} >
                         {
-                            link.type === 'link' && <span className={`span-link ${activePage === link.path ? 'active' : ''}`}
+                            link.type === 'link' && <span className={`span-link ${(link.path === '/blog' ? isBlogPage : activePage === link.path) ? 'active' : ''}`}
 
                                 onClick={() => {
                                     closeMob();

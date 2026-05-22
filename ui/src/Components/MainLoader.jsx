@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import mainGOCLogo from  '../../public/gic-log-main.png';
+import mainGOCLogo from  '../../public/gic-logo-main.png';
+
 import './MainLoader.css'
 const MainLoader = () => {
     

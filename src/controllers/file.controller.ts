@@ -50,7 +50,10 @@ export class FileController extends Controller {
         fs.writeFileSync(targetPath, file.buffer);
 
         this.setStatus(201);
-        return createSuccessResponse(undefined,"File created successfully");
+        return createSuccessResponse(
+          { fileId: result.insertedId.toString(), extension },
+          "File created successfully"
+        );
        
 
       }

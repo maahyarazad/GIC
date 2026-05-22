@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import DOMPurify from "dompurify";
 import { usePage } from "@/Providers/PageContext";
 import { useToast } from "@/Providers/ToastContext";
 import Loader from "@/Components/Loader/Loader";
@@ -117,6 +118,8 @@ const BlogDetail: React.FC = () => {
     }
   };
 
+
+
   /* ── States ── */
   if (loading) {
     return (
@@ -182,11 +185,12 @@ const BlogDetail: React.FC = () => {
       <main className="bd-body">
         <div className="bd-content">
           {blog.excerpt && <p className="bd-excerpt">{blog.excerpt}</p>}
-          <div className="bd-text">
-            {blog.content.split("\n").map((paragraph: string, i: number) =>
-              paragraph.trim() ? <p key={i}>{paragraph}</p> : <br key={i} />
-            )}
-          </div>
+          <div
+            className="bd-text bd-html-content"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(blog.content, { USE_PROFILES: { html: true } }),
+            }}
+          />
         </div>
 
         {/* Comments */}

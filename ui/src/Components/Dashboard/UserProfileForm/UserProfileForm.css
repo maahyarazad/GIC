@@ -42,8 +42,7 @@
   border-color: var(--ora);
   box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.15);
 }
-.profile-form .form-group input[type=text]::-moz-placeholder,
-.profile-form .form-group textarea::-moz-placeholder {
+.profile-form .form-group input[type=text]::-moz-placeholder, .profile-form .form-group textarea::-moz-placeholder {
   color: var(--mu);
   opacity: 0.6;
 }

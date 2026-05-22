@@ -246,3 +246,43 @@ Two new public-facing Blog pages need to be designed and implemented: a `Blog Po
 - Both pages redirect unauthorized users
 - All new API endpoints required by the pages are implemented and working
 - UI/UX is consistent with the existing site design system
+
+
+# Feature Ticket 7 — Rich Text Editor for Blog Posts
+
+## Title
+Integrate Quill Rich Text Editor for Blog Post Authoring and Rendering
+
+## Description
+The current blog content input is a plain text field. This ticket replaces it with a Quill Rich Text Editor in the Dashboard blog create/edit forms, and updates the public-facing Blog Detail page to render the resulting HTML content correctly and responsively in both light and dark themes.
+
+## Requirements
+
+### Task 1 — Editor Integration (Dashboard)
+- Replace the plain `<textarea>` blog content field in the create and edit blog forms with a Quill Rich Text Editor instance
+- Support the following authoring capabilities:
+  - Rich text formatting (bold, italic, underline, lists, headings, blockquote)
+  - Font size selection
+  - Image upload and inline embedding into content
+- Store the Quill delta/HTML output as the blog `content` field — no changes to the data model required beyond accepting HTML
+- Editor must respect the existing dashboard UI/UX styling guidelines (dark/light theme aware)
+
+### Task 2 — Frontend Renderer (Blog Detail Page)
+- Update the Blog Detail page to render Quill-generated HTML content using `dangerouslySetInnerHTML` (or a sanitised equivalent)
+- Replace the current line-split paragraph renderer with the HTML renderer
+- Apply responsive typography styles to the rendered HTML (headings, lists, blockquotes, inline images)
+- Ensure embedded images are responsive (`max-width: 100%`) and do not break layout
+- Ensure rendered content is compatible with both light and dark themes using CSS variables
+
+### Task 3 — Styling & Theme Compatibility
+- Scope Quill editor styles to avoid leaking into the rest of the Dashboard
+- Ensure the rendered blog HTML in BlogDetail uses site CSS variables (`--txt`, `--mu`, `--bgp`, `--bdr`, `--ora`, `--sa`, `--se`) for full theme compatibility
+- No hardcoded colours in editor output styles
+
+## Acceptance Criteria
+- Blog create/edit form uses Quill editor with formatting and image upload support
+- Blog content is saved and retrieved as HTML without data model changes
+- Blog Detail page renders HTML content correctly, including images and formatting
+- Rendered content is responsive and visually consistent in both themes
+- Editor styles do not leak outside the blog form
+- All existing blog functionality (publish, slug, tags, excerpt) remains unchanged

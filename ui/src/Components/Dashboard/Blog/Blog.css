@@ -202,12 +202,6 @@
 .blog-form .form-control::placeholder {
   color: rgba(245, 242, 238, 0.2);
 }
-.blog-form textarea.form-control {
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  resize: vertical;
-}
 .blog-form .form-check {
   display: flex;
   align-items: center;

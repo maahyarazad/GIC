@@ -73,6 +73,7 @@ const {showPage} = usePage();
 
     useEffect(() => {
         if(location.pathname){
+            
             showPage(location.pathname);
         }
 

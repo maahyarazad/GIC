@@ -37,10 +37,15 @@ const BlogPosts: React.FC = () => {
     fetchBlogs();
   }, [fetchBlogs]);
 
-  const totalPages = Math.ceil(total / PAGE_SIZE);
+useEffect(()=> {
+console.log(activePage);
+console.log(/^\/blog(\/.*)?$/.test(activePage));
+}, [activePage])
 
+const isBlogPage = /^\/blog(\/.*)?$/.test(activePage);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
   return (
-    <div id="page-blog" className={`page ${activePage === "/blog" ? "active" : ""}`}>
+    <div id="page-blog" className={`page ${isBlogPage ? "active" : ""}`}>
       <div className="ptnav" />
 
       <section className="bp-hero">

@@ -172,6 +172,86 @@
   margin-bottom: 1.25em;
 }
 
+/* ── Quill HTML renderer ── */
+.bd-html-content p,
+.bd-html-content li {
+  margin-bottom: 1em;
+  font-family: var(--sa);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--txt);
+}
+.bd-html-content h1,
+.bd-html-content h2,
+.bd-html-content h3 {
+  font-family: var(--se);
+  font-weight: 400;
+  color: var(--txt);
+  margin: 1.75em 0 0.6em;
+  line-height: 1.2;
+}
+.bd-html-content h1 { font-size: clamp(1.6rem, 3vw, 2.25rem); }
+.bd-html-content h2 { font-size: clamp(1.3rem, 2.5vw, 1.75rem); }
+.bd-html-content h3 { font-size: 1.2rem; }
+.bd-html-content blockquote {
+  border-left: 3px solid var(--ora);
+  margin: 1.5em 0;
+  padding: 0.5em 0 0.5em 1.25rem;
+  color: var(--mu);
+  font-family: var(--se);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.bd-html-content ul,
+.bd-html-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25em;
+}
+.bd-html-content a {
+  color: var(--ora);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.bd-html-content a:hover {
+  opacity: 0.8;
+}
+.bd-html-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--bdr);
+  margin: 1.25em 0;
+  display: block;
+}
+.bd-html-content strong { font-weight: 700; color: var(--txt); }
+.bd-html-content em { font-style: italic; }
+.bd-html-content pre {
+  background: var(--bgp2);
+  border: 1px solid var(--bdr);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  margin-bottom: 1.25em;
+}
+.bd-html-content code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  background: var(--bgp2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--bdr);
+}
+/* Quill size classes */
+.bd-html-content .ql-size-small  { font-size: 0.8em; }
+.bd-html-content .ql-size-large  { font-size: 1.3em; }
+.bd-html-content .ql-size-huge   { font-size: 1.7em; }
+/* Quill alignment */
+.bd-html-content .ql-align-center { text-align: center; }
+.bd-html-content .ql-align-right  { text-align: right; }
+.bd-html-content .ql-align-justify { text-align: justify; }
+
 /* ── Comments ── */
 .bd-section-label {
   display: flex;

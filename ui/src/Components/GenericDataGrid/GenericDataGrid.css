@@ -30,7 +30,9 @@
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .table-wrapper table td {
   padding: 13px 14px;
@@ -59,6 +61,9 @@
   width: 90%;
   padding: 4px;
   box-sizing: border-box;
+}
+.table-wrapper table input[type=text]::-moz-placeholder {
+  color: var(--mu);
 }
 .table-wrapper table input[type=text]::placeholder {
   color: var(--mu);
@@ -195,4 +200,4 @@
     opacity: 0;
     transform: translate(-50%, -160%) scale(0.95);
   }
-}
+}/*# sourceMappingURL=GenericDataGrid.css.map */

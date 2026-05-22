@@ -28,14 +28,6 @@
   position: relative;
   z-index: 1;
 }
-.login-card::before {
-  content: "";
-  display: block;
-  width: 22px;
-  height: 1px;
-  background: #C8541A;
-  margin-bottom: 14px;
-}
 
 .login-title {
   font-family: "Cormorant Garamond", Georgia, serif;
@@ -125,6 +117,10 @@
   outline: none;
   box-shadow: none;
 }
+.form-group input[type=text]::-moz-placeholder, .form-group input[type=email]::-moz-placeholder, .form-group input[type=password]::-moz-placeholder {
+  color: rgba(245, 242, 238, 0.22);
+  font-style: italic;
+}
 .form-group input[type=text]::placeholder,
 .form-group input[type=email]::placeholder,
 .form-group input[type=password]::placeholder {
@@ -151,6 +147,10 @@
   outline: none;
   box-shadow: none;
 }
+.form-group > div > input::-moz-placeholder {
+  color: rgba(245, 242, 238, 0.22);
+  font-style: italic;
+}
 .form-group > div > input::placeholder {
   color: rgba(245, 242, 238, 0.22);
   font-style: italic;
@@ -161,6 +161,10 @@
 }
 .form-group > div > span:hover {
   color: #C8541A !important;
+}
+
+[data-theme=light] .form-group input::-moz-placeholder, [data-theme=light] .form-group > div > input::-moz-placeholder {
+  color: rgba(26, 20, 16, 0.28);
 }
 
 [data-theme=light] .form-group input::placeholder,
@@ -265,4 +269,4 @@
   .login-title {
     font-size: 28px;
   }
-}
+}/*# sourceMappingURL=Login.css.map */

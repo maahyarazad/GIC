@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import jwt from "jsonwebtoken";
+import { tokenExpiry } from "../config/tokenConfig";
 import bcrypt from "bcryptjs";
 import {
   User,
@@ -134,7 +135,7 @@ export class UserController extends Controller {
       const token = jwt.sign(
         { userId: newUser._id.toString(), email: newUser.email },
         JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: tokenExpiry.access.value }
       );
 
       this.setStatus(201);

@@ -1,12 +1,14 @@
-import { Controller, Get, Route, Tags, Request, SuccessResponse } from "tsoa";
+import { Controller, Get, Route, Tags, Request, SuccessResponse, Middlewares } from "tsoa";
 import { Request as ExpressRequest } from "express";
 import jwt from "jsonwebtoken";
 import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
-
+import { authMiddleware } from "../middleware/auth.middleware";
+import { tokenExpiry } from "../config/tokenConfig";
 @Route("api/v1")
 @Tags("auth")
 export class SSOController extends Controller {
   @Get("sso")
+  @Middlewares(authMiddleware)
   @SuccessResponse("200", "SSO token generated")
   public async getSSOToken(@Request() req: ExpressRequest): Promise<any> {
     try {
@@ -31,7 +33,7 @@ export class SSOController extends Controller {
           user_profile: (payload as any).user_profile,
         },
         process.env.SSO_SECRET!,
-        { expiresIn: "5m" }
+        { expiresIn: tokenExpiry.sso.value }
       );
 
       this.setStatus(200);

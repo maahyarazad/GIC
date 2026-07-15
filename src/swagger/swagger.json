@@ -2118,6 +2118,293 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"NewsletterArticle": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"title": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					},
+					"sentAt": {
+						"type": "string",
+						"nullable": true,
+						"description": "Timestamp of when the article was sent to subscribers, or null."
+					}
+				},
+				"required": [
+					"title",
+					"subject",
+					"html",
+					"sentAt"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_NewsletterArticle_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/NewsletterArticle"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_NewsletterArticle_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_NewsletterArticle_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"CreateNewsletterArticleRequest": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"subject",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_NewsletterArticle-Array_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/NewsletterArticle"
+						},
+						"type": "array"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_NewsletterArticle-Array_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_NewsletterArticle-Array_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"UpdateNewsletterArticleRequest": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_null_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_null_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_null_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"SendTestNewsletterRequest": {
+				"description": "Body for POST /newsletter-articles/{id}/send-test — the recipient of the test email.",
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"NewsletterSubscriber": {
 				"properties": {
 					"_id": {
@@ -2226,72 +2513,6 @@
 				"anyOf": [
 					{
 						"$ref": "#/components/schemas/SuccessResponse_any_"
-					},
-					{
-						"$ref": "#/components/schemas/ErrorResponse"
-					}
-				]
-			},
-			"SuccessResponse_null_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
-			"ApiResponse_null_": {
-				"anyOf": [
-					{
-						"$ref": "#/components/schemas/SuccessResponse_null_"
 					},
 					{
 						"$ref": "#/components/schemas/ErrorResponse"
@@ -3934,6 +4155,231 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/newsletter-articles": {
+			"post": {
+				"operationId": "CreateArticle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterArticle_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateNewsletterArticleRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetArticles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterArticle-Array_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/newsletter-articles/{id}": {
+			"get": {
+				"operationId": "GetArticle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterArticle_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateArticle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterArticle_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateNewsletterArticleRequest"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteArticle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/newsletter-articles/{id}/send-test": {
+			"post": {
+				"operationId": "SendTest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_null_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Send the article to a single address as a test, without touching sentAt.",
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SendTestNewsletterRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/newsletter-articles/{id}/send": {
+			"post": {
+				"operationId": "SendToSubscribers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterArticle_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Send the article to all active subscribers and record the sent time.",
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/v1/newsletter": {

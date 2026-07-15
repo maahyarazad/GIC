@@ -1,0 +1,191 @@
+/* ──────────────────────────────────────
+   NEWSLETTER DASHBOARD
+────────────────────────────────────── */
+.newsletter-section {
+  padding: 1.5rem 0;
+  font-family: var(--sa);
+}
+
+/* Header */
+.newsletter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--bdr);
+}
+.newsletter-header h3 {
+  margin: 0;
+  font-family: var(--se);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--txt);
+  letter-spacing: 0.02em;
+}
+.newsletter-header-count {
+  font-family: var(--sa);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mu);
+  margin-left: 10px;
+}
+
+/* Empty state */
+.newsletter-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 5rem 0;
+  color: var(--mu);
+  font-size: 0.95rem;
+}
+
+/* ──────────────────────────────────────
+   TABLE CELLS (used via GenericDataGrid renderCell)
+────────────────────────────────────── */
+.newsletter-title-cell {
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+.newsletter-row-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ──────────────────────────────────────
+   BADGES
+────────────────────────────────────── */
+.newsletter-badge {
+  display: inline-block;
+  font-family: var(--sa);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.newsletter-badge--sent {
+  background: rgba(6, 214, 160, 0.1);
+  color: #06d6a0;
+  border: 1px solid rgba(6, 214, 160, 0.22);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 600;
+}
+.newsletter-badge--draft {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--mu);
+  border: 1px solid var(--bdr);
+}
+
+/* ──────────────────────────────────────
+   BUTTONS
+────────────────────────────────────── */
+.newsletter-btn-back {
+  background: transparent;
+  color: var(--mu);
+  border: 1px solid var(--bdr);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--sa);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.newsletter-btn-back:hover {
+  color: var(--txt);
+  border-color: var(--bdrs);
+}
+
+/* ──────────────────────────────────────
+   FORM
+────────────────────────────────────── */
+.newsletter-form {
+  max-width: 860px;
+}
+.newsletter-form .form-label {
+  font-family: var(--sa);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin-bottom: 6px;
+  display: block;
+}
+.newsletter-form .form-control {
+  background: var(--bgp);
+  border: 1px solid var(--bdr);
+  color: var(--txt);
+  border-radius: 6px;
+  font-family: var(--sa);
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.newsletter-form .form-control:focus {
+  background: var(--bgp2);
+  border-color: var(--ora);
+  box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.15);
+  color: var(--txt);
+  outline: none;
+}
+.newsletter-form .form-control::placeholder {
+  color: rgba(245, 242, 238, 0.2);
+}
+.newsletter-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--bdr);
+}
+
+/* ──────────────────────────────────────
+   PREVIEW + TEST MODAL
+────────────────────────────────────── */
+.newsletter-preview {
+  max-height: 65vh;
+  overflow-y: auto;
+  color: var(--txt);
+  font-family: var(--se);
+  line-height: 1.65;
+}
+.newsletter-preview img {
+  max-width: 100%;
+  height: auto;
+}
+.newsletter-test-modal .form-label {
+  font-family: var(--sa);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mu);
+  margin-bottom: 6px;
+  display: block;
+}
+.newsletter-test-modal .form-control {
+  background: var(--bgp);
+  border: 1px solid var(--bdr);
+  color: var(--txt);
+  border-radius: 6px;
+  font-family: var(--sa);
+  font-size: 0.9rem;
+  padding: 9px 12px;
+  width: 100%;
+}
+.newsletter-test-modal .form-control:focus {
+  border-color: var(--ora);
+  outline: none;
+}

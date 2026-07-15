@@ -38,11 +38,10 @@ const EmailTemplatesDataGrid = () => {
             headerName: "Actions",
             width: '30%',
             renderCell: (row) => (
-                <div className=" btn-group" role="group">
+                <div className="email-template-row-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                     <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
                     <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
                     <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
-                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onSendToSubscriber(row)}>Send to Subscribers</button>
                 </div>
             ),
             sortable: false,
@@ -228,30 +227,6 @@ debugger;
             show({ type: "error", message: err.message || "Failed to delete template" });
         }
     }
-
-    const onSendToSubscriber = async (row: EmailTemplate) => {
-        const isConfirmed = await confirm({
-            title: "Send Email",
-            message: `Are you sure you want to send this email template "${row.name}" to subscribers?`,
-            confirmText: "Send",
-            cancelText: "Cancel",
-        });
-
-        if (!isConfirmed) return;
-
-        try {
-
-            const res = await axiosInstance.post(`email-templates/send-email-template/${row._id}`);
-
-            if (res.data.success) {
-                show({ type: "success", message: res.data.message });
-            } else {
-                show({ type: "error", message: res.data.message || "Failed to send email template." });
-            }
-        } catch (err: any) {
-            show({ type: "error", message: err.message || "An error occurred while sending the email template." });
-        }
-    };
 
     const [html, setHtml] = useState("<div>Hello {{USER_NAME}}</div>");
 

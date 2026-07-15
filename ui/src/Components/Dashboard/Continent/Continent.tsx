@@ -8,6 +8,7 @@ import Loader from "@/Components/Loader/Loader";
 import { ContinetViewModel } from '../../../../../src/types/continent.types'
 import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
+import DataPackageDialog from "./DataPackageDialog";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import Button from "@/Components/Button/Button";
 
@@ -179,25 +180,10 @@ const CategoriesDataGrid = () => {
         });
         setOpen(true);
     };
-    const [initializing, setInitializing] = useState(false);
-    const handleInitializeDb = async () => {
-        setInitializing(true);
-
-        try{
-
-            const response = await axiosInstance.get('/continents/initialize_db');
-            
-//@ts-ignore
-            show({ type: "success", message: response?.data?.message || "Request Completed."});
-
-        }catch(err){
-            //@ts-ignore
-            show({ type: "error", message: err?.message || "Failed to initialize the Db" });
-            console.error(err)
-        }finally{
-setInitializing(false);
-        }
-    };
+    // Picking the dataset is the admin's call, so the button opens the picker rather
+    // than seeding straight away.
+    const [dataPackageDialogOpen, setDataPackageDialogOpen] = useState(false);
+    const handleInitializeDb = () => setDataPackageDialogOpen(true);
 
     const onEdit = (row: ContinetViewModel) => {
         setHeaderTitle(`Modify ${row.name}`);
@@ -267,9 +253,8 @@ setInitializing(false);
                         className="dashboard-btn"
                         style={{ minWidth: 94 }}
                         onClick={handleInitializeDb}
-                        disabled={initializing}
                     >
-                        {initializing ? <Loader size={14} /> : "Initialize Db"}
+                        Initialize Db
                     </button>
                     <button className="dashboard-btn" onClick={onCreate}>
                         Add New
@@ -293,6 +278,13 @@ setInitializing(false);
                     filterModel={filterModel}
                     onFilterModelChange={setFilterModel}
                     getRowId={(row) => row._id!}
+                />
+            )}
+
+            {dataPackageDialogOpen && (
+                <DataPackageDialog
+                    onClose={() => setDataPackageDialogOpen(false)}
+                    onImported={fetchCategories}
                 />
             )}
         </div>

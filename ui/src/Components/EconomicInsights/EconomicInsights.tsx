@@ -16,6 +16,33 @@ export interface Continent {
     products?: Product[];
 }
 
+const STAR_TOTAL = 5;
+
+type ConfidenceLevel = "high" | "moderate" | "cautious" | "low";
+
+/** The indicator arrives as "🟡 Moderate Confidence" — match on the wording, not the emoji. */
+const confidenceLevel = (indicator?: string | null): ConfidenceLevel | null => {
+    const text = indicator?.toLowerCase() ?? "";
+    if (text.includes("high")) return "high";
+    if (text.includes("moderate")) return "moderate";
+    if (text.includes("cautious")) return "cautious";
+    if (text.includes("low")) return "low";
+    return null;
+};
+
+/** Drops the leading emoji so the pill can carry its own colour-coded dot instead. */
+const confidenceLabel = (indicator: string): string => indicator.replace(/^[^\p{L}]+/u, "").trim();
+
+/** "★★★☆☆" -> 3, so filled and empty stars can be styled apart. */
+const filledStars = (rating?: string | number | null): number | null => {
+    if (rating === null || rating === undefined) return null;
+
+    const filled =
+        typeof rating === "number" ? Math.round(rating) : (rating.match(/★/g) ?? []).length;
+
+    return filled > 0 ? Math.min(filled, STAR_TOTAL) : null;
+};
+
 // --- Component ---
 const EconomicInsights: React.FC = () => {
     const [categories, setCategories] = useState<Continent[]>([]);
@@ -62,7 +89,6 @@ const EconomicInsights: React.FC = () => {
 
             // Fetch products for category if not included
             const res = await axiosInstance.get<Product[]>(`/products/by-parent/${category._id}`);
-
             setProducts(res.data.products);
 
         } catch (err) {
@@ -72,9 +98,6 @@ const EconomicInsights: React.FC = () => {
             setLoadingProducts(false);
         }
     }, []);
-
-    useEffect(() => { fetchCategories() }, [fetchCategories]);
-
 
     useEffect(() => {
         if (selectedCategory) loadProducts(selectedCategory)
@@ -121,8 +144,6 @@ const EconomicInsights: React.FC = () => {
     };
 
 
-    useEffect
-
     if (error) return <p className="text-danger">{error}</p>;
 
     return (
@@ -159,70 +180,80 @@ const EconomicInsights: React.FC = () => {
                 <p>No products found in this category.</p>
             ) : (
                 <div className="_products row mt-2">
-                    {products.map((p) => (
-                        <div
-                            key={p._id}
-                            className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
-                            onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}
-                        >
-                            <div className="_card h-100">
-                                <div className="_card-body">
-                                    <h5 className="_card-title-d text-center">{p.name}</h5>
-
-                                    {/* Row: flag + downloads on left, rating + signal on right */}
-                                    <div className="d-flex align-items-center justify-content-between gap-2 my-2">
-                                        <div className="d-flex align-items-center gap-2 ps-4">
-                                            <i
-                                                className={`fi fi-${p.code.toLowerCase()} flag-icon`}
-                                                aria-hidden="true"
-                                            />
-                                            <span className="_card-text small">Downloads: {p.downloadCount}</span>
-                                        </div>
-
-                                        <div style={{ width: '1px', alignSelf: 'stretch', backgroundColor: 'var(--bdr)', margin: '0 8px' }} />
-
-                                        {p.metadata?.conclusion && (
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }} className="pe-4">
-                                                {/* Left: Rating & Signal */}
-                                                <div className="text-start">
-                                                    <p className="_card-text p-0 m-0 small">
-                                                        Rating:
-                                                    </p>
-                                                    <p className="_card-text p-0 m-0 small">
-                                                        Signal:
-                                                    </p>
-                                                </div>
-
-                                                {/* Right: remaining content */}
-                                                <div className="text-end">
-                                                    <p className="_card-text p-0 m-0 small">
-                                                        {p.metadata.conclusion.gicStarRating}
-                                                    </p>
-                                                    <p className="_card-text p-0 m-0">
-                                                        {p.metadata.conclusion.investmentAttractivenessSignal === '⚖' ? "⚖️" : p.metadata.conclusion.investmentAttractivenessSignal}
-                                                    </p>
+                    {products.map((p) => {
+                        const ratings = p.metadata?.conclusion?.gicStarRatings;
+                        const stars = filledStars(ratings?.gicStarRating);
+                        const indicator = ratings?.investorConfidenceIndicator;
+                        const level = confidenceLevel(indicator);
+                        const rationale = ratings?.rationaleIndustrialInvestability;
+                        console.log(ratings);
+                        return (
+                            <div
+                                key={p._id}
+                                className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3"
+                                onClick={() => { setDownloadingProductId(p._id); pdfDownload(p.fileId); }}
+                            >
+                                <div className="_card h-100">
+                                    <div className="_card-body">
+                                        <div className="_card-head">
+                                            <div className="_card-head-main">
+                                                <i
+                                                    className={`fi fi-${p.code.toLowerCase()} flag-icon`}
+                                                    aria-hidden="true"
+                                                />
+                                                <div className="_card-head-text">
+                                                    <h5 className="_card-title-d">{p.name}</h5>
+                                                    <span className="_card-downloads">
+                                                        {p.downloadCount} downloads
+                                                    </span>
                                                 </div>
                                             </div>
+
+                                            <div className="_card-head-meta">
+                                                {stars !== null && (
+                                                    <div
+                                                        className="_rating"
+                                                        aria-label={`GIC star rating: ${stars} out of ${STAR_TOTAL}`}
+                                                    >
+                                                        <span className="_stars" aria-hidden="true">
+                                                            {Array.from({ length: STAR_TOTAL }, (_, i) => (
+                                                                <span
+                                                                    key={i}
+                                                                    className={`_star ${i < stars ? "filled" : ""}`}
+                                                                >
+                                                                    ★
+                                                                </span>
+                                                            ))}
+                                                        </span>
+                                                        <span className="_rating-value">{stars}/{STAR_TOTAL}</span>
+                                                    </div>
+                                                )}
+
+                                                {level && indicator && (
+                                                    <span className={`_confidence _confidence--${level}`}>
+                                                        <span className="_confidence-dot" aria-hidden="true" />
+                                                        {confidenceLabel(indicator)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {rationale && (
+                                            <p className="_rationale" title={rationale}>
+                                                {rationale}
+                                            </p>
                                         )}
+
+                                        <span className="_card-cta">Download report</span>
                                     </div>
 
-
-                                    <hr style={{ borderColor: 'var(--bdr)', margin: '8px 0' }} />
-
-                                    {/* Rationale below */}
-                                    {p.metadata?.conclusion?.rationaleIndustrialInvestability && (
-                                        <p className="_card-text small text-center mt-1 p-0 m-0">
-                                            {p.metadata.conclusion.rationaleIndustrialInvestability}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
-                                    <Loader />
+                                    <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
+                                        <Loader />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

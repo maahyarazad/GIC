@@ -22,7 +22,20 @@ async function _connectToDatabase(): Promise<Db> {
     throw new Error("DB_NAME environment variable is not defined.");
   }
 
-  await mongoose.connect(process.env.MONGO_URI, {
+  // In development talk to the Docker mongo (db_container, published on 127.0.0.1:27017),
+  // so local work never writes to the shared cluster. MONGO_URI_LOCAL overrides the default.
+  const isDevelopment = process.env.NODE_ENV === "DEVELOPMENT";
+  const uri = isDevelopment
+    ? process.env.MONGO_URI_LOCAL || "mongodb://localhost:27017"
+    : process.env.MONGO_URI;
+
+  if (!uri) {
+    throw new Error(
+      "No MongoDB URI available. Set MONGO_URI (or MONGO_URI_LOCAL in development)."
+    );
+  }
+
+  await mongoose.connect(uri, {
     dbName,
     autoIndex: true,
   });
@@ -32,7 +45,9 @@ async function _connectToDatabase(): Promise<Db> {
   }
 
   database = mongoose.connection.db;
-  console.log(`Connected to database: ${database.databaseName}`);
+  console.log(
+    `Connected to database: ${database.databaseName} (${isDevelopment ? "local" : "remote"})`
+  );
   return database;
 }
 

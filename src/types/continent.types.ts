@@ -76,3 +76,7 @@ export interface CreateContinentRequest {
 export interface UpdateContinentRequest extends Partial<CreateContinentRequest> {
   _id?: string;
 }
+/** Body for POST /continents/data_packages/import — the folder name under chapter_data/. */
+export interface ImportDataPackageRequest {
+  package: string;
+}

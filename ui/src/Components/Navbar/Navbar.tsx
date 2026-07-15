@@ -5,7 +5,7 @@ import './Navbar.css';
 import type { RootState } from "../../store";
 import { EnvContext } from '../../EnvContext.jsx'
 import mainLogo from '../../../public/gic-logo-main.png';
-import mainLogoLight from  '../../../public/gic-logo-main-light.png';
+import mainLogoLight from  '../../../public/gic-logo-transparent.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useSelector, useDispatch } from 'react-redux';

@@ -1442,24 +1442,30 @@
 					},
 					"conclusion": {
 						"properties": {
-							"rationaleIndustrialInvestability": {
-								"type": "string",
-								"nullable": true
-							},
-							"investmentAttractivenessSignal": {
-								"type": "string",
-								"nullable": true
-							},
-							"gicStarRating": {
-								"anyOf": [
-									{
-										"type": "string"
+							"gicStarRatings": {
+								"properties": {
+									"rationaleIndustrialInvestability": {
+										"type": "string",
+										"nullable": true
 									},
-									{
-										"type": "number",
-										"format": "double"
+									"investorConfidenceIndicator": {
+										"type": "string",
+										"nullable": true
+									},
+									"gicStarRating": {
+										"anyOf": [
+											{
+												"type": "string"
+											},
+											{
+												"type": "number",
+												"format": "double"
+											}
+										],
+										"nullable": true
 									}
-								],
+								},
+								"type": "object",
 								"nullable": true
 							}
 						},
@@ -2631,6 +2637,19 @@
 				},
 				"type": "object",
 				"description": "Construct a type with a set of properties K of type T"
+			},
+			"ImportDataPackageRequest": {
+				"description": "Body for POST /continents/data_packages/import — the folder name under chapter_data/.",
+				"properties": {
+					"package": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"package"
+				],
+				"type": "object",
+				"additionalProperties": true
 			},
 			"CreateContinentRequest": {
 				"properties": {
@@ -4560,6 +4579,58 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/v1/continents/data_packages": {
+			"get": {
+				"operationId": "GetDataPackages",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Data update packages available under chapter_data/.",
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/continents/data_packages/import": {
+			"post": {
+				"operationId": "ImportDataPackage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Merges one data package into the existing products. Drops nothing.",
+				"tags": [
+					"Continents"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ImportDataPackageRequest"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/continents": {

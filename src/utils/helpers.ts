@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { tokenExpiry } from "../config/tokenConfig";
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 /* ============================================================
@@ -114,7 +115,7 @@ export function generateUnsubscribeToken(subscriberId: string) {
     },
     JWT_SECRET,
     {
-      expiresIn: "30d", // adjust if needed
+      expiresIn: tokenExpiry.unsubscribe.value,
     }
   );
 }

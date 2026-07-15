@@ -18,6 +18,7 @@ import {
   CreateContinentRequest,
   UpdateContinentRequest,
   ContinentViewModel,
+  ImportDataPackageRequest,
 } from "../types/continent.types";
 import { Product } from "../types/product.types";
 import {
@@ -42,6 +43,10 @@ import {
   initializeDatabase,
   hydrateProductMetadataFromXlsx,
 } from "../initialize_db";
+import {
+  listDataPackages,
+  updateProductsFromDataPackage,
+} from "../update_db";
 
 export type ContinentSortKey =
   | "name"
@@ -62,6 +67,53 @@ export class ContinentController extends Controller {
     } catch (error: any) {
       this.setStatus(500);
       return createErrorResponse(error.message || "Failed to process request");
+    }
+  }
+
+  /** Data update packages available under chapter_data/. */
+  @Get("/data_packages")
+  @Middlewares(adminAuthMiddleware)
+  public async getDataPackages(): Promise<any> {
+    try {
+      return createSuccessResponse(
+        { packages: listDataPackages() },
+        "Request Completed"
+      );
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Failed to list data packages"
+      );
+    }
+  }
+
+  /** Merges one data package into the existing products. Drops nothing. */
+  @Post("/data_packages/import")
+  @Middlewares(adminAuthMiddleware)
+  public async importDataPackage(
+    @Body() body: ImportDataPackageRequest
+  ): Promise<any> {
+    try {
+      const missing = validateRequiredFields(body, ["package"]);
+      if (missing.length > 0) {
+        this.setStatus(400);
+        return createErrorResponse(
+          `Missing required fields: ${missing.join(", ")}`
+        );
+      }
+
+      const report = await updateProductsFromDataPackage(body.package);
+
+      return createSuccessResponse(
+        report,
+        `Imported "${report.package}": ${report.countriesUpdated} countries updated, ` +
+          `${report.totalNewColumns} new columns detected.`
+      );
+    } catch (error: any) {
+      this.setStatus(500);
+      return createErrorResponse(
+        error.message || "Failed to import data package"
+      );
     }
   }
 

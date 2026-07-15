@@ -1,6 +1,7 @@
 import { Controller, Get, Route, Tags, SuccessResponse, Request } from "tsoa";
 import { Request as ExpressRequest } from "express";
 import { createSuccessResponse, createErrorResponse } from "../utils/helpers";
+import { tokenExpiry } from "../config/tokenConfig";
 import * as jwt from "jsonwebtoken";
 
 @Route("api/v1")
@@ -13,7 +14,7 @@ export class EventController extends Controller {
       const external_access_token = jwt.sign(
         {},
         process.env.EXTERNAL_ACCESS_SECRET,
-        { expiresIn: "10s" }
+        { expiresIn: tokenExpiry.externalAccess.value }
       );
 
       const isProd = process.env.NODE_ENV === "PRODUCTION";
@@ -66,7 +67,7 @@ export class EventController extends Controller {
       const external_access_token = jwt.sign(
         {},
         process.env.EXTERNAL_ACCESS_SECRET,
-        { expiresIn: "10s" }
+        { expiresIn: tokenExpiry.externalAccess.value }
       );
 
       const SERVICES_SERVER_ORIGIN =
@@ -141,7 +142,7 @@ export class EventController extends Controller {
       const external_access_token = jwt.sign(
         {},
         process.env.EXTERNAL_ACCESS_SECRET,
-        { expiresIn: "10s" }
+        { expiresIn: tokenExpiry.externalAccess.value }
       );
 
       const SERVICES_SERVER_ORIGIN =

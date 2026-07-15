@@ -65,73 +65,214 @@
     }
 
 
+    /* Confidence levels, keyed off investorConfidenceIndicator. Light theme needs
+       darker inks so the pill text stays legible on a white card. */
+    --cf-high: #35B06A;
+    --cf-moderate: #D8A32B;
+    --cf-cautious: #E07A2B;
+    --cf-low: #D2503F;
+
     ._products {
 
         ._card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
             border: 1px solid var(--bdr);
+            border-radius: 0.75rem;
             background-color: var(--bgp);
             color: var(--txt);
-            min-height: 180px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            flex-direction: column;
-            padding: 0;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-
+            padding: 1rem;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 
             &:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 2px 25px var(--bo);
+                border-color: var(--bdrs);
+                box-shadow: 0 6px 24px color-mix(in srgb, var(--bo) 18%, transparent);
+
+                ._card-cta {
+                    color: var(--or2);
+                    gap: 0.5rem;
+                }
             }
 
-            .card-img-top {
-                object-fit: cover;
-                height: 200px;
-            }
-
-            .card-body {
-                position: relative;
+            ._card-body {
                 display: flex;
                 flex-direction: column;
+                gap: 0.6rem;
+                height: 100%;
+                padding: 0;
+            }
+
+            ._card-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+            }
+
+            ._card-head-main {
+                display: flex;
+                align-items: center;
+                gap: 0.65rem;
+                min-width: 0; // so the country name ellipsizes rather than squashing the meta column
 
                 .flag-icon {
-                    font-size: 3rem;
-                    margin: 0px;
-                    padding: 0px;
-                    display: inline-block;
-
-                    // margin-bottom: 0.5rem;
+                    flex: 0 0 auto;
+                    font-size: 2.09rem;
+                    line-height: 1;
+                    margin: 0;
+                    padding: 0;
                     border-radius: 0.25rem;
-                    box-shadow: 0 2px 6px var(--bo);
+                    box-shadow: 0 1px 4px color-mix(in srgb, var(--bo) 25%, transparent);
+                }
+            }
+
+            ._card-head-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0; // lets long country names ellipsize instead of pushing the flag
+            }
+
+            ._card-title-d {
+                margin: 0;
+                font-weight: 600;
+                font-size: 1.02rem;
+                line-height: 1.25;
+                color: var(--txt);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            ._card-downloads {
+                font-size: 0.75rem;
+                color: var(--mu);
+            }
+
+            /* Rating + confidence sit opposite the flag, right-aligned against the card edge. */
+            ._card-head-meta {
+                display: flex;
+                flex: 0 0 auto;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 0.35rem;
+            }
+
+            ._rating {
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+
+                ._stars {
+                    display: inline-flex;
+                    gap: 0.1rem;
+                    font-size: 0.95rem;
+                    line-height: 1;
                 }
 
-                ._card-title-d {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 60px;
-                    margin-bottom: 0.1rem;
-                    font-weight: 600;
-                    color: var(--txt);
-                    // background: var(--bgp2);
-                    background-color: transparent;
+                ._star {
+                    color: var(--bdrs);
+
+                    &.filled {
+                        color: var(--or2);
+                    }
                 }
 
-                .loader-overlay {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: color-mix(in srgb, var(--bgp) 70%, transparent);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    border-radius: 0.25rem;
-                    z-index: 10;
+                ._rating-value {
+                    font-size: 0.75rem;
+                    color: var(--mu);
                 }
+            }
+
+            ._confidence {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.2rem 0.6rem;
+                border-radius: 999px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                white-space: nowrap;
+                color: var(--cf);
+                background-color: color-mix(in srgb, var(--cf) 12%, transparent);
+                border: 1px solid color-mix(in srgb, var(--cf) 38%, transparent);
+
+                ._confidence-dot {
+                    width: 0.45rem;
+                    height: 0.45rem;
+                    border-radius: 50%;
+                    background-color: var(--cf);
+                }
+
+                &--high {
+                    --cf: var(--cf-high);
+                }
+
+                &--moderate {
+                    --cf: var(--cf-moderate);
+                }
+
+                &--cautious {
+                    --cf: var(--cf-cautious);
+                }
+
+                &--low {
+                    --cf: var(--cf-low);
+                }
+            }
+
+            ._rationale {
+                margin: 0;
+                flex: 1 1 auto;
+                font-size: 0.8rem;
+                line-height: 1.5;
+                color: var(--mu);
+
+                // The rationale runs to a paragraph; clamp it so every card in the row
+                // keeps the same height. Full text stays available via the title tooltip.
+                display: -webkit-box;
+                -webkit-line-clamp: 4;
+                line-clamp: 4;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            ._card-cta {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                margin-top: auto;
+                padding-top: 0.6rem;
+                border-top: 1px solid var(--bdr);
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: var(--mu);
+                transition: color 0.2s, gap 0.2s;
+
+                &::after {
+                    content: "↓";
+                }
+            }
+
+            .loader-overlay {
+                position: absolute;
+                inset: 0;
+                background-color: color-mix(in srgb, var(--bgp) 70%, transparent);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10;
             }
         }
     }
+}
+
+[data-theme="light"] .economic-insights {
+    --cf-high: #1E7A45;
+    --cf-moderate: #96690A;
+    --cf-cautious: #B4541A;
+    --cf-low: #B03325;
 }

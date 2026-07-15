@@ -104,6 +104,17 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError | unknown) => {
     const normalized = normalizeApiError(error);
+
+    // When the access token has expired and could not be refreshed on the
+    // server (no valid refresh token), send the user back to the login page.
+    if (
+      normalized.error.code === "TOKEN_EXPIRED" &&
+      typeof window !== "undefined" &&
+      window.location.pathname !== "/login"
+    ) {
+      window.location.href = "/login";
+    }
+
     return Promise.reject(normalized);
   }
 );

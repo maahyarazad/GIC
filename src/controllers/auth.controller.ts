@@ -26,6 +26,7 @@ import {
   ApiResponse,
 } from "../utils/helpers";
 import { sendDynamicEmailDoc } from "../services/emailService";
+import { tokenExpiry } from "../config/tokenConfig";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
@@ -35,8 +36,6 @@ import { authMessages } from "../serverResponseMessages";
 import { createHash, randomBytes } from "crypto";
 const JWT_SECRET: string = process.env.JWT_SECRET!;
 const REFRESH_SECRET: string = process.env.REFRESH_SECRET!;
-const REFRESH_EXPIRE: string = process.env.REFRESH_EXPIRE!;
-const ACCESS_EXPIRE: string = process.env.ACCESS_EXPIRE!;
 
 const FRONTEND_URL = process.env.FRONTEND_URL!;
 const FB_APP_ID = process.env.FACEBOOK_APP_ID!;
@@ -114,7 +113,7 @@ export class AuthController extends Controller {
 
     // 4. Sign JWT
     const token = jwt.sign({ userId: user._id, role: "user" }, JWT_SECRET, {
-      expiresIn: "30d",
+      expiresIn: tokenExpiry.access.value,
     });
 
     // 5. Set token cookie
@@ -123,7 +122,7 @@ export class AuthController extends Controller {
       `token=${token}`,
       "HttpOnly",
       "Path=/",
-      `Max-Age=${30 * 24 * 3600}`, // 30 days
+      `Max-Age=${tokenExpiry.access.seconds}`,
       isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
     ]
@@ -203,7 +202,7 @@ export class AuthController extends Controller {
 
     // 4. Sign token
     const token = jwt.sign({ userId: user._id, role: "user" }, JWT_SECRET, {
-      expiresIn: "30d",
+      expiresIn: tokenExpiry.access.value,
     });
 
     const isProd = process.env.NODE_ENV === "PRODUCTION";
@@ -211,7 +210,7 @@ export class AuthController extends Controller {
       `token=${token}`,
       "HttpOnly",
       "Path=/",
-      `Max-Age=${30 * 24 * 3600}`, // 30 days
+      `Max-Age=${tokenExpiry.access.seconds}`,
       isProd ? "SameSite=None" : "SameSite=Lax",
       isProd ? "Secure" : "",
     ]
@@ -340,7 +339,7 @@ export class AuthController extends Controller {
           },
         },
         JWT_SECRET,
-        { expiresIn: ACCESS_EXPIRE }
+        { expiresIn: tokenExpiry.access.value }
       );
 
       const isProd = process.env.NODE_ENV === "PRODUCTION";
@@ -349,7 +348,7 @@ export class AuthController extends Controller {
         `token=${newToken}`,
         "HttpOnly",
         "Path=/",
-        `Max-Age=${1 * 3600}`,
+        `Max-Age=${tokenExpiry.access.seconds}`,
         isProd ? "SameSite=None" : "SameSite=Lax",
         isProd ? "Secure" : "Secure",
       ]
@@ -431,12 +430,12 @@ const sessionCollection = getCollection("passwordResetSessions");
         });
 
         if(active_session){
- this.setStatus(200);
-        //@ts-ignore
-        return createSuccessResponse(
-          { user: safeUser, token: active_session.token },
-          authMessages.success.requirePasswordChange
-        );
+            this.setStatus(200);
+            //@ts-ignore
+            return createSuccessResponse(
+            { user: safeUser, token: active_session.token },
+            authMessages.success.requirePasswordChange
+            );
         }
 
         const token = randomBytes(32).toString("hex");
@@ -486,7 +485,7 @@ const sessionCollection = getCollection("passwordResetSessions");
           },
         },
         JWT_SECRET,
-        { expiresIn: ACCESS_EXPIRE }
+        { expiresIn: tokenExpiry.access.value }
       );
 
       const refreshCollection =
@@ -511,7 +510,7 @@ const sessionCollection = getCollection("passwordResetSessions");
         refreshToken = jwt.sign(
           { userId: user._id.toString() },
           REFRESH_SECRET,
-          { expiresIn: REFRESH_EXPIRE }
+          { expiresIn: tokenExpiry.refresh.value }
         );
         await refreshCollection.insertOne({
           userId: user._id,
@@ -529,7 +528,7 @@ const sessionCollection = getCollection("passwordResetSessions");
           `token=${token}`,
           "HttpOnly",
           "Path=/",
-          `Max-Age=${1 * 3600}`,
+          `Max-Age=${tokenExpiry.access.seconds}`,
           isProd ? "SameSite=None" : "SameSite=Lax",
           isProd ? "Secure" : "Secure",
         ]
@@ -575,7 +574,7 @@ const sessionCollection = getCollection("passwordResetSessions");
           `token=`,
           "HttpOnly",
           "Path=/",
-          `Max-Age=$`,
+          `Max-Age=0`,
           isProd ? "SameSite=None" : "SameSite=Lax",
           isProd ? "Secure" : "Secure",
         ]
@@ -587,7 +586,7 @@ const sessionCollection = getCollection("passwordResetSessions");
           `refreshToken=`,
           "HttpOnly",
           "Path=/", // or /refresh-token if you want restricted path
-          `Max-Age=`,
+          `Max-Age=0`,
           isProd ? "SameSite=None" : "SameSite=Lax",
           isProd ? "Secure" : "Secure",
         ]

@@ -288,9 +288,11 @@ export interface ProductMetadata {
   } | null;
 
   conclusion?: {
-    gicStarRating?: string | number | null;
-    investmentAttractivenessSignal?: string | null;
-    rationaleIndustrialInvestability?: string | null;
+    gicStarRatings?: {
+      gicStarRating?: string | number | null;
+      investorConfidenceIndicator?: string | null;
+      rationaleIndustrialInvestability?: string | null;
+    } | null;
   } | null;
 }
 

@@ -2,6 +2,11 @@ import { getCollection } from "./db";
 import path from "path";
 import fs from "fs";
 import * as XLSX from "xlsx";
+
+/** Chapter workbooks live under chapter_data/: the baseline seed in SEED_PACKAGE, dated update packages alongside it. */
+export const CHAPTER_DATA_DIR = "chapter_data";
+export const SEED_PACKAGE = "seed";
+
 export async function initializeDatabase() {
     try{
 
@@ -300,7 +305,7 @@ type CountrySeed = {
   subRegion: string;
 };
 
-function toNumberIfPossible(value: any): number | string | null {
+export function toNumberIfPossible(value: any): number | string | null {
   if (value === undefined || value === null || value === "") return null;
   if (typeof value === "number") return value;
 
@@ -327,7 +332,7 @@ function toText(value: any): string | null {
   return str || null;
 }
 
-function normalizeCountryName(name: string): string {
+export function normalizeCountryName(name: string): string {
   return name
     .toLowerCase()
     .replace(/\(.*?\)/g, "")
@@ -347,7 +352,7 @@ function readSheetRows(filePath: string, sheetName: string): AnyObj[] {
   return XLSX.utils.sheet_to_json(sheet, { defval: null });
 }
 
-function readAllSheets(filePath: string): Record<string, AnyObj[]> {
+export function readAllSheets(filePath: string): Record<string, AnyObj[]> {
   const workbook = XLSX.readFile(filePath);
   const output: Record<string, AnyObj[]> = {};
 
@@ -1022,7 +1027,7 @@ function buildMetadataFromFiles(baseDir: string) {
 
 export async function hydrateProductMetadataFromXlsx() {
   const productCollection = getCollection("products");
-  const baseDir = process.cwd(); // change this if your xlsx files are elsewhere
+  const baseDir = path.join(process.cwd(), CHAPTER_DATA_DIR, SEED_PACKAGE);
 
   const countryMap = buildMetadataFromFiles(baseDir);
 

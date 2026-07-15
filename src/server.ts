@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 import fs from "fs";
 import cookieParser from "cookie-parser";
+import { sessionMaxAgeMs } from "./config/tokenConfig";
 import session from "express-session";
 import swaggerUi from "swagger-ui-express";
 
@@ -72,7 +73,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
-      maxAge: 15 * 60 * 1000,
+      maxAge: sessionMaxAgeMs,
     },
   })
 );

@@ -164,7 +164,7 @@ const models: TsoaRoute.Models = {
             "industrialManufacturingStrengths": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"investmentReadiness":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"oneSentenceJustification":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"readiness":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},"germanProductsCompanies":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"notableGermanBackedProjectsQualifiers":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"germanProductsCommonlyImportedDirectional":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"germanOemsIndustrialOperationsExamples":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},"governmentIncentives":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"exportOrientedIncentives":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"localContentLocalisation":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"taxCustomsIncentives":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"industrialZonesSezs":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},"keySectors":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"maturityQualifier":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"secondaryEmergingSectors":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"primaryManufacturingSectors":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
             "sustainabilityEnvironment": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"futureDevelopmentPlans":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"indicativeSources":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"strategicImplicationsForGermanIndustrialFirms":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"roleEnvisionedForForeignPrivateInvestors":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"timeHorizonIndicated":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"statusOfPlans":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"sustainabilityLinkedIndustrialDevelopmentPlans":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},"environmentalInitiatives":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"indicativeSources":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"relevanceForIndustrialManufacturingInvestors":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"implementationSignal":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"circularEconomyResourceEfficiencyInitiatives":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"carbonClimatePolicyInstrumentsAffectingIndustry":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"renewableCleanEnergyInitiativesRelevantToIndustry":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},"wasteManagementPolicies":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"indicativeSources":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"keyGapsConstraints":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"roleOfPrivateSectorPpps":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"implementationEnforcementSignal":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"wasteStreamsExplicitlyAddressed":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"documentedNationalWasteManagementPolicyStrategy":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
             "swot": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"threats":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"opportunities":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"weaknesses":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"strengths":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
-            "conclusion": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"rationaleIndustrialInvestability":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"investmentAttractivenessSignal":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"gicStarRating":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
+            "conclusion": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"gicStarRatings":{"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"rationaleIndustrialInvestability":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"investorConfidenceIndicator":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"gicStarRating":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"double"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": true,
     },
@@ -509,6 +509,14 @@ const models: TsoaRoute.Models = {
     "Record_string.string_": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"string"},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ImportDataPackageRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "package": {"dataType":"string","required":true},
+        },
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateContinentRequest": {
@@ -1980,6 +1988,65 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'initializeDB',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_getDataPackages: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/v1/continents/data_packages',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.getDataPackages)),
+
+            async function ContinentController_getDataPackages(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_getDataPackages, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'getDataPackages',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsContinentController_importDataPackage: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"ImportDataPackageRequest"},
+        };
+        app.post('/api/v1/continents/data_packages/import',
+            ...(fetchMiddlewares<RequestHandler>(ContinentController)),
+            ...(fetchMiddlewares<RequestHandler>(ContinentController.prototype.importDataPackage)),
+
+            async function ContinentController_importDataPackage(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsContinentController_importDataPackage, request, response });
+
+                const controller = new ContinentController();
+
+              await templateService.apiHandler({
+                methodName: 'importDataPackage',
                 controller,
                 response,
                 next,

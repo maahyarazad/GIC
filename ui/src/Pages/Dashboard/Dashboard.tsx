@@ -17,6 +17,7 @@ import { usePage } from "@/Providers/PageContext";
 import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
 import Blog from "@/Components/Dashboard/Blog/Blog";
+import Newsletter from "@/Components/Dashboard/Newsletter/Newsletter";
 import type { RootState } from "../../store";
 
 type MenuItem =
@@ -24,6 +25,7 @@ type MenuItem =
   | "member_profiles"
   | "events"
   | "blog"
+  | "newsletter"
   | "sitedata"
   | "file_management"
   | "email_management"
@@ -38,6 +40,7 @@ const accessControl: Record<MenuItem, string[]> = {
   member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
   blog: ["admin", "procurement"],
+  newsletter: ["admin", "procurement"],
   sitedata: ["admin", "procurement"],
   file_management: ["admin", "procurement"],
   email_management: ["admin", "procurement"],
@@ -53,6 +56,7 @@ const menuTitles: Record<MenuItem, string> = {
   member_profiles: "Member Profiles",
   events: "Events",
   blog: "Blog",
+  newsletter: "Newsletter",
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
@@ -82,6 +86,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "member_profiles",
     "events",
     "blog",
+    "newsletter",
     "sitedata",
     "file_management",
     "email_management",
@@ -107,6 +112,7 @@ const Dashboard: React.FC = () => {
     member_requests: <ContactUsRequests />,
     member_profiles: <UserProfilesDataGrid />,
     blog: <Blog />,
+    newsletter: <Newsletter />,
     sitedata: <JsonViewer />,
     file_management: <FileManagement />,
     email_management: <EmailTemplatesDataGrid />,

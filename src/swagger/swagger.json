@@ -3866,6 +3866,57 @@
 				]
 			}
 		},
+		"/api/v1/products/metadata-schema": {
+			"get": {
+				"operationId": "GetMetadataSchema",
+				"responses": {
+					"200": {
+						"description": "Product metadata schema fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "The ProductMetadata schema (category -> field tree) taken from the generated\nOpenAPI spec. Drives the Compare Countries UI dynamically so it adapts when\nnew categories/fields are added to the metadata type. Declared before the\n`{id}` route so the literal path isn't captured as a product id.",
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/products/{id}/metadata": {
+			"get": {
+				"operationId": "GetProductMetadata",
+				"responses": {
+					"200": {
+						"description": "Product metadata fetched successfully",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Returns just a country's full metadata tree — used by the Compare Countries\nview, which loads each country's metadata on demand as it is selected.",
+				"tags": [
+					"Products"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/products/{id}": {
 			"get": {
 				"operationId": "GetProductById",

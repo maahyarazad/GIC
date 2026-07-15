@@ -9,6 +9,7 @@ import FileManagement from "@/Components/Dashboard/FileManagement/FileManagement
 import EmailTemplatesDataGrid from "@/Components/Dashboard/EmailTemplate/EmailTemplate";
 import UserProfileForm from "@/Components/Dashboard/UserProfileForm/UserProfileForm";
 import EconomicInsights from "@/Components/EconomicInsights/EconomicInsights";
+import CompareCountries from "@/Components/Dashboard/CompareCountries/CompareCountries";
 import Continent from "@/Components/Dashboard/Continent/Continent";
 import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
@@ -33,6 +34,7 @@ type MenuItem =
   | "sub_region_management"
   | "profile"
   | "country_intelligence"
+  | "compare_countries"
   | "logout";
 
 const accessControl: Record<MenuItem, string[]> = {
@@ -48,6 +50,7 @@ const accessControl: Record<MenuItem, string[]> = {
   sub_region_management: ["admin", "procurement"],
   profile: ["user"],
   country_intelligence: ["user", "admin", "procurement"],
+  compare_countries: ["user", "admin", "procurement"],
   logout: ["admin", "user", "procurement"],
 };
 
@@ -64,6 +67,7 @@ const menuTitles: Record<MenuItem, string> = {
   sub_region_management: "Manage Sub Region",
   profile: "Profile",
   country_intelligence: "Country Intelligence",
+  compare_countries: "Compare Countries",
   logout: "Logout",
 };
 
@@ -94,6 +98,8 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "sub_region_management",
     "profile",
     "economic_insights",
+    "country_intelligence",
+    "compare_countries",
     "logout",
   ].includes(value || "");
 };
@@ -119,6 +125,7 @@ const Dashboard: React.FC = () => {
     newsletter_subscribers: <NewsletterSubscribers />,
     sub_region_management: <Continent />,
     country_intelligence: <EconomicInsights />,
+    compare_countries: <CompareCountries />,
     events: <Events />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,

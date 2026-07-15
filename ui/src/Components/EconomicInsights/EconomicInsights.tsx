@@ -122,13 +122,12 @@ const EconomicInsights: React.FC = () => {
 
         try {
 
-            const { blob, filename } = await getPDFBlob(fileId);
-
+            const { blob } = await getPDFBlob(fileId);
             const url = window.URL.createObjectURL(blob);
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename;
+            a.download = fileId;
             document.body.appendChild(a);
             a.click();
 

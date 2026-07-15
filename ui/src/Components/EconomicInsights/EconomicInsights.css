@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* EconomicInsights.scss */
 .economic-insights .categories {
   position: relative;
@@ -127,7 +128,9 @@
   font-size: 0.75rem;
   color: var(--mu);
 }
-/* Rating + confidence sit opposite the flag, right-aligned against the card edge. */
+.economic-insights ._products ._card {
+  /* Rating + confidence sit opposite the flag, right-aligned against the card edge. */
+}
 .economic-insights ._products ._card ._card-head-meta {
   display: flex;
   flex: 0 0 auto;
@@ -229,4 +232,4 @@
   --cf-moderate: #96690A;
   --cf-cautious: #B4541A;
   --cf-low: #B03325;
-}
+}/*# sourceMappingURL=EconomicInsights.css.map */

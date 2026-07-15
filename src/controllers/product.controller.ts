@@ -34,6 +34,7 @@ import {
   mapUpdateProductRequestToDb,
 } from "../mappers/product.mapper";
 import { ProductModel } from "../models/product.model";
+import swaggerDocument from "../swagger/swagger.json";
 
 @Route("api/v1/products")
 @Tags("Products")
@@ -115,6 +116,84 @@ export class ProductController extends Controller {
     return { products: mapProducts(docs), total, limit, skip };
   }
 
+  /**
+   * The ProductMetadata schema (category -> field tree) taken from the generated
+   * OpenAPI spec. Drives the Compare Countries UI dynamically so it adapts when
+   * new categories/fields are added to the metadata type. Declared before the
+   * `{id}` route so the literal path isn't captured as a product id.
+   */
+  @Get("/metadata-schema")
+  @Middlewares(authMiddleware)
+  @SuccessResponse("200", "Product metadata schema fetched successfully")
+  public async getMetadataSchema(): Promise<any> {
+    try {
+      const properties = (swaggerDocument as any)?.components?.schemas
+        ?.ProductMetadata?.properties;
+
+      if (!properties) {
+        this.setStatus(404);
+        return createErrorResponse("ProductMetadata schema not found");
+      }
+
+      return createSuccessResponse(
+        { properties },
+        "Product metadata schema fetched successfully"
+      );
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(
+        "Failed to fetch metadata schema",
+        undefined,
+        error
+      );
+    }
+  }
+
+  /**
+   * Returns just a country's full metadata tree — used by the Compare Countries
+   * view, which loads each country's metadata on demand as it is selected.
+   */
+  @Get("{id}/metadata")
+  @Middlewares(authMiddleware)
+  @SuccessResponse("200", "Product metadata fetched successfully")
+  public async getProductMetadata(@Path() id: string): Promise<any> {
+    try {
+      if (!Types.ObjectId.isValid(id)) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid product ID");
+      }
+
+      const product = await (ProductModel as any)
+        .findById(id)
+        .select("name code metadata")
+        .lean();
+
+      if (!product) {
+        this.setStatus(404);
+        return createErrorResponse("Product not found");
+      }
+
+      return createSuccessResponse(
+        {
+          _id: String((product as any)._id),
+          name: (product as any).name,
+          code: (product as any).code,
+          metadata: (product as any).metadata ?? {},
+        },
+        "Product metadata fetched successfully"
+      );
+    } catch (error) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(
+        "Failed to fetch product metadata",
+        undefined,
+        error
+      );
+    }
+  }
+
   @Get("{id}")
   @SuccessResponse("200", "Product fetched successfully")
   @Middlewares(authMiddleware)
@@ -160,7 +239,7 @@ export class ProductController extends Controller {
         parent: new Types.ObjectId(parentId),
       })
         .select(
-          "fileId name code content variant media tags downloadCount importance parent children recommended metadata.conclusion createdAt updatedAt"
+          "fileId name slug code subRegion content variant media tags downloadCount importance parent children recommended metadata sourceFiles sourceSheets isActive order createdAt updatedAt"
         )
         .lean();
 

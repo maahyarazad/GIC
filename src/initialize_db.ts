@@ -1009,13 +1009,15 @@ function buildMetadataFromFiles(baseDir: string) {
         // =========================
         if (fileName.includes("Chapter 12")) {
           entry.metadata.conclusion = {
-            gicStarRating: toText(row["GIC Star Rating"]),
-            investmentAttractivenessSignal: toText(
-              row["Investment Attractiveness Signal"]
-            ),
-            rationaleIndustrialInvestability: toText(
-              row["Rationale (industrial investability)"]
-            ),
+            gicStarRatings: {
+              gicStarRating: toText(row["GIC Star Rating"]),
+              investorConfidenceIndicator: toText(
+                row["Investment Attractiveness Signal"]
+              ),
+              rationaleIndustrialInvestability: toText(
+                row["Rationale (industrial investability)"]
+              ),
+            },
           };
         }
       }

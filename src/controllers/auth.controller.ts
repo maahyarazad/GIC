@@ -26,6 +26,7 @@ import {
   ApiResponse,
 } from "../utils/helpers";
 import { sendDynamicEmailDoc } from "../services/emailService";
+import { toPublicUser } from "../mappers/user.mapper";
 import { tokenExpiry } from "../config/tokenConfig";
 import * as cookie from "cookie";
 import bcrypt from "bcryptjs";
@@ -417,7 +418,7 @@ export class AuthController extends Controller {
         );
       }
 
-      const { password, ...safeUser } = user;
+      const safeUser = toPublicUser(user);
 
       if (user.requirePasswordChange) {
         // 2. Generate secure random token

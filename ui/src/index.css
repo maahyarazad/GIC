@@ -60,111 +60,113 @@ body {
 /* ------------------------------------------
    BUTTONS
 ------------------------------------------- */
+/* Shared geometry so every dashboard button has the same size, shape and style */
+.dashboard-btn--icon,
+.dashboard-btn--icon-danger, .dashboard-btn--delete,
+.dashboard-btn--delete-ghost, .dashboard-btn--ghost-minimal, .dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  min-height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+.dashboard-btn--icon:focus-visible,
+.dashboard-btn--icon-danger:focus-visible, .dashboard-btn--delete:focus-visible,
+.dashboard-btn--delete-ghost:focus-visible, .dashboard-btn--ghost-minimal:focus-visible, .dashboard-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.45);
+}
+.dashboard-btn--icon:active,
+.dashboard-btn--icon-danger:active, .dashboard-btn--delete:active,
+.dashboard-btn--delete-ghost:active, .dashboard-btn--ghost-minimal:active, .dashboard-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.35);
+}
+.dashboard-btn--icon:disabled,
+.dashboard-btn--icon-danger:disabled, .dashboard-btn--delete:disabled,
+.dashboard-btn--delete-ghost:disabled, .dashboard-btn--ghost-minimal:disabled, .dashboard-btn:disabled, [disabled].dashboard-btn--icon,
+[disabled].dashboard-btn--icon-danger, [disabled].dashboard-btn--delete,
+[disabled].dashboard-btn--delete-ghost, [disabled].dashboard-btn--ghost-minimal, [disabled].dashboard-btn {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Primary — filled */
 .dashboard-btn {
   background: var(--ora);
   color: var(--bg);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background 0.25s ease, box-shadow 0.25s ease;
   box-shadow: 0 3px 10px rgba(200, 84, 26, 0.4);
-  font-size: small;
 }
 .dashboard-btn:hover {
   background: var(--or2);
   box-shadow: 0 4px 12px rgba(200, 84, 26, 0.6);
 }
-.dashboard-btn:active {
-  transform: scale(0.97);
-}
-.dashboard-btn:disabled, .dashboard-btn[disabled] {
-  background: var(--ora);
-  color: var(--bg);
-  box-shadow: none;
-  cursor: not-allowed;
-  filter: saturate(0.1) brightness(1.1);
-}
 
-.dashboard-btn--delete {
-  background: var(--bgp);
-  color: var(--txt);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  border: 2px solid #d11a2a;
-  cursor: pointer;
-  transition: background 0.25s ease, box-shadow 0.25s ease;
-  font-size: small;
-  box-shadow: 0 3px 10px rgba(209, 26, 42, 0.35);
-}
-.dashboard-btn--delete:hover {
-  background: var(--bgp2);
-  box-shadow: 0 4px 12px rgba(209, 26, 42, 0.55);
-}
-.dashboard-btn--delete:active {
-  transform: scale(0.97);
-}
-.dashboard-btn--delete:disabled, .dashboard-btn--delete[disabled] {
-  background: transparent;
-  color: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  pointer-events: none;
-}
-
-.dashboard-btn--delete-ghost {
-  background: transparent;
-  color: #d11a2a;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1px solid #d11a2a;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.25s ease;
-  font-size: small;
-}
-.dashboard-btn--delete-ghost:hover {
-  background: rgba(209, 26, 42, 0.1);
-}
-.dashboard-btn--delete-ghost:active {
-  transform: scale(0.97);
-}
-.dashboard-btn--delete-ghost:disabled, .dashboard-btn--delete-ghost[disabled] {
-  background: transparent;
-  color: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  pointer-events: none;
-}
-
+/* Secondary / ghost — orange outline */
 .dashboard-btn--ghost-minimal {
   background: transparent;
   color: var(--ora);
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1px dashed var(--ora);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  font-size: small;
+  border-color: var(--ora);
 }
 .dashboard-btn--ghost-minimal:hover {
-  background-color: rgba(200, 84, 26, 0.1);
+  background: rgba(200, 84, 26, 0.1);
   border-color: var(--or2);
 }
-.dashboard-btn--ghost-minimal:active {
-  transform: scale(0.97);
-}
-.dashboard-btn--ghost-minimal:disabled, .dashboard-btn--ghost-minimal[disabled] {
+
+/* Danger — red dashed ghost outline (delete + delete-ghost unified) */
+.dashboard-btn--delete,
+.dashboard-btn--delete-ghost {
   background: transparent;
-  color: transparent;
-  border-color: transparent;
-  cursor: not-allowed;
-  pointer-events: none;
-  box-shadow: none;
-  transform: none;
+  color: #d11a2a;
+  border-color: #d11a2a;
+  border-style: dashed;
+}
+.dashboard-btn--delete:hover,
+.dashboard-btn--delete-ghost:hover {
+  background: rgba(209, 26, 42, 0.1);
+}
+
+/* Icon-only square buttons — same height as text buttons */
+.dashboard-btn--icon,
+.dashboard-btn--icon-danger {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 18px;
+  background: transparent;
+}
+
+.dashboard-btn--icon {
+  color: var(--txt);
+  border-color: var(--bdr);
+}
+.dashboard-btn--icon:hover {
+  color: var(--ora);
+  border-color: var(--ora);
+  background: rgba(200, 84, 26, 0.08);
+}
+
+.dashboard-btn--icon-danger {
+  color: #d11a2a;
+  border-color: #d11a2a;
+}
+.dashboard-btn--icon-danger:hover {
+  background: rgba(209, 26, 42, 0.1);
 }
 
 .btn-primary-contrast {

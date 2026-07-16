@@ -1493,6 +1493,15 @@
 					"subRegion": {
 						"type": "string"
 					},
+					"productVersion": {
+						"type": "string",
+						"nullable": true
+					},
+					"fileUpload_timeStamp": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"content": {
 						"allOf": [
 							{
@@ -1614,6 +1623,17 @@
 					},
 					"code": {
 						"type": "string"
+					},
+					"productVersion": {
+						"type": "string",
+						"nullable": true,
+						"description": "Product data version label, e.g. \"V1\", \"V2\"."
+					},
+					"fileUpload_timeStamp": {
+						"type": "number",
+						"format": "double",
+						"nullable": true,
+						"description": "Epoch ms (Date.now()) of the last PDF upload/assignment."
 					},
 					"subRegion": {
 						"type": "string",
@@ -1759,6 +1779,13 @@
 					},
 					"subRegion": {
 						"type": "string"
+					},
+					"productVersion": {
+						"type": "string"
+					},
+					"fileUpload_timeStamp": {
+						"type": "number",
+						"format": "double"
 					},
 					"content": {
 						"$ref": "#/components/schemas/ProductContent"
@@ -2519,6 +2546,80 @@
 					}
 				]
 			},
+			"SuccessResponse__fileId-string--fileName-string__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"fileName": {
+								"type": "string"
+							},
+							"fileId": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"fileName",
+							"fileId"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse__fileId-string--fileName-string__": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse__fileId-string--fileName-string__"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
 			"UploadedFileDoc": {
 				"properties": {
 					"filename": {
@@ -2872,6 +2973,92 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"ContinentProductInput": {
+				"description": "The trimmed product shape the continent editor sends on save. Deliberately a\nsubset of Product (no heavy metadata / read-only fields) so the save request\nstays small and validates cleanly.",
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"fileId": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"code": {
+						"type": "string"
+					},
+					"importance": {
+						"$ref": "#/components/schemas/ProductImportance"
+					},
+					"productVersion": {
+						"type": "string",
+						"nullable": true
+					},
+					"fileUpload_timeStamp": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"content": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductContent"
+							}
+						],
+						"nullable": true
+					},
+					"variant": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductVariant"
+							}
+						],
+						"nullable": true
+					},
+					"media": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/ProductMedia"
+							}
+						],
+						"nullable": true
+					},
+					"tags": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"downloadCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"children": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"recommended": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array",
+						"nullable": true
+					}
+				},
+				"required": [
+					"fileId",
+					"name",
+					"code",
+					"importance"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"CreateContinentRequest": {
 				"properties": {
 					"name": {
@@ -2904,7 +3091,7 @@
 					},
 					"productObjects": {
 						"items": {
-							"$ref": "#/components/schemas/Product"
+							"$ref": "#/components/schemas/ContinentProductInput"
 						},
 						"type": "array",
 						"nullable": true
@@ -2985,7 +3172,11 @@
 				"additionalProperties": true
 			},
 			"UpdateContinentRequest": {
+				"description": "Declared explicitly (not `Partial<CreateContinentRequest>`) because tsoa drops\nthe `| null` from a Partial's nullable fields, which then rejects the `null`\nvalues the client sends (code, description, parent, image, …).",
 				"properties": {
+					"_id": {
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
@@ -2993,37 +3184,44 @@
 						"type": "string"
 					},
 					"code": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"description": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"products": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"nullable": true
 					},
 					"productCodes": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"nullable": true
 					},
 					"productObjects": {
 						"items": {
-							"$ref": "#/components/schemas/Product"
+							"$ref": "#/components/schemas/ContinentProductInput"
 						},
-						"type": "array"
+						"type": "array",
+						"nullable": true
 					},
 					"parent": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"children": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"nullable": true
 					},
 					"isActive": {
 						"type": "boolean"
@@ -3033,46 +3231,53 @@
 						"format": "double"
 					},
 					"image": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"imageAlt": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"seoTitle": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"seoDescription": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"seoKeywords": {
 						"items": {
 							"type": "string"
 						},
-						"type": "array"
+						"type": "array",
+						"nullable": true
 					},
 					"sourceLabel": {
-						"type": "string"
+						"type": "string",
+						"nullable": true
 					},
 					"summary": {
 						"properties": {
 							"notes": {
-								"type": "string"
+								"type": "string",
+								"nullable": true
 							},
 							"chapterCoverage": {
 								"items": {
 									"type": "string"
 								},
-								"type": "array"
+								"type": "array",
+								"nullable": true
 							},
 							"countryCount": {
 								"type": "number",
-								"format": "double"
+								"format": "double",
+								"nullable": true
 							}
 						},
-						"type": "object"
-					},
-					"_id": {
-						"type": "string"
+						"type": "object",
+						"nullable": true
 					}
 				},
 				"type": "object",
@@ -4643,6 +4848,48 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/files/pdf": {
+			"post": {
+				"operationId": "UploadPdf",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse__fileId-string--fileName-string__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Dedicated PDF upload. Saves the file to file_storage under its original\nfilename and returns the file id (the filename without the .pdf extension)\nso it can be assigned to a product's `fileId` separately from the\ncontinent update request.",
+				"tags": [
+					"files"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/files": {

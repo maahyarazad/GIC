@@ -1,21 +1,27 @@
-import React, { useMemo, useEffect, useCallback } from "react";
+import React, { useMemo, useEffect, useCallback, useState } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
 import { ContinetViewModel } from "../../../../../src/types/continent.types";
 import { Product } from "../../../../../src/types/product.types";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import { MdOutlineDeleteForever, MdOutlineUploadFile } from "react-icons/md";
 import axiosInstance from "@/api/axiosInstance";
+
+type Notify = (toast: { type: "success" | "error"; message: string }) => void;
 
 interface Props {
     continent: ContinetViewModel;
     setContinent: React.Dispatch<React.SetStateAction<ContinetViewModel>>;
+    // Passed in from a parent that lives inside ToastProvider — the slide-menu
+    // content is rendered outside that provider, so useToast is unavailable here.
+    notify?: Notify;
 }
 
 const importanceOptions = ["A", "B", "C", "D"] as const;
 
-const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
+const CountriesSelector: React.FC<Props> = ({ continent, setContinent, notify }) => {
     const editMode = continent._id !== null && continent._id !== undefined;
     const options = useMemo(() => countryList().getData(), []);
+    const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
     const fetchProductsByParent = useCallback(async (parentId: string) => {
         try {
@@ -50,13 +56,14 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
         }
     }, [continent.productObjects, setContinent]);
 
-    const handleSelect = (selectedOption: { label: string; value: string } | null) => {
+    const handleSelect = useCallback((selectedOption: { label: string; value: string } | null) => {
         if (!selectedOption) return;
 
         const countryProduct: Product = {
             fileId: "",
             name: selectedOption.label,
             code: selectedOption.value,
+            productVersion: null,
             content: null,
             variant: null,
             media: null,
@@ -72,9 +79,9 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
             ...prev,
             productObjects: [...(prev.productObjects ?? []), countryProduct],
         }));
-    };
+    }, [continent._id, setContinent]);
 
-    const handleDelete = async (index: number) => {
+    const handleDelete = useCallback(async (index: number) => {
         if (editMode) {
             const productId = continent.productObjects?.[index]?._id;
             if (!productId) return;
@@ -100,9 +107,9 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
             updatedProducts.splice(index, 1);
             return { ...prev, productObjects: updatedProducts };
         });
-    };
+    }, [editMode, continent.productObjects, setContinent]);
 
-    const handleProductChange = (
+    const handleProductChange = useCallback((
         index: number,
         key: keyof Product,
         value: any
@@ -120,29 +127,80 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                 productObjects: updatedProducts,
             };
         });
-    };
+    }, [setContinent]);
 
-    const themedInputStyle: React.CSSProperties = {
+    // Upload a PDF to file_storage and store the returned file id in the product's File ID.
+    const handleUploadPdf = useCallback(async (
+        index: number,
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        e.target.value = ""; // allow re-selecting the same file later
+        if (!file) return;
+
+        if (file.type !== "application/pdf") {
+            notify?.({ type: "error", message: "Please select a PDF file." });
+            return;
+        }
+
+        try {
+            setUploadingIndex(index);
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Dedicated PDF endpoint: saves under the original filename and returns
+            // the file id (filename without extension) to assign to the product.
+            const { data } = await axiosInstance.post("/files/pdf", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            const fileId = data?.data?.fileId;
+            if (!fileId) {
+                notify?.({ type: "error", message: "Upload failed: no file id returned." });
+                return;
+            }
+
+
+            // Store the new file id and stamp the upload time.
+            setContinent((prev) => {
+                const updatedProducts = [...(prev.productObjects ?? [])];
+                updatedProducts[index] = {
+                    ...updatedProducts[index],
+                    fileId,
+                    fileUpload_timeStamp: Date.now(),
+                };
+                return { ...prev, productObjects: updatedProducts };
+            });
+            notify?.({ type: "success", message: "PDF uploaded successfully." });
+        } catch (err: any) {
+            console.error("Failed to upload PDF", err);
+            notify?.({ type: "error", message: err?.message || "Failed to upload PDF." });
+        } finally {
+            setUploadingIndex(null);
+        }
+    }, [notify, setContinent]);
+
+    const themedInputStyle: React.CSSProperties = useMemo(() => ({
         background: "var(--bg2)",
         color: "var(--txt)",
         border: "1px solid var(--bdr)",
         boxShadow: "none",
-    };
+    }), []);
 
-    const themedDisabledInputStyle: React.CSSProperties = {
+    const themedDisabledInputStyle: React.CSSProperties = useMemo(() => ({
         ...themedInputStyle,
         background: "var(--bgp2)",
         color: "var(--mu)",
         opacity: 1,
         cursor: "not-allowed",
-    };
+    }), [themedInputStyle]);
 
-    const headerTextStyle: React.CSSProperties = {
+    const headerTextStyle: React.CSSProperties = useMemo(() => ({
         color: "var(--txt)",
         fontWeight: 700,
-    };
+    }), []);
 
-    const reactSelectStyles = {
+    const reactSelectStyles = useMemo(() => ({
         control: (base: any, state: any) => ({
             ...base,
             backgroundColor: "var(--bg2)",
@@ -204,7 +262,35 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                 color: "var(--txt)",
             },
         }),
-    };
+    }), []);
+
+    const selectTheme = useCallback((theme: any) => ({
+        ...theme,
+        borderRadius: 6,
+        colors: {
+            ...theme.colors,
+            primary: "var(--ora)",
+            primary25: "var(--bgp)",
+            primary50: "var(--bgp2)",
+            neutral0: "var(--bg2)",
+            neutral5: "var(--bg2)",
+            neutral10: "var(--bdr)",
+            neutral20: "var(--bdr)",
+            neutral30: "var(--ora)",
+            neutral40: "var(--mu)",
+            neutral50: "var(--mu)",
+            neutral60: "var(--txt)",
+            neutral70: "var(--txt)",
+            neutral80: "var(--txt)",
+            neutral90: "var(--txt)",
+        },
+    }), []);
+
+    const filterOption = useCallback(
+        (option: { label: string }, inputValue: string) =>
+            option.label.toLowerCase().includes(inputValue.toLowerCase()),
+        []
+    );
 
     return (
         <div style={{ color: "var(--txt)" }}>
@@ -219,30 +305,8 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                     placeholder="Select country"
                     isSearchable
                     styles={reactSelectStyles}
-                    theme={(theme) => ({
-                        ...theme,
-                        borderRadius: 6,
-                        colors: {
-                            ...theme.colors,
-                            primary: "var(--ora)",
-                            primary25: "var(--bgp)",
-                            primary50: "var(--bgp2)",
-                            neutral0: "var(--bg2)",
-                            neutral5: "var(--bg2)",
-                            neutral10: "var(--bdr)",
-                            neutral20: "var(--bdr)",
-                            neutral30: "var(--ora)",
-                            neutral40: "var(--mu)",
-                            neutral50: "var(--mu)",
-                            neutral60: "var(--txt)",
-                            neutral70: "var(--txt)",
-                            neutral80: "var(--txt)",
-                            neutral90: "var(--txt)",
-                        },
-                    })}
-                    filterOption={(option, inputValue) =>
-                        option.label.toLowerCase().includes(inputValue.toLowerCase())
-                    }
+                    theme={selectTheme}
+                    filterOption={filterOption}
                 />
             </div>
 
@@ -252,11 +316,12 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                         className="d-flex mt-3 mb-1 fw-bold align-items-center"
                         style={{ color: "var(--txt)" }}
                     >
-                        <div style={{ width: "25%" }}>Name</div>
-                        <div style={{ width: "15%" }}>Code</div>
-                        <div style={{ width: "30%" }}>File ID</div>
-                        <div style={{ width: "15%" }}>Importance</div>
-                        <div style={{ width: "15%" }}>Actions</div>
+                        <div style={{ width: "20%" }}>Name</div>
+                        <div style={{ width: "10%" }}>Code</div>
+                        <div style={{ width: "23%" }}>File ID</div>
+                        <div style={{ width: "12%" }}>Version</div>
+                        <div style={{ width: "12%" }}>Importance</div>
+                        <div style={{ width: "23%" }}>Actions</div>
                     </div>
                 )}
 
@@ -277,7 +342,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                             value={product.name}
                             readOnly
                             disabled
-                            style={{ ...themedDisabledInputStyle, width: "25%" }}
+                            style={{ ...themedDisabledInputStyle, width: "20%" }}
                         />
 
                         <input
@@ -286,7 +351,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                             value={product.code}
                             readOnly
                             disabled
-                            style={{ ...themedDisabledInputStyle, width: "15%" }}
+                            style={{ ...themedDisabledInputStyle, width: "10%" }}
                         />
 
                         <input
@@ -297,7 +362,22 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                             onChange={(e) =>
                                 handleProductChange(index, "fileId", e.target.value)
                             }
-                            style={{ ...themedInputStyle, width: "30%" }}
+                            style={{ ...themedInputStyle, width: "23%" }}
+                        />
+
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="V1"
+                            value={product.productVersion ?? ""}
+                            onChange={(e) =>
+                                handleProductChange(
+                                    index,
+                                    "productVersion",
+                                    e.target.value || null
+                                )
+                            }
+                            style={{ ...themedInputStyle, width: "12%" }}
                         />
 
                         <select
@@ -306,7 +386,7 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                             onChange={(e) =>
                                 handleProductChange(index, "importance", e.target.value)
                             }
-                            style={{ ...themedInputStyle, width: "15%" }}
+                            style={{ ...themedInputStyle, width: "12%" }}
                         >
                             {importanceOptions.map((opt) => (
                                 <option
@@ -322,21 +402,44 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
                             ))}
                         </select>
 
-                        <button
-                            type="button"
-                            title="Delete the product"
-                            onClick={() => handleDelete(index)}
-                            className="btn d-flex justify-content-center align-items-center"
-                            style={{
-                                width: "15%",
-                                fontSize: 24,
-                                color: "var(--or3)",
-                                border: "1px solid var(--bdr)",
-                                background: "var(--bg2)",
-                            }}
+                        <div
+                            className="d-flex gap-2"
+                            style={{ width: "23%" }}
                         >
-                            <MdOutlineDeleteForever />
-                        </button>
+                            <label
+                                title="Upload a PDF"
+                                className="dashboard-btn--icon mb-0"
+                                style={{
+                                    cursor:
+                                        uploadingIndex === index ? "wait" : "pointer",
+                                }}
+                            >
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    hidden
+                                    disabled={uploadingIndex === index}
+                                    onChange={(e) => handleUploadPdf(index, e)}
+                                />
+                                {uploadingIndex === index ? (
+                                    <span
+                                        className="spinner-border spinner-border-sm"
+                                        role="status"
+                                    />
+                                ) : (
+                                    <MdOutlineUploadFile />
+                                )}
+                            </label>
+
+                            <button
+                                type="button"
+                                title="Delete the product"
+                                onClick={() => handleDelete(index)}
+                                className="dashboard-btn--icon-danger"
+                            >
+                                <MdOutlineDeleteForever />
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -344,4 +447,4 @@ const CountriesSelector: React.FC<Props> = ({ continent, setContinent }) => {
     );
 };
 
-export default CountriesSelector;
+export default React.memo(CountriesSelector);

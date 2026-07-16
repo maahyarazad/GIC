@@ -7,6 +7,8 @@ export interface ProductDb {
   fileId: string;
   name: string;
   code: string;
+  productVersion?: string | null;
+  fileUpload_timeStamp?: number | null;
   content: Product["content"];
   variant: Product["variant"];
   media: Product["media"];
@@ -27,6 +29,8 @@ export const mapProduct = (doc: any): Product => ({
   name: doc.name,
   slug: doc.slug,
   code: doc.code,
+  productVersion: doc.productVersion ?? null,
+  fileUpload_timeStamp: doc.fileUpload_timeStamp ?? null,
   subRegion: doc.subRegion,
   content: doc.content ?? null,
   variant: doc.variant ?? null,
@@ -52,6 +56,8 @@ export const mapCreateProductRequestToDb = (body: CreateProductRequest): Product
   fileId: body.fileId,
   name: body.name,
   code: body.code,
+  productVersion: body.productVersion ?? null,
+  fileUpload_timeStamp: body.fileUpload_timeStamp ?? null,
   content: body.content ?? null,
   variant: body.variant ?? null,
   media: body.media ?? null,
@@ -69,6 +75,12 @@ export const mapUpdateProductRequestToDb = (body: Partial<CreateProductRequest>)
   ...(body.fileId !== undefined ? { fileId: body.fileId } : {}),
   ...(body.name !== undefined ? { name: body.name } : {}),
   ...(body.code !== undefined ? { code: body.code } : {}),
+  ...(body.productVersion !== undefined
+    ? { productVersion: body.productVersion ?? null }
+    : {}),
+  ...(body.fileUpload_timeStamp !== undefined
+    ? { fileUpload_timeStamp: body.fileUpload_timeStamp ?? null }
+    : {}),
   ...(body.content !== undefined ? { content: body.content ?? null } : {}),
   ...(body.variant !== undefined ? { variant: body.variant ?? null } : {}),
   ...(body.media !== undefined ? { media: body.media ?? null } : {}),

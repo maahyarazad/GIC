@@ -63,7 +63,9 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
+// Continent save posts all its products (each with full metadata), which can
+// exceed the default 100kb body limit — allow larger JSON/urlencoded bodies.
+app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 app.use(
   session({
     name: "sid",
@@ -77,7 +79,7 @@ app.use(
     },
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "25mb" }));
 
 /* ---------------------- Routes ---------------------- */
 RegisterRoutes(app);

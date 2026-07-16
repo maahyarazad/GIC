@@ -1,9 +1,10 @@
-import { Controller, Route, Tags, Post, Get, Delete, UploadedFile, Query, Request } from "tsoa";
+import { Controller, Route, Tags, Post, Get, Delete, UploadedFile, Query, Request, Middlewares } from "tsoa";
 import { getCollection } from "../db";
 import fs from "fs";
 import path from "path";
 import { ObjectId } from "mongodb";
 import { ApiResponse, createSuccessResponse, createErrorResponse , FilterModel, escapeRegExp} from "../utils/helpers";
+import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import mime from "mime-types";
 
 export interface UploadedFileDoc {
@@ -19,6 +20,64 @@ export interface UploadedFileDoc {
 @Route("api/v1/files")
 @Tags("files")
 export class FileController extends Controller {
+  /**
+   * Dedicated PDF upload. Saves the file to file_storage under its original
+   * filename and returns the file id (the filename without the .pdf extension)
+   * so it can be assigned to a product's `fileId` separately from the
+   * continent update request.
+   */
+  @Post("/pdf")
+  @Middlewares(adminAuthMiddleware)
+  public async uploadPdf(
+    @UploadedFile("file") file: Express.Multer.File
+  ): Promise<ApiResponse<{ fileId: string; fileName: string }>> {
+    try {
+      if (!file) {
+        this.setStatus(400);
+        return createErrorResponse("No file provided", "NO_FILE");
+      }
+
+      if (file.mimetype !== "application/pdf") {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Only PDF files are allowed",
+          "INVALID_FILE_TYPE"
+        );
+      }
+
+      // Preserve the original filename (ensuring a .pdf extension). Strip any
+      // path components so the filename can't escape file_storage.
+      const originalName = path.basename(file.originalname);
+      const fileName = /\.pdf$/i.test(originalName)
+        ? originalName
+        : `${originalName}.pdf`;
+      const fileId = fileName.replace(/\.pdf$/i, "");
+
+      const targetPath = path.join("file_storage", fileName);
+      fs.writeFileSync(targetPath, file.buffer);
+
+      // Record it for the file manager.
+      const collection = getCollection<UploadedFileDoc>("uploaded_files");
+      await collection.insertOne({
+        filename: fileName,
+        mimetype: file.mimetype,
+        extension: "pdf",
+        path: targetPath,
+        size: file.size,
+        createdAt: new Date(),
+      });
+
+      this.setStatus(201);
+      return createSuccessResponse(
+        { fileId, fileName },
+        "PDF uploaded successfully"
+      );
+    } catch (err: any) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to upload PDF", "UPLOAD_ERROR", err);
+    }
+  }
+
   @Post("/")
   public async uploadFile(
     @UploadedFile("file") file: Express.Multer.File

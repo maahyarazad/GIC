@@ -103,7 +103,7 @@ export const ContactUsRequests = () => {
             renderCell: (row) =>
                 row.attachment?.filename ? (
                     <button
-                        className="btn btn-sm dashboard-btn"
+                        className="dashboard-btn"
                         onClick={() =>
                             window.open(
                                 row.attachment?.path
@@ -126,7 +126,7 @@ export const ContactUsRequests = () => {
             filterable: false,
             renderCell: (row) => (
                 <button
-                    className="btn btn-sm dashboard-btn"
+                    className="dashboard-btn"
                     onClick={() =>
                         openModal({
                             variant: "default",
@@ -163,7 +163,7 @@ export const ContactUsRequests = () => {
         </div>
     ) : (
         <button
-            className="btn btn-sm dashboard-btn"
+            className="dashboard-btn"
             onClick={() =>
                 openModal({
                     variant: "default",

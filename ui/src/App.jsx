@@ -44,9 +44,9 @@ const AppContainer = ({ children }) => {
 
 const App = () => {
     const location = useLocation();
-    const navigate = useNavigate();
+    
     const [language, setLanguage] = useState('EN');
-const {showPage} = usePage();
+    const {showPage} = usePage();
 
     const [sessionId, setSessionId] = useState(null);
     const [isMounted, setIsMounted] = useState(false);

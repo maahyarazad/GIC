@@ -5,6 +5,8 @@ export interface ProductDocument {
   fileId: string;
   name: string;
   code: string;
+  productVersion?: string | null;
+  fileUpload_timeStamp?: number | null;
   content: ProductContent | null;
   variant: ProductVariant | null;
   media: ProductMedia | null;
@@ -53,6 +55,8 @@ const ProductSchema = new Schema<ProductDocument>(
     fileId: { type: String, required: true, trim: true, index: true },
     name: { type: String, required: true, trim: true, index: true },
     code: { type: String, required: true, trim: true, unique: true, index: true },
+    productVersion: { type: String, default: null },
+    fileUpload_timeStamp: { type: Number, default: null },
     content: { type: ProductContentSchema, default: null },
     variant: { type: ProductVariantSchema, default: null },
     media: { type: ProductMediaSchema, default: null },

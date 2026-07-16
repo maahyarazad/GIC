@@ -66,7 +66,7 @@
   border: 1px solid var(--bdr);
   border-radius: 0.75rem;
   background-color: var(--bgp);
-  color: var(--txt);
+  color: color-mix(in srgb, var(--txt), black 10%);
   padding: 1rem;
   cursor: pointer;
   overflow: hidden;
@@ -115,6 +115,7 @@
   min-width: 0;
 }
 .economic-insights ._products ._card ._card-title-d {
+  font-family: var(--se);
   margin: 0;
   font-weight: 600;
   font-size: 1.02rem;
@@ -137,6 +138,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 0.35rem;
+  color: color-mix(in srgb, var(--txt), black 10%);
 }
 .economic-insights ._products ._card ._rating {
   display: flex;
@@ -195,7 +197,7 @@
   flex: 1 1 auto;
   font-size: 0.8rem;
   line-height: 1.5;
-  color: var(--mu);
+  color: var(--txt);
   display: -webkit-box;
   -webkit-line-clamp: 4;
   line-clamp: 4;
@@ -216,6 +218,13 @@
 }
 .economic-insights ._products ._card ._card-cta::after {
   content: "↓";
+}
+.economic-insights ._products ._card ._card-updated {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.35rem;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--mu), black 10%);
 }
 .economic-insights ._products ._card .loader-overlay {
   position: absolute;

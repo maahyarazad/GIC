@@ -81,7 +81,8 @@
             border: 1px solid var(--bdr);
             border-radius: 0.75rem;
             background-color: var(--bgp);
-            color: var(--txt);
+            
+            color: color-mix(in srgb, var(--txt), black 10%);
             padding: 1rem;
             cursor: pointer;
             overflow: hidden;
@@ -99,6 +100,7 @@
             }
 
             ._card-body {
+                
                 display: flex;
                 flex-direction: column;
                 gap: 0.6rem;
@@ -137,6 +139,7 @@
             }
 
             ._card-title-d {
+                font-family: var(--se);
                 margin: 0;
                 font-weight: 600;
                 font-size: 1.02rem;
@@ -159,6 +162,7 @@
                 flex-direction: column;
                 align-items: flex-end;
                 gap: 0.35rem;
+                color: color-mix(in srgb, var(--txt), black 10%);
             }
 
             ._rating {
@@ -188,6 +192,7 @@
             }
 
             ._confidence {
+                
                 display: inline-flex;
                 align-items: center;
                 gap: 0.4rem;
@@ -225,11 +230,12 @@
             }
 
             ._rationale {
+                
                 margin: 0;
                 flex: 1 1 auto;
                 font-size: 0.8rem;
                 line-height: 1.5;
-                color: var(--mu);
+                color: var(--txt);
 
                 // The rationale runs to a paragraph; clamp it so every card in the row
                 // keeps the same height. Full text stays available via the title tooltip.
@@ -255,6 +261,14 @@
                 &::after {
                     content: "↓";
                 }
+            }
+
+            ._card-updated {
+                font-size: 0.75rem;
+                font-weight: 600;
+                margin-top: 0.35rem;
+                letter-spacing: 0.02em;
+                color: color-mix(in srgb, var(--mu), black 10%);
             }
 
             .loader-overlay {

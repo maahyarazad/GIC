@@ -40,6 +40,21 @@
   border-bottom-color: var(--ora);
 }
 
+.user-webmail-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: var(--txt);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.user-webmail-link:hover {
+  color: var(--ora);
+}
+
 .user-link {
   display: inline-flex;
   align-items: center;
@@ -61,9 +76,7 @@
   text-transform: uppercase;
   border: 1px solid var(--bdr);
   line-height: 1;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none; /* prevents text selection shifting */
+  user-select: none; /* prevents text selection shifting */
   letter-spacing: 0; /* removes any inherited spacing */
   text-indent: 0; /* ensures no indent offset */
-}/*# sourceMappingURL=Navbar.css.map */
+}

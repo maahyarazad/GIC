@@ -19,8 +19,8 @@ import {
   UpdateContinentRequest,
   ContinentViewModel,
   ImportDataPackageRequest,
+  ContinentProductInput,
 } from "../types/continent.types";
-import { Product } from "../types/product.types";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -405,7 +405,7 @@ export class ContinentController extends Controller {
 
   private async upsertProductsForContinent(
     continentId: Types.ObjectId,
-    products: Product[]
+    products: ContinentProductInput[]
   ): Promise<Types.ObjectId[]> {
     const ids: Types.ObjectId[] = [];
 
@@ -424,6 +424,8 @@ export class ContinentController extends Controller {
             fileId: product.fileId,
             name: product.name,
             code: product.code,
+            productVersion: product.productVersion ?? null,
+            fileUpload_timeStamp: product.fileUpload_timeStamp ?? null,
             content: product.content,
             variant: product.variant,
             media: product.media,

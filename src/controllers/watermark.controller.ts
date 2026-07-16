@@ -58,10 +58,13 @@ export function RegisterFileDownloadRoutes(app: Application) {
       const fullname =
         user.name === "" ? user.email.split("@") : user.name.split("@");
       const uniqueIndex = `Confidential Black File [informal, not Official]  ${fullname[0]}`;
-
-      await addWatermark(inputPath, outputPath, uniqueIndex);
-
+      
       const product = await productCollection.findOne({ fileId: fileId });
+
+      const productVersion = product?.productVersion ?? "V1";
+
+      await addWatermark(inputPath, outputPath, uniqueIndex, productVersion);
+
 
       const updateData: Partial<Product> = {
         ...product,

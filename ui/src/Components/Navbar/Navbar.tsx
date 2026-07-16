@@ -251,7 +251,7 @@ const Navbar = (
             : 'light'
     );
 
-const logoSrc = theme === "light" ? mainLogoLight : mainLogo;
+    const logoSrc = theme === "light" ? mainLogoLight : mainLogo;
 
 
     const NavLogo = (

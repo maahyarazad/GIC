@@ -302,6 +302,12 @@ export interface Product extends BaseModel {
   slug: string;
   code: string;
 
+  /** Product data version label, e.g. "V1", "V2". */
+  productVersion?: string | null;
+
+  /** Epoch ms (Date.now()) of the last PDF upload/assignment. */
+  fileUpload_timeStamp?: number | null;
+
   /**
    * sub-region label
    */
@@ -336,6 +342,8 @@ export interface CreateProductRequest {
   slug: string;
   code: string;
   subRegion: string;
+  productVersion?: string | null;
+  fileUpload_timeStamp?: number | null;
   content?: ProductContent | null;
   variant?: ProductVariant | null;
   media?: ProductMedia | null;

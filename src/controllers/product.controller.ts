@@ -239,7 +239,7 @@ export class ProductController extends Controller {
         parent: new Types.ObjectId(parentId),
       })
         .select(
-          "fileId name slug code subRegion content variant media tags downloadCount importance parent children recommended metadata sourceFiles sourceSheets isActive order createdAt updatedAt"
+          "fileId name slug code subRegion productVersion fileUpload_timeStamp content variant media tags downloadCount importance parent children recommended metadata sourceFiles sourceSheets isActive order createdAt updatedAt"
         )
         .lean();
 

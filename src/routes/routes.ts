@@ -177,6 +177,8 @@ const models: TsoaRoute.Models = {
             "slug": {"dataType":"string","required":true},
             "code": {"dataType":"string","required":true},
             "subRegion": {"dataType":"string","required":true},
+            "productVersion": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "fileUpload_timeStamp": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
             "content": {"dataType":"union","subSchemas":[{"ref":"ProductContent"},{"dataType":"enum","enums":[null]}]},
             "variant": {"dataType":"union","subSchemas":[{"ref":"ProductVariant"},{"dataType":"enum","enums":[null]}]},
             "media": {"dataType":"union","subSchemas":[{"ref":"ProductMedia"},{"dataType":"enum","enums":[null]}]},
@@ -205,6 +207,8 @@ const models: TsoaRoute.Models = {
             "name": {"dataType":"string","required":true},
             "slug": {"dataType":"string","required":true},
             "code": {"dataType":"string","required":true},
+            "productVersion": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "fileUpload_timeStamp": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
             "subRegion": {"dataType":"string","required":true},
             "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "content": {"dataType":"union","subSchemas":[{"ref":"ProductContent"},{"dataType":"enum","enums":[null]}],"required":true},
@@ -242,6 +246,8 @@ const models: TsoaRoute.Models = {
             "slug": {"dataType":"string"},
             "code": {"dataType":"string"},
             "subRegion": {"dataType":"string"},
+            "productVersion": {"dataType":"string"},
+            "fileUpload_timeStamp": {"dataType":"double"},
             "content": {"ref":"ProductContent"},
             "variant": {"ref":"ProductVariant"},
             "media": {"ref":"ProductMedia"},
@@ -424,6 +430,16 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_any_"},{"ref":"ErrorResponse"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse__fileId-string--fileName-string__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"dataType":"nestedObjectLiteral","nestedProperties":{"fileName":{"dataType":"string","required":true},"fileId":{"dataType":"string","required":true}}},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse__fileId-string--fileName-string__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse__fileId-string--fileName-string__"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UploadedFileDoc": {
         "dataType": "refObject",
         "properties": {
@@ -519,6 +535,27 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ContinentProductInput": {
+        "dataType": "refObject",
+        "properties": {
+            "_id": {"dataType":"string"},
+            "fileId": {"dataType":"string","required":true},
+            "name": {"dataType":"string","required":true},
+            "code": {"dataType":"string","required":true},
+            "importance": {"ref":"ProductImportance","required":true},
+            "productVersion": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "fileUpload_timeStamp": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
+            "content": {"dataType":"union","subSchemas":[{"ref":"ProductContent"},{"dataType":"enum","enums":[null]}]},
+            "variant": {"dataType":"union","subSchemas":[{"ref":"ProductVariant"},{"dataType":"enum","enums":[null]}]},
+            "media": {"dataType":"union","subSchemas":[{"ref":"ProductMedia"},{"dataType":"enum","enums":[null]}]},
+            "tags": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "downloadCount": {"dataType":"double"},
+            "children": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "recommended": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateContinentRequest": {
         "dataType": "refObject",
         "properties": {
@@ -528,7 +565,7 @@ const models: TsoaRoute.Models = {
             "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "products": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
             "productCodes": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
-            "productObjects": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"Product"}},{"dataType":"enum","enums":[null]}]},
+            "productObjects": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"ContinentProductInput"}},{"dataType":"enum","enums":[null]}]},
             "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "children": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
             "isActive": {"dataType":"boolean"},
@@ -547,25 +584,25 @@ const models: TsoaRoute.Models = {
     "UpdateContinentRequest": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string"},
             "name": {"dataType":"string"},
             "slug": {"dataType":"string"},
-            "code": {"dataType":"string"},
-            "description": {"dataType":"string"},
-            "products": {"dataType":"array","array":{"dataType":"string"}},
-            "productCodes": {"dataType":"array","array":{"dataType":"string"}},
-            "productObjects": {"dataType":"array","array":{"dataType":"refObject","ref":"Product"}},
-            "parent": {"dataType":"string"},
-            "children": {"dataType":"array","array":{"dataType":"string"}},
+            "code": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "products": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "productCodes": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "productObjects": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"ContinentProductInput"}},{"dataType":"enum","enums":[null]}]},
+            "parent": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "children": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
             "isActive": {"dataType":"boolean"},
             "order": {"dataType":"double"},
-            "image": {"dataType":"string"},
-            "imageAlt": {"dataType":"string"},
-            "seoTitle": {"dataType":"string"},
-            "seoDescription": {"dataType":"string"},
-            "seoKeywords": {"dataType":"array","array":{"dataType":"string"}},
-            "sourceLabel": {"dataType":"string"},
-            "summary": {"dataType":"nestedObjectLiteral","nestedProperties":{"notes":{"dataType":"string"},"chapterCoverage":{"dataType":"array","array":{"dataType":"string"}},"countryCount":{"dataType":"double"}}},
-            "_id": {"dataType":"string"},
+            "image": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "imageAlt": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "seoTitle": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "seoDescription": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "seoKeywords": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},
+            "sourceLabel": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "summary": {"dataType":"union","subSchemas":[{"dataType":"nestedObjectLiteral","nestedProperties":{"notes":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"chapterCoverage":{"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"string"}},{"dataType":"enum","enums":[null]}]},"countryCount":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]}}},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": true,
     },
@@ -1647,6 +1684,42 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getLogsByTargetId',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsFileController_uploadPdf: Record<string, TsoaRoute.ParameterSchema> = {
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+        };
+        app.post('/api/v1/files/pdf',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(FileController)),
+            ...(fetchMiddlewares<RequestHandler>(FileController.prototype.uploadPdf)),
+
+            async function FileController_uploadPdf(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsFileController_uploadPdf, request, response });
+
+                const controller = new FileController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadPdf',
                 controller,
                 response,
                 next,

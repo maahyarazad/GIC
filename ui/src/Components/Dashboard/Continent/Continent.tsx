@@ -10,9 +10,6 @@ import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 import DataPackageDialog from "./DataPackageDialog";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import Button from "@/Components/Button/Button";
-
-const buttonGroupStyle = { fontSize: 14, padding: 5 };
 
 const CategoriesDataGrid = () => {
     const { show } = useToast();
@@ -58,11 +55,10 @@ const CategoriesDataGrid = () => {
             headerName: "Actions",
             width: "20%",
             renderCell: (row) => (
-                <div className="btn-group">
+                <div className="d-flex gap-2 flex-wrap">
                     <button
                         title="Edit"
-                        style={buttonGroupStyle}
-                        className="btn btn-sm dashboard-btn"
+                        className="dashboard-btn--ghost-minimal"
                         onClick={() => onEdit(row)}
                     >
                         Edit
@@ -70,8 +66,7 @@ const CategoriesDataGrid = () => {
 
                     <button
                         title="Delete"
-                        style={buttonGroupStyle}
-                        className="btn btn-sm dashboard-btn--delete-ghost"
+                        className="dashboard-btn--delete-ghost"
                         onClick={() => onDelete(row)}
                     >
                         Delete
@@ -203,13 +198,49 @@ const CategoriesDataGrid = () => {
     const handleSaveContinent = async (continent: ContinetViewModel) => {
         try {
             const editMode = (continent._id !== null && continent._id !== undefined);
+
+            // Send only the fields the API accepts. In particular, drop each
+            // product's heavy `metadata` and any read-only fields (createdAt, etc.)
+            // — they aren't editable here and bloat/invalidate the request.
+            const payload = {
+                name: continent.name,
+                slug: continent.slug,
+                code: continent.code ?? null,
+                description: continent.description ?? null,
+                parent: continent.parent,
+                children: continent.children,
+                isActive: continent.isActive,
+                order: continent.order,
+                image: continent.image ?? null,
+                imageAlt: continent.imageAlt ?? null,
+                seoTitle: continent.seoTitle ?? null,
+                seoDescription: continent.seoDescription ?? null,
+                seoKeywords: continent.seoKeywords ?? null,
+                productObjects: (continent.productObjects ?? []).map((p: any) => ({
+                    ...(p._id ? { _id: p._id } : {}),
+                    fileId: p.fileId,
+                    name: p.name,
+                    code: p.code,
+                    importance: p.importance,
+                    productVersion: p.productVersion ?? null,
+                    fileUpload_timeStamp: p.fileUpload_timeStamp ?? null,
+                    content: p.content ?? null,
+                    variant: p.variant ?? null,
+                    media: p.media ?? null,
+                    tags: p.tags ?? null,
+                    downloadCount: p.downloadCount ?? 0,
+                    children: p.children ?? [],
+                    recommended: p.recommended ?? [],
+                })),
+            };
+
             if (editMode) {
 
-                await axiosInstance.put(`/continents/${continent._id}`, continent);
+                await axiosInstance.put(`/continents/${continent._id}`, payload);
                 show({ type: "success", message: "ContinetViewModel updated!" });
             } else {
 
-                await axiosInstance.post("/continents", continent);
+                await axiosInstance.post("/continents", payload);
                 show({ type: "success", message: "ContinetViewModel created!" });
             }
 
@@ -235,6 +266,7 @@ const CategoriesDataGrid = () => {
                     continent={continent}
                     setContinent={setContinent}
                     handleSaveContinent={handleSaveContinent}
+                    notify={show}
                 />
 
             );

@@ -21,7 +21,6 @@ export interface EmailTemplate {
     updatedAt?: string;
 }
 
-const buttonGroupStyle = { fontSize: 10, padding: 5 }
 const EmailTemplatesDataGrid = () => {
     const { show } = useToast();
     const { openModal, setModalDisabled } = useModal();
@@ -39,9 +38,9 @@ const EmailTemplatesDataGrid = () => {
             width: '30%',
             renderCell: (row) => (
                 <div className="email-template-row-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onEdit(row)}>Edit</button>
-                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
-                    <button style={buttonGroupStyle} className="btn btn-sm dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
+                    <button className="dashboard-btn--ghost-minimal" onClick={() => onEdit(row)}>Edit</button>
+                    <button className="dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
+                    <button className="dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
                 </div>
             ),
             sortable: false,

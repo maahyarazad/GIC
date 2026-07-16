@@ -9,10 +9,15 @@ import { ContinetViewModel } from "../../../../../src/types/continent.types";
 import slugify from "slugify";
 import CountriesSelector from "./CountriesSelector";
 
+type Notify = (toast: { type: "success" | "error"; message: string }) => void;
+
 interface ModifyContinentProps {
     id?: string;
     continent?: ContinetViewModel;
     handleSaveContinent: (continent: ContinetViewModel) => void;
+    // Toast callback captured from a parent inside ToastProvider (the slide-menu
+    // content is rendered outside that provider).
+    notify?: Notify;
 }
 
 export interface ModifyContinentRef {
@@ -47,7 +52,7 @@ const cardStyle: React.CSSProperties = {
 const ModifyContinent = forwardRef<
     ModifyContinentRef,
     ModifyContinentProps
->(({ id, continent, handleSaveContinent }, ref) => {
+>(({ id, continent, handleSaveContinent, notify }, ref) => {
     const formRef = useRef<HTMLFormElement>(null);
 
     const [formState, setFormState] = useState<ContinetViewModel>({
@@ -68,6 +73,9 @@ const ModifyContinent = forwardRef<
         seoKeywords: [],
     });
 
+    // Sync from the parent only when a *different* continent is opened. Keying on
+    // the whole `continent` object would reset formState on every incidental
+    // re-render, wiping in-progress edits like the uploaded fileUpload_timeStamp.
     useEffect(() => {
         if (continent) {
             setFormState({
@@ -79,7 +87,8 @@ const ModifyContinent = forwardRef<
                 }),
             });
         }
-    }, [continent]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [continent?._id]);
 
     useImperativeHandle(ref, () => ({
         submitForm: () => {
@@ -161,6 +170,7 @@ const ModifyContinent = forwardRef<
                     <CountriesSelector
                         continent={formState}
                         setContinent={setFormState}
+                        notify={notify}
                     />
                 </div>
 
@@ -172,7 +182,7 @@ const ModifyContinent = forwardRef<
                         className="form-control"
                         style={inputStyle}
                         rows={3}
-                        value={formState.description}
+                        value={formState.description ?? ""}
                         onChange={(e) =>
                             handleChange("description", e.target.value)
                         }

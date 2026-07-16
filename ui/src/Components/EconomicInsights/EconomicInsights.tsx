@@ -33,6 +33,17 @@ const confidenceLevel = (indicator?: string | null): ConfidenceLevel | null => {
 /** Drops the leading emoji so the pill can carry its own colour-coded dot instead. */
 const confidenceLabel = (indicator: string): string => indicator.replace(/^[^\p{L}]+/u, "").trim();
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Epoch ms -> "DD-MMM-YYYY" (e.g. 16-Jul-2026), or null when not set. */
+const formatLastUpdated = (ts?: number | null): string | null => {
+    if (!ts) return null;
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return null;
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${dd}-${MONTHS[d.getMonth()]}-${d.getFullYear()}`;
+};
+
 /** "★★★☆☆" -> 3, so filled and empty stars can be styled apart. */
 const filledStars = (rating?: string | number | null): number | null => {
     if (rating === null || rating === undefined) return null;
@@ -185,7 +196,7 @@ const EconomicInsights: React.FC = () => {
                         const indicator = ratings?.investorConfidenceIndicator;
                         const level = confidenceLevel(indicator);
                         const rationale = ratings?.rationaleIndustrialInvestability;
-                        console.log(ratings);
+                        
                         return (
                             <div
                                 key={p._id}
@@ -243,7 +254,15 @@ const EconomicInsights: React.FC = () => {
                                             </p>
                                         )}
 
-                                        <span className="_card-cta">Download report</span>
+                                        <span className="d-flex justify-content-between align-items-center">
+
+                                            <span className="_card-cta">Download report</span>
+                                            {formatLastUpdated(p.fileUpload_timeStamp) && (
+                                                <span className="_card-updated">
+                                                    Last updated: {formatLastUpdated(p.fileUpload_timeStamp)}
+                                                </span>
+                                            )}
+                                        </span>
                                     </div>
 
                                     <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>

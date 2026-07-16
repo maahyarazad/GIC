@@ -167,7 +167,7 @@ const FileManagement = () => {
             sortable: false,
             filterable: false,
             renderCell: (row) => (
-                <button type="button" className="btn btn-sm dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
+                <button type="button" className="dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
                     Delete
                 </button>
             ),

@@ -119,10 +119,10 @@ export const UserProfilesDataGrid = () => {
 
 
                 <div className={`${row.role !== 'admin' ? " " : "d-none"}`}>
-                    <div className="btn-group" role="group" aria-label="Basic example">
-                        <button className={`btn btn-sm dashboard-btn`}
+                    <div className="d-flex gap-2 flex-wrap">
+                        <button className="dashboard-btn"
                             disabled={row.authorize} onClick={() => toggleAuthorization(row)}>Authorize</button>
-                        <button className={`btn btn-sm dashboard-btn`}
+                        <button className="dashboard-btn--delete-ghost"
                             disabled={!row.authorize} onClick={() => toggleAuthorization(row)}>Unauthorize</button>
                     </div>
 

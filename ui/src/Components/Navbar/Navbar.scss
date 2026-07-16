@@ -49,6 +49,22 @@
 }
 
 
+.user-webmail-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: var(--txt);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--ora);
+  }
+}
+
 .user-link {
   display: inline-flex;
   align-items: center;

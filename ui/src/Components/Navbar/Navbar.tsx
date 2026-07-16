@@ -10,7 +10,15 @@ import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useSelector, useDispatch } from 'react-redux';
 import { setReady } from '@/features/appSlice';
+import { TfiEmail } from "react-icons/tfi";
 
+// Users allowed to see the webmail icon.
+const WEBMAIL_ALLOWLIST = [
+    'ricco.deutscher@german-industry-club.com',
+    'philip.hoelzer@german-industry-club.com',
+    'jan.hussing@german-industry-club.com',
+];
+const ROUNDCUBE_URL = 'https://buenapublica.cmpsrv.com/rc/';
 
 type NavbarProps = {
     onLanguageChange: any, currentlanguage: any
@@ -209,10 +217,27 @@ const Navbar = (
       const isBlogPage = /^\/blog(\/.*)?$/.test(activePage);
 
 
+    const userEmail = user?.email?.trim().toLowerCase();
+    const canUseWebmail = !!userEmail && WEBMAIL_ALLOWLIST.includes(userEmail);
+    const webmailHref = `${ROUNDCUBE_URL}?_user=${encodeURIComponent(user?.email ?? '')}`;
+
     const User: React.ReactNode = (
         <>
             {user !== null ? (
                 <>
+                    {canUseWebmail && (
+                        <a
+                            className="user-webmail-link"
+                            href={webmailHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Open Webmail"
+                            aria-label="Open Webmail"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <TfiEmail />
+                        </a>
+                    )}
                     <span
                         className={`span-link user-link ${activePage === "/dashboard" ? "active" : ""
                             }`}

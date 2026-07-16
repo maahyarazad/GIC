@@ -43,6 +43,20 @@ requirePasswordChange: doc.requirePasswordChange
 
 export const mapUsers = (docs: any[] = []): User[] => docs.map(mapUser);
 
+/** Sensitive fields that must never be sent to the client. */
+export type PublicUser = Omit<
+  User,
+  "password" | "googleId" | "facebookId" | "remarks"
+>;
+
+/** Strip sensitive fields (credentials, external ids, internal remarks) from a user. */
+export function toPublicUser<T extends Record<string, any>>(
+  user: T
+): Omit<T, "password" | "googleId" | "facebookId" | "remarks"> {
+  const { password, googleId, facebookId, remarks, ...safe } = user;
+  return safe;
+}
+
 export const mapCreateUserRequestToDb = (body: CreateUserRequest, hashedPassword: string): UserDb => ({
   name: body.name,
   email: body.email.trim().toLowerCase(),

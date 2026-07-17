@@ -38,6 +38,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  margin-right: 10px;
+  border: 1px solid;
+  border-color: #e6dfdf !important;
+  border-radius: 20px;
+  padding: 5px 10px 5px 10px;
 }
 .compare-pill-flag {
   width: 20px;
@@ -47,9 +52,10 @@
 .compare-remove-btn {
   border: none;
   cursor: pointer;
+  background: transparent;
   padding: 0 2px;
   color: var(--mu);
-  font-size: 1.05rem;
+  font-size: 1.7rem;
   line-height: 1;
   transition: color 0.2s ease, transform 0.15s ease;
 }
@@ -332,4 +338,4 @@
     width: 100%;
     max-width: 100%;
   }
-}/*# sourceMappingURL=CompareCountries.css.map */
+}

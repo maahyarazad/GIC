@@ -99,6 +99,11 @@ $header-bg: rgba(200, 85, 26, 0.15);
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    margin-right: 10px;
+    border: 1px solid;
+    border-color:#e6dfdf!important;
+    border-radius: 20px;
+    padding: 5px 10px 5px 10px;
   }
 
   &-pill-flag {
@@ -109,9 +114,10 @@ $header-bg: rgba(200, 85, 26, 0.15);
 
   &-remove-btn {
     @include reset-button;
+    background: transparent;
     padding: 0 2px;
     color: var(--mu);
-    font-size: 1.05rem;
+    font-size: 1.7rem;
     line-height: 1;
     transition: color $dur ease, transform $dur-fast ease;
 

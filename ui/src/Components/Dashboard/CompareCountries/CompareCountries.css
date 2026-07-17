@@ -8,6 +8,14 @@
     transform: translateY(0);
   }
 }
+.dashboard:has(.compare-section) {
+  overflow-x: visible;
+}
+
+.main-content:has(.compare-section) {
+  overflow-y: visible;
+}
+
 .compare-section {
   padding: 1.5rem 0;
   font-family: var(--sa);
@@ -245,8 +253,8 @@
 .compare-cards {
   display: flex;
   align-items: flex-start;
+  flex-wrap: wrap;
   gap: 1rem;
-  overflow-x: auto;
   padding-bottom: 0.5rem;
 }
 .compare-card {
@@ -263,15 +271,21 @@
   justify-content: center;
   gap: 0.5rem;
   flex-direction: column;
+  position: sticky;
+  top: 70px;
+  z-index: 3;
+  background: var(--bg);
   padding-bottom: 0.85rem;
   margin-bottom: 0.85rem;
   border-bottom: 1px solid var(--bdr);
+  transition: padding 0.3s ease;
 }
 .compare-card-name {
   font-family: var(--se);
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--txt);
+  transition: font-size 0.3s ease;
 }
 .compare-card-body {
   display: flex;
@@ -295,6 +309,17 @@
   height: 190px;
   border-radius: 2px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+.compare-cards-wrap.is-compact .compare-card-head {
+  padding-bottom: 0.5rem;
+}
+.compare-cards-wrap.is-compact .compare-flag {
+  width: 150px;
+  height: 95px;
+}
+.compare-cards-wrap.is-compact .compare-card-name {
+  font-size: 0.9rem;
 }
 .compare-branch {
   margin-bottom: 0.35rem;

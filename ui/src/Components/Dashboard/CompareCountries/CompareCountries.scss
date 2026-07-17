@@ -20,6 +20,9 @@ $dur-collapse: 0.28s;
 
 $border: 1px solid var(--bdr);
 $header-bg: rgba(200, 85, 26, 0.15);
+// Height of the fixed site navbar (see `nav` in index.scss) — sticky elements
+// must pin below it or they slide underneath.
+$nav-height: 70px;
 
 // ── Mixins ─────────────────────────────────────────────────
 @mixin reset-button {
@@ -63,6 +66,21 @@ $header-bg: rgba(200, 85, 26, 0.15);
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+// ── Dashboard-shell overrides (Compare tab only) ───────────
+// The dashboard shell creates scroll containers (.dashboard has overflow-x:
+// scroll, .main-content has overflow-y: auto). Either one becomes the sticky
+// containing block of .compare-card-head — and since neither actually scrolls
+// vertically (the window does), the heads would never pin. Neutralize both
+// only while the Compare Countries section is rendered, so other dashboard
+// tabs keep their scroll behavior.
+.dashboard:has(.compare-section) {
+  overflow-x: visible;
+}
+
+.main-content:has(.compare-section) {
+  overflow-y: visible;
 }
 
 // ── Component ──────────────────────────────────────────────
@@ -319,8 +337,12 @@ $header-bg: rgba(200, 85, 26, 0.15);
   &-cards {
     display: flex;
     align-items: flex-start;
+    // Wrap instead of overflowing horizontally: the page can't scroll
+    // sideways (body overflow-x: hidden), and a non-visible overflow here
+    // would become the sticky containing block of .compare-card-head and
+    // break its stickiness against the page scroll.
+    flex-wrap: wrap;
     gap: 1rem;
-    overflow-x: auto;
     padding-bottom: 0.5rem;
   }
 
@@ -332,12 +354,20 @@ $header-bg: rgba(200, 85, 26, 0.15);
     background: transparent;
     animation: compare-fade-in 0.3s ease both;
 
+    // Sticks to the top while its card scrolls, so the user always sees which
+    // country each column belongs to. The compact (50%) state is toggled by
+    // `.is-compact` on .compare-cards-wrap once the cards reach the top.
     &-head {
       @include flex(center, center, 0.5rem);
       flex-direction: column;
+      position: sticky;
+      top: $nav-height; // pin below the fixed navbar, not underneath it
+      z-index: 3; // below the loading overlay (z-index 5)
+      background: var(--bg);
       padding-bottom: 0.85rem;
       margin-bottom: 0.85rem;
       border-bottom: $border;
+      transition: padding 0.3s ease;
     }
 
     &-name {
@@ -345,6 +375,7 @@ $header-bg: rgba(200, 85, 26, 0.15);
       font-size: 1.15rem;
       font-weight: 600;
       color: var(--txt);
+      transition: font-size 0.3s ease;
     }
 
     &-body {
@@ -367,6 +398,24 @@ $header-bg: rgba(200, 85, 26, 0.15);
     height: 190px;
     border-radius: $radius-xs;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    transition: width 0.3s ease, height 0.3s ease;
+  }
+
+  // Compact sticky state — heads shrink to 50% while pinned to the top and
+  // smoothly restore when the user scrolls back up.
+  &-cards-wrap.is-compact {
+    .compare-card-head {
+      padding-bottom: 0.5rem;
+    }
+
+    .compare-flag {
+      width: calc($flag-width / 2); // 50% of the original 300x190
+      height: 95px;
+    }
+
+    .compare-card-name {
+      font-size: 0.9rem;
+    }
   }
 
   // ── Recursive leaf / branch rendering ──

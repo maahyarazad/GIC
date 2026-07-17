@@ -41,6 +41,9 @@ const fieldId = (category: string, field: string) => `${category}.${field}`;
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
 
+/** Height of the fixed site navbar — keep in sync with $nav-height in the SCSS. */
+const NAV_HEIGHT = 70;
+
 /**
  * Recursively renders a metadata value down to its leaf nodes, so we display the
  * value stored deep in the tree rather than only the parent key.
@@ -272,6 +275,43 @@ const CompareCountries: React.FC = () => {
 
   const hasComparison = selectedCountryIds.length > 0 && selectedFields.length > 0;
 
+  /**
+   * Compact the sticky card heads (flag at 50%) once the cards reach the top of
+   * the viewport — i.e. exactly when position: sticky starts pinning them.
+   * Scroll work is throttled with requestAnimationFrame so scrolling stays smooth.
+   */
+  const cardsRef = useRef<HTMLDivElement | null>(null);
+  const [compactHeads, setCompactHeads] = useState(false);
+
+  useEffect(() => {
+    if (!hasComparison) {
+      setCompactHeads(false);
+      return;
+    }
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const wrap = cardsRef.current;
+      // Compact once the cards reach the bottom edge of the fixed navbar —
+      // the exact point where the sticky heads (top: $nav-height) start pinning.
+      setCompactHeads(!!wrap && wrap.getBoundingClientRect().top <= NAV_HEIGHT);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    // capture=true catches scroll from whichever ancestor actually scrolls.
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [hasComparison]);
+
   if (loading) {
     return (
       <div className="compare-section">
@@ -438,7 +478,10 @@ const CompareCountries: React.FC = () => {
         </div>
 
         {/* ── Selected country cards (GSMArena-style columns) ── */}
-        <div className="compare-cards-wrap">
+        <div
+          ref={cardsRef}
+          className={`compare-cards-wrap ${compactHeads ? "is-compact" : ""}`}
+        >
           {loadingMetadata && (
             <div className="compare-overlay" role="status" aria-live="polite">
               <Loader />

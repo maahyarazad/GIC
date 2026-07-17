@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import Loader from "@/Components/Loader/Loader";
 import { useToast } from "@/Providers/ToastContext";
@@ -41,11 +41,14 @@ const fieldId = (category: string, field: string) => `${category}.${field}`;
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
 
+/** Height of the fixed site navbar — keep in sync with $nav-height in the SCSS. */
+const NAV_HEIGHT = 70;
+
 /**
  * Recursively renders a metadata value down to its leaf nodes, so we display the
  * value stored deep in the tree rather than only the parent key.
  */
-const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = ({
+const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = React.memo(({
   label,
   value,
   depth,
@@ -97,7 +100,7 @@ const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = ({
       <span className="compare-leaf-value">{String(value)}</span>
     </div>
   );
-};
+});
 
 /* ──────────────────────────────────────────────────────────────
    Component
@@ -158,9 +161,18 @@ const CompareCountries: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  /* ── Fetch full metadata for any newly-selected country (cached) ── */
+  /**
+   * Fetch full metadata for any newly-selected country (cached).
+   *
+   * Reads the already-loaded metadata from a ref so this effect depends ONLY on
+   * `selectedCountryIds` — NOT on `metadataById`. Depending on `metadataById`
+   * (which this effect also writes) makes it re-run on every metadata update,
+   * causing redundant re-fetches and loading on/off churn that janks scrolling.
+   */
+  const metadataByIdRef = useRef(metadataById);
+
   useEffect(() => {
-    const missing = selectedCountryIds.filter((id) => !metadataById[id]);
+    const missing = selectedCountryIds.filter((id) => !metadataByIdRef.current[id]);
     if (missing.length === 0) return;
 
     let cancelled = false;
@@ -181,6 +193,7 @@ const CompareCountries: React.FC = () => {
         setMetadataById((prev) => {
           const next = { ...prev };
           for (const [id, meta] of results) next[id] = meta;
+          metadataByIdRef.current = next; // keep the ref in sync with state
           return next;
         });
       } finally {
@@ -191,7 +204,7 @@ const CompareCountries: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [selectedCountryIds, metadataById]);
+  }, [selectedCountryIds]);
 
   /* ── Lookups ── */
   const countryById = useMemo(() => {
@@ -261,6 +274,43 @@ const CompareCountries: React.FC = () => {
   }, [categories, selectedFields]);
 
   const hasComparison = selectedCountryIds.length > 0 && selectedFields.length > 0;
+
+  /**
+   * Compact the sticky card heads (flag at 50%) once the cards reach the top of
+   * the viewport — i.e. exactly when position: sticky starts pinning them.
+   * Scroll work is throttled with requestAnimationFrame so scrolling stays smooth.
+   */
+  const cardsRef = useRef<HTMLDivElement | null>(null);
+  const [compactHeads, setCompactHeads] = useState(false);
+
+  useEffect(() => {
+    if (!hasComparison) {
+      setCompactHeads(false);
+      return;
+    }
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const wrap = cardsRef.current;
+      // Compact once the cards reach the bottom edge of the fixed navbar —
+      // the exact point where the sticky heads (top: $nav-height) start pinning.
+      setCompactHeads(!!wrap && wrap.getBoundingClientRect().top <= NAV_HEIGHT);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+
+    update();
+    // capture=true catches scroll from whichever ancestor actually scrolls.
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [hasComparison]);
 
   if (loading) {
     return (
@@ -428,7 +478,10 @@ const CompareCountries: React.FC = () => {
         </div>
 
         {/* ── Selected country cards (GSMArena-style columns) ── */}
-        <div className="compare-cards-wrap">
+        <div
+          ref={cardsRef}
+          className={`compare-cards-wrap ${compactHeads ? "is-compact" : ""}`}
+        >
           {loadingMetadata && (
             <div className="compare-overlay" role="status" aria-live="polite">
               <Loader />

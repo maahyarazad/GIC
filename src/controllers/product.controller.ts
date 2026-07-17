@@ -34,6 +34,7 @@ import {
   mapUpdateProductRequestToDb,
 } from "../mappers/product.mapper";
 import { ProductModel } from "../models/product.model";
+import { cacheService } from "../services/cacheService";
 import swaggerDocument from "../swagger/swagger.json";
 
 @Route("api/v1/products")
@@ -70,6 +71,7 @@ export class ProductController extends Controller {
         mapCreateProductRequestToDb(body)
       );
 
+      cacheService.clear();
       this.setStatus(201);
       return createSuccessResponse(
         { product: mapProduct(product.toObject()) },
@@ -98,22 +100,34 @@ export class ProductController extends Controller {
     limit: number;
     skip: number;
   }> {
-    const filter: any = {};
-    if (name) filter.name = { $regex: new RegExp(name, "i") };
-    if (importance) filter.importance = importance;
-    if (tags) filter.tags = { $all: tags.split(",").map((t) => t.trim()) };
+    const key = `products:all:${JSON.stringify({
+      limit,
+      skip,
+      sortBy,
+      sortOrder,
+      name,
+      importance,
+      tags,
+    })}`;
 
-    const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
-      string,
-      1 | -1
-    >;
+    return cacheService.getOrSet(key, async () => {
+      const filter: any = {};
+      if (name) filter.name = { $regex: new RegExp(name, "i") };
+      if (importance) filter.importance = importance;
+      if (tags) filter.tags = { $all: tags.split(",").map((t) => t.trim()) };
 
-    const [docs, total] = await Promise.all([
-      ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
-      ProductModel.countDocuments(filter),
-    ]);
+      const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 } as Record<
+        string,
+        1 | -1
+      >;
 
-    return { products: mapProducts(docs), total, limit, skip };
+      const [docs, total] = await Promise.all([
+        ProductModel.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+        ProductModel.countDocuments(filter),
+      ]);
+
+      return { products: mapProducts(docs), total, limit, skip };
+    });
   }
 
   /**
@@ -127,6 +141,10 @@ export class ProductController extends Controller {
   @SuccessResponse("200", "Product metadata schema fetched successfully")
   public async getMetadataSchema(): Promise<any> {
     try {
+      const cacheKey = "products:metadata-schema";
+      const cached = cacheService.get<any>(cacheKey);
+      if (cached !== undefined) return cached;
+
       const properties = (swaggerDocument as any)?.components?.schemas
         ?.ProductMetadata?.properties;
 
@@ -135,10 +153,12 @@ export class ProductController extends Controller {
         return createErrorResponse("ProductMetadata schema not found");
       }
 
-      return createSuccessResponse(
+      const response = createSuccessResponse(
         { properties },
         "Product metadata schema fetched successfully"
       );
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -164,6 +184,10 @@ export class ProductController extends Controller {
         return createErrorResponse("Invalid product ID");
       }
 
+      const cacheKey = `products:metadata:${id}`;
+      const cached = cacheService.get<any>(cacheKey);
+      if (cached !== undefined) return cached;
+
       const product = await (ProductModel as any)
         .findById(id)
         .select("name code metadata")
@@ -174,7 +198,7 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse(
+      const response = createSuccessResponse(
         {
           _id: String((product as any)._id),
           name: (product as any).name,
@@ -183,6 +207,8 @@ export class ProductController extends Controller {
         },
         "Product metadata fetched successfully"
       );
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -203,6 +229,11 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid product ID");
       }
+
+      const cacheKey = `products:byId:${id}`;
+      const cached = cacheService.get<any>(cacheKey);
+      if (cached !== undefined) return cached;
+
       //@ts-ignore
       const product = await ProductModel.findById(id).lean();
 
@@ -211,10 +242,12 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
-      return createSuccessResponse(
+      const response = createSuccessResponse(
         { product: mapProduct(product) },
         "Product fetched successfully"
       );
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -233,6 +266,11 @@ export class ProductController extends Controller {
         this.setStatus(400);
         return { products: [] };
       }
+
+      const cacheKey = `products:byParent:${parentId}`;
+      const cached = cacheService.get<{ products: Product[] }>(cacheKey);
+      if (cached !== undefined) return cached;
+
       //@ts-ignore
       const products = await ProductModel.find({
         //@ts-ignore
@@ -243,7 +281,9 @@ export class ProductController extends Controller {
         )
         .lean();
 
-      return { products: products };
+      const response = { products: products as Product[] };
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error) {
       console.error(error);
       this.setStatus(500);
@@ -278,6 +318,7 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
+      cacheService.clear();
       return createSuccessResponse(
         { product: mapProduct(product) },
         "Product updated successfully"
@@ -305,6 +346,7 @@ export class ProductController extends Controller {
         return createErrorResponse("Product not found");
       }
 
+      cacheService.clear();
       return createSuccessResponse(
         { success: true },
         "Product deleted successfully"

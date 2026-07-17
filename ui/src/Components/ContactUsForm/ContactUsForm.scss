@@ -28,14 +28,13 @@ $white: var(--primary-color);
 
 .request-form-section input:not(:placeholder-shown) {
     background-color: transparent !important;
-       color: rgb(rgb(205, 33, 33), green, blue)
-    
+    color: rgb(205, 33, 33);
 }
 
 .request-form-section input::placeholder,
 .request-form-section textarea::placeholder {
     background-color: transparent !important;
-        color: rgb(rgb(205, 33, 33), green, blue)
+    color: rgb(205, 33, 33);
 }
 
 

@@ -19,17 +19,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ui/package.json
 
-          
       - name: Install dependencies
         working-directory: ui
         run: npm install
 
-      - name: Install Sass Compiler
-        run: npm install -g sass
-
-      - name: Compile SCSS to CSS
-        run: sass src/scss/styles.scss dist/css/styles.css --style=compressed
-        
       - name: Build client
         working-directory: ui
         run: npm run build:client

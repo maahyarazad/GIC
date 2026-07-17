@@ -19,21 +19,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ui/package.json
 
+          
       - name: Install dependencies
         working-directory: ui
         run: npm install
 
-      - name: Ensure SCSS compiler (sass) is installed
-        working-directory: ui
-        run: |
-          if ! npm ls sass >/dev/null 2>&1; then
-            echo "sass not found — installing it so SCSS can compile"
-            npm install -D sass
-          else
-            echo "sass is present:"
-            npm ls sass
-          fi
+      - name: Install Sass Compiler
+        run: npm install -g sass
 
+      - name: Compile SCSS to CSS
+        run: sass src/scss/styles.scss dist/css/styles.css --style=compressed
+        
       - name: Build client
         working-directory: ui
         run: npm run build:client

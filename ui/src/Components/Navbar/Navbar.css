@@ -76,7 +76,9 @@
   text-transform: uppercase;
   border: 1px solid var(--bdr);
   line-height: 1;
-  user-select: none; /* prevents text selection shifting */
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none; /* prevents text selection shifting */
   letter-spacing: 0; /* removes any inherited spacing */
   text-indent: 0; /* ensures no indent offset */
-}
+}/*# sourceMappingURL=Navbar.css.map */

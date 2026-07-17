@@ -11,6 +11,10 @@
 
 ## Improve the Compare Card Header UX
 
+## Target Files:
+1. CompareCountries.scss
+2. CompareCountries.tsx
+
 ### Description
 
 1. Make the `.compare-card-head` sticky once it scrolls out of the viewport.

@@ -22,23 +22,23 @@
 
 .request-form-section input:not(:-moz-placeholder) {
   background-color: transparent !important;
-  color: white;
+  color: rgb(205, 33, 33);
 }
 
 .request-form-section input:not(:placeholder-shown) {
   background-color: transparent !important;
-  color: white;
+  color: rgb(205, 33, 33);
 }
 
 .request-form-section input::-moz-placeholder, .request-form-section textarea::-moz-placeholder {
   background-color: transparent !important;
-  color: var(--primary-color);
+  color: rgb(205, 33, 33);
 }
 
 .request-form-section input::placeholder,
 .request-form-section textarea::placeholder {
   background-color: transparent !important;
-  color: var(--primary-color);
+  color: rgb(205, 33, 33);
 }
 
 .request-form-section input:focus,

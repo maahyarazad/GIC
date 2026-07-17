@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import Loader from "@/Components/Loader/Loader";
 import { useToast } from "@/Providers/ToastContext";
@@ -45,7 +45,7 @@ const isPlainObject = (v: unknown): v is Record<string, unknown> =>
  * Recursively renders a metadata value down to its leaf nodes, so we display the
  * value stored deep in the tree rather than only the parent key.
  */
-const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = ({
+const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = React.memo(({
   label,
   value,
   depth,
@@ -97,7 +97,7 @@ const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = ({
       <span className="compare-leaf-value">{String(value)}</span>
     </div>
   );
-};
+});
 
 /* ──────────────────────────────────────────────────────────────
    Component
@@ -158,9 +158,18 @@ const CompareCountries: React.FC = () => {
     loadData();
   }, [loadData]);
 
-  /* ── Fetch full metadata for any newly-selected country (cached) ── */
+  /**
+   * Fetch full metadata for any newly-selected country (cached).
+   *
+   * Reads the already-loaded metadata from a ref so this effect depends ONLY on
+   * `selectedCountryIds` — NOT on `metadataById`. Depending on `metadataById`
+   * (which this effect also writes) makes it re-run on every metadata update,
+   * causing redundant re-fetches and loading on/off churn that janks scrolling.
+   */
+  const metadataByIdRef = useRef(metadataById);
+
   useEffect(() => {
-    const missing = selectedCountryIds.filter((id) => !metadataById[id]);
+    const missing = selectedCountryIds.filter((id) => !metadataByIdRef.current[id]);
     if (missing.length === 0) return;
 
     let cancelled = false;
@@ -181,6 +190,7 @@ const CompareCountries: React.FC = () => {
         setMetadataById((prev) => {
           const next = { ...prev };
           for (const [id, meta] of results) next[id] = meta;
+          metadataByIdRef.current = next; // keep the ref in sync with state
           return next;
         });
       } finally {
@@ -191,7 +201,7 @@ const CompareCountries: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [selectedCountryIds, metadataById]);
+  }, [selectedCountryIds]);
 
   /* ── Lookups ── */
   const countryById = useMemo(() => {

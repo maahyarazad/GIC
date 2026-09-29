@@ -17,6 +17,7 @@ const WEBMAIL_ALLOWLIST = [
     'ricco.deutscher@german-industry-club.com',
     'philip.hoelzer@german-industry-club.com',
     'jan.hussing@german-industry-club.com',
+    'thomas.hochberger@german-industry-club.com',
 ];
 const ROUNDCUBE_URL = 'https://buenapublica.cmpsrv.com/rc/';
 

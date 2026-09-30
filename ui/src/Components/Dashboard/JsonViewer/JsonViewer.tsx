@@ -3,7 +3,8 @@ import React, { useState, useCallback, useEffect } from "react";
 import axiosInstance from "../../../api/axiosInstance";
 import { updateClientById } from "../../../api/client";
 import { useToast } from "../../../Providers/ToastContext";
-import { JsonData, JsonEditor } from 'json-edit-react'
+import JsonView from '@uiw/react-json-view';
+import { lightTheme } from '@uiw/react-json-view/light';
 import './JsonViewer.css';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import Loader from "@/Components/Loader/Loader";
@@ -72,13 +73,6 @@ export default function JsonViewer() {
     }, [fetchClient,]);
 
 
-    const handleChange = (updatedJson: JsonData) => {
-
-
-        setData(updatedJson);
-    };
-
-
     // useEffect(() => {
     // if (!loading) {
     //     const timer = setTimeout(() => {
@@ -112,10 +106,11 @@ export default function JsonViewer() {
                 {loading ? (
                     <Loader />
                 ) : (
-                    <JsonEditor
-                        data={data}
+                    <JsonView
+                        value={data}
                         key={editorKey}
-                        setData={handleChange}
+                        style={lightTheme}
+                        collapsed={2}
                     />
                 )}
             </div>

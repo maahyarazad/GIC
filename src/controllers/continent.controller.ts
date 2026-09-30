@@ -32,6 +32,7 @@ import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { ContinentModel } from "../models/continent.model";
 import { ProductModel } from "../models/product.model";
+import { cacheService } from "../services/cacheService";
 import {
   mapContinent,
   mapContinentViewModel,
@@ -63,6 +64,7 @@ export class ContinentController extends Controller {
     try {
       await initializeDatabase();
       await hydrateProductMetadataFromXlsx();
+      cacheService.clear();
       return createSuccessResponse(null, "Request Completed");
     } catch (error: any) {
       this.setStatus(500);
@@ -104,6 +106,7 @@ export class ContinentController extends Controller {
 
       const report = await updateProductsFromDataPackage(body.package);
 
+      cacheService.clear();
       return createSuccessResponse(
         report,
         `Imported "${report.package}": ${report.countriesUpdated} countries updated, ` +
@@ -156,6 +159,7 @@ export class ContinentController extends Controller {
         await continent.save();
       }
 
+      cacheService.clear();
       this.setStatus(201);
       return createSuccessResponse(
         mapContinent(continent.toObject()),
@@ -251,6 +255,7 @@ export class ContinentController extends Controller {
         return createErrorResponse("Continent not found");
       }
 
+      cacheService.clear();
       return createSuccessResponse(
         mapContinent(continent),
         "Continent updated successfully"
@@ -272,6 +277,16 @@ export class ContinentController extends Controller {
     @Query() sortOrder: "asc" | "desc" = "asc"
   ): Promise<any> {
     try {
+      const cacheKey = `continents:all:${JSON.stringify({
+        filtersJson,
+        limit,
+        skip,
+        sortBy,
+        sortOrder,
+      })}`;
+      const cached = cacheService.get<any>(cacheKey);
+      if (cached !== undefined) return cached;
+
       let filter: any = {};
 
       if (filtersJson) {
@@ -325,7 +340,7 @@ export class ContinentController extends Controller {
         ContinentModel.countDocuments(filter),
       ]);
 
-      return createSuccessResponse(
+      const response = createSuccessResponse(
         {
           continents: docs.map(mapContinent),
           total,
@@ -334,6 +349,8 @@ export class ContinentController extends Controller {
         },
         "Continents fetched successfully"
       );
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error: any) {
       console.error(error);
       this.setStatus(500);
@@ -349,6 +366,10 @@ export class ContinentController extends Controller {
         this.setStatus(400);
         return createErrorResponse("Invalid continent ID");
       }
+
+      const cacheKey = `continents:byId:${id}`;
+      const cached = cacheService.get<any>(cacheKey);
+      if (cached !== undefined) return cached;
 
       //@ts-ignore
       const continent = await ContinentModel.findById(id).lean();
@@ -368,10 +389,12 @@ export class ContinentController extends Controller {
           .lean();
       }
 
-      return createSuccessResponse(
+      const response = createSuccessResponse(
         mapContinentViewModel(continent, productDocs as any),
         "Continent fetched successfully"
       );
+      cacheService.set(cacheKey, response);
+      return response;
     } catch (error: any) {
       this.setStatus(500);
       return createErrorResponse(error.message || "Failed to fetch continent");
@@ -393,6 +416,7 @@ export class ContinentController extends Controller {
         return createErrorResponse("Continent not found");
       }
 
+      cacheService.clear();
       return createSuccessResponse(
         { success: true },
         "Continent deleted successfully"

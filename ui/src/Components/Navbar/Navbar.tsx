@@ -278,7 +278,8 @@ const Navbar = (
             : 'light'
     );
 
-    const logoSrc = theme === "light" ? mainLogoLight : mainLogo;
+    // header is inverted relative to the page theme, so the logo is too
+    const logoSrc = theme === "light" ? mainLogo : mainLogoLight;
 
 
     const NavLogo = (

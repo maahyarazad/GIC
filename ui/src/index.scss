@@ -696,8 +696,20 @@ nav {
   border-bottom: 1px solid var(--bdr);
   transition: background 0.3s;
 
+  // Inverted header: dark bar on the light theme, light bar on the dark theme.
+  --bdr: #{$bdr-dark};
+  --txt: #{$txt-dark};
+  --mu:  #{$mu-dark};
+
   [data-theme="light"] & {
+    background: rgba(10, 10, 10, 0.96);
+  }
+
+  [data-theme="dark"] & {
     background: rgba(248, 245, 241, 0.96);
+    --bdr: #{$bdr-light};
+    --txt: #{$txt-light};
+    --mu:  #{$mu-light};
   }
 }
 

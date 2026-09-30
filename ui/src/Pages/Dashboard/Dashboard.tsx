@@ -35,6 +35,7 @@ type MenuItem =
   | "profile"
   | "country_intelligence"
   | "compare_countries"
+  | "tenders"
   | "logout";
 
 const accessControl: Record<MenuItem, string[]> = {
@@ -51,6 +52,7 @@ const accessControl: Record<MenuItem, string[]> = {
   profile: ["user"],
   country_intelligence: ["user", "admin", "procurement"],
   compare_countries: ["user", "admin", "procurement"],
+  tenders: ["user", "admin", "procurement"],
   logout: ["admin", "user", "procurement"],
 };
 
@@ -68,6 +70,7 @@ const menuTitles: Record<MenuItem, string> = {
   profile: "Profile",
   country_intelligence: "Country Intelligence",
   compare_countries: "Compare Countries",
+  tenders: "Tenders",
   logout: "Logout",
 };
 
@@ -100,6 +103,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "economic_insights",
     "country_intelligence",
     "compare_countries",
+    "tenders",
     "logout",
   ].includes(value || "");
 };
@@ -126,6 +130,7 @@ const Dashboard: React.FC = () => {
     sub_region_management: <Continent />,
     country_intelligence: <EconomicInsights />,
     compare_countries: <CompareCountries />,
+    tenders: <UnderDevelopment withLockOverlay={false} />,
     events: <Events />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,

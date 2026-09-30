@@ -84,6 +84,7 @@ const Navbar = (
             return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
         }
     }
+    const isDashboard = location.pathname.startsWith('/dashboard');
     const [showNavbar, setShowNavbar] = useState(false);
 
 
@@ -339,7 +340,7 @@ const Navbar = (
                 </div>
                 <div className='d-flex justify-content-center'>
 
-                    <ul className="nav-links">
+                    <ul className="nav-links" style={isDashboard ? { display: 'none' } : undefined}>
 
                         {Array.isArray(navbarLinks) &&
                             navbarLinks.map((link) => (
@@ -394,7 +395,7 @@ const Navbar = (
                 className={`mob-nav ${isOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
-                {Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
+                {!isDashboard && Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
                     <li key={link.path} >
                         {
                             link.type === 'link' && <span className={`span-link ${(link.path === '/blog' ? isBlogPage : activePage === link.path) ? 'active' : ''}`}

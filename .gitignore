@@ -60,3 +60,4 @@ database.sqlite
 /file_storage
 
 /gic
+!ui/public/bootstrap/dist/

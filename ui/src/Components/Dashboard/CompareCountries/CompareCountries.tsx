@@ -291,6 +291,7 @@ const CompareCountries: React.FC = () => {
 
     let raf = 0;
     const update = () => {
+        console.log('update')
       raf = 0;
       const wrap = cardsRef.current;
       // Compact once the cards reach the bottom edge of the fixed navbar —
@@ -298,7 +299,10 @@ const CompareCountries: React.FC = () => {
       setCompactHeads(!!wrap && wrap.getBoundingClientRect().top <= NAV_HEIGHT);
     };
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+        
+        update();
+    //   if (!raf) raf = requestAnimationFrame(update);
+    //   debugger;
     };
 
     update();

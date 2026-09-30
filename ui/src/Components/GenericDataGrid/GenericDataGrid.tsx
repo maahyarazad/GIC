@@ -22,7 +22,7 @@ export interface SortModel<T> {
 
 export interface FilterModel<T> {
     field: keyof T;
-    operator: "contains" | "equals" | "startsWith" | "endsWith"; // extend as needed
+    operator: "contains" | "equals" | "startsWith" | "endsWith";
     value: string | number;
 }
 

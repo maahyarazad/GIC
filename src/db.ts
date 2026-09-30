@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
-import type { Db, Collection, Document } from "mongodb";
+import type { mongo } from "mongoose";
 import dotenv from "dotenv";
 
 import { UserModel, RefreshTokenModel, LoginLogModel } from "./models/user.model";
 import { OrderModel } from "./models/order.model";
 
 dotenv.config();
+
+type Db = mongo.Db;
+type Collection<T extends mongo.Document> = mongo.Collection<T>;
+type Document = mongo.Document;
 
 let database: Db | null = null;
 let connect$: Promise<Db> | null = null;

@@ -265,9 +265,11 @@ const EconomicInsights: React.FC = () => {
                                         </span>
                                     </div>
 
-                                    <div className={`loader-overlay ${downloadingProductId === p._id ? "" : "d-none"}`}>
-                                        <Loader />
-                                    </div>
+                                    {downloadingProductId === p._id && (
+                                        <div className="loader-overlay">
+                                            <Loader />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );

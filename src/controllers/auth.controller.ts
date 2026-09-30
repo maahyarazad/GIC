@@ -19,7 +19,8 @@ import {
   RefreshTokenModel,
   LoginLogModel,
 } from "../types/user.types";
-import { Collection, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
+import type { mongo } from "mongoose";
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -46,7 +47,7 @@ const FB_CALLBACK = process.env.FACEBOOK_CALLBACK_URL!;
 @Route("api/v1/auth")
 @Tags("Auth")
 export class AuthController extends Controller {
-  private static userCollection(): Collection<User> {
+  private static userCollection(): mongo.Collection<User> {
     return getCollection<User>("users");
   }
 

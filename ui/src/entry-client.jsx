@@ -1,4 +1,4 @@
-import "../public/bootstrap/dist/css/bootstrap.min.css";
+// import "../public/bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import { hydrateRoot } from "react-dom/client";
 import App from "./App";

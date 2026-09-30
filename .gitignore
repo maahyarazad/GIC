@@ -59,3 +59,4 @@ database.sqlite
 *.bak
 /file_storage
 
+/gic

@@ -196,9 +196,8 @@ export const UserProfilesDataGrid = () => {
     const _toggle = async (row) => {
         try {
 
+            // Only send the field being changed; sending name/email here would overwrite the user's name.
             const payload: UpdateUserRequest = {
-                name: row.email,
-                email: row.email,
                 authorize: !row.authorize,
             };
 

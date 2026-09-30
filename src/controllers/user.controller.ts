@@ -206,16 +206,13 @@ export class UserController extends Controller {
       );
 
 
-      const token = request.cookies?.token;
-      
-      
-          
-          const decoded_token = jwt.verify(token, JWT_SECRET) as { userId: string, role: string};
-
+      // The auth middleware already verified (and, if needed, re-issued) the token and set request.user;
+      // re-verifying the original cookie here would throw after the update when it had just expired.
+      const actorId = (request as any).user?.userId;
 
       await LogChangeModel.create({
         targetId: new Types.ObjectId(id),
-        lastModifiedBy: new Types.ObjectId(decoded_token.userId),
+        lastModifiedBy: new Types.ObjectId(actorId),
         collection: "users",
         message: body.authorize
   ? "User has been authorized"

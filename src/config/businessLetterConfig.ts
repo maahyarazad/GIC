@@ -12,6 +12,7 @@ const DEFAULT_RECIPIENTS = [
   "philip.hoelzer@german-industry-club.com",
   "jan.hussing@german-industry-club.com",
   "thomas.hochberger@german-industry-club.com",
+  "office6@german-emirates-club.com",
 ];
 
 // Email template record (emailtemplates collection) used for new request notifications.

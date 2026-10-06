@@ -32,7 +32,9 @@ jobs:
         # No package-lock.json is committed (it's in .gitignore), so `npm ci` can't be used.
         run: npm install --no-audit --no-fund
 
-
+      - name: Build server
+        run: npm run build
+        
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 

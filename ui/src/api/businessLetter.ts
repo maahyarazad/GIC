@@ -10,9 +10,14 @@ export async function createBusinessLetterRequest(body: CreateBusinessLetterRequ
   return res.data as { success: boolean; message: string; data: BusinessLetterRequestDto };
 }
 
-export async function listBusinessLetterRequests({ limit = 20, skip = 0 } = {}) {
+export const EMPTY_BUSINESS_LETTER_LIST: BusinessLetterRequestList = { items: [], total: 0, page: 1, pages: 0 };
+
+export async function listBusinessLetterRequests({ limit = 20, skip = 0 } = {}): Promise<BusinessLetterRequestList> {
   const res = await axiosInstance.get('/business-letters', { params: { limit, skip } });
-  return res.data.data as BusinessLetterRequestList;
+  const data = res.data?.data;
+  // Anything other than the expected shape (e.g. an HTML page) is treated as "no requests".
+  if (!data || !Array.isArray(data.items)) return EMPTY_BUSINESS_LETTER_LIST;
+  return { ...data, total: Number(data.total) || data.items.length };
 }
 
 export async function downloadBusinessLetterPdf(id: string, reference: string) {

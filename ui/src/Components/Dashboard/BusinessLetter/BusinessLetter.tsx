@@ -130,8 +130,10 @@ const BusinessLetter: React.FC = () => {
       setRequests(data.items);
       setTotal(data.total);
     } catch (err) {
+      // Show the empty state rather than an error; the history is secondary to the form.
       console.error("Failed to fetch business letter requests", err);
-      show({ type: "error", message: "Failed to load your business letter requests" });
+      setRequests([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }

@@ -32,11 +32,6 @@ jobs:
         # No package-lock.json is committed (it's in .gitignore), so `npm ci` can't be used.
         run: npm install --no-audit --no-fund
 
-      - name: Build client
-        run: npm run build
-        # If your Vite app needs build-time variables, add them here, e.g.:
-        # env:
-        #   VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Install sshpass
         run: sudo apt-get update && sudo apt-get install -y sshpass
@@ -59,3 +54,14 @@ jobs:
 
           # Verify
           sshpass -e $SSH "$SSH_TARGET" "ls -la '$REMOTE_DIR'"
+
+      
+      
+      - name: Restart server (PM2)
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          PM2_APP_NAME: ${{ vars.PM2_APP_NAME }}
+        run: |
+          sudo systemctl restart $PM2_APP_NAME

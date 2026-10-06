@@ -29,7 +29,8 @@ jobs:
           cache-dependency-path: package.json
 
       - name: Install dependencies
-        run: npm ci
+        # No package-lock.json is committed (it's in .gitignore), so `npm ci` can't be used.
+        run: npm install --no-audit --no-fund
 
       - name: Build client
         run: npm run build

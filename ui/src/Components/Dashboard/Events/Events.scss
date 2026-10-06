@@ -1,3 +1,5 @@
+$event-fallback-blur: 2px;
+
 .economic-insights {
 
     .products {
@@ -23,6 +25,16 @@
                 height: 100%;
                 object-fit: cover;
                 z-index: 0;
+            }
+
+            // GIC logo shown when an event has no image of its own.
+            .card-bg-image--fallback {
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-color: var(--bo);
+                filter: blur($event-fallback-blur);
+                transform: scale(1.08);
             }
 
             .event-date-badge {
@@ -64,6 +76,21 @@
             }
         }
     }
+}
+
+
+.events-group {
+  margin-top: 1.5rem;
+
+  &__title {
+    color: var(--ora);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__empty {
+    opacity: 0.7;
+  }
 }
 
 

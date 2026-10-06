@@ -1,15 +1,21 @@
-name: Deploy German Industry Club App Server
+name: Deploy German Industry Club App
 
 on:
   workflow_dispatch:
 
+# Prevent two deploys from running over each other
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   # ─────────────────────────────────────────────
-  # JOB 1: Build & Deploy Server (Vite)
+  # Build (Vite) & deploy static client
   # ─────────────────────────────────────────────
   deploy-client:
     name: Build & Deploy Client
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -18,36 +24,37 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: package.json
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build client
         run: npm run build
+        # If your Vite app needs build-time variables, add them here, e.g.:
+        # env:
+        #   VITE_API_URL: ${{ vars.VITE_API_URL }}
 
       - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Clear old build on server
+      - name: Deploy to server
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}   # read by `sshpass -e`, never on the command line
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          REMOTE_DIR: german-industry-club/node/german-industry-club.com/dist   # relative to the SSH user's home
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
-            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "rm -rf ~/german-industry-club/node/german-industry-club.com/dist/* && mkdir -p ~/german-industry-club/node/german-industry-club.com/dist/"
+          set -euo pipefail
+          SSH="ssh -p $SSH_PORT -o StrictHostKeyChecking=accept-new"
 
-      - name: Upload new build to server
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no" \
-            dist/ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/german-industry-club/node/german-industry-club.com/dist/
+          # Make sure the target exists
+          sshpass -e $SSH "$SSH_TARGET" "mkdir -p '$REMOTE_DIR'"
 
-      - name: Verify deployment
-        run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh \
-            -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "ls -la ~/german-industry-club/node/german-industry-club.com/dist/"
+          # Sync the build; --delete removes stale files, so no separate "clear" step
+          sshpass -e rsync -avz --delete -e "$SSH" dist/ "$SSH_TARGET:$REMOTE_DIR/"
+
+          # Verify
+          sshpass -e $SSH "$SSH_TARGET" "ls -la '$REMOTE_DIR'"

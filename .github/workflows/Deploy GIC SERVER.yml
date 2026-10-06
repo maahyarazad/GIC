@@ -41,6 +41,7 @@ jobs:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}   # read by `sshpass -e`, never on the command line
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+          PM2_APP_NAME: ${{ vars.PM2_APP_NAME }}
           REMOTE_DIR: german-industry-club/node/german-industry-club.com/dist   # relative to the SSH user's home
         run: |
           set -euo pipefail
@@ -55,13 +56,5 @@ jobs:
           # Verify
           sshpass -e $SSH "$SSH_TARGET" "ls -la '$REMOTE_DIR'"
 
-      
-      
-      - name: Restart server (PM2)
-        env:
-          SSHPASS: ${{ secrets.SSH_PASSWORD }}
-          SSH_PORT: ${{ secrets.SSH_PORT }}
-          SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
-          PM2_APP_NAME: ${{ vars.PM2_APP_NAME }}
-        run: |
-          sudo systemctl restart $PM2_APP_NAME
+          # Restart PM2 instance
+          sshpass -e $SSH "$SSH_TARGET" "sudo systemctl restart $PM2_APP_NAME"

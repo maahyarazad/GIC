@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>New Business Letter Request</title>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f4f4f4">
+
+    <tbody>
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" border="0"
+            style="background-color: #ffffff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); overflow: hidden; margin: 5px auto;">
+            <tr>
+              <td bgcolor="#C8541A"
+                style="color: #ffffff; text-align: center; padding: 20px; font-size: 22px; font-weight: bold; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                New Business Letter Request
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" border="0"
+            style="background-color: #ffffff; padding: 30px;">
+            <tr>
+              <td style="color: #333333; font-size: 16px; line-height: 1.6; padding: 0 20px;">
+                <p style="color: #333333;">
+                  A member has submitted a new business letter request through the GIC Dashboard.
+                </p>
+                <p style="text-align: center; margin: 30px 0; color: #333333;">
+                  <span style="display: block; font-size: 13px; color: #777777; letter-spacing: 1px; text-transform: uppercase;">Reference</span>
+                  <span style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #D9B144;">{{REFERENCE}}</span>
+                </p>
+              </td>
+            </tr>
+
+            <!-- Requester -->
+            <tr>
+              <td style="padding: 0 20px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #C8541A; text-transform: uppercase; letter-spacing: 1px;">
+                  Requester
+                </p>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                  style="font-size: 15px; color: #333333; line-height: 1.5; border-collapse: collapse;">
+                  <tr>
+                    <td width="38%" style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Name</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;"><strong>{{REQUESTER_NAME}}</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Email</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">
+                      <a href="mailto:{{REQUESTER_EMAIL}}" style="color: #C8541A; text-decoration: none;">{{REQUESTER_EMAIL}}</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Phone</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">{{REQUESTER_PHONE}}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Company</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">{{REQUESTER_COMPANY}}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Letter details -->
+            <tr>
+              <td style="padding: 24px 20px 0 20px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #C8541A; text-transform: uppercase; letter-spacing: 1px;">
+                  Letter Details
+                </p>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                  style="font-size: 15px; color: #333333; line-height: 1.5; border-collapse: collapse;">
+                  <tr>
+                    <td width="38%" style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Letter type</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;"><strong>{{LETTER_TYPE}}</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Address</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">{{ADDRESSEE_ADDRESS}}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Language</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">{{LANGUAGE}}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Needed by</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;"><strong style="color: #C8541A;">{{NEEDED_BY}}</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 6px 0; color: #777777; border-bottom: 1px solid #eeeeee;">Submitted</td>
+                    <td style="padding: 6px 0; border-bottom: 1px solid #eeeeee;">{{SUBMITTED_AT}}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Purpose -->
+            <tr>
+              <td style="padding: 24px 20px 0 20px;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #C8541A; text-transform: uppercase; letter-spacing: 1px;">
+                  Purpose
+                </p>
+                <div
+                  style="font-size: 15px; color: #333333; line-height: 1.6; background-color: #faf7f2; border-left: 4px solid #D9B144; padding: 12px 16px;">
+                  {{PURPOSE}}
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="color: #333333; font-size: 16px; line-height: 1.6; padding: 24px 20px 0 20px;">
+                <p style="color: #333333;">
+                  Please prepare the letter and reply directly to the requester at
+                  <a href="mailto:{{REQUESTER_EMAIL}}" style="color: #C8541A; text-decoration: none;">{{REQUESTER_EMAIL}}</a>,
+                  quoting reference <strong>{{REFERENCE}}</strong>.
+                </p>
+                <p style="color: #333333;">
+                  This is an automated notification sent to the GIC leadership team.
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="font-size: 13px; color: #777777; text-align: center; padding: 20px; border-top: 1px solid #dddddd;">
+                &copy; {{CURRENT_YEAR}} German Industry Club. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
+</html>

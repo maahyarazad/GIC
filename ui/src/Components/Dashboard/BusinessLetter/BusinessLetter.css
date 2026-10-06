@@ -1,0 +1,150 @@
+.business-letter .bl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (min-width: 992px) {
+  .business-letter .bl-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+.business-letter .bl-card {
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+}
+.business-letter .bl-card h4 {
+  font-family: var(--se);
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--txt);
+  margin: 0 0 1.25rem;
+}
+.business-letter .bl-group-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ora);
+  margin: 1.25rem 0 0.75rem;
+}
+.business-letter .bl-group-title:first-of-type {
+  margin-top: 0;
+}
+.business-letter .bl-field {
+  margin-bottom: 0.9rem;
+}
+.business-letter .bl-field label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--mu);
+  margin-bottom: 0.3rem;
+}
+.business-letter .bl-field .required::after {
+  content: " *";
+  color: var(--ora);
+}
+.business-letter .bl-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 1rem;
+}
+@media (min-width: 576px) {
+  .business-letter .bl-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.business-letter .bl-error {
+  font-size: 0.85rem;
+  color: var(--ora);
+  margin-top: 0.25rem;
+}
+.business-letter .bl-counter {
+  font-size: 0.8rem;
+  color: var(--mu);
+  text-align: right;
+  margin-top: 0.25rem;
+}
+.business-letter .bl-radios {
+  display: flex;
+  gap: 1.5rem;
+  min-height: 38px;
+}
+.business-letter .bl-radios label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--txt);
+  margin: 0;
+  cursor: pointer;
+}
+.business-letter .bl-submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  border: none;
+}
+.business-letter .bl-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.business-letter .bl-table-wrap {
+  overflow-x: auto;
+}
+.business-letter .bl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: var(--txt);
+}
+.business-letter .bl-table th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mu);
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--bdrs);
+  white-space: nowrap;
+}
+.business-letter .bl-table td {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid var(--bdr);
+  vertical-align: top;
+}
+.business-letter .bl-table .bl-ref {
+  font-weight: 600;
+  color: var(--ora);
+  white-space: nowrap;
+}
+.business-letter .bl-table .bl-muted {
+  color: var(--mu);
+  font-size: 0.85rem;
+}
+.business-letter .bl-download {
+  background: transparent;
+  border: 1px solid var(--ora);
+  color: var(--ora);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.business-letter .bl-download:hover:not(:disabled) {
+  background: var(--ora);
+  color: #fff;
+}
+.business-letter .bl-download:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.business-letter .bl-empty {
+  color: var(--mu);
+  padding: 2rem 0;
+  text-align: center;
+}
+.business-letter .bl-more {
+  display: block;
+  margin: 1rem auto 0;
+}/*# sourceMappingURL=BusinessLetter.css.map */

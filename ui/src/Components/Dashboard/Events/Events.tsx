@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useCallback, useContext, useMemo } from "react";
 import { PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
 import { useToast } from "@/Providers/ToastContext";
 import { EnvContext } from '@/EnvContext.jsx';
@@ -9,6 +9,39 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { Event } from '../../../../../src/types/event.types';
 import axiosInstance from "@/api/axiosInstance";
 import newEvent from "@/Assets/upcoming-events2.png";
+import gicLogo from "../../../../public/gic-logo-main.png"
+
+// Parses event_date as a local calendar day; "YYYY-MM-DD" strings would otherwise be read as UTC midnight.
+const toLocalDay = (value?: string): Date | null => {
+    if (!value) return null;
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+    const date = match
+        ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+        : new Date(value);
+    if (isNaN(date.getTime())) return null;
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
+
+// Splits events into upcoming (today or later, or undated) and past, sorted soonest/most recent first.
+const splitEventsByDate = (events: Event[], now = new Date()) => {
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const upcoming: { event: Event; day: number | null }[] = [];
+    const past: { event: Event; day: number }[] = [];
+
+    events.forEach((event) => {
+        const day = toLocalDay(event.event_date)?.getTime() ?? null;
+        if (day !== null && day < startOfToday) past.push({ event, day });
+        else upcoming.push({ event, day });
+    });
+
+    upcoming.sort((a, b) => (a.day ?? Infinity) - (b.day ?? Infinity));
+    past.sort((a, b) => b.day - a.day);
+
+    return {
+        upcoming: upcoming.map((x) => x.event),
+        past: past.map((x) => x.event),
+    };
+};
 
 // --- Component ---
 const Events: React.FC = () => {
@@ -49,11 +82,9 @@ const Events: React.FC = () => {
         fetchEvents()
     }, [fetchEvents])
 
-    const getEventImageUrl = (p?: Event) => {
-
-        const fallback = "https://www.german-emirates-club.com/v2/static/media/GECBackground.369835c3b111bdc2a4e8.png";
-
-        if (!p?.Image) return fallback;
+    const getEventImageUrl = (p?: Event): string | null => {
+        // No image of its own: the card shows the blurred GIC logo instead.
+        if (!p?.Image) return null;
 
         const baseUrl = "https://services.german-emirates-club.com/uploads/";
         const url = new URL(p.Image, baseUrl);
@@ -85,6 +116,88 @@ const Events: React.FC = () => {
 
 
 
+    const { upcoming, past } = useMemo(() => splitEventsByDate(events ?? []), [events]);
+
+    const renderEventCard = (p: Event, showUpcomingBadge: boolean) => {
+        const eventDate = toLocalDay(p.event_date);
+
+        const formattedDate = eventDate
+            ? eventDate.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            })
+            : null;
+
+        const url = getEventImageUrl(p);
+
+        // Check if the event is within the next 30 days
+        const isUpcoming =
+            showUpcomingBadge &&
+            eventDate &&
+            eventDate >= new Date(new Date().setHours(0, 0, 0, 0)) &&
+            eventDate <= new Date(new Date().setDate(new Date().getDate() + 30));
+
+        return (
+            <div
+                key={p.id}
+                className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3 position-relative"
+                onClick={() => handleNavigation(p.page)}
+            >
+                <div className="card h-100 card-bg position-relative overflow-hidden">
+                    {url === null ? (
+                        <div
+                            className="card-bg-image card-bg-image--fallback w-100 h-100 position-absolute top-0 start-0"
+                            style={{ backgroundImage: `url("${gicLogo}")`, zIndex: 0 }}
+                        />
+                    ) : isVideo(p.Image) ? (
+                        <video
+                            className="card-video-bg w-100 h-100 position-absolute top-0 start-0"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            style={{ objectFit: "cover", zIndex: 0 }}
+                        >
+                            <source src={url} type="video/webm" />
+                            Your browser does not support the video tag.
+                        </video>
+                    ) : (
+                        <div
+                            className="card-bg-image w-100 h-100 position-absolute top-0 start-0"
+                            style={{
+                                backgroundImage: `url("${url}")`,
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                zIndex: 0,
+                            }}
+                        />
+                    )}
+
+                    {formattedDate && (
+                        <div className="event-date-badge position-absolute top-0 start-0 m-2 z-1">
+                            {formattedDate}
+                        </div>
+                    )}
+
+                    <div className="card-body text-center position-relative z-1">
+                        <h5 className="card-title">{p.title}</h5>
+                    </div>
+                </div>
+                {isUpcoming && (
+                    <img
+                        src={newEvent}
+                        alt="Upcoming Event"
+                        className="position-absolute pulse-badge"
+                        style={{
+                            zIndex: 1,
+                        }}
+                    />
+                )}
+            </div>
+        );
+    };
+
     return (
         <div className="dash-section economic-insights">
             <div className="dash-header">
@@ -96,91 +209,29 @@ const Events: React.FC = () => {
             ) : events?.length === 0 ? (
                 <p>No event found.</p>
             ) : (
-                <div className="products row mt-2">
-                    {events?.map((p) => {
-                        const eventDate = p.event_date ? new Date(p.event_date) : null;
-
-                        const formattedDate = eventDate
-                            ? eventDate.toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                            })
-                            : null;
-
-                        const url = getEventImageUrl(p);
-
-                        // Check if the event is within the next 30 days
-                        const isUpcoming =
-                            eventDate &&
-                            eventDate >= new Date() &&
-                            eventDate <= new Date(new Date().setDate(new Date().getDate() + 30));
-
-                        
-
-                        return (
-                            <div
-                                key={p.id}
-                                className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3 position-relative"
-                                onClick={() => handleNavigation(p.page)}
-
-                            >
-                                <div className="card h-100 card-bg position-relative overflow-hidden">
-                                    {isVideo(p.Image) ? (
-                                        <video
-                                            className="card-video-bg w-100 h-100 position-absolute top-0 start-0"
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            style={{ objectFit: "cover", zIndex: 0 }}
-                                        >
-                                            <source src={url} type="video/webm" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    ) : (
-                                        <div
-                                            className="card-bg-image w-100 h-100 position-absolute top-0 start-0"
-                                            style={{
-                                                backgroundImage: `url("${url}")`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                zIndex: 0,
-                                            }}
-                                        />
-                                    )}
-
-                                    {formattedDate && (
-                                        <div className="event-date-badge position-absolute top-0 start-0 m-2 z-1">
-                                            {formattedDate}
-                                        </div>
-                                    )}
-
-
-
-
-
-                                    <div className="card-body text-center position-relative z-1">
-                                        <h5 className="card-title">{p.title}</h5>
-                                    </div>
-                                </div>
-                                {isUpcoming && (
-                                    <img
-                                        src={newEvent}
-                                        alt="Upcoming Event"
-                                        className="position-absolute pulse-badge"
-                                        style={{
-
-                                            zIndex: 1,
-                                        }}
-                                    />
-                                )}
+                <>
+                    <section className="events-group">
+                        <h4 className="events-group__title">Upcoming Events</h4>
+                        {upcoming.length === 0 ? (
+                            <p className="events-group__empty">No upcoming events.</p>
+                        ) : (
+                            <div className="products row mt-2">
+                                {upcoming.map((p) => renderEventCard(p, true))}
                             </div>
+                        )}
+                    </section>
 
-                        );
-                    })}
-                </div>
-
+                    <section className="events-group">
+                        <h4 className="events-group__title">Past Events</h4>
+                        {past.length === 0 ? (
+                            <p className="events-group__empty">No past events.</p>
+                        ) : (
+                            <div className="products row mt-2">
+                                {past.map((p) => renderEventCard(p, false))}
+                            </div>
+                        )}
+                    </section>
+                </>
             )}
         </div>
     );

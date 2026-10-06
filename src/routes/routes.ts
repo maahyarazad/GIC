@@ -32,6 +32,8 @@ import { ContactUsController } from './../controllers/contactus.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ClientController } from './../controllers/client.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { BusinessLetterController } from './../controllers/businessLetter.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { BlogController } from './../controllers/blog.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/auth.controller';
@@ -615,6 +617,29 @@ const models: TsoaRoute.Models = {
     "ContactUsSortKey": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["fullName"]},{"dataType":"enum","enums":["company"]},{"dataType":"enum","enums":["email"]},{"dataType":"enum","enums":["industry"]},{"dataType":"enum","enums":["countryOfInterest"]},{"dataType":"enum","enums":["meaObjective"]},{"dataType":"enum","enums":["referredBy"]},{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["updatedAt"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BusinessLetterType": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["business_recommendation"]},{"dataType":"enum","enums":["partner_recommendation"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BusinessLetterLanguage": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["en"]},{"dataType":"enum","enums":["de"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateBusinessLetterRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "requester": {"dataType":"nestedObjectLiteral","nestedProperties":{"company":{"dataType":"string"},"phone":{"dataType":"string"},"name":{"dataType":"string","required":true}},"required":true},
+            "letterType": {"ref":"BusinessLetterType","required":true},
+            "addressee": {"dataType":"nestedObjectLiteral","nestedProperties":{"address":{"dataType":"string"}},"required":true},
+            "purpose": {"dataType":"string","required":true},
+            "neededBy": {"dataType":"string","required":true},
+            "language": {"ref":"BusinessLetterLanguage","required":true},
+        },
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateBlogRequest": {
@@ -2457,6 +2482,100 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'updateJson',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBusinessLetterController_createBusinessLetterRequest: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"CreateBusinessLetterRequest"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/business-letters',
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController)),
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController.prototype.createBusinessLetterRequest)),
+
+            async function BusinessLetterController_createBusinessLetterRequest(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBusinessLetterController_createBusinessLetterRequest, request, response });
+
+                const controller = new BusinessLetterController();
+
+              await templateService.apiHandler({
+                methodName: 'createBusinessLetterRequest',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBusinessLetterController_getMyBusinessLetterRequests: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                limit: {"default":20,"in":"query","name":"limit","dataType":"double"},
+                skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
+        };
+        app.get('/api/v1/business-letters',
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController)),
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController.prototype.getMyBusinessLetterRequests)),
+
+            async function BusinessLetterController_getMyBusinessLetterRequests(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBusinessLetterController_getMyBusinessLetterRequests, request, response });
+
+                const controller = new BusinessLetterController();
+
+              await templateService.apiHandler({
+                methodName: 'getMyBusinessLetterRequests',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBusinessLetterController_downloadBusinessLetterPdf: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/api/v1/business-letters/:id/pdf',
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController)),
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController.prototype.downloadBusinessLetterPdf)),
+
+            async function BusinessLetterController_downloadBusinessLetterPdf(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBusinessLetterController_downloadBusinessLetterPdf, request, response });
+
+                const controller = new BusinessLetterController();
+
+              await templateService.apiHandler({
+                methodName: 'downloadBusinessLetterPdf',
                 controller,
                 response,
                 next,

@@ -100,6 +100,17 @@ export function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/** Escapes a value for safe insertion into HTML (e.g. email template placeholders). */
+export function escapeHtml(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export interface FilterModel<T> {
     field: keyof T;
     operator: "contains" | "equals" | "startsWith" | "endsWith"; // extend as needed

@@ -3307,6 +3307,73 @@
 					"updatedAt"
 				]
 			},
+			"BusinessLetterType": {
+				"type": "string",
+				"enum": [
+					"business_recommendation",
+					"partner_recommendation"
+				]
+			},
+			"BusinessLetterLanguage": {
+				"type": "string",
+				"enum": [
+					"en",
+					"de"
+				]
+			},
+			"CreateBusinessLetterRequest": {
+				"description": "Request body for POST /api/v1/business-letters. The requester email is taken from the user record.",
+				"properties": {
+					"requester": {
+						"properties": {
+							"company": {
+								"type": "string"
+							},
+							"phone": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"name"
+						],
+						"type": "object"
+					},
+					"letterType": {
+						"$ref": "#/components/schemas/BusinessLetterType"
+					},
+					"addressee": {
+						"properties": {
+							"address": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					},
+					"purpose": {
+						"type": "string"
+					},
+					"neededBy": {
+						"type": "string",
+						"description": "Date only, YYYY-MM-DD"
+					},
+					"language": {
+						"$ref": "#/components/schemas/BusinessLetterLanguage"
+					}
+				},
+				"required": [
+					"requester",
+					"letterType",
+					"addressee",
+					"purpose",
+					"neededBy",
+					"language"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"CreateBlogRequest": {
 				"properties": {
 					"title": {
@@ -5714,6 +5781,104 @@
 						}
 					}
 				}
+			}
+		},
+		"/api/v1/business-letters": {
+			"post": {
+				"operationId": "CreateBusinessLetterRequest",
+				"responses": {
+					"201": {
+						"description": "Business letter request submitted",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Business Letters"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateBusinessLetterRequest"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetMyBusinessLetterRequests",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Business Letters"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 20,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/business-letters/{id}/pdf": {
+			"get": {
+				"operationId": "DownloadBusinessLetterPdf",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Business Letters"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/v1/blogs": {

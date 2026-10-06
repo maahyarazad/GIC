@@ -2,6 +2,7 @@ import nodemailer, { SendMailOptions } from "nodemailer";
 import dotenv from "dotenv";
 
 import pLimit from "p-limit";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
@@ -213,7 +214,10 @@ export async function sendMassDynamicEmailDoc(
 }
 
 interface EmailParam {
-    template_name:string,
+  /** Look the template up by name... */
+  template_name?: string,
+  /** ...or by its _id (takes precedence over template_name). */
+  template_id?: string,
   data: Record<string, any>,
   email: string
 }
@@ -226,9 +230,14 @@ export async function sendDynamicEmailToUser(
 
     const templateCollection = getCollection("emailtemplates");
     // Fetch template from DB
-    const template = await templateCollection.findOne({
-      name: param.template_name,
-    });
+    let query: Record<string, any>;
+    if (param.template_id) {
+      if (!ObjectId.isValid(param.template_id)) throw new Error("Invalid email template id");
+      query = { _id: new ObjectId(param.template_id) };
+    } else {
+      query = { name: param.template_name };
+    }
+    const template = await templateCollection.findOne(query);
 
 if (!template) throw new Error("Email template not found");
     // 🔁 GLOBAL + CUSTOM VARIABLES

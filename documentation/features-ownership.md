@@ -21,6 +21,7 @@
 | 10 | Registration | New member sign-up | |
 | 11 | Member Profile | Members view and update their own details | |
 | 12 | Member Roles & Permissions | Different dashboard access for Admin, Procurement and Member | |
+| 12a | Request a Business Letter | Members (all roles) request a business letter, see their past requests and download a PDF copy; GIC leadership is notified by email | |
 
 ## 3. Administration Dashboard
 
@@ -28,7 +29,7 @@
 |---|---------|-------------|---------------|
 | 13 | Member Requests | Review and approve incoming membership and contact requests | |
 | 14 | Member Profiles | Manage member accounts and authorisations | |
-| 15 | Events | Create and manage events, member bookings and event tickets | |
+| 15 | Events | Create and manage events, member bookings and event tickets; dashboard lists Upcoming and Past events separately | |
 | 16 | Blog Management | Write, edit and publish articles; approve comments | |
 | 17 | Newsletter | Create newsletters and articles, send test and live campaigns | |
 | 18 | Email Subscribers | Manage the newsletter subscriber list | |

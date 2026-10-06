@@ -1,4 +1,4 @@
-name: Deploy German Industry Club App
+name: Deploy GIC Server
 
 on:
   workflow_dispatch:

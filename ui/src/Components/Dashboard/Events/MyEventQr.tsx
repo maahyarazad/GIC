@@ -45,7 +45,7 @@ const MyEventQr: React.FC<{ reference: string }> = ({ reference }) => {
                 <>
                     <img src={state.url} alt={`QR code for ${reference}`} />
                     <p className="my-event-qr__reference">{reference}</p>
-                    <a className="btn btn-sm btn-primary" href={state.url} download={`${reference}.png`}>
+                    <a className="dashboard-btn my-event-qr__download" href={state.url} download={`${reference}.png`}>
                         Download
                     </a>
                 </>

@@ -10,6 +10,19 @@
         font-family: var(--bs-font-monospace);
         word-break: break-all;
     }
+
+    // Themed .dashboard-btn on an <a>: drop the link underline and keep the
+    // button colours over the global link hover/visited styles.
+    &__download {
+        text-decoration: none;
+
+        &:hover,
+        &:focus,
+        &:visited {
+            color: var(--bg);
+            text-decoration: none;
+        }
+    }
 }
 
 

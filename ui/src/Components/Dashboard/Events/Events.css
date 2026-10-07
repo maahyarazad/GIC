@@ -8,6 +8,13 @@
   font-family: var(--bs-font-monospace);
   word-break: break-all;
 }
+.my-event-qr__download {
+  text-decoration: none;
+}
+.my-event-qr__download:hover, .my-event-qr__download:focus, .my-event-qr__download:visited {
+  color: var(--bg);
+  text-decoration: none;
+}
 
 .events-group {
   margin-top: 1.5rem;
@@ -108,4 +115,6 @@
   .events-columns > [class*=col-] + [class*=col-] {
     margin-top: 1.5rem;
   }
-}/*# sourceMappingURL=Events.css.map */
+}
+
+/*# sourceMappingURL=Events.css.map */

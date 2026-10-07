@@ -51,3 +51,27 @@ export interface Event {
     createdAt: string;
     modifiedAt: string;
 }
+
+// Row returned by the services platform's GET /api/registration
+// (registration table LEFT JOIN event_proforma_invoice for `status`).
+export interface ServicesRegistrationRow {
+    id: number;
+    event: string;
+    event_id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    companyName: string | null;
+    metadata_createdAt: string | null;
+    external_source: string | null;
+    status: string | null;
+}
+
+// A signed-in user's registration for a GIC event, as returned by GET /my-events.
+export interface MyEventRegistration {
+    reference: string;
+    registeredAt: string | null;
+    attendeeName: string;
+    paymentStatus: string | null;
+    event: Pick<Event, "page" | "title" | "event_date" | "event_time" | "event_location_name" | "Image">;
+}

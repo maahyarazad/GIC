@@ -39,9 +39,13 @@ interface EventItemProps {
     onNavigate: (page: string) => void;
 }
 
+// Cards sit in the half-width left column, so two per row instead of 3–4.
+const EVENT_CARD_COLUMN = "col-12 col-sm-6 mb-3";
+
 // Wrapper keeps EventCard from re-rendering when unrelated parent state changes.
 const EventItem = memo(({ event, showUpcomingBadge, onNavigate }: EventItemProps) => (
     <EventCard
+        columnClassName={EVENT_CARD_COLUMN}
         event={event}
         showUpcomingBadge={showUpcomingBadge}
         onClick={() => onNavigate(event.page)}
@@ -149,30 +153,37 @@ const Events: React.FC = () => {
                 <h3>Events</h3>
             </div>
 
-            <MyEvents />
+            {/* Upcoming/Past on the left, My Events on the right, top-aligned; stacked below lg. */}
+            <div className="row align-items-start events-columns">
+                <div className="col-12 col-lg-6">
+                    {loading ? (
+                        <Loader />
+                    ) : events.length === 0 ? (
+                        <p>No event found.</p>
+                    ) : (
+                        <>
+                            <EventsGroup
+                                title="Upcoming Events"
+                                emptyText="No upcoming events."
+                                events={upcoming}
+                                showUpcomingBadge
+                                onNavigate={handleNavigation}
+                            />
+                            <EventsGroup
+                                title="Past Events"
+                                emptyText="No past events."
+                                events={past}
+                                showUpcomingBadge={false}
+                                onNavigate={handleNavigation}
+                            />
+                        </>
+                    )}
+                </div>
 
-            {loading ? (
-                <Loader />
-            ) : events.length === 0 ? (
-                <p>No event found.</p>
-            ) : (
-                <>
-                    <EventsGroup
-                        title="Upcoming Events"
-                        emptyText="No upcoming events."
-                        events={upcoming}
-                        showUpcomingBadge
-                        onNavigate={handleNavigation}
-                    />
-                    <EventsGroup
-                        title="Past Events"
-                        emptyText="No past events."
-                        events={past}
-                        showUpcomingBadge={false}
-                        onNavigate={handleNavigation}
-                    />
-                </>
-            )}
+                <div className="col-12 col-lg-6">
+                    <MyEvents />
+                </div>
+            </div>
         </div>
     );
 };

@@ -5133,7 +5133,7 @@
 				"operationId": "GetMyEvents",
 				"responses": {
 					"200": {
-						"description": "Events fetched",
+						"description": "My events fetched",
 						"content": {
 							"application/json": {
 								"schema": {}
@@ -5148,9 +5148,9 @@
 				"parameters": []
 			}
 		},
-		"/api/v1/my-events/qr": {
+		"/api/v1/my-events/{reference}/qr": {
 			"get": {
-				"operationId": "GetMyEventQR",
+				"operationId": "GetMyEventQr",
 				"responses": {
 					"200": {
 						"description": "QR fetched",
@@ -5165,7 +5165,16 @@
 					"events"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "path",
+						"name": "reference",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/v1/email-templates": {

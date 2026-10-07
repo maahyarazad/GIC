@@ -1,64 +1,19 @@
-.economic-insights .products .card {
-  border: 1px solid var(--bdr);
-  min-height: 300px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.economic-insights .products .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 25px var(--bo);
-}
-.economic-insights .products .card .card-bg-image,
-.economic-insights .products .card .card-video-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
+.my-event-qr img {
   width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  z-index: 0;
+  max-width: 280px;
+  image-rendering: pixelated;
 }
-.economic-insights .products .card .card-bg-image--fallback {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: var(--bo);
-  filter: blur(2px);
-  transform: scale(1.08);
+.my-event-qr__reference {
+  margin: 0.5rem 0;
+  font-family: var(--bs-font-monospace);
+  word-break: break-all;
 }
-.economic-insights .products .card .event-date-badge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.85rem;
-  z-index: 1;
+.my-event-qr__download {
+  text-decoration: none;
 }
-.economic-insights .products .card .card-body {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-.economic-insights .products .card .card-body .card-title {
-  background: rgba(0, 0, 0, 0.6);
-  font-size: 1.7rem !important;
-  color: #ffffff;
-  text-shadow: 0 0 5px rgba(222, 226, 230, 0.8), 0 0 10px rgba(222, 226, 230, 0.6), 0 0 15px rgba(222, 226, 230, 0.4);
-  font-weight: 900;
-  min-height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 0.25rem;
+.my-event-qr__download:hover, .my-event-qr__download:focus, .my-event-qr__download:visited {
+  color: var(--bg);
+  text-decoration: none;
 }
 
 .events-group {
@@ -73,30 +28,93 @@
   opacity: 0.7;
 }
 
-.pulse-badge {
-  padding: 0.5rem 0.8rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  position: absolute;
-  top: -30px;
-  right: -30px;
-  max-height: 100px;
-  transform: rotate(45deg);
-  animation: pulse 1.5s infinite;
-  z-index: 1;
+.my-events-card {
+  margin-top: 1.5rem;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+}
+.my-events-card h4 {
+  font-family: var(--se);
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--txt);
+  margin: 0 0 1.25rem;
 }
 
-@keyframes pulse {
-  0% {
-    transform: rotate(45deg) scale(1);
-    opacity: 1;
+.my-events-table-wrap {
+  overflow-x: auto;
+}
+
+.my-events-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: var(--txt);
+}
+.my-events-table th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mu);
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--bdrs);
+  white-space: nowrap;
+}
+.my-events-table td {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid var(--bdr);
+  vertical-align: top;
+}
+.my-events-table .my-events-ref {
+  font-weight: 600;
+  color: var(--ora);
+  white-space: nowrap;
+}
+.my-events-table .my-events-muted {
+  color: var(--mu);
+  font-size: 0.85rem;
+}
+.my-events-table .my-events-status {
+  text-transform: capitalize;
+}
+
+.my-events-action {
+  background: transparent;
+  border: 1px solid var(--ora);
+  color: var(--ora);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.my-events-action:hover:not(:disabled) {
+  background: var(--ora);
+  color: #fff;
+}
+.my-events-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.my-events-empty {
+  color: var(--mu);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.events-columns {
+  margin-top: 1.5rem;
+}
+.events-columns > [class*=col-] > :first-child {
+  margin-top: 0;
+}
+@media (max-width: 991.98px) {
+  .events-columns > [class*=col-] + [class*=col-] {
+    margin-top: 1.5rem;
   }
-  50% {
-    transform: rotate(45deg) scale(1.1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: rotate(45deg) scale(1);
-    opacity: 1;
-  }
-}/*# sourceMappingURL=Events.css.map */
+}
+
+/*# sourceMappingURL=Events.css.map */

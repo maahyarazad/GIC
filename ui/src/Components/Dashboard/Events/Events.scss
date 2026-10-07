@@ -1,79 +1,26 @@
-$event-fallback-blur: 2px;
+.my-event-qr {
+    img {
+        width: 100%;
+        max-width: 280px;
+        image-rendering: pixelated;
+    }
 
-.economic-insights {
+    &__reference {
+        margin: 0.5rem 0;
+        font-family: var(--bs-font-monospace);
+        word-break: break-all;
+    }
 
-    .products {
+    // Themed .dashboard-btn on an <a>: drop the link underline and keep the
+    // button colours over the global link hover/visited styles.
+    &__download {
+        text-decoration: none;
 
-        .card {
-            border: 1px solid var(--bdr);
-            min-height: 300px; // increased min height
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-
-            &:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 2px 25px var(--bo);
-            }
-
-            .card-bg-image,
-            .card-video-bg {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                z-index: 0;
-            }
-
-            // GIC logo shown when an event has no image of its own.
-            .card-bg-image--fallback {
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: center;
-                background-color: var(--bo);
-                filter: blur($event-fallback-blur);
-                transform: scale(1.08);
-            }
-
-            .event-date-badge {
-                position: absolute;
-                top: 0.5rem;
-                left: 0.5rem;
-                font-weight: 500;
-                background: rgba(0, 0, 0, 0.6);
-                color: #fff;
-                padding: 0.25rem 0.5rem;
-                border-radius: 0.25rem;
-                font-size: 0.85rem;
-                z-index: 1;
-            }
-
-            .card-body {
-                position: relative;
-                z-index: 1;
-                display: flex; // make body a flex container
-                justify-content: center; // horizontal centering
-                align-items: center; // vertical centering
-                text-align: center;
-
-                .card-title {
-                     background: rgba(0, 0, 0, 0.6);
-                    font-size: 1.7rem !important;
-                    color: #ffffff;
-                    text-shadow:
-                        0 0 5px rgba(222, 226, 230, 0.8), // soft glow
-                        0 0 10px rgba(222, 226, 230, 0.6),
-                        0 0 15px rgba(222, 226, 230, 0.4);
-                    font-weight: 900;
-                    min-height: 60px; // ensures enough space
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                border-radius: 0.25rem;
-                }
-            }
+        &:hover,
+        &:focus,
+        &:visited {
+            color: var(--bg);
+            text-decoration: none;
         }
     }
 }
@@ -94,30 +41,107 @@ $event-fallback-blur: 2px;
 }
 
 
-.pulse-badge {
-  padding: 0.5rem 0.8rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  position: absolute;
-  top: -30px;
-  right: -30px;
-  max-height: 100px;
-  transform: rotate(45deg);
-  animation: pulse 1.5s infinite;
-  z-index: 1;
+// My Events: same card + table layout as "My requests" in Request a Business Letter
+// (BusinessLetter.scss .bl-card / .bl-table), which is scoped to .business-letter.
+.my-events-card {
+  margin-top: 1.5rem;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+
+  h4 {
+    font-family: var(--se);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--txt);
+    margin: 0 0 1.25rem;
+  }
 }
 
-@keyframes pulse {
-  0% {
-    transform: rotate(45deg) scale(1);
-    opacity: 1;
+.my-events-table-wrap {
+  overflow-x: auto;
+}
+
+.my-events-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: var(--txt);
+
+  th {
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mu);
+    text-align: left;
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid var(--bdrs);
+    white-space: nowrap;
   }
-  50% {
-    transform: rotate(45deg) scale(1.1);
-    opacity: 0.7;
+
+  td {
+    padding: 0.7rem 0.5rem;
+    border-bottom: 1px solid var(--bdr);
+    vertical-align: top;
   }
-  100% {
-    transform: rotate(45deg) scale(1);
-    opacity: 1;
+
+  .my-events-ref {
+    font-weight: 600;
+    color: var(--ora);
+    white-space: nowrap;
+  }
+
+  .my-events-muted {
+    color: var(--mu);
+    font-size: 0.85rem;
+  }
+
+  .my-events-status {
+    text-transform: capitalize;
+  }
+}
+
+.my-events-action {
+  background: transparent;
+  border: 1px solid var(--ora);
+  color: var(--ora);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--ora);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+}
+
+.my-events-empty {
+  color: var(--mu);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+
+// Two-column Events layout: the row carries the top spacing and each column's
+// first block drops its own margin, so both columns start on the same line.
+.events-columns {
+  margin-top: 1.5rem;
+
+  > [class*="col-"] > :first-child {
+    margin-top: 0;
+  }
+
+  // Stacked below lg: keep a gap between the two columns.
+  @media (max-width: 991.98px) {
+    > [class*="col-"] + [class*="col-"] {
+      margin-top: 1.5rem;
+    }
   }
 }

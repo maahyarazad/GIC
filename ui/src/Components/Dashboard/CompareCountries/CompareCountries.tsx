@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import Loader from "@/Components/Loader/Loader";
 import { useToast } from "@/Providers/ToastContext";
@@ -20,19 +20,36 @@ interface Region {
   countries: Country[];
 }
 
+interface Category {
+  key: string;
+  fields: string[];
+}
+
+type Metadata = Record<string, any>;
+
 /* ──────────────────────────────────────────────────────────────
    Helpers
 ──────────────────────────────────────────────────────────────── */
 
-/** camelCase / PascalCase key -> human label, e.g. "gdpGrowthRate2024" -> "Gdp Growth Rate 2024". */
+const humanizeCache = new Map<string, string>();
+
+/**
+ * camelCase / PascalCase key -> human label, e.g. "gdpGrowthRate2024" -> "Gdp Growth Rate 2024".
+ * Cached: the same keys are humanized for every card, field and re-render.
+ */
 const humanize = (key: string): string => {
+  const cached = humanizeCache.get(key);
+  if (cached !== undefined) return cached;
+
   const spaced = key
     .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/([A-Za-z])(\d)/g, "$1 $2")
     .replace(/(\d)([A-Za-z])/g, "$1 $2")
     .replace(/[_-]+/g, " ")
     .trim();
-  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+  const label = spaced.charAt(0).toUpperCase() + spaced.slice(1);
+  humanizeCache.set(key, label);
+  return label;
 };
 
 /** Build the composite field id used to track a selected field. */
@@ -44,11 +61,14 @@ const isPlainObject = (v: unknown): v is Record<string, unknown> =>
 /** Height of the fixed site navbar — keep in sync with $nav-height in the SCSS. */
 const NAV_HEIGHT = 70;
 
+/** Shared fallback so a card without metadata keeps a stable `meta` prop. */
+const EMPTY_META: Metadata = {};
+
 /**
  * Recursively renders a metadata value down to its leaf nodes, so we display the
  * value stored deep in the tree rather than only the parent key.
  */
-const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = React.memo(({
+const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = memo(({
   label,
   value,
   depth,
@@ -101,6 +121,216 @@ const MetaNodes: React.FC<{ label: string; value: unknown; depth: number }> = Re
     </div>
   );
 });
+MetaNodes.displayName = "MetaNodes";
+
+/* ──────────────────────────────────────────────────────────────
+   Memoized building blocks
+   Each one receives only primitives or stable references, so a change in one
+   part of the page (a region expanding, a field toggling, the sticky heads
+   compacting on scroll) doesn't re-render the rest.
+──────────────────────────────────────────────────────────────── */
+
+const SelectedCountryPill = memo(({
+  id,
+  country,
+  onRemove,
+}: {
+  id: string;
+  country?: Country;
+  onRemove: (id: string) => void;
+}) => (
+  <div className="continent compare-remove-pill">
+    {country?.code && (
+      <span
+        className={`fi fi-${country.code.toLowerCase()} compare-pill-flag`}
+        aria-hidden="true"
+      />
+    )}
+    <span>{country?.name ?? "Unknown"}</span>
+    <button
+      type="button"
+      className="compare-remove-btn"
+      aria-label={`Remove ${country?.name ?? ""}`}
+      onClick={() => onRemove(id)}
+    >
+      ×
+    </button>
+  </div>
+));
+SelectedCountryPill.displayName = "SelectedCountryPill";
+
+const CheckboxItem = memo(({
+  value,
+  label,
+  checked,
+  onToggle,
+}: {
+  value: string;
+  label: string;
+  checked: boolean;
+  onToggle: (value: string) => void;
+}) => (
+  <label className="compare-check">
+    <input type="checkbox" checked={checked} onChange={() => onToggle(value)} />
+    <span>{label}</span>
+  </label>
+));
+CheckboxItem.displayName = "CheckboxItem";
+
+const RegionDropdown = memo(({
+  region,
+  expanded,
+  selectedCountrySet,
+  onToggleRegion,
+  onToggleCountry,
+}: {
+  region: Region;
+  expanded: boolean;
+  selectedCountrySet: Set<string>;
+  onToggleRegion: (id: string) => void;
+  onToggleCountry: (id: string) => void;
+}) => (
+  <div className="compare-dropdown">
+    <button
+      type="button"
+      className="compare-dropdown-header"
+      onClick={() => onToggleRegion(region._id)}
+    >
+      <span>{region.name}</span>
+      <span className={`compare-caret ${expanded ? "open" : ""}`}>▸</span>
+    </button>
+    <div className={`compare-collapse ${expanded ? "open" : ""}`}>
+      <div className="compare-dropdown-body">
+        {region.countries.map((country) => (
+          <CheckboxItem
+            key={country._id}
+            value={country._id}
+            label={country.name}
+            checked={selectedCountrySet.has(country._id)}
+            onToggle={onToggleCountry}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+));
+RegionDropdown.displayName = "RegionDropdown";
+
+const CategoryAccordion = memo(({
+  category,
+  expanded,
+  selectedFieldSet,
+  onToggleCategory,
+  onToggleAll,
+  onToggleField,
+}: {
+  category: Category;
+  expanded: boolean;
+  selectedFieldSet: Set<string>;
+  onToggleCategory: (key: string) => void;
+  onToggleAll: (category: string, fields: string[], selectAll: boolean) => void;
+  onToggleField: (id: string) => void;
+}) => {
+  const { key, fields } = category;
+
+  const selectedInCat = useMemo(
+    () => fields.filter((f) => selectedFieldSet.has(fieldId(key, f))).length,
+    [fields, key, selectedFieldSet]
+  );
+  const allSelected = selectedInCat === fields.length && fields.length > 0;
+  const indeterminate = selectedInCat > 0 && !allSelected;
+
+  // `indeterminate` is DOM-only; set it when it changes instead of via an inline
+  // ref callback that React would detach and re-attach on every render.
+  const parentRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (parentRef.current) parentRef.current.indeterminate = indeterminate;
+  }, [indeterminate]);
+
+  const handleToggleAll = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => onToggleAll(key, fields, e.target.checked),
+    [key, fields, onToggleAll]
+  );
+
+  return (
+    <div className="compare-accordion">
+      <div className="compare-accordion-header">
+        <label className="compare-check compare-check--parent">
+          <input
+            type="checkbox"
+            checked={allSelected}
+            ref={parentRef}
+            onChange={handleToggleAll}
+          />
+        </label>
+        <button
+          type="button"
+          className="compare-accordion-title"
+          onClick={() => onToggleCategory(key)}
+        >
+          <span>{humanize(key)}</span>
+          <span className={`compare-caret ${expanded ? "open" : ""}`}>▸</span>
+        </button>
+      </div>
+      <div className={`compare-collapse ${expanded ? "open" : ""}`}>
+        <div className="compare-accordion-body">
+          {fields.map((f) => {
+            const id = fieldId(key, f);
+            return (
+              <CheckboxItem
+                key={f}
+                value={id}
+                label={humanize(f)}
+                checked={selectedFieldSet.has(id)}
+                onToggle={onToggleField}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+});
+CategoryAccordion.displayName = "CategoryAccordion";
+
+const CountryCard = memo(({
+  country,
+  meta,
+  comparisonGroups,
+}: {
+  country?: Country;
+  meta: Metadata;
+  comparisonGroups: Category[];
+}) => (
+  <div className="compare-card">
+    <div className="compare-card-head">
+      {country?.code && (
+        <span
+          className={`fi fi-${country.code.toLowerCase()} compare-flag`}
+          aria-hidden="true"
+        />
+      )}
+      <span className="compare-card-name">{country?.name ?? "Unknown"}</span>
+    </div>
+
+    <div className="compare-card-body">
+      {comparisonGroups.map((group) => (
+        <div key={group.key} className="compare-card-category">
+          <div className="compare-card-category-title">{humanize(group.key)}</div>
+          {group.fields.map((field) => (
+            <MetaNodes
+              key={field}
+              label={humanize(field)}
+              value={meta?.[group.key]?.[field]}
+              depth={0}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+));
+CountryCard.displayName = "CountryCard";
 
 /* ──────────────────────────────────────────────────────────────
    Component
@@ -112,7 +342,7 @@ const CompareCountries: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // countryId -> full metadata object
-  const [metadataById, setMetadataById] = useState<Record<string, Record<string, any>>>({});
+  const [metadataById, setMetadataById] = useState<Record<string, Metadata>>({});
   const [loadingMetadata, setLoadingMetadata] = useState(false);
 
   const [selectedCountryIds, setSelectedCountryIds] = useState<string[]>([]);
@@ -213,12 +443,16 @@ const CompareCountries: React.FC = () => {
     return map;
   }, [regions]);
 
+  // O(1) membership checks for every checkbox instead of Array.includes per render.
+  const selectedCountrySet = useMemo(() => new Set(selectedCountryIds), [selectedCountryIds]);
+  const selectedFieldSet = useMemo(() => new Set(selectedFields), [selectedFields]);
+
   /**
    * The category/field structure is derived from the real metadata of the
    * selected countries (union of keys) rather than a static schema, so it always
    * matches the actual data shape and adapts as new fields appear.
    */
-  const categories = useMemo(() => {
+  const categories = useMemo<Category[]>(() => {
     const catFields: Record<string, Set<string>> = {};
     for (const id of selectedCountryIds) {
       const meta = metadataById[id];
@@ -235,50 +469,55 @@ const CompareCountries: React.FC = () => {
       .filter((c) => c.fields.length > 0);
   }, [metadataById, selectedCountryIds]);
 
-  /* ── Selection handlers ── */
-  const toggleCountry = (id: string) =>
+  /* ── Selection handlers (stable: they only use state setters) ── */
+  const toggleCountry = useCallback((id: string) =>
     setSelectedCountryIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    ), []);
 
-  const removeCountry = (id: string) =>
-    setSelectedCountryIds((prev) => prev.filter((x) => x !== id));
+  const removeCountry = useCallback((id: string) =>
+    setSelectedCountryIds((prev) => prev.filter((x) => x !== id)), []);
 
-  const toggleField = (id: string) =>
+  const toggleField = useCallback((id: string) =>
     setSelectedFields((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    ), []);
 
-  const toggleAllFields = (category: string, fields: string[], selectAll: boolean) => {
+  const toggleAllFields = useCallback((category: string, fields: string[], selectAll: boolean) => {
     const ids = fields.map((f) => fieldId(category, f));
+    const idSet = new Set(ids);
     setSelectedFields((prev) => {
-      const withoutCategory = prev.filter((id) => !ids.includes(id));
+      const withoutCategory = prev.filter((id) => !idSet.has(id));
       return selectAll ? [...withoutCategory, ...ids] : withoutCategory;
     });
-  };
+  }, []);
 
-  const toggleRegion = (id: string) =>
-    setExpandedRegions((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleRegion = useCallback((id: string) =>
+    setExpandedRegions((prev) => ({ ...prev, [id]: !prev[id] })), []);
 
-  const toggleCategory = (key: string) =>
-    setExpandedCategories((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleCategory = useCallback((key: string) =>
+    setExpandedCategories((prev) => ({ ...prev, [key]: !prev[key] })), []);
+
+  const toggleAddPanel = useCallback(() => setAddPanelOpen((o) => !o), []);
+  const toggleFieldsPanel = useCallback(() => setFieldsPanelOpen((o) => !o), []);
 
   /* ── Comparison groups (category -> selected fields) ── */
   const comparisonGroups = useMemo(() => {
     return categories
       .map((cat) => ({
         key: cat.key,
-        fields: cat.fields.filter((f) => selectedFields.includes(fieldId(cat.key, f))),
+        fields: cat.fields.filter((f) => selectedFieldSet.has(fieldId(cat.key, f))),
       }))
       .filter((cat) => cat.fields.length > 0);
-  }, [categories, selectedFields]);
+  }, [categories, selectedFieldSet]);
 
   const hasComparison = selectedCountryIds.length > 0 && selectedFields.length > 0;
 
   /**
    * Compact the sticky card heads (flag at 50%) once the cards reach the top of
    * the viewport — i.e. exactly when position: sticky starts pinning them.
-   * Scroll work is throttled with requestAnimationFrame so scrolling stays smooth.
+   * Scroll work is throttled with requestAnimationFrame (one layout read per
+   * frame) and state is only set when the compact flag actually flips.
    */
   const cardsRef = useRef<HTMLDivElement | null>(null);
   const [compactHeads, setCompactHeads] = useState(false);
@@ -290,25 +529,26 @@ const CompareCountries: React.FC = () => {
     }
 
     let raf = 0;
+    let lastCompact: boolean | null = null;
     const update = () => {
-        console.log('update')
       raf = 0;
       const wrap = cardsRef.current;
       // Compact once the cards reach the bottom edge of the fixed navbar —
       // the exact point where the sticky heads (top: $nav-height) start pinning.
-      setCompactHeads(!!wrap && wrap.getBoundingClientRect().top <= NAV_HEIGHT);
+      const compact = !!wrap && wrap.getBoundingClientRect().top <= NAV_HEIGHT;
+      if (compact !== lastCompact) {
+        lastCompact = compact;
+        setCompactHeads(compact);
+      }
     };
     const onScroll = () => {
-        
-        update();
-    //   if (!raf) raf = requestAnimationFrame(update);
-    //   debugger;
+      if (!raf) raf = requestAnimationFrame(update);
     };
 
     update();
     // capture=true catches scroll from whichever ancestor actually scrolls.
-    window.addEventListener("scroll", onScroll, true);
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
@@ -341,23 +581,12 @@ const CompareCountries: React.FC = () => {
               <span className="compare-empty-hint">No countries selected yet.</span>
             ) : (
               selectedCountryIds.map((id) => (
-                <div key={id} className="continent compare-remove-pill">
-                  {countryById[id]?.code && (
-                    <span
-                      className={`fi fi-${countryById[id].code.toLowerCase()} compare-pill-flag`}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <span>{countryById[id]?.name ?? "Unknown"}</span>
-                  <button
-                    type="button"
-                    className="compare-remove-btn"
-                    aria-label={`Remove ${countryById[id]?.name ?? ""}`}
-                    onClick={() => removeCountry(id)}
-                  >
-                    ×
-                  </button>
-                </div>
+                <SelectedCountryPill
+                  key={id}
+                  id={id}
+                  country={countryById[id]}
+                  onRemove={removeCountry}
+                />
               ))
             )}
           </div>
@@ -372,7 +601,7 @@ const CompareCountries: React.FC = () => {
             <button
               type="button"
               className="compare-panel-title compare-panel-toggle"
-              onClick={() => setAddPanelOpen((o) => !o)}
+              onClick={toggleAddPanel}
             >
               <span>Add Countries</span>
               <span className={`compare-caret ${addPanelOpen ? "open" : ""}`}>▸</span>
@@ -380,32 +609,14 @@ const CompareCountries: React.FC = () => {
             <div className={`compare-collapse ${addPanelOpen ? "open" : ""}`}>
               <div className="compare-collapse-inner">
                 {regions.map((region) => (
-                  <div key={region._id} className="compare-dropdown">
-                    <button
-                      type="button"
-                      className="compare-dropdown-header"
-                      onClick={() => toggleRegion(region._id)}
-                    >
-                      <span>{region.name}</span>
-                      <span className={`compare-caret ${expandedRegions[region._id] ? "open" : ""}`}>
-                        ▸
-                      </span>
-                    </button>
-                    <div className={`compare-collapse ${expandedRegions[region._id] ? "open" : ""}`}>
-                      <div className="compare-dropdown-body">
-                        {region.countries.map((country) => (
-                          <label key={country._id} className="compare-check">
-                            <input
-                              type="checkbox"
-                              checked={selectedCountryIds.includes(country._id)}
-                              onChange={() => toggleCountry(country._id)}
-                            />
-                            <span>{country.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  <RegionDropdown
+                    key={region._id}
+                    region={region}
+                    expanded={!!expandedRegions[region._id]}
+                    selectedCountrySet={selectedCountrySet}
+                    onToggleRegion={toggleRegion}
+                    onToggleCountry={toggleCountry}
+                  />
                 ))}
               </div>
             </div>
@@ -416,7 +627,7 @@ const CompareCountries: React.FC = () => {
             <button
               type="button"
               className="compare-panel-title compare-panel-toggle"
-              onClick={() => setFieldsPanelOpen((o) => !o)}
+              onClick={toggleFieldsPanel}
             >
               <span>Comparison Fields</span>
               <span className={`compare-caret ${fieldsPanelOpen ? "open" : ""}`}>▸</span>
@@ -428,54 +639,17 @@ const CompareCountries: React.FC = () => {
                     Add a country to load its comparison fields.
                   </p>
                 )}
-                {categories.map((cat) => {
-                  const selectedInCat = cat.fields.filter((f) =>
-                    selectedFields.includes(fieldId(cat.key, f))
-                  ).length;
-                  const allSelected =
-                    selectedInCat === cat.fields.length && cat.fields.length > 0;
-
-                  return (
-                    <div key={cat.key} className="compare-accordion">
-                      <div className="compare-accordion-header">
-                        <label className="compare-check compare-check--parent">
-                          <input
-                            type="checkbox"
-                            checked={allSelected}
-                            ref={(el) => {
-                              if (el) el.indeterminate = selectedInCat > 0 && !allSelected;
-                            }}
-                            onChange={(e) => toggleAllFields(cat.key, cat.fields, e.target.checked)}
-                          />
-                        </label>
-                        <button
-                          type="button"
-                          className="compare-accordion-title"
-                          onClick={() => toggleCategory(cat.key)}
-                        >
-                          <span>{humanize(cat.key)}</span>
-                          <span className={`compare-caret ${expandedCategories[cat.key] ? "open" : ""}`}>
-                            ▸
-                          </span>
-                        </button>
-                      </div>
-                      <div className={`compare-collapse ${expandedCategories[cat.key] ? "open" : ""}`}>
-                        <div className="compare-accordion-body">
-                          {cat.fields.map((f) => (
-                            <label key={f} className="compare-check">
-                              <input
-                                type="checkbox"
-                                checked={selectedFields.includes(fieldId(cat.key, f))}
-                                onChange={() => toggleField(fieldId(cat.key, f))}
-                              />
-                              <span>{humanize(f)}</span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {categories.map((cat) => (
+                  <CategoryAccordion
+                    key={cat.key}
+                    category={cat}
+                    expanded={!!expandedCategories[cat.key]}
+                    selectedFieldSet={selectedFieldSet}
+                    onToggleCategory={toggleCategory}
+                    onToggleAll={toggleAllFields}
+                    onToggleField={toggleField}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -498,41 +672,14 @@ const CompareCountries: React.FC = () => {
                 Select at least one country and one field to see the comparison.
               </p>
             ) : (
-              <>
-                {selectedCountryIds.map((id) => {
-                const country = countryById[id];
-                const meta = metadataById[id] ?? {};
-                return (
-                  <div key={id} className="compare-card">
-                    <div className="compare-card-head">
-                      {country?.code && (
-                        <span
-                          className={`fi fi-${country.code.toLowerCase()} compare-flag`}
-                          aria-hidden="true"
-                        />
-                      )}
-                      <span className="compare-card-name">{country?.name ?? "Unknown"}</span>
-                    </div>
-
-                    <div className="compare-card-body">
-                      {comparisonGroups.map((group) => (
-                        <div key={group.key} className="compare-card-category">
-                          <div className="compare-card-category-title">{humanize(group.key)}</div>
-                          {group.fields.map((field) => (
-                            <MetaNodes
-                              key={field}
-                              label={humanize(field)}
-                              value={meta?.[group.key]?.[field]}
-                              depth={0}
-                            />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-                })}
-              </>
+              selectedCountryIds.map((id) => (
+                <CountryCard
+                  key={id}
+                  country={countryById[id]}
+                  meta={metadataById[id] ?? EMPTY_META}
+                  comparisonGroups={comparisonGroups}
+                />
+              ))
             )}
           </div>
         </div>

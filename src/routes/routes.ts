@@ -1857,7 +1857,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsEventController_getEvents: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/api/v1/events',
             ...(fetchMiddlewares<RequestHandler>(EventController)),
@@ -1916,25 +1915,26 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsEventController_getMyEventQR: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsEventController_getMyEventQr: Record<string, TsoaRoute.ParameterSchema> = {
+                reference: {"in":"path","name":"reference","required":true,"dataType":"string"},
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/api/v1/my-events/qr',
+        app.get('/api/v1/my-events/:reference/qr',
             ...(fetchMiddlewares<RequestHandler>(EventController)),
-            ...(fetchMiddlewares<RequestHandler>(EventController.prototype.getMyEventQR)),
+            ...(fetchMiddlewares<RequestHandler>(EventController.prototype.getMyEventQr)),
 
-            async function EventController_getMyEventQR(request: ExRequest, response: ExResponse, next: any) {
+            async function EventController_getMyEventQr(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsEventController_getMyEventQR, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventController_getMyEventQr, request, response });
 
                 const controller = new EventController();
 
               await templateService.apiHandler({
-                methodName: 'getMyEventQR',
+                methodName: 'getMyEventQr',
                 controller,
                 response,
                 next,

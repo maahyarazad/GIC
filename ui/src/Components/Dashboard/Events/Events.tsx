@@ -1,29 +1,17 @@
-import React, { useState, useEffect, useCallback, useContext, useMemo } from "react";
-import { PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "@/Providers/ToastContext";
-import { EnvContext } from '@/EnvContext.jsx';
-import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import './Events.css';
 import Loader from "@/Components/Loader/Loader";
-import { Navigate, useNavigate } from "react-router-dom";
-import { Event } from '../../../../../src/types/event.types';
+import type { Event } from '../../../../../src/types/event.types';
 import axiosInstance from "@/api/axiosInstance";
-import newEvent from "@/Assets/upcoming-events2.png";
-import gicLogo from "../../../../public/gic-logo-main.png"
+import EventCard, { toLocalDay } from "./EventCard";
+import MyEvents from "./MyEvents";
 
-// Parses event_date as a local calendar day; "YYYY-MM-DD" strings would otherwise be read as UTC midnight.
-const toLocalDay = (value?: string): Date | null => {
-    if (!value) return null;
-    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
-    const date = match
-        ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
-        : new Date(value);
-    if (isNaN(date.getTime())) return null;
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-};
+const SERVICES_REGISTRATION_URL = "https://services.german-emirates-club.com/registration";
 
 // Splits events into upcoming (today or later, or undated) and past, sorted soonest/most recent first.
-const splitEventsByDate = (events: Event[], now = new Date()) => {
+// Pure function: lives outside the component so it can be unit tested and isn't recreated per render.
+function splitEventsByDate(events: Event[], now: Date = new Date()) {
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const upcoming: { event: Event; day: number | null }[] = [];
     const past: { event: Event; day: number }[] = [];
@@ -41,162 +29,123 @@ const splitEventsByDate = (events: Event[], now = new Date()) => {
         upcoming: upcoming.map((x) => x.event),
         past: past.map((x) => x.event),
     };
-};
+}
+
+// --- Memoized list pieces ---
+
+interface EventItemProps {
+    event: Event;
+    showUpcomingBadge: boolean;
+    onNavigate: (page: string) => void;
+}
+
+// Cards sit in the half-width left column, so two per row instead of 3–4.
+const EVENT_CARD_COLUMN = "col-12 col-sm-6 mb-3";
+
+// Wrapper keeps EventCard from re-rendering when unrelated parent state changes.
+const EventItem = memo(({ event, showUpcomingBadge, onNavigate }: EventItemProps) => (
+    <EventCard
+        columnClassName={EVENT_CARD_COLUMN}
+        event={event}
+        showUpcomingBadge={showUpcomingBadge}
+        onClick={() => onNavigate(event.page)}
+    />
+));
+EventItem.displayName = "EventItem";
+
+interface EventsGroupProps {
+    title: string;
+    emptyText: string;
+    events: Event[];
+    showUpcomingBadge: boolean;
+    onNavigate: (page: string) => void;
+}
+
+const EventsGroup = memo(({ title, emptyText, events, showUpcomingBadge, onNavigate }: EventsGroupProps) => (
+    <section className="events-group">
+        <h4 className="events-group__title">{title}</h4>
+        {events.length === 0 ? (
+            <p className="events-group__empty">{emptyText}</p>
+        ) : (
+            <div className="products row mt-2">
+                {events.map((event) => (
+                    <EventItem
+                        key={event.id}
+                        event={event}
+                        showUpcomingBadge={showUpcomingBadge}
+                        onNavigate={onNavigate}
+                    />
+                ))}
+            </div>
+        )}
+    </section>
+));
+EventsGroup.displayName = "EventsGroup";
 
 // --- Component ---
 const Events: React.FC = () => {
-
-
     const [events, setEvents] = useState<Event[]>([]);
-    const [rowCount, setRowCount] = useState(0);
-    const [paginationModel, setPaginationModel] = useState<PaginationModel>({ page: 1, pageSize: 10 });
-    const [sortModel, setSortModel] = useState<SortModel<Event> | null>(null);
-    const [filterModel, setFilterModel] = useState<FilterModel<Event>[] | null>(null);
-    const [uploading, setUploading] = useState(false);
-    const { show } = useToast();
-    const { confirm } = useConfirm();
-    const env = useContext(EnvContext);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
-    const fetchEvents = useCallback(async () => {
-        try {
-            setLoading(true);
-            const response = await axiosInstance.get("/events");
-            if(response){
-                const {data} = response;
-                setEvents(data.data);
-                setRowCount(data.data.length);
+    const { show } = useToast();
+
+    // Keep the latest toast function without making it a dependency of effects/callbacks.
+    const showRef = useRef(show);
+    showRef.current = show;
+
+    // Fetch once on mount; abort on unmount to avoid state updates on an unmounted component.
+    useEffect(() => {
+        const controller = new AbortController();
+
+        (async () => {
+            try {
+                const { data } = await axiosInstance.get("/events", { signal: controller.signal });
+                setEvents(data?.data ?? []);
+            } catch (err) {
+                if (controller.signal.aborted) return;
+                showRef.current({ type: "error", message: "Failed to fetch events" });
+                console.error("Failed to fetch events", err);
+            } finally {
+                if (!controller.signal.aborted) setLoading(false);
             }
-        } catch (err) {
-            show({ type: "error", message: 'Failed to fetch registration list' });
-            console.error("Failed to fetch registration list", err);
-        } finally {
-            setLoading(false);
-        }
+        })();
+
+        return () => controller.abort();
     }, []);
 
+    // Guards against duplicate SSO requests from rapid clicks.
+    const navigatingRef = useRef(false);
 
+    const handleNavigation = useCallback(async (page: string) => {
+        if (navigatingRef.current) return;
+        navigatingRef.current = true;
 
-    useEffect(() => {
-
-        fetchEvents()
-    }, [fetchEvents])
-
-    const getEventImageUrl = (p?: Event): string | null => {
-        // No image of its own: the card shows the blurred GIC logo instead.
-        if (!p?.Image) return null;
-
-        const baseUrl = "https://services.german-emirates-club.com/uploads/";
-        const url = new URL(p.Image, baseUrl);
-
-        return url.toString();
-    };
-
-
-
-    const isVideo = (file?: string) => file?.trimEnd().toLowerCase().endsWith(".webm");
-
-    const handleNavigation = async (page: string) => {
         try {
-            const response = await axiosInstance.get("/sso");
-            const data = response.data;
+            const { data } = await axiosInstance.get("/sso");
+            const ssoToken = data?.data?.ssoToken;
 
-            if (data.data.ssoToken) {
-                window.location.href = `https://services.german-emirates-club.com/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
-                // window.location.href = `http://localhost:5175/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
-            }
+            if (!ssoToken) throw new Error("Missing SSO token");
+
+            window.location.href =
+                `${SERVICES_REGISTRATION_URL}/${encodeURIComponent(page)}` +
+                `?sso=${encodeURIComponent(ssoToken)}&referer=gic`;
+            // Flag stays set: the browser is leaving the page.
         } catch (error) {
-            show({
+            navigatingRef.current = false;
+            showRef.current({
                 type: "error",
                 message: "SSO token not generated. Please try again.",
             });
             console.error("SSO error", error);
         }
-    };
+    }, []);
 
-
-
-    const { upcoming, past } = useMemo(() => splitEventsByDate(events ?? []), [events]);
-
-    const renderEventCard = (p: Event, showUpcomingBadge: boolean) => {
-        const eventDate = toLocalDay(p.event_date);
-
-        const formattedDate = eventDate
-            ? eventDate.toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-            })
-            : null;
-
-        const url = getEventImageUrl(p);
-
-        // Check if the event is within the next 30 days
-        const isUpcoming =
-            showUpcomingBadge &&
-            eventDate &&
-            eventDate >= new Date(new Date().setHours(0, 0, 0, 0)) &&
-            eventDate <= new Date(new Date().setDate(new Date().getDate() + 30));
-
-        return (
-            <div
-                key={p.id}
-                className="col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3 position-relative"
-                onClick={() => handleNavigation(p.page)}
-            >
-                <div className="card h-100 card-bg position-relative overflow-hidden">
-                    {url === null ? (
-                        <div
-                            className="card-bg-image card-bg-image--fallback w-100 h-100 position-absolute top-0 start-0"
-                            style={{ backgroundImage: `url("${gicLogo}")`, zIndex: 0 }}
-                        />
-                    ) : isVideo(p.Image) ? (
-                        <video
-                            className="card-video-bg w-100 h-100 position-absolute top-0 start-0"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            style={{ objectFit: "cover", zIndex: 0 }}
-                        >
-                            <source src={url} type="video/webm" />
-                            Your browser does not support the video tag.
-                        </video>
-                    ) : (
-                        <div
-                            className="card-bg-image w-100 h-100 position-absolute top-0 start-0"
-                            style={{
-                                backgroundImage: `url("${url}")`,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                zIndex: 0,
-                            }}
-                        />
-                    )}
-
-                    {formattedDate && (
-                        <div className="event-date-badge position-absolute top-0 start-0 m-2 z-1">
-                            {formattedDate}
-                        </div>
-                    )}
-
-                    <div className="card-body text-center position-relative z-1">
-                        <h5 className="card-title">{p.title}</h5>
-                    </div>
-                </div>
-                {isUpcoming && (
-                    <img
-                        src={newEvent}
-                        alt="Upcoming Event"
-                        className="position-absolute pulse-badge"
-                        style={{
-                            zIndex: 1,
-                        }}
-                    />
-                )}
-            </div>
-        );
-    };
+    // Recompute when events change, or when the calendar day rolls over (e.g. tab left open overnight).
+    const todayKey = new Date().toDateString();
+    const { upcoming, past } = useMemo(
+        () => splitEventsByDate(events),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [events, todayKey]
+    );
 
     return (
         <div className="dash-section economic-insights">
@@ -204,36 +153,39 @@ const Events: React.FC = () => {
                 <h3>Events</h3>
             </div>
 
-            {loading ? (
-                <Loader />
-            ) : events?.length === 0 ? (
-                <p>No event found.</p>
-            ) : (
-                <>
-                    <section className="events-group">
-                        <h4 className="events-group__title">Upcoming Events</h4>
-                        {upcoming.length === 0 ? (
-                            <p className="events-group__empty">No upcoming events.</p>
-                        ) : (
-                            <div className="products row mt-2">
-                                {upcoming.map((p) => renderEventCard(p, true))}
-                            </div>
-                        )}
-                    </section>
+            {/* Upcoming/Past on the left, My Events on the right, top-aligned; stacked below lg. */}
+            <div className="row align-items-start events-columns">
+                <div className="col-12 col-lg-6">
+                    {loading ? (
+                        <Loader />
+                    ) : events.length === 0 ? (
+                        <p>No event found.</p>
+                    ) : (
+                        <>
+                            <EventsGroup
+                                title="Upcoming Events"
+                                emptyText="No upcoming events."
+                                events={upcoming}
+                                showUpcomingBadge
+                                onNavigate={handleNavigation}
+                            />
+                            <EventsGroup
+                                title="Past Events"
+                                emptyText="No past events."
+                                events={past}
+                                showUpcomingBadge={false}
+                                onNavigate={handleNavigation}
+                            />
+                        </>
+                    )}
+                </div>
 
-                    <section className="events-group">
-                        <h4 className="events-group__title">Past Events</h4>
-                        {past.length === 0 ? (
-                            <p className="events-group__empty">No past events.</p>
-                        ) : (
-                            <div className="products row mt-2">
-                                {past.map((p) => renderEventCard(p, false))}
-                            </div>
-                        )}
-                    </section>
-                </>
-            )}
+                <div className="col-12 col-lg-6">
+                    <MyEvents />
+                </div>
+            </div>
         </div>
     );
-}
+};
+
 export default Events;

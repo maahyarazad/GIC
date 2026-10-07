@@ -1,8 +1,8 @@
+import './Loader.css';
 interface LoaderProps {
   size?: number;
   borderWidth?: number;
 }
-
 const Loader = ({ size = 20, borderWidth = 3 }: LoaderProps) => {
   return (
     <div className="application-loader">

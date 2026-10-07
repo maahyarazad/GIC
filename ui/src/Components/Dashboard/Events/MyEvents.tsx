@@ -17,7 +17,7 @@ const MyEvents: React.FC = () => {
             setLoading(true);
             setFailed(false);
             setItems(await getMyEvents());
-            debugger;
+            
         } catch (err) {
             console.error("Failed to fetch my events", err);
             setFailed(true);

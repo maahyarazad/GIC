@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import ModalDialog from "@/Components/Generic/Dialog/Dialog";
 import Loader from "@/Components/Loader/Loader";
 import axiosInstance from "../../../api/axiosInstance";
@@ -35,6 +35,71 @@ interface DataPackageDialogProps {
     onImported: () => void;
 }
 
+interface PackageOptionProps {
+    value: string;
+    name: string;
+    meta: string;
+    checked: boolean;
+    danger?: boolean;
+    onSelect: (value: string) => void;
+}
+
+// Memoized so a selection change re-renders only the two options whose `checked` flipped.
+const PackageOption = memo(({ value, name, meta, checked, danger = false, onSelect }: PackageOptionProps) => (
+    <label
+        className={`data-pkg-option${danger ? " data-pkg-option--danger" : ""} ${
+            checked ? "data-pkg-option--selected" : ""
+        }`}
+    >
+        <input
+            type="radio"
+            name="data-package"
+            checked={checked}
+            onChange={() => onSelect(value)}
+        />
+        <div>
+            <div className="data-pkg-option__name">{name}</div>
+            <div className="data-pkg-option__meta">{meta}</div>
+        </div>
+    </label>
+));
+PackageOption.displayName = "PackageOption";
+
+const UpdateReportView = memo(({ result }: { result: UpdateReport }) => (
+    <div className="data-pkg-report">
+        <div>
+            <span className="data-pkg-report__stat">{result.countriesUpdated}</span>{" "}
+            countries updated from{" "}
+            <span className="data-pkg-report__stat">{result.filesProcessed.length}</span>{" "}
+            chapter files.
+        </div>
+        <div style={{ marginTop: 4 }}>
+            <span className="data-pkg-report__stat">{result.totalNewColumns}</span> new
+            columns detected. Existing data was left in place.
+        </div>
+
+        {result.countriesNotMatched.length > 0 && (
+            <div className="data-pkg-warning">
+                No matching record for {result.countriesNotMatched.length} country(ies):{" "}
+                {result.countriesNotMatched.join(", ")}
+            </div>
+        )}
+
+        {result.newColumns.map((group) => (
+            <div
+                className="data-pkg-report__group"
+                key={`${group.chapter}.${group.sheet}`}
+            >
+                <div className="data-pkg-report__stat">
+                    {group.chapter} › {group.sheet}
+                </div>
+                <div className="data-pkg-report__cols">{group.columns.join(", ")}</div>
+            </div>
+        ))}
+    </div>
+));
+UpdateReportView.displayName = "UpdateReportView";
+
 const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImported }) => {
     const { show } = useToast();
 
@@ -64,9 +129,11 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
         };
 
         fetchPackages();
-    }, []);
+    }, [show]);
 
-    const runImport = async () => {
+    const isFullReseed = selected === FULL_RESEED;
+
+    const runImport = useCallback(async () => {
         if (!selected) return;
 
         setImporting(true);
@@ -99,43 +166,9 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
         } finally {
             setImporting(false);
         }
-    };
+    }, [selected, show, onImported, onClose]);
 
-    const renderReport = (result: UpdateReport) => (
-        <div className="data-pkg-report">
-            <div>
-                <span className="data-pkg-report__stat">{result.countriesUpdated}</span>{" "}
-                countries updated from{" "}
-                <span className="data-pkg-report__stat">{result.filesProcessed.length}</span>{" "}
-                chapter files.
-            </div>
-            <div style={{ marginTop: 4 }}>
-                <span className="data-pkg-report__stat">{result.totalNewColumns}</span> new
-                columns detected. Existing data was left in place.
-            </div>
-
-            {result.countriesNotMatched.length > 0 && (
-                <div className="data-pkg-warning">
-                    No matching record for {result.countriesNotMatched.length} country(ies):{" "}
-                    {result.countriesNotMatched.join(", ")}
-                </div>
-            )}
-
-            {result.newColumns.map((group) => (
-                <div
-                    className="data-pkg-report__group"
-                    key={`${group.chapter}.${group.sheet}`}
-                >
-                    <div className="data-pkg-report__stat">
-                        {group.chapter} › {group.sheet}
-                    </div>
-                    <div className="data-pkg-report__cols">{group.columns.join(", ")}</div>
-                </div>
-            ))}
-        </div>
-    );
-
-    const renderPicker = () => {
+    const pickerContent = useMemo(() => {
         if (loading) return <Loader />;
 
         return (
@@ -148,51 +181,27 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
                     )}
 
                     {packages.map((pkg) => (
-                        <label
+                        <PackageOption
                             key={pkg.name}
-                            className={`data-pkg-option ${
-                                selected === pkg.name ? "data-pkg-option--selected" : ""
-                            }`}
-                        >
-                            <input
-                                type="radio"
-                                name="data-package"
-                                checked={selected === pkg.name}
-                                onChange={() => setSelected(pkg.name)}
-                            />
-                            <div>
-                                <div className="data-pkg-option__name">{pkg.name}</div>
-                                <div className="data-pkg-option__meta">
-                                    {pkg.fileCount} chapter files · updates existing records in
-                                    place
-                                </div>
-                            </div>
-                        </label>
+                            value={pkg.name}
+                            name={pkg.name}
+                            meta={`${pkg.fileCount} chapter files · updates existing records in place`}
+                            checked={selected === pkg.name}
+                            onSelect={setSelected}
+                        />
                     ))}
 
-                    <label
-                        className={`data-pkg-option data-pkg-option--danger ${
-                            selected === FULL_RESEED ? "data-pkg-option--selected" : ""
-                        }`}
-                    >
-                        <input
-                            type="radio"
-                            name="data-package"
-                            checked={selected === FULL_RESEED}
-                            onChange={() => setSelected(FULL_RESEED)}
-                        />
-                        <div>
-                            <div className="data-pkg-option__name">
-                                Full re-seed (legacy root files)
-                            </div>
-                            <div className="data-pkg-option__meta">
-                                Rebuilds everything from the .xlsx files in the project root
-                            </div>
-                        </div>
-                    </label>
+                    <PackageOption
+                        value={FULL_RESEED}
+                        name="Full re-seed (legacy root files)"
+                        meta="Rebuilds everything from the .xlsx files in the project root"
+                        checked={isFullReseed}
+                        danger
+                        onSelect={setSelected}
+                    />
                 </div>
 
-                {selected === FULL_RESEED && (
+                {isFullReseed && (
                     <div className="data-pkg-warning">
                         This deletes every continent and country record and rebuilds them from
                         scratch. Any edit made in the dashboard will be lost.
@@ -200,7 +209,7 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
                 )}
             </>
         );
-    };
+    }, [loading, packages, selected, isFullReseed]);
 
     if (importing) {
         return (
@@ -216,7 +225,7 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
         return (
             <ModalDialog
                 title={`Imported ${report.package}`}
-                content={renderReport(report)}
+                content={<UpdateReportView result={report} />}
                 confirmText="Done"
                 onConfirm={onClose}
                 onCancel={onClose}
@@ -227,11 +236,9 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
     return (
         <ModalDialog
             title="Update Country Intelligence Data"
-            content={renderPicker()}
-            confirmText={selected === FULL_RESEED ? "Re-seed database" : "Import"}
-            confirmClassName={
-                selected === FULL_RESEED ? "dashboard-btn--delete-ghost" : undefined
-            }
+            content={pickerContent}
+            confirmText={isFullReseed ? "Re-seed database" : "Import"}
+            confirmClassName={isFullReseed ? "dashboard-btn--delete-ghost" : undefined}
             disabled={!selected}
             cancelText="Cancel"
             onConfirm={runImport}
@@ -240,4 +247,4 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
     );
 };
 
-export default DataPackageDialog;
+export default memo(DataPackageDialog);

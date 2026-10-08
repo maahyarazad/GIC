@@ -26,13 +26,6 @@
       "name": "Philip Hoelzer",
       "role": "Chief Strategy Advisor",
       "picture_file_id": ""
-    },
-    {
-      "key": "eco",
-      "init": "EA",
-      "name": "Economic Analyst",
-      "role": "Market Intelligence & Research",
-      "picture_file_id": ""
     }
   ],
   "expertData": {
@@ -80,21 +73,6 @@
         "JV formation and acquisition legal structures"
       ],
       "bg": "Practising across multiple MEA jurisdictions, our legal advisor has advised on market entry, JV formation, and large-scale procurement engagements."
-    },
-    "eco": {
-      "init": "EA",
-      "name": "Economic Analyst",
-      "role": "Market Intelligence & Research",
-      "tag": "Translating MEA's structural economic dynamics into investment-grade intelligence for Club members.",
-      "bio": "Our economic analyst delivers proprietary research on sectoral underrepresentation, supply-demand imbalances, and structural investment opportunities across MEA markets — the analytical engine powering the Club's intelligence offering.",
-      "exp": [
-        "Sectoral demand–supply gap analysis across MEA",
-        "Market entry feasibility and opportunity mapping",
-        "Competitive landscape assessments by jurisdiction",
-        "Tender pipeline intelligence and prioritisation",
-        "Trade flow and logistics infrastructure analysis"
-      ],
-      "bg": "Our economic analyst ensures that Club members receive intelligence that goes beyond publicly available data — identifying asymmetries only visible to those with deep regional knowledge."
     }
   },
   "navLinks": [

@@ -1,21 +1,3 @@
-.my-event-qr img {
-  width: 100%;
-  max-width: 280px;
-  image-rendering: pixelated;
-}
-.my-event-qr__reference {
-  margin: 0.5rem 0;
-  font-family: var(--bs-font-monospace);
-  word-break: break-all;
-}
-.my-event-qr__download {
-  text-decoration: none;
-}
-.my-event-qr__download:hover, .my-event-qr__download:focus, .my-event-qr__download:visited {
-  color: var(--bg);
-  text-decoration: none;
-}
-
 .events-group {
   margin-top: 1.5rem;
 }
@@ -97,6 +79,25 @@
 .my-events-action:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+
+.request-status {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+}
+.request-status--pending {
+  background: #b7791f;
+}
+.request-status--approved {
+  background: #2f855a;
+}
+.request-status--declined {
+  background: #9b2c2c;
 }
 
 .my-events-empty {

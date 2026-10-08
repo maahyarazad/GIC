@@ -103,40 +103,64 @@ $event-date-block-width: clamp(64px, 22%, 110px);
         }
     }
 
-    // Bottom strip for a record's reference and action (My Events, My requests), right of the date block.
-    .event-card-footer {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 2;
+    // Title + subtitle stack, left-aligned against the date block like the title.
+    .event-card__text {
         display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.35rem 0.5rem;
-        background: rgba(0, 0, 0, 0.65);
-        color: #fff;
-        font-size: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        min-width: 0;
+    }
 
-        &__reference {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-family: var(--bs-font-monospace);
+    .event-card__subtitle {
+        margin: 0;
+        padding: 0.1rem 0.5rem;
+        max-width: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        font-size: 0.8rem;
+        border-radius: 0rem 0.5rem 0.5rem 0rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    // Request status (Requested / Invited / Declined); bottom-right so it never meets
+    // the date block or the "upcoming" ribbon in the top-right corner.
+    .event-status-badge {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.5rem;
+        z-index: 2;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.7);
+
+        &--pending {
+            background: #b7791f;
         }
 
-        &__status {
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
-            background: var(--ora);
-            text-transform: capitalize;
+        &--approved {
+            background: #2f855a;
+        }
+
+        &--declined {
+            background: #9b2c2c;
         }
     }
 
-    .event-date-block ~ .event-card-footer {
-        left: $event-date-block-width;
+    // Past meetings: not clickable.
+    &.event-card--static {
+        cursor: default;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+        }
     }
 }
 

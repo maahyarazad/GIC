@@ -165,4 +165,81 @@
   background-color: var(--bg);
   color: var(--txt);
   transition: background-color 0.3s ease, color 0.3s ease;
-}/*# sourceMappingURL=Dashboard.css.map */
+}
+
+.dashboard,
+.dashboard-modal,
+.confirm-dialog,
+.json-node-dialog {
+  --ora-dark: #9a4114;
+  --ora-focus-ring: rgba(200, 84, 26, 0.25);
+  --bs-focus-ring-color: var(--ora-focus-ring);
+}
+.dashboard .btn,
+.dashboard-modal .btn,
+.confirm-dialog .btn,
+.json-node-dialog .btn {
+  --bs-btn-focus-shadow-rgb: 200, 84, 26;
+}
+.dashboard button:not([class*=dashboard-btn]):focus-visible,
+.dashboard a:focus-visible,
+.dashboard [role=button]:focus-visible,
+.dashboard [role=tab]:focus-visible,
+.dashboard summary:focus-visible,
+.dashboard-modal button:not([class*=dashboard-btn]):focus-visible,
+.dashboard-modal a:focus-visible,
+.dashboard-modal [role=button]:focus-visible,
+.dashboard-modal [role=tab]:focus-visible,
+.dashboard-modal summary:focus-visible,
+.confirm-dialog button:not([class*=dashboard-btn]):focus-visible,
+.confirm-dialog a:focus-visible,
+.confirm-dialog [role=button]:focus-visible,
+.confirm-dialog [role=tab]:focus-visible,
+.confirm-dialog summary:focus-visible,
+.json-node-dialog button:not([class*=dashboard-btn]):focus-visible,
+.json-node-dialog a:focus-visible,
+.json-node-dialog [role=button]:focus-visible,
+.json-node-dialog [role=tab]:focus-visible,
+.json-node-dialog summary:focus-visible {
+  outline: 2px solid var(--ora);
+  outline-offset: 2px;
+}
+.dashboard .dashboard-btn:not([class*=dashboard-btn--]):focus-visible,
+.dashboard-modal .dashboard-btn:not([class*=dashboard-btn--]):focus-visible,
+.confirm-dialog .dashboard-btn:not([class*=dashboard-btn--]):focus-visible,
+.json-node-dialog .dashboard-btn:not([class*=dashboard-btn--]):focus-visible {
+  box-shadow: 0 0 0 3px var(--ora-dark);
+}
+.dashboard .form-control:focus,
+.dashboard .form-select:focus,
+.dashboard .form-check-input:focus,
+.dashboard-modal .form-control:focus,
+.dashboard-modal .form-select:focus,
+.dashboard-modal .form-check-input:focus,
+.confirm-dialog .form-control:focus,
+.confirm-dialog .form-select:focus,
+.confirm-dialog .form-check-input:focus,
+.json-node-dialog .form-control:focus,
+.json-node-dialog .form-select:focus,
+.json-node-dialog .form-check-input:focus {
+  border-color: var(--ora);
+  box-shadow: 0 0 0 0.25rem var(--ora-focus-ring);
+}
+.dashboard .form-range:focus::-webkit-slider-thumb,
+.dashboard-modal .form-range:focus::-webkit-slider-thumb,
+.confirm-dialog .form-range:focus::-webkit-slider-thumb,
+.json-node-dialog .form-range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--bg), 0 0 0 0.25rem var(--ora-focus-ring);
+}
+.dashboard .form-range:focus::-moz-range-thumb,
+.dashboard-modal .form-range:focus::-moz-range-thumb,
+.confirm-dialog .form-range:focus::-moz-range-thumb,
+.json-node-dialog .form-range:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--bg), 0 0 0 0.25rem var(--ora-focus-ring);
+}
+
+.dashboard .sidebar li[role=button]:focus-visible {
+  outline-offset: -2px;
+}
+
+/*# sourceMappingURL=Dashboard.css.map */

@@ -93,3 +93,51 @@
     }
   }
 }
+
+// Boardroom page: compact hero (the global .br-hero is 55vh with the text pinned to the bottom,
+// which left a large empty band under the nav) and tighter spacing between the sections.
+#page-boardroom {
+  .br-hero {
+    height: auto;
+    padding: 48px 80px 32px;
+  }
+
+  .ev-sec--upcoming {
+    padding-top: 40px;
+  }
+
+  .ev-sec--past {
+    padding-top: 0;
+  }
+
+  .ev-hd {
+    margin-bottom: 32px;
+  }
+
+  .ev-empty {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--mu);
+  }
+
+  @media (max-width: 1024px) {
+    .br-hero {
+      padding: 40px 32px 28px;
+    }
+
+    .ev-sec--upcoming {
+      padding-top: 32px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .br-hero {
+      padding: 32px 20px 24px;
+    }
+
+    .ev-sec--upcoming {
+      padding-top: 24px;
+    }
+  }
+}

@@ -1,0 +1,296 @@
+// Admin Board Meetings section; table/card look matches My Requests (Events.scss)
+// and the Business Letter tables.
+
+$bm-pending: #b7791f;
+$bm-approved: #2f855a;
+$bm-declined: #9b2c2c;
+
+.board-meetings {
+  .bm-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
+    border-bottom: 1px solid var(--bdrs);
+  }
+
+  .bm-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--mu);
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &.active {
+      color: var(--ora);
+      border-bottom-color: var(--ora);
+    }
+
+    &__badge {
+      min-width: 1.4rem;
+      padding: 0 0.4rem;
+      border-radius: 999px;
+      background: var(--ora);
+      color: #fff;
+      font-size: 0.75rem;
+      line-height: 1.4rem;
+      text-align: center;
+    }
+  }
+
+  .bm-card {
+    margin-top: 1.5rem;
+    border: 1px solid var(--bdr);
+    background: var(--bgp);
+    padding: 1.5rem;
+
+    &__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+
+      h4 {
+        font-family: var(--se);
+        font-size: 1.35rem;
+        font-weight: 500;
+        color: var(--txt);
+        margin: 0;
+      }
+    }
+  }
+
+  .bm-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    .form-select {
+      width: auto;
+      min-width: 10rem;
+    }
+  }
+
+  .bm-table-wrap {
+    overflow-x: auto;
+  }
+
+  .bm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    color: var(--txt);
+
+    th {
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--mu);
+      text-align: left;
+      padding: 0.6rem 0.5rem;
+      border-bottom: 1px solid var(--bdrs);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.7rem 0.5rem;
+      border-bottom: 1px solid var(--bdr);
+      vertical-align: top;
+    }
+
+    .bm-row--past td {
+      opacity: 0.65;
+    }
+  }
+
+  .bm-ref {
+    font-weight: 600;
+    color: var(--ora);
+    white-space: nowrap;
+  }
+
+  .bm-muted {
+    color: var(--mu);
+    font-size: 0.85rem;
+  }
+
+  .bm-nowrap {
+    white-space: nowrap;
+  }
+
+  .bm-actions {
+    white-space: nowrap;
+    text-align: right;
+
+    .bm-action + .bm-action {
+      margin-left: 0.4rem;
+    }
+  }
+
+  .bm-action {
+    background: transparent;
+    border: 1px solid var(--ora);
+    color: var(--ora);
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--ora);
+      color: #fff;
+    }
+
+    &--danger {
+      border-color: $bm-declined;
+      color: $bm-declined;
+
+      &:hover:not(:disabled) {
+        background: $bm-declined;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+
+  .bm-empty {
+    color: var(--mu);
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  .request-status {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #fff;
+
+    &--pending {
+      background: $bm-pending;
+    }
+
+    &--approved {
+      background: $bm-approved;
+    }
+
+    &--declined {
+      background: $bm-declined;
+    }
+  }
+
+  // Email delivery indicators: L(eadership), R(eceipt), I(nvitation).
+  .email-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.25rem;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: help;
+
+    &--sent {
+      background: $bm-approved;
+    }
+
+    &--failed {
+      background: $bm-declined;
+    }
+
+    &--pending {
+      background: $bm-pending;
+    }
+
+    &--not_sent {
+      background: transparent;
+      color: var(--mu);
+      border: 1px dashed var(--bdrs);
+    }
+  }
+}
+
+// The meeting form renders inside the dashboard modal, outside .board-meetings.
+.bm-form {
+  text-align: left;
+
+  .bm-field {
+    margin-bottom: 0.9rem;
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--mu);
+      margin-bottom: 0.3rem;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--ora);
+    }
+  }
+
+  .bm-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 1rem;
+
+    @media (min-width: 576px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .bm-error {
+    font-size: 0.85rem;
+    color: var(--ora);
+    margin-top: 0.25rem;
+  }
+
+  .bm-hint,
+  .bm-counter {
+    font-size: 0.8rem;
+    color: var(--mu);
+    margin-top: 0.25rem;
+  }
+
+  .bm-counter {
+    text-align: right;
+  }
+
+  .bm-image-preview {
+    display: block;
+    margin-top: 0.5rem;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: 1px solid var(--bdr);
+  }
+
+  .bm-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}

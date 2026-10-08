@@ -1,5 +1,4 @@
 import React from "react";
-import { Event } from '../../../../../src/types/event.types';
 import newEvent from "@/Assets/upcoming-events2.png";
 import gicLogo from "../../../../public/gic-logo-main.png"
 import "./EventCard.css";
@@ -15,37 +14,43 @@ export const toLocalDay = (value?: string | null): Date | null => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 };
 
-const getEventImageUrl = (p?: Pick<Event, "Image">): string | null => {
-    // No image of its own: the card shows the blurred GIC logo instead.
-    if (!p?.Image) return null;
-
-    const baseUrl = "https://services.german-emirates-club.com/uploads/";
-    const url = new URL(p.Image, baseUrl);
-
-    return url.toString();
+// Images are GIC File Management uploads, served by this app under /uploads.
+const resolveImageUrl = (imageUrl?: string | null): string | null => {
+    if (!imageUrl) return null;
+    if (typeof window === "undefined") return imageUrl;
+    return new URL(imageUrl, window.location.origin).toString();
 };
 
 const isVideo = (file?: string | null) => file?.trimEnd().toLowerCase().endsWith(".webm");
 
-export type EventCardEvent = Pick<Event, "page" | "title" | "event_date" | "Image">;
+export type EventCardBadgeTone = "pending" | "approved" | "declined";
 
 interface EventCardProps {
-    event: EventCardEvent;
+    title: string;
+    /** Calendar day ("YYYY-MM-DD") shown in the left date block. */
+    date?: string | null;
+    /** One line under the title, e.g. "Venue · 18:30 GST". */
+    subtitle?: string;
+    imageUrl?: string | null;
+    badge?: { label: string; tone: EventCardBadgeTone };
     showUpcomingBadge?: boolean;
-    onClick: () => void;
-    footer?: React.ReactNode;
+    /** Omit to render a non-interactive card. */
+    onClick?: () => void;
     // Bootstrap column classes; override when the card sits in a narrower container.
     columnClassName?: string;
 }
 
 const EventCard: React.FC<EventCardProps> = ({
-    event: p,
+    title,
+    date,
+    subtitle,
+    imageUrl,
+    badge,
     showUpcomingBadge = false,
     onClick,
-    footer,
     columnClassName = "col-md-6 mb-3 col-lg-4 col-xl-4 col-xxl-3",
 }) => {
-    const eventDate = toLocalDay(p.event_date);
+    const eventDate = toLocalDay(date);
 
     const dateParts = eventDate
         ? {
@@ -56,7 +61,7 @@ const EventCard: React.FC<EventCardProps> = ({
         }
         : null;
 
-    const url = getEventImageUrl(p);
+    const url = resolveImageUrl(imageUrl);
 
     // Check if the event is within the next 30 days
     const isUpcoming =
@@ -70,13 +75,13 @@ const EventCard: React.FC<EventCardProps> = ({
             className={`${columnClassName} position-relative`}
             onClick={onClick}
         >
-            <div className="card event-card card-bg position-relative overflow-hidden">
+            <div className={`card event-card card-bg position-relative overflow-hidden${onClick ? "" : " event-card--static"}`}>
                 {url === null ? (
                     <div
                         className="card-bg-image card-bg-image--fallback w-100 h-100 position-absolute top-0 start-0"
                         style={{ backgroundImage: `url("${gicLogo}")`, zIndex: 0 }}
                     />
-                ) : isVideo(p.Image) ? (
+                ) : isVideo(imageUrl) ? (
                     <video
                         className="card-video-bg w-100 h-100 position-absolute top-0 start-0"
                         autoPlay
@@ -108,11 +113,16 @@ const EventCard: React.FC<EventCardProps> = ({
                     </time>
                 )}
 
-                <div className={`card-body text-center position-relative z-1${dateParts ? " has-date" : ""}`}>
-                    <h5 className="card-title">{p.title}</h5>
-                </div>
+                {badge && (
+                    <span className={`event-status-badge event-status-badge--${badge.tone}`}>{badge.label}</span>
+                )}
 
-                {footer}
+                <div className={`card-body text-center position-relative z-1${dateParts ? " has-date" : ""}`}>
+                    <div className="event-card__text">
+                        <h5 className="card-title">{title}</h5>
+                        {subtitle && <p className="event-card__subtitle">{subtitle}</p>}
+                    </div>
+                </div>
             </div>
             {isUpcoming && (
                 <img

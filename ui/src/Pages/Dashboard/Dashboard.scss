@@ -193,3 +193,65 @@
   transition: background-color 0.3s ease,
               color 0.3s ease;
 }
+
+// ─────────────────────────────────────────────
+// Keyboard focus (:focus / :focus-visible) in the admin dashboard
+// ─────────────────────────────────────────────
+// Replaces Bootstrap's blue focus colours (#86b7fe, rgba(13,110,253,.25)) and the browser's
+// default blue outline with the application colour. --ora-dark is a darker tone of --ora
+// (#C8541A) for elements that are already orange, where an --ora ring would not show.
+// Dialogs render outside .dashboard, so they are listed explicitly.
+$ora-rgb: 200, 84, 26;
+
+.dashboard,
+.dashboard-modal,
+.confirm-dialog,
+.json-node-dialog {
+  --ora-dark: #9a4114;
+  --ora-focus-ring: rgba(#{$ora-rgb}, 0.25);
+
+  // Bootstrap 5.3 focus tokens (.focus-ring utility, .btn variants).
+  --bs-focus-ring-color: var(--ora-focus-ring);
+
+  .btn {
+    --bs-btn-focus-shadow-rgb: #{$ora-rgb};
+  }
+
+  // Plain buttons, links and role="button"/"tab" elements (e.g. the sidebar items).
+  // .dashboard-btn* keep their own themed ring from index.scss.
+  button:not([class*="dashboard-btn"]):focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  [role="tab"]:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--ora);
+    outline-offset: 2px;
+  }
+
+  // Filled (orange) primary button only: an orange ring is invisible against it.
+  .dashboard-btn:not([class*="dashboard-btn--"]):focus-visible {
+    box-shadow: 0 0 0 3px var(--ora-dark);
+  }
+
+  // Form fields.
+  .form-control:focus,
+  .form-select:focus,
+  .form-check-input:focus {
+    border-color: var(--ora);
+    box-shadow: 0 0 0 0.25rem var(--ora-focus-ring);
+  }
+
+  // Separate rules: an unknown vendor pseudo-element would invalidate a combined selector.
+  .form-range:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 1px var(--bg), 0 0 0 0.25rem var(--ora-focus-ring);
+  }
+
+  .form-range:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 1px var(--bg), 0 0 0 0.25rem var(--ora-focus-ring);
+  }
+}
+
+// Sidebar items clip their background (overflow: hidden): draw the ring inside.
+.dashboard .sidebar li[role="button"]:focus-visible {
+  outline-offset: -2px;
+}

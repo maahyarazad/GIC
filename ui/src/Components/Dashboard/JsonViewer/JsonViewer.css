@@ -37,7 +37,7 @@
   color: #2f855a;
 }
 .json-viewer-action--edit {
-  color: #2b6cb0;
+  color: #c8541a;
 }
 .json-viewer-action--delete {
   color: #c53030;
@@ -47,7 +47,7 @@
   color: #fff;
 }
 .json-viewer-action--edit:hover {
-  background: #2b6cb0;
+  background: #c8541a;
   color: #fff;
 }
 .json-viewer-action--delete:hover {

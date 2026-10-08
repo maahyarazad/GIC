@@ -128,7 +128,7 @@ const isMobile = useIsMobile();
             <div>
               <div className="co-dl">Email</div>
               <div className="co-dv">
-                <span style={{ color: "var(--ora)" }}>info&#64;GIC.com</span>
+                <span style={{ color: "var(--ora)" }}>info&#64;german-industry-club.com</span>
               </div>
             </div>
 

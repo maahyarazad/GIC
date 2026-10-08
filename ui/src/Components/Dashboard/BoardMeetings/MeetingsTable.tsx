@@ -60,6 +60,7 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
                         changed();
                     }}
                     onCancel={() => closeModalRef.current()}
+                    notify={show}
                 />
             ),
         });

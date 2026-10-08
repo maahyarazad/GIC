@@ -11,7 +11,7 @@ import {
     apiErrorMessage,
     apiFieldErrors,
 } from "@/api/boardMeetings";
-import { useToast } from "@/Providers/ToastContext";
+import type ToastOptions from "@/Providers/ToastContext";
 
 const DESCRIPTION_MAX = 2000;
 const IMAGE_URL = /^\/uploads\/[A-Za-z0-9._-]{1,128}$/;
@@ -74,26 +74,28 @@ interface MeetingFormProps {
     meeting?: AdminBoardMeetingDto;
     onSaved: () => void;
     onCancel: () => void;
+    // Passed in rather than read with useToast(): the form renders inside the modal
+    // provider, which sits outside ToastProvider.
+    notify: (options: ToastOptions) => void;
 }
 
-const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel }) => {
-    const { show } = useToast();
+const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel, notify }) => {
 
     const handleSubmit = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
         try {
             const payload = toPayload(values);
             if (meeting) {
                 await adminUpdateMeeting(meeting.id, payload);
-                show({ type: "success", message: "Meeting updated" });
+                notify({ type: "success", message: "Meeting updated" });
             } else {
                 await adminCreateMeeting(payload);
-                show({ type: "success", message: "Meeting created" });
+                notify({ type: "success", message: "Meeting created" });
             }
             onSaved();
         } catch (error) {
             const fieldErrors = apiFieldErrors(error);
             if (fieldErrors) helpers.setErrors(fieldErrors);
-            show({ type: "error", message: apiErrorMessage(error, "Failed to save the meeting") });
+            notify({ type: "error", message: apiErrorMessage(error, "Failed to save the meeting") });
         } finally {
             helpers.setSubmitting(false);
         }

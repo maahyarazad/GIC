@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, useMemo } from "react";
 import { loginUser, LoginModel } from "../../api/auth";
 import "./Boardroom.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,8 +12,10 @@ import './Boardroom.css';
 import { setReady } from '../../features/appSlice';
 import { usePage } from '@/Providers/PageContext';
 import { EnvContext } from '@/EnvContext';
-import axiosInstance from "@/api/axiosInstance";
 import EventCard from './EventCard';
+import { getBoardMeetings } from "@/api/boardMeetings";
+import { useBoardMeetingRequest } from "@/Hooks/useBoardMeetingRequest";
+import { MemberBoardMeetingDto, REQUEST_STATUS_LABELS } from "../../../../src/types/boardMeeting.types";
 
 interface Props {
     siteData: any;
@@ -52,84 +54,71 @@ const Boardroom: React.FC<Props> = ({ siteData }) => {
 
 
 
-    const [eventCard, setEventCards] = useState<Event[]>([]);
+    const [meetings, setMeetings] = useState<MemberBoardMeetingDto[]>([]);
 
     const [_loading, _setLoading] = useState(true);
 
-    const stripHtml = (html: string): string => {
-        const tmp = document.createElement("div");
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || "";
-    };
-
+    // Meetings are members-only: fetch only for a signed-in user (the lock overlay covers the page otherwise).
     const fetchEvents = useCallback(async () => {
+        if (!user) {
+            setMeetings([]);
+            _setLoading(false);
+            return;
+        }
         try {
             _setLoading(true);
-            const response = await axiosInstance.get("/events");
-            if (response) {
-                const { data } = response;
-                const eventCards = data.data.map((x: any) => {
-                    const eventDate = new Date(x.event_date);
-                    const monthLabel = eventDate.toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric",
-                    });
-
-                    return {
-                        id: x.id,
-                        page: x.page,
-                        city: "Dubai",
-                        day: eventDate.getDate().toString(),
-                        monthLabel,
-                        dateValue: x.event_date,
-                        type: "Upcoming · Members Briefing",
-                        title: x.title,
-                        description: stripHtml(x.description),
-                        meta: [monthLabel, "Members Only", "Register Interest"],
-                        visStyle: {
-                            background: "linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)",
-                        },
-                        dateStyle: { background: "" },
-                        cardStyle: { opacity: 1, cursor: 'pointer' }
-                    };
-                });
-                setEventCards(eventCards);
-            }
+            setMeetings(await getBoardMeetings());
         } catch (err) {
-            show({ type: "error", message: "Failed to fetch registration list" });
-            console.error("Failed to fetch registration list", err);
+            show({ type: "error", message: "Failed to fetch board meetings" });
+            console.error("Failed to fetch board meetings", err);
         } finally {
             _setLoading(false);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
+        if (loading) return;
         fetchEvents();
-    }, [fetchEvents]);
+    }, [loading, fetchEvents]);
 
+    const { request } = useBoardMeetingRequest(fetchEvents);
 
-
-    const handleNavigation = async (page: string) => {
-        try {
-            
-            const response = await axiosInstance.get("/sso");
-            const data = response.data;
-
-            if (data.data.ssoToken) {
-                window.location.href = `https://services.german-emirates-club.com/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
-                // window.location.href = `http://localhost:5175/registration/${page}?sso=${data.data.ssoToken}&referer=gic`;
-            }
-        } catch (error) {
-            show({
-                type: "error",
-                message: "SSO token not generated. Please try again.",
+    // Upcoming meetings mapped to the Boardroom card's shape.
+    const eventCard = useMemo(() => meetings
+        .filter((meeting) => !meeting.isPast)
+        .map((meeting) => {
+            const [year, month, day] = meeting.date.split("-").map(Number);
+            const monthLabel = new Date(year, month - 1, day).toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
             });
-            console.error("SSO error", error);
-        }
+
+            return {
+                id: meeting.id,
+                page: meeting.id,
+                city: meeting.location.length > 32 ? `${meeting.location.slice(0, 31)}…` : meeting.location,
+                day: String(day),
+                monthLabel,
+                type: "Upcoming · Board Meeting",
+                title: meeting.title,
+                description: meeting.description,
+                meta: [
+                    `${meeting.time} GST`,
+                    meeting.venue,
+                    meeting.myRequest ? REQUEST_STATUS_LABELS[meeting.myRequest.status] : "Request to Join",
+                ],
+                visStyle: {
+                    background: "linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)",
+                },
+                dateStyle: { background: "" },
+                cardStyle: { opacity: 1, cursor: 'pointer' }
+            };
+        }), [meetings]);
+
+    const handleRequest = (id: string) => {
+        const meeting = meetings.find((m) => m.id === id);
+        if (meeting) request(meeting);
     };
-
-
-
 
     return (
 
@@ -178,7 +167,7 @@ const Boardroom: React.FC<Props> = ({ siteData }) => {
                     </div>
 
                     {eventCard?.map((event) => (
-                        <EventCard key={event.id} event={event} _onClick={(p) => handleNavigation(p)} />
+                        <EventCard key={event.id} event={event} _onClick={(id) => handleRequest(String(id))} />
                     ))}
                 </div>
 

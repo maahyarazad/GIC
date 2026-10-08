@@ -16,8 +16,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   z-index: 0;
 }
 .card.event-card .card-bg-image--fallback {
@@ -83,36 +82,53 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.card.event-card .event-card-footer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 2;
+.card.event-card .event-card__text {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
-  background: rgba(0, 0, 0, 0.65);
-  color: #fff;
-  font-size: 0.8rem;
-}
-.card.event-card .event-card-footer__reference {
-  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
   min-width: 0;
+}
+.card.event-card .event-card__subtitle {
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  max-width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 0.8rem;
+  border-radius: 0rem 0.5rem 0.5rem 0rem;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--bs-font-monospace);
 }
-.card.event-card .event-card-footer__status {
-  padding: 0.1rem 0.4rem;
-  border-radius: 0.25rem;
-  background: var(--ora);
-  text-transform: capitalize;
+.card.event-card .event-status-badge {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 2;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.7);
 }
-.card.event-card .event-date-block ~ .event-card-footer {
-  left: clamp(64px, 22%, 110px);
+.card.event-card .event-status-badge--pending {
+  background: #b7791f;
+}
+.card.event-card .event-status-badge--approved {
+  background: #2f855a;
+}
+.card.event-card .event-status-badge--declined {
+  background: #9b2c2c;
+}
+.card.event-card.event-card--static {
+  cursor: default;
+}
+.card.event-card.event-card--static:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .pulse-badge {
@@ -141,4 +157,6 @@
     transform: rotate(45deg) scale(1);
     opacity: 1;
   }
-}/*# sourceMappingURL=EventCard.css.map */
+}
+
+/*# sourceMappingURL=EventCard.css.map */

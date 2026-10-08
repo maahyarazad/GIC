@@ -1,0 +1,245 @@
+.board-meetings .bm-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 1.5rem;
+  border-bottom: 1px solid var(--bdrs);
+}
+.board-meetings .bm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--mu);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.board-meetings .bm-tab.active {
+  color: var(--ora);
+  border-bottom-color: var(--ora);
+}
+.board-meetings .bm-tab__badge {
+  min-width: 1.4rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--ora);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.4rem;
+  text-align: center;
+}
+.board-meetings .bm-card {
+  margin-top: 1.5rem;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+}
+.board-meetings .bm-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.board-meetings .bm-card__header h4 {
+  font-family: var(--se);
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--txt);
+  margin: 0;
+}
+.board-meetings .bm-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.board-meetings .bm-filters .form-select {
+  width: auto;
+  min-width: 10rem;
+}
+.board-meetings .bm-table-wrap {
+  overflow-x: auto;
+}
+.board-meetings .bm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: var(--txt);
+}
+.board-meetings .bm-table th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mu);
+  text-align: left;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--bdrs);
+  white-space: nowrap;
+}
+.board-meetings .bm-table td {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid var(--bdr);
+  vertical-align: top;
+}
+.board-meetings .bm-table .bm-row--past td {
+  opacity: 0.65;
+}
+.board-meetings .bm-ref {
+  font-weight: 600;
+  color: var(--ora);
+  white-space: nowrap;
+}
+.board-meetings .bm-muted {
+  color: var(--mu);
+  font-size: 0.85rem;
+}
+.board-meetings .bm-nowrap {
+  white-space: nowrap;
+}
+.board-meetings .bm-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.board-meetings .bm-actions .bm-action + .bm-action {
+  margin-left: 0.4rem;
+}
+.board-meetings .bm-action {
+  background: transparent;
+  border: 1px solid var(--ora);
+  color: var(--ora);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.board-meetings .bm-action:hover:not(:disabled) {
+  background: var(--ora);
+  color: #fff;
+}
+.board-meetings .bm-action--danger {
+  border-color: #9b2c2c;
+  color: #9b2c2c;
+}
+.board-meetings .bm-action--danger:hover:not(:disabled) {
+  background: #9b2c2c;
+}
+.board-meetings .bm-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.board-meetings .bm-empty {
+  color: var(--mu);
+  padding: 2rem 0;
+  text-align: center;
+}
+.board-meetings .request-status {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+}
+.board-meetings .request-status--pending {
+  background: #b7791f;
+}
+.board-meetings .request-status--approved {
+  background: #2f855a;
+}
+.board-meetings .request-status--declined {
+  background: #9b2c2c;
+}
+.board-meetings .email-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: help;
+}
+.board-meetings .email-status--sent {
+  background: #2f855a;
+}
+.board-meetings .email-status--failed {
+  background: #9b2c2c;
+}
+.board-meetings .email-status--pending {
+  background: #b7791f;
+}
+.board-meetings .email-status--not_sent {
+  background: transparent;
+  color: var(--mu);
+  border: 1px dashed var(--bdrs);
+}
+
+.bm-form {
+  text-align: left;
+}
+.bm-form .bm-field {
+  margin-bottom: 0.9rem;
+}
+.bm-form .bm-field label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--mu);
+  margin-bottom: 0.3rem;
+}
+.bm-form .bm-field .required::after {
+  content: " *";
+  color: var(--ora);
+}
+.bm-form .bm-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 1rem;
+}
+@media (min-width: 576px) {
+  .bm-form .bm-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.bm-form .bm-error {
+  font-size: 0.85rem;
+  color: var(--ora);
+  margin-top: 0.25rem;
+}
+.bm-form .bm-hint,
+.bm-form .bm-counter {
+  font-size: 0.8rem;
+  color: var(--mu);
+  margin-top: 0.25rem;
+}
+.bm-form .bm-counter {
+  text-align: right;
+}
+.bm-form .bm-image-preview {
+  display: block;
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border: 1px solid var(--bdr);
+}
+.bm-form .bm-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.bm-form .bm-form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/*# sourceMappingURL=BoardMeetings.css.map */

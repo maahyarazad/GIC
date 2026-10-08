@@ -18,6 +18,7 @@ import { usePage } from "@/Providers/PageContext";
 import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
 import BusinessLetter from "@/Components/Dashboard/BusinessLetter/BusinessLetter";
+import BoardMeetings from "@/Components/Dashboard/BoardMeetings/BoardMeetings";
 import Blog from "@/Components/Dashboard/Blog/Blog";
 import Newsletter from "@/Components/Dashboard/Newsletter/Newsletter";
 import type { RootState } from "../../store";
@@ -26,6 +27,7 @@ type MenuItem =
   | "member_requests"
   | "member_profiles"
   | "events"
+  | "board_meetings"
   | "business_letter"
   | "blog"
   | "newsletter"
@@ -44,6 +46,7 @@ const accessControl: Record<MenuItem, string[]> = {
   member_requests: ["admin"],
   member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
+  board_meetings: ["admin"],
   business_letter: ["user", "admin", "procurement"],
   blog: ["admin", "procurement"],
   newsletter: ["admin", "procurement"],
@@ -63,6 +66,7 @@ const menuTitles: Record<MenuItem, string> = {
   member_requests: "Member Requests",
   member_profiles: "Member Profiles",
   events: "Events",
+  board_meetings: "Board Meetings",
   business_letter: "Request a Business Letter",
   blog: "Blog",
   newsletter: "Newsletter",
@@ -96,6 +100,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "member_requests",
     "member_profiles",
     "events",
+    "board_meetings",
     "business_letter",
     "blog",
     "newsletter",
@@ -137,6 +142,7 @@ const Dashboard: React.FC = () => {
     compare_countries: <CompareCountries />,
     tenders: <UnderDevelopment withLockOverlay={false} />,
     events: <Events />,
+    board_meetings: <BoardMeetings />,
     business_letter: <BusinessLetter />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,

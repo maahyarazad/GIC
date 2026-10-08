@@ -1,31 +1,3 @@
-.my-event-qr {
-    img {
-        width: 100%;
-        max-width: 280px;
-        image-rendering: pixelated;
-    }
-
-    &__reference {
-        margin: 0.5rem 0;
-        font-family: var(--bs-font-monospace);
-        word-break: break-all;
-    }
-
-    // Themed .dashboard-btn on an <a>: drop the link underline and keep the
-    // button colours over the global link hover/visited styles.
-    &__download {
-        text-decoration: none;
-
-        &:hover,
-        &:focus,
-        &:visited {
-            color: var(--bg);
-            text-decoration: none;
-        }
-    }
-}
-
-
 .events-group {
   margin-top: 1.5rem;
 
@@ -41,7 +13,7 @@
 }
 
 
-// My Events: same card + table layout as "My requests" in Request a Business Letter
+// My Requests: same card + table layout as "My requests" in Request a Business Letter
 // (BusinessLetter.scss .bl-card / .bl-table), which is scoped to .business-letter.
 .my-events-card {
   margin-top: 1.5rem;
@@ -119,6 +91,29 @@
   &:disabled {
     opacity: 0.6;
     cursor: wait;
+  }
+}
+
+// Request status chip (Pending / Approved / Declined); tones match the card badge.
+.request-status {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+
+  &--pending {
+    background: #b7791f;
+  }
+
+  &--approved {
+    background: #2f855a;
+  }
+
+  &--declined {
+    background: #9b2c2c;
   }
 }
 

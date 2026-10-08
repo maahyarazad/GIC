@@ -14,9 +14,8 @@ export interface AuthRequest extends Request {
   user?: User;
 }
 
-const ADMIN_ROLES = ["admin", "procurement"];
-
-export const adminAuthMiddleware = async (
+/** Builds a middleware that accepts only tokens whose role is in `roles`. */
+export const requireRoles = (roles: string[]) => async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
@@ -33,7 +32,7 @@ export const adminAuthMiddleware = async (
       role: string;
     };
 
-    if (!ADMIN_ROLES.includes(decoded.role)) {
+    if (!roles.includes(decoded.role)) {
       return res.status(403).json({ message: "Forbidden: Admins only" });
     }
 
@@ -44,7 +43,7 @@ export const adminAuthMiddleware = async (
       // Access token expired — try to reissue using the refresh token cookie.
       const reissued = await reissueAccessTokenFromRefresh(req, res);
       if (reissued) {
-        if (!ADMIN_ROLES.includes(reissued.role)) {
+        if (!roles.includes(reissued.role)) {
           return res.status(403).json({ message: "Forbidden: Admins only" });
         }
         req.user = reissued as unknown as User;
@@ -65,3 +64,8 @@ export const adminAuthMiddleware = async (
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const adminAuthMiddleware = requireRoles(["admin", "procurement"]);
+
+/** Admin role only (procurement excluded). */
+export const adminOnlyMiddleware = requireRoles(["admin"]);

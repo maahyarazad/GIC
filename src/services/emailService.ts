@@ -291,11 +291,75 @@ export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>
     });
 
     return result;
-    
+
   } catch (error) {
     console.error(error);
     throw error;
   }
+}
+
+
+export interface SendInfoEmailParams {
+  to: string | string[];
+  cc?: string | string[];
+  replyTo?: string;
+  subject: string;
+  html: string;
+  text?: string;
+}
+
+/** Sends from the info@ mailbox (SMTP_INFO_*). Throws on failure; there is no fallback sender. */
+export async function sendInfoEmail({ to, cc, replyTo, subject, html, text = "" }: SendInfoEmailParams) {
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST!,
+    port: Number(process.env.SMTP_PORT!),
+    secure: false,
+    auth: {
+      user: process.env.SMTP_INFO_USER!,
+      pass: process.env.SMTP_INFO_PASS!,
+    },
+  });
+
+  const mailOptions: SendMailOptions = {
+    from: process.env.SMTP_INFO_SENDER!,
+    to,
+    cc,
+    replyTo,
+    subject,
+    html,
+    text,
+  };
+
+  try {
+    const response = await transporter.sendMail(mailOptions);
+    console.log("Info email sent:", response.messageId);
+    return response;
+  } catch (error) {
+    console.error("SMTP (info) send error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Renders an emailtemplates record looked up by name. Throws when the template is missing.
+ * `data` fills the plain-text subject and text body; `htmlData` (HTML-escaped values) fills the HTML body.
+ */
+export async function renderTemplateByName(
+  name: string,
+  data: Record<string, any>,
+  htmlData: Record<string, any> = data
+): Promise<{ subject: string; html: string; text: string }> {
+  const template = await getCollection("emailtemplates").findOne({ name });
+  if (!template) throw new Error(`Email template not found: ${name}`);
+
+  const variables = { ...getGlobalEmailVariables(data), ...data };
+  const htmlVariables = { ...getGlobalEmailVariables(htmlData), ...htmlData };
+
+  return {
+    subject: replacePlaceholders(template.subject, variables),
+    html: replacePlaceholders(template.html, htmlVariables),
+    text: replacePlaceholders(template.text || "", variables),
+  };
 }
 
 

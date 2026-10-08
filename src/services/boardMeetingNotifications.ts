@@ -134,7 +134,9 @@ export async function sendInvitation(requestId: unknown): Promise<NotificationSt
     const { request, meeting } = await loadRequestAndMeeting(requestId);
     if (!request || !meeting) throw new Error("Request or meeting not found");
 
-    const description = meeting.description?.trim() ?? "";
+    // The invitation template has an "About the Meeting" box; never leave it empty.
+    const description =
+      meeting.description?.trim() || "The agenda will be shared with attendees ahead of the meeting.";
     const variables = { ...buildEmailVariables(request, meeting), MEETING_DESCRIPTION: description };
     const htmlVariables = {
       ...escapeVariables(variables),

@@ -5,7 +5,7 @@ import {
   BOARD_MEETING_NOTIFY_TO,
   BOARD_MEETING_TEMPLATES,
 } from "../config/boardMeetingConfig";
-import { renderTemplateByName, sendInfoEmail } from "./emailService";
+import { sendDynamicEmailDoc } from "./emailService";
 import { escapeHtml } from "../utils/helpers";
 import { NotificationStatus } from "../types/boardMeeting.types";
 
@@ -79,21 +79,17 @@ export async function notifyRequestCreated(requestId: unknown): Promise<void> {
     const variables = buildEmailVariables(request, meeting);
     const htmlVariables = escapeVariables(variables);
 
+    // sendDynamicEmailDoc sends to `email`; all board meeting emails go from info@.
     const [leadership, receipt] = await Promise.allSettled([
-      renderTemplateByName(BOARD_MEETING_TEMPLATES.notification, variables, htmlVariables).then((email) =>
-        sendInfoEmail({
-          to: BOARD_MEETING_NOTIFY_TO,
-          cc: BOARD_MEETING_CC,
-          replyTo: request.requester.email,
-          ...email,
-        })
+      sendDynamicEmailDoc(
+        BOARD_MEETING_TEMPLATES.notification,
+        { ...variables, email: BOARD_MEETING_NOTIFY_TO },
+        { sender: "info", cc: BOARD_MEETING_CC, replyTo: request.requester.email, htmlData: htmlVariables }
       ),
-      renderTemplateByName(BOARD_MEETING_TEMPLATES.receipt, variables, htmlVariables).then((email) =>
-        sendInfoEmail({
-          to: request.requester.email,
-          replyTo: BOARD_MEETING_NOTIFY_TO,
-          ...email,
-        })
+      sendDynamicEmailDoc(
+        BOARD_MEETING_TEMPLATES.receipt,
+        { ...variables, email: request.requester.email },
+        { sender: "info", replyTo: BOARD_MEETING_NOTIFY_TO, htmlData: htmlVariables }
       ),
     ]);
 
@@ -144,12 +140,11 @@ export async function sendInvitation(requestId: unknown): Promise<NotificationSt
       MEETING_DESCRIPTION: escapeHtml(description).replace(/\r?\n/g, "<br />"),
     };
 
-    const email = await renderTemplateByName(BOARD_MEETING_TEMPLATES.invitation, variables, htmlVariables);
-    await sendInfoEmail({
-      to: request.requester.email,
-      replyTo: BOARD_MEETING_NOTIFY_TO,
-      ...email,
-    });
+    await sendDynamicEmailDoc(
+      BOARD_MEETING_TEMPLATES.invitation,
+      { ...variables, email: request.requester.email },
+      { sender: "info", replyTo: BOARD_MEETING_NOTIFY_TO, htmlData: htmlVariables }
+    );
 
     outcome = { status: "sent", attemptedAt: new Date(), error: null };
   } catch (error: any) {

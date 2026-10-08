@@ -36,6 +36,9 @@ export interface EmailAttachment {
   contentType?: string;
 }
 
+/** "default" sends from SMTP_SENDER (do-not-reply@), "info" from SMTP_INFO_SENDER (info@). */
+export type EmailSender = "default" | "info";
+
 export interface SendRawEmailParams {
   to: string | string[];
   subject: string;
@@ -43,8 +46,15 @@ export interface SendRawEmailParams {
   text?: string;
   attachments?: EmailAttachment[];
   bcc?: string | string[];
-  
+  cc?: string | string[];
+  replyTo?: string;
+  sender?: EmailSender;
 }
+
+const SMTP_ACCOUNTS: Record<EmailSender, { user?: string; pass?: string; from?: string }> = {
+  default: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS, from: process.env.SMTP_SENDER },
+  info: { user: process.env.SMTP_INFO_USER, pass: process.env.SMTP_INFO_PASS, from: process.env.SMTP_INFO_SENDER },
+};
 
 function slugToTitle(slug: string): string {
   return slug.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
@@ -56,20 +66,26 @@ async function sendRawEmailWithAttachments({
   text = "",
   attachments = [],
   bcc = [],
+  cc,
+  replyTo,
+  sender = "default",
 }: SendRawEmailParams) {
+  const account = SMTP_ACCOUNTS[sender];
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST!,
     port: Number(process.env.SMTP_PORT!),
     secure: false,
     auth: {
-      user: process.env.SMTP_USER!,
-      pass: process.env.SMTP_PASS!,
+      user: account.user!,
+      pass: account.pass!,
     },
   });
 
   const mailOptions: SendMailOptions = {
-    from: process.env.SMTP_SENDER!,
+    from: account.from!,
     to,
+    cc,
+    replyTo,
     subject,
     html,
     text,
@@ -264,7 +280,24 @@ if (!template) throw new Error("Email template not found");
 }
 
 
-export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>) {
+export interface DynamicEmailOptions {
+  /** Defaults to "default" (do-not-reply@). */
+  sender?: EmailSender;
+  cc?: string | string[];
+  replyTo?: string;
+  /**
+   * Variables for the HTML body only (e.g. HTML-escaped values). Defaults to `data`;
+   * the subject and text body always use `data`.
+   */
+  htmlData?: Record<string, any>;
+}
+
+/** Sends the emailtemplates record named `doc` to `data.email`. */
+export async function sendDynamicEmailDoc(
+  doc: string,
+  data: Record<string, any>,
+  options: DynamicEmailOptions = {}
+) {
   try {
     
         const templateCollection = getCollection("emailtemplates");
@@ -272,14 +305,20 @@ export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>
     const template = await templateCollection.findOne({
       name: doc,
     });
+    if (!template) throw new Error(`Email template not found: ${doc}`);
 
     // Merge global variables + template-specific variables
     const variables = {
       ...getGlobalEmailVariables(data),
       ...data, // data overrides global if needed
     };
+    const htmlData = options.htmlData ?? data;
+    const htmlVariables = {
+      ...getGlobalEmailVariables(htmlData),
+      ...htmlData,
+    };
 
-    const htmlBody = replacePlaceholders(template.html, variables);
+    const htmlBody = replacePlaceholders(template.html, htmlVariables);
     const textBody = replacePlaceholders(template.text || "", variables);
     const subject = replacePlaceholders(template.subject, variables);
 
@@ -288,6 +327,9 @@ export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>
       subject,
       html: htmlBody,
       text: textBody,
+      cc: options.cc,
+      replyTo: options.replyTo,
+      sender: options.sender,
     });
 
     return result;
@@ -297,73 +339,6 @@ export async function sendDynamicEmailDoc(doc: string, data: Record<string, any>
     throw error;
   }
 }
-
-
-export interface SendInfoEmailParams {
-  to: string | string[];
-  cc?: string | string[];
-  replyTo?: string;
-  subject: string;
-  html: string;
-  text?: string;
-}
-
-/** Sends from the info@ mailbox (SMTP_INFO_*). Throws on failure; there is no fallback sender. */
-export async function sendInfoEmail({ to, cc, replyTo, subject, html, text = "" }: SendInfoEmailParams) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST!,
-    port: Number(process.env.SMTP_PORT!),
-    secure: false,
-    auth: {
-      user: process.env.SMTP_INFO_USER!,
-      pass: process.env.SMTP_INFO_PASS!,
-    },
-  });
-
-  const mailOptions: SendMailOptions = {
-    from: process.env.SMTP_INFO_SENDER!,
-    to,
-    cc,
-    replyTo,
-    subject,
-    html,
-    text,
-  };
-
-  try {
-    const response = await transporter.sendMail(mailOptions);
-    console.log("Info email sent:", response.messageId);
-    return response;
-  } catch (error) {
-    console.error("SMTP (info) send error:", error);
-    throw error;
-  }
-}
-
-/**
- * Renders an emailtemplates record looked up by name. Throws when the template is missing.
- * `data` fills the plain-text subject and text body; `htmlData` (HTML-escaped values) fills the HTML body.
- */
-export async function renderTemplateByName(
-  name: string,
-  data: Record<string, any>,
-  htmlData: Record<string, any> = data
-): Promise<{ subject: string; html: string; text: string }> {
-  const template = await getCollection("emailtemplates").findOne({ name });
-  if (!template) throw new Error(`Email template not found: ${name}`);
-
-  const variables = { ...getGlobalEmailVariables(data), ...data };
-  const htmlVariables = { ...getGlobalEmailVariables(htmlData), ...htmlData };
-
-  return {
-    subject: replacePlaceholders(template.subject, variables),
-    html: replacePlaceholders(template.html, htmlVariables),
-    text: replacePlaceholders(template.text || "", variables),
-  };
-}
-
-
-
 
 
 export interface MassEmailRecipient {

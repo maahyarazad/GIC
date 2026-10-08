@@ -9,3 +9,122 @@
     }
 }
 
+
+// Add / edit / delete buttons next to each key in the read-only viewer; visible on row hover.
+$json-add: #2f855a;
+$json-edit: #2b6cb0;
+$json-delete: #c53030;
+
+.json-viewer-actions {
+    display: inline-flex;
+    gap: 0.25rem;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 0.15s;
+
+    &:focus-within {
+        opacity: 1;
+    }
+}
+
+.json-viewer-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    padding: 0;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: transparent;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &--add { color: $json-add; }
+    &--edit { color: $json-edit; }
+    &--delete { color: $json-delete; }
+
+    &--add:hover { background: $json-add; color: #fff; }
+    &--edit:hover { background: $json-edit; color: #fff; }
+    &--delete:hover { background: $json-delete; color: #fff; }
+}
+
+// Leaf rows are .w-rjv-line; an object/array header is the first span of its .w-rjv-inner
+// (hovering a header must not reveal the buttons of its children).
+.w-rjv-line:hover .json-viewer-actions,
+.w-rjv-inner > span:first-child:hover .json-viewer-actions {
+    opacity: 1;
+}
+
+// Edit / add dialog.
+.json-node-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.json-node-dialog {
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    padding: 1.5rem;
+    border: 1px solid var(--bdr);
+    background: var(--bgp, #fff);
+    color: var(--txt);
+    text-align: left;
+
+    &__title {
+        font-size: 1.2rem;
+        margin: 0 0 1rem;
+        word-break: break-all;
+    }
+
+    &__field {
+        margin-bottom: 0.9rem;
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--mu);
+            margin-bottom: 0.3rem;
+        }
+    }
+
+    &__code {
+        font-family: var(--bs-font-monospace);
+        font-size: 0.85rem;
+    }
+
+    &__error {
+        font-size: 0.85rem;
+        color: $json-delete;
+        margin-top: 0.25rem;
+    }
+
+    &__hint {
+        font-size: 0.8rem;
+        color: var(--mu);
+        margin-top: 0.25rem;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+}
+
+.json-viewer-unsaved {
+    font-size: 0.85rem;
+    color: $json-delete;
+    font-weight: 600;
+}

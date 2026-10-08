@@ -21,7 +21,7 @@ import {
   buildBoardMeetingReference,
 } from "../models/boardMeetingRequest.model";
 import { notifyRequestCreated } from "../services/boardMeetingNotifications";
-import { MemberBoardMeetingDto } from "../types/boardMeeting.types";
+import { BoardMeetingDto, MemberBoardMeetingDto } from "../types/boardMeeting.types";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
 import { toObjectId } from "../mappers/objectId.mapper";
 
@@ -36,6 +36,24 @@ const toMyRequest = (doc: any) => ({
 @Route("api/v1/board-meetings")
 @Tags("Board Meetings")
 export class BoardMeetingController extends Controller {
+  // Public (Boardroom page for visitors): all meetings, upcoming and past, without request data.
+  @Get("/public")
+  public async getPublicBoardMeetings(): Promise<any> {
+    try {
+      const now = new Date();
+      const meetings = await BoardMeetingModel.find().sort({ startsAt: 1 }).lean();
+
+      const items: BoardMeetingDto[] = meetings.map((meeting: any) => mapBoardMeeting(meeting, now));
+
+      this.setStatus(200);
+      return createSuccessResponse({ items }, "Board meetings fetched");
+    } catch (error) {
+      console.error("Error fetching public board meetings:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch board meetings", "INTERNAL_ERROR");
+    }
+  }
+
   @Get("/")
   @Middlewares(authMiddleware)
   public async getBoardMeetings(@Request() req: ExpressRequest): Promise<any> {

@@ -2761,6 +2761,35 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBoardMeetingController_getPublicBoardMeetings: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/v1/board-meetings/public',
+            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController)),
+            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController.prototype.getPublicBoardMeetings)),
+
+            async function BoardMeetingController_getPublicBoardMeetings(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingController_getPublicBoardMeetings, request, response });
+
+                const controller = new BoardMeetingController();
+
+              await templateService.apiHandler({
+                methodName: 'getPublicBoardMeetings',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsBoardMeetingController_getBoardMeetings: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };

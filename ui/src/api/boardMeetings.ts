@@ -1,6 +1,7 @@
 import axiosInstance, { ApiError } from "./axiosInstance";
 import type {
   AdminBoardMeetingDto,
+  BoardMeetingDto,
   BoardMeetingInput,
   BoardMeetingRequestDto,
   BoardMeetingRequestStatus,
@@ -15,10 +16,20 @@ export const apiErrorCode = (error: unknown): string | undefined =>
 export const apiErrorMessage = (error: unknown, fallback: string): string =>
   (error as ApiError)?.message || fallback;
 
-export const getBoardMeetings = async (signal?: AbortSignal): Promise<MemberBoardMeetingDto[]> => {
-  const response = await axiosInstance.get("/board-meetings", { signal });
-  return response.data?.data?.items ?? [];
+// An unknown API path falls through to the SSR page (HTML, 200); treat anything
+// without an items array as a failure instead of "no meetings".
+const itemsOf = <T,>(response: { data: any }): T[] => {
+  const items = response.data?.data?.items;
+  if (!Array.isArray(items)) throw new Error("Unexpected response from the board meetings API");
+  return items;
 };
+
+export const getBoardMeetings = async (signal?: AbortSignal): Promise<MemberBoardMeetingDto[]> =>
+  itemsOf(await axiosInstance.get("/board-meetings", { signal }));
+
+// No sign-in needed: all meetings (upcoming and past) without request data (Boardroom page for visitors).
+export const getPublicBoardMeetings = async (signal?: AbortSignal): Promise<BoardMeetingDto[]> =>
+  itemsOf(await axiosInstance.get("/board-meetings/public", { signal }));
 
 export type JoinRequestResult = MyBoardMeetingRequest & { kind: "created" | "exists" };
 

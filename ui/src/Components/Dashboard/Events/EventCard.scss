@@ -125,7 +125,7 @@ $event-date-block-width: clamp(64px, 22%, 110px);
         text-overflow: ellipsis;
     }
 
-    // Request status (Requested / Invited / Declined); bottom-right so it never meets
+    // Attendance state (Attending / Fully booked); bottom-right so it never meets
     // the date block or the "upcoming" ribbon in the top-right corner.
     .event-status-badge {
         position: absolute;
@@ -140,20 +140,16 @@ $event-date-block-width: clamp(64px, 22%, 110px);
         color: #ffffff;
         background: rgba(0, 0, 0, 0.7);
 
-        &--pending {
-            background: #b7791f;
-        }
-
-        &--approved {
+        &--attending {
             background: #2f855a;
         }
 
-        &--declined {
-            background: #9b2c2c;
+        &--full {
+            background: #4a4a4a;
         }
     }
 
-    // Past meetings: not clickable.
+    // Past events: not clickable.
     &.event-card--static {
         cursor: default;
 

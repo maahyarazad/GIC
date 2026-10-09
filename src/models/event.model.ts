@@ -1,11 +1,11 @@
 import { Schema, model } from "mongoose";
-import { BoardMeetingDto } from "../types/boardMeeting.types";
+import { AdminEventDto, EventDto } from "../types/event.types";
 import {
-  BOARD_MEETING_TIMEZONE,
+  EVENT_TIMEZONE,
   DUBAI_UTC_OFFSET_HOURS,
-} from "../config/boardMeetingConfig";
+} from "../config/eventConfig";
 
-const BoardMeetingSchema = new Schema(
+const EventSchema = new Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 160 },
     description: { type: String, default: "", trim: true, maxlength: 2000 },
@@ -14,6 +14,8 @@ const BoardMeetingSchema = new Schema(
     location: { type: String, required: true, trim: true, maxlength: 300 },
     imageUrl: { type: String, default: null },
     capacity: { type: Number, min: 1, max: 50, default: 10 },
+    // Seat counter: changed only by the attendance create ($inc) and the migration.
+    confirmedCount: { type: Number, min: 0, default: 0 },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     updatedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
@@ -22,14 +24,15 @@ const BoardMeetingSchema = new Schema(
   }
 );
 
-BoardMeetingSchema.index({ startsAt: -1 });
+EventSchema.index({ startsAt: -1 });
 
-export const BoardMeetingModel = model("BoardMeeting", BoardMeetingSchema);
+// Collection name kept from feature 003 so no data has to move.
+export const EventModel = model("Event", EventSchema, "boardmeetings");
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 const TIME_HH_MM = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
-export const isValidMeetingDate = (date: string): boolean => {
+export const isValidEventDate = (date: string): boolean => {
   const match = DATE_ONLY.exec(date);
   if (!match) return false;
   const [, y, m, d] = match.map(Number);
@@ -38,18 +41,18 @@ export const isValidMeetingDate = (date: string): boolean => {
   return probe.getUTCMonth() === m - 1 && probe.getUTCDate() === d;
 };
 
-export const isValidMeetingTime = (time: string): boolean => TIME_HH_MM.test(time);
+export const isValidEventTime = (time: string): boolean => TIME_HH_MM.test(time);
 
 /** Converts a date and time entered in Gulf Standard Time to a UTC Date. */
 export const toStartsAt = (date: string, time: string): Date | null => {
-  if (!isValidMeetingDate(date) || !isValidMeetingTime(time)) return null;
+  if (!isValidEventDate(date) || !isValidEventTime(time)) return null;
   const [y, m, d] = date.split("-").map(Number);
   const [hh, mm] = time.split(":").map(Number);
   return new Date(Date.UTC(y, m - 1, d, hh - DUBAI_UTC_OFFSET_HOURS, mm));
 };
 
 const dubaiPartsFormat = new Intl.DateTimeFormat("en-CA", {
-  timeZone: BOARD_MEETING_TIMEZONE,
+  timeZone: EVENT_TIMEZONE,
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
@@ -70,22 +73,24 @@ export const toDubaiParts = (startsAt: Date): { date: string; time: string } => 
 };
 
 /** e.g. "Thu, 15 Oct 2026" */
-export const formatMeetingDateForEmail = (startsAt: Date): string =>
+export const formatEventDateForEmail = (startsAt: Date): string =>
   new Date(startsAt).toLocaleDateString("en-GB", {
     weekday: "short",
     day: "2-digit",
     month: "short",
     year: "numeric",
-    timeZone: BOARD_MEETING_TIMEZONE,
+    timeZone: EVENT_TIMEZONE,
   });
 
 /** e.g. "18:30 (GST)" */
-export const formatMeetingTimeForEmail = (startsAt: Date): string =>
+export const formatEventTimeForEmail = (startsAt: Date): string =>
   `${toDubaiParts(new Date(startsAt)).time} (GST)`;
 
-export const mapBoardMeeting = (doc: any, now: Date = new Date()): BoardMeetingDto => {
+export const mapEvent = (doc: any, now: Date = new Date()): EventDto => {
   const startsAt = new Date(doc.startsAt);
   const { date, time } = toDubaiParts(startsAt);
+  const capacity = doc.capacity ?? 10;
+  const confirmed = doc.confirmedCount ?? 0;
   return {
     id: doc._id?.toString?.() || doc.id,
     title: doc.title,
@@ -96,7 +101,16 @@ export const mapBoardMeeting = (doc: any, now: Date = new Date()): BoardMeetingD
     venue: doc.venue,
     location: doc.location,
     imageUrl: doc.imageUrl || null,
-    capacity: doc.capacity ?? 10,
+    capacity,
+    seatsLeft: Math.max(capacity - confirmed, 0),
+    isFull: confirmed >= capacity,
     isPast: startsAt.getTime() <= now.getTime(),
   };
 };
+
+export const mapAdminEvent = (doc: any): AdminEventDto => ({
+  ...mapEvent(doc),
+  confirmedCount: doc.confirmedCount ?? 0,
+  createdAt: new Date(doc.createdAt).toISOString(),
+  updatedAt: new Date(doc.updatedAt).toISOString(),
+});

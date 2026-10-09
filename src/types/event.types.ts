@@ -1,13 +1,12 @@
-export type BoardMeetingRequestStatus = "pending" | "approved" | "declined";
+export type AttendanceStatus = "confirmed" | "cancelled";
 export type NotificationStatus = "not_sent" | "pending" | "sent" | "failed";
 
-export const REQUEST_STATUS_LABELS: Record<BoardMeetingRequestStatus, string> = {
-    pending: "Pending",
-    approved: "Approved",
-    declined: "Declined",
+export const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
+    confirmed: "Confirmed",
+    cancelled: "Cancelled",
 };
 
-export interface BoardMeetingDto {
+export interface EventDto {
     id: string;
     title: string;
     /** Plain text; "" when unset. */
@@ -23,28 +22,25 @@ export interface BoardMeetingDto {
     /** "/uploads/<file>" or null. */
     imageUrl: string | null;
     capacity: number;
+    /** max(capacity − confirmed attendees, 0). */
+    seatsLeft: number;
+    isFull: boolean;
     isPast: boolean;
 }
 
-export interface MyBoardMeetingRequest {
+export interface MyAttendance {
     reference: string;
-    status: BoardMeetingRequestStatus;
+    status: AttendanceStatus;
     createdAt: string;
 }
 
-/** Member view: includes the caller's own request, if any. */
-export interface MemberBoardMeetingDto extends BoardMeetingDto {
-    myRequest: MyBoardMeetingRequest | null;
+/** Member view: includes the caller's own attendance, if any. */
+export interface MemberEventDto extends EventDto {
+    myAttendance: MyAttendance | null;
 }
 
-export interface BoardMeetingRequestCounts {
-    pending: number;
-    approved: number;
-    declined: number;
-}
-
-export interface AdminBoardMeetingDto extends BoardMeetingDto {
-    counts: BoardMeetingRequestCounts;
+export interface AdminEventDto extends EventDto {
+    confirmedCount: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -54,23 +50,22 @@ export interface NotificationOutcomeDto {
     attemptedAt: string | null;
 }
 
-export interface BoardMeetingRequestDto {
+export interface EventAttendanceDto {
     id: string;
     reference: string;
-    status: BoardMeetingRequestStatus;
+    status: AttendanceStatus;
     requester: { name: string; email: string; phone: string };
-    meeting: Pick<BoardMeetingDto, "id" | "title" | "startsAt" | "date" | "time" | "venue" | "location"> | null;
-    decision: { by: string | null; byName: string | null; at: string | null };
+    event: Pick<EventDto, "id" | "title" | "startsAt" | "date" | "time" | "venue" | "location"> | null;
     notifications: {
         leadership: NotificationOutcomeDto;
-        receipt: NotificationOutcomeDto;
-        invitation: NotificationOutcomeDto;
+        confirmation: NotificationOutcomeDto;
     };
+    /** Confirmation time. */
     createdAt: string;
 }
 
 /** Create and update body (full replace). Date and time are Asia/Dubai. */
-export interface BoardMeetingInput {
+export interface EventInput {
     title: string;
     description?: string;
     /** "YYYY-MM-DD" */

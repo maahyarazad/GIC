@@ -1,10 +1,10 @@
-.board-meetings .bm-tabs {
+.manage-events .bm-tabs {
   display: flex;
   gap: 0.25rem;
   margin-top: 1.5rem;
   border-bottom: 1px solid var(--bdrs);
 }
-.board-meetings .bm-tab {
+.manage-events .bm-tab {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -16,27 +16,17 @@
   font-weight: 600;
   cursor: pointer;
 }
-.board-meetings .bm-tab.active {
+.manage-events .bm-tab.active {
   color: var(--ora);
   border-bottom-color: var(--ora);
 }
-.board-meetings .bm-tab__badge {
-  min-width: 1.4rem;
-  padding: 0 0.4rem;
-  border-radius: 999px;
-  background: var(--ora);
-  color: #fff;
-  font-size: 0.75rem;
-  line-height: 1.4rem;
-  text-align: center;
-}
-.board-meetings .bm-card {
+.manage-events .bm-card {
   margin-top: 1.5rem;
   border: 1px solid var(--bdr);
   background: var(--bgp);
   padding: 1.5rem;
 }
-.board-meetings .bm-card__header {
+.manage-events .bm-card__header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -44,32 +34,32 @@
   gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
-.board-meetings .bm-card__header h4 {
+.manage-events .bm-card__header h4 {
   font-family: var(--se);
   font-size: 1.35rem;
   font-weight: 500;
   color: var(--txt);
   margin: 0;
 }
-.board-meetings .bm-filters {
+.manage-events .bm-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-.board-meetings .bm-filters .form-select {
+.manage-events .bm-filters .form-select {
   width: auto;
   min-width: 10rem;
 }
-.board-meetings .bm-table-wrap {
+.manage-events .bm-table-wrap {
   overflow-x: auto;
 }
-.board-meetings .bm-table {
+.manage-events .bm-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
   color: var(--txt);
 }
-.board-meetings .bm-table th {
+.manage-events .bm-table th {
   font-weight: 600;
   font-size: 0.8rem;
   letter-spacing: 0.06em;
@@ -80,34 +70,34 @@
   border-bottom: 1px solid var(--bdrs);
   white-space: nowrap;
 }
-.board-meetings .bm-table td {
+.manage-events .bm-table td {
   padding: 0.7rem 0.5rem;
   border-bottom: 1px solid var(--bdr);
   vertical-align: top;
 }
-.board-meetings .bm-table .bm-row--past td {
+.manage-events .bm-table .bm-row--past td {
   opacity: 0.65;
 }
-.board-meetings .bm-ref {
+.manage-events .bm-ref {
   font-weight: 600;
   color: var(--ora);
   white-space: nowrap;
 }
-.board-meetings .bm-muted {
+.manage-events .bm-muted {
   color: var(--mu);
   font-size: 0.85rem;
 }
-.board-meetings .bm-nowrap {
+.manage-events .bm-nowrap {
   white-space: nowrap;
 }
-.board-meetings .bm-actions {
+.manage-events .bm-actions {
   white-space: nowrap;
   text-align: right;
 }
-.board-meetings .bm-actions .bm-action + .bm-action {
+.manage-events .bm-actions .bm-action + .bm-action {
   margin-left: 0.4rem;
 }
-.board-meetings .bm-action {
+.manage-events .bm-action {
   background: transparent;
   border: 1px solid var(--ora);
   color: var(--ora);
@@ -116,27 +106,27 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.board-meetings .bm-action:hover:not(:disabled) {
+.manage-events .bm-action:hover:not(:disabled) {
   background: var(--ora);
   color: #fff;
 }
-.board-meetings .bm-action--danger {
+.manage-events .bm-action--danger {
   border-color: #9b2c2c;
   color: #9b2c2c;
 }
-.board-meetings .bm-action--danger:hover:not(:disabled) {
+.manage-events .bm-action--danger:hover:not(:disabled) {
   background: #9b2c2c;
 }
-.board-meetings .bm-action:disabled {
+.manage-events .bm-action:disabled {
   opacity: 0.6;
   cursor: wait;
 }
-.board-meetings .bm-empty {
+.manage-events .bm-empty {
   color: var(--mu);
   padding: 2rem 0;
   text-align: center;
 }
-.board-meetings .request-status {
+.manage-events .request-status {
   display: inline-block;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
@@ -145,16 +135,13 @@
   white-space: nowrap;
   color: #fff;
 }
-.board-meetings .request-status--pending {
-  background: #b7791f;
-}
-.board-meetings .request-status--approved {
+.manage-events .request-status--confirmed {
   background: #2f855a;
 }
-.board-meetings .request-status--declined {
+.manage-events .request-status--cancelled {
   background: #9b2c2c;
 }
-.board-meetings .email-status {
+.manage-events .email-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -167,16 +154,16 @@
   color: #fff;
   cursor: help;
 }
-.board-meetings .email-status--sent {
+.manage-events .email-status--sent {
   background: #2f855a;
 }
-.board-meetings .email-status--failed {
+.manage-events .email-status--failed {
   background: #9b2c2c;
 }
-.board-meetings .email-status--pending {
+.manage-events .email-status--pending {
   background: #b7791f;
 }
-.board-meetings .email-status--not_sent {
+.manage-events .email-status--not_sent {
   background: transparent;
   color: var(--mu);
   border: 1px dashed var(--bdrs);
@@ -228,7 +215,8 @@
   width: 100%;
   max-width: 320px;
   aspect-ratio: 16/9;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   border: 1px solid var(--bdr);
 }
 .bm-form .bm-form-actions {
@@ -240,6 +228,4 @@
 .bm-form .bm-form-actions button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-/*# sourceMappingURL=BoardMeetings.css.map */
+}/*# sourceMappingURL=ManageEvents.css.map */

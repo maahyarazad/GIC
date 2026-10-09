@@ -81,25 +81,6 @@
   cursor: wait;
 }
 
-.request-status {
-  display: inline-block;
-  padding: 0.15rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-  color: #fff;
-}
-.request-status--pending {
-  background: #b7791f;
-}
-.request-status--approved {
-  background: #2f855a;
-}
-.request-status--declined {
-  background: #9b2c2c;
-}
-
 .my-events-empty {
   color: var(--mu);
   padding: 2rem 0;
@@ -116,6 +97,4 @@
   .events-columns > [class*=col-] + [class*=col-] {
     margin-top: 1.5rem;
   }
-}
-
-/*# sourceMappingURL=Events.css.map */
+}/*# sourceMappingURL=Events.css.map */

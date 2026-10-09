@@ -18,7 +18,7 @@ import { usePage } from "@/Providers/PageContext";
 import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
 import BusinessLetter from "@/Components/Dashboard/BusinessLetter/BusinessLetter";
-import BoardMeetings from "@/Components/Dashboard/BoardMeetings/BoardMeetings";
+import ManageEvents from "@/Components/Dashboard/ManageEvents/ManageEvents";
 import Blog from "@/Components/Dashboard/Blog/Blog";
 import Newsletter from "@/Components/Dashboard/Newsletter/Newsletter";
 import type { RootState } from "../../store";
@@ -27,7 +27,7 @@ type MenuItem =
   | "member_requests"
   | "member_profiles"
   | "events"
-  | "board_meetings"
+  | "manage_events"
   | "business_letter"
   | "blog"
   | "newsletter"
@@ -46,7 +46,7 @@ const accessControl: Record<MenuItem, string[]> = {
   member_requests: ["admin"],
   member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
-  board_meetings: ["admin"],
+  manage_events: ["admin"],
   business_letter: ["user", "admin", "procurement"],
   blog: ["admin", "procurement"],
   newsletter: ["admin", "procurement"],
@@ -66,8 +66,8 @@ const menuTitles: Record<MenuItem, string> = {
   member_requests: "Member Requests",
   member_profiles: "Member Profiles",
   events: "Events",
-  board_meetings: "Board Meetings",
-  business_letter: "Request a Business Letter",
+  manage_events: "Manage Events",
+  business_letter: "Request for letter of recommendation",
   blog: "Blog",
   newsletter: "Newsletter",
   sitedata: "Website Data",
@@ -100,7 +100,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "member_requests",
     "member_profiles",
     "events",
-    "board_meetings",
+    "manage_events",
     "business_letter",
     "blog",
     "newsletter",
@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
     compare_countries: <CompareCountries />,
     tenders: <UnderDevelopment withLockOverlay={false} />,
     events: <Events />,
-    board_meetings: <BoardMeetings />,
+    manage_events: <ManageEvents />,
     business_letter: <BusinessLetter />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,
@@ -170,7 +170,9 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     if (authLoading || !userRole || !defaultTab) return;
 
-    const queryTab = searchParams.get("tab");
+    const rawTab = searchParams.get("tab");
+    // Links in emails sent before the rename still use the old key.
+    const queryTab = rawTab === "board_meetings" ? "manage_events" : rawTab;
     const isAllowedTab =
       isValidMenuItem(queryTab) && filteredMenuItems.includes(queryTab);
 
@@ -178,7 +180,7 @@ const Dashboard: React.FC = () => {
 
     setActiveTab(nextTab);
 
-    if (!isAllowedTab) {
+    if (nextTab !== rawTab) {
       const nextParams = new URLSearchParams(searchParams);
       nextParams.set("tab", nextTab);
       setSearchParams(nextParams, { replace: true });

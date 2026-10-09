@@ -9,7 +9,7 @@
 | 3 | What We Do | Overview of the organisation's work | |
 | 4 | Services | Services listing and individual service detail pages | |
 | 5 | Membership | Membership information and sign-up entry point | |
-| 6 | Boardroom | Public events listing | |
+| 6 | Events | Public events listing at /events (/boardroom redirects); signed-in members confirm attendance directly | |
 | 7 | Contact Us | Contact form for enquiries and membership requests | |
 | 8 | Blog | Blog articles and reader comments | |
 | 9 | Newsletter Sign-up | Newsletter subscription and unsubscribe | |
@@ -29,7 +29,7 @@
 |---|---------|-------------|---------------|
 | 13 | Member Requests | Review and approve incoming membership and contact requests | |
 | 14 | Member Profiles | Manage member accounts and authorisations | |
-| 15 | Events | Create and manage events, member bookings and event tickets; dashboard lists Upcoming and Past events separately | |
+| 15 | Events | Members confirm attendance instantly (no approval, confirmation email from info@); admins manage events and attendees in Manage Events; dashboard lists Upcoming and Past events separately | |
 | 16 | Blog Management | Write, edit and publish articles; approve comments | |
 | 17 | Newsletter | Create newsletters and articles, send test and live campaigns | |
 | 18 | Email Subscribers | Manage the newsletter subscriber list | |

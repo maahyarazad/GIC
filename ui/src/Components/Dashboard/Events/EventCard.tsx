@@ -23,7 +23,7 @@ const resolveImageUrl = (imageUrl?: string | null): string | null => {
 
 const isVideo = (file?: string | null) => file?.trimEnd().toLowerCase().endsWith(".webm");
 
-export type EventCardBadgeTone = "pending" | "approved" | "declined";
+export type EventCardBadgeTone = "attending" | "full";
 
 interface EventCardProps {
     title: string;

@@ -3,18 +3,18 @@ import Loader from "@/Components/Loader/Loader";
 import { useModal } from "@/Providers/ModalContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useToast } from "@/Providers/ToastContext";
-import { adminDeleteMeeting, adminListMeetings, apiErrorMessage } from "@/api/boardMeetings";
-import type { AdminBoardMeetingDto } from "../../../../../src/types/boardMeeting.types";
-import MeetingForm from "./MeetingForm";
+import { adminDeleteEvent, adminListEvents, apiErrorMessage } from "@/api/events";
+import type { AdminEventDto } from "../../../../../src/types/event.types";
+import EventForm from "./EventForm";
 import { formatDay } from "./format";
 
-interface MeetingsTableProps {
-    /** Called after any change, so the parent can refresh its pending-requests badge. */
+interface EventsTableProps {
+    /** Called after any change, so the parent can refresh what depends on events. */
     onChanged?: () => void;
 }
 
-const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
-    const [meetings, setMeetings] = useState<AdminBoardMeetingDto[]>([]);
+const EventsTable: React.FC<EventsTableProps> = ({ onChanged }) => {
+    const [events, setEvents] = useState<AdminEventDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -31,9 +31,9 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
     const load = useCallback(async () => {
         try {
             setFailed(false);
-            setMeetings(await adminListMeetings());
+            setEvents(await adminListEvents());
         } catch (error) {
-            console.error("Failed to fetch board meetings", error);
+            console.error("Failed to fetch events", error);
             setFailed(true);
         } finally {
             setLoading(false);
@@ -49,12 +49,12 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
         onChanged?.();
     };
 
-    const openForm = (meeting?: AdminBoardMeetingDto) =>
+    const openForm = (event?: AdminEventDto) =>
         openModal({
-            title: meeting ? "Edit meeting" : "New meeting",
+            title: event ? "Edit event" : "New event",
             content: (
-                <MeetingForm
-                    meeting={meeting}
+                <EventForm
+                    event={event}
                     onSaved={() => {
                         closeModalRef.current();
                         changed();
@@ -65,23 +65,22 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
             ),
         });
 
-    const remove = async (meeting: AdminBoardMeetingDto) => {
-        const requests = meeting.counts.pending + meeting.counts.approved + meeting.counts.declined;
+    const remove = async (event: AdminEventDto) => {
         const confirmed = await confirm({
-            title: "Delete meeting",
-            message: `Delete “${meeting.title}”? This also removes ${requests} request(s).`,
+            title: "Delete event",
+            message: `Delete “${event.title}”? This also removes ${event.confirmedCount} attendee record(s).`,
             confirmText: "Delete",
             cancelText: "Cancel",
         });
         if (!confirmed) return;
 
-        setDeletingId(meeting.id);
+        setDeletingId(event.id);
         try {
-            await adminDeleteMeeting(meeting.id);
-            show({ type: "success", message: "Meeting deleted" });
+            await adminDeleteEvent(event.id);
+            show({ type: "success", message: "Event deleted" });
             changed();
         } catch (error) {
-            show({ type: "error", message: apiErrorMessage(error, "Failed to delete the meeting") });
+            show({ type: "error", message: apiErrorMessage(error, "Failed to delete the event") });
         } finally {
             setDeletingId(null);
         }
@@ -90,9 +89,9 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
     return (
         <section className="bm-card">
             <div className="bm-card__header">
-                <h4>Meetings</h4>
+                <h4>Events</h4>
                 <button type="button" className="dashboard-btn" onClick={() => openForm()}>
-                    New meeting
+                    New event
                 </button>
             </div>
 
@@ -100,11 +99,11 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
                 <Loader />
             ) : failed ? (
                 <p className="bm-empty">
-                    Could not load meetings.
+                    Could not load events.
                     <button type="button" className="bm-action ms-2" onClick={load}>Retry</button>
                 </p>
-            ) : meetings.length === 0 ? (
-                <p className="bm-empty">No meetings yet. Create the first one with “New meeting”.</p>
+            ) : events.length === 0 ? (
+                <p className="bm-empty">No events yet. Create the first one with “New event”.</p>
             ) : (
                 <div className="bm-table-wrap">
                     <table className="bm-table">
@@ -114,32 +113,33 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
                                 <th>Title</th>
                                 <th>Venue</th>
                                 <th>Location</th>
-                                <th>Approved</th>
-                                <th>Pending</th>
+                                <th>Confirmed</th>
                                 <th aria-label="Actions" />
                             </tr>
                         </thead>
                         <tbody>
-                            {meetings.map((meeting) => (
-                                <tr key={meeting.id} className={meeting.isPast ? "bm-row--past" : undefined}>
+                            {events.map((event) => (
+                                <tr key={event.id} className={event.isPast ? "bm-row--past" : undefined}>
                                     <td className="bm-nowrap">
-                                        {formatDay(meeting.date)}
-                                        <div className="bm-muted">{meeting.time} GST{meeting.isPast ? " · past" : ""}</div>
+                                        {formatDay(event.date)}
+                                        <div className="bm-muted">{event.time} GST{event.isPast ? " · past" : ""}</div>
                                     </td>
-                                    <td>{meeting.title}</td>
-                                    <td>{meeting.venue}</td>
-                                    <td>{meeting.location}</td>
-                                    <td className="bm-nowrap">{meeting.counts.approved} / {meeting.capacity}</td>
-                                    <td>{meeting.counts.pending}</td>
+                                    <td>{event.title}</td>
+                                    <td>{event.venue}</td>
+                                    <td>{event.location}</td>
+                                    <td className="bm-nowrap">
+                                        {event.confirmedCount} / {event.capacity}
+                                        {event.isFull ? " · Full" : ""}
+                                    </td>
                                     <td className="bm-actions">
-                                        <button type="button" className="bm-action" onClick={() => openForm(meeting)}>
+                                        <button type="button" className="bm-action" onClick={() => openForm(event)}>
                                             Edit
                                         </button>
                                         <button
                                             type="button"
                                             className="bm-action bm-action--danger"
-                                            disabled={deletingId === meeting.id}
-                                            onClick={() => remove(meeting)}
+                                            disabled={deletingId === event.id}
+                                            onClick={() => remove(event)}
                                         >
                                             Delete
                                         </button>
@@ -154,4 +154,4 @@ const MeetingsTable: React.FC<MeetingsTableProps> = ({ onChanged }) => {
     );
 };
 
-export default MeetingsTable;
+export default EventsTable;

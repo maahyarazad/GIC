@@ -1,14 +1,15 @@
 /**
- * Inserts the board meeting email templates into `emailtemplates` when they are missing.
+ * Inserts the event email templates into `emailtemplates` when they are missing.
  *
  * Idempotent: an existing template (possibly edited in Dashboard → Email Templates)
- * is never overwritten, unless it is named in --update.
+ * is never overwritten, unless it is named in --update. --remove-legacy deletes the
+ * feature 003 board meeting templates, which are no longer used.
  *
- *   npx tsx src/seed_board_meeting_templates.ts
- *   npx tsx src/seed_board_meeting_templates.ts --update=board_meeting_request_receipt,board_meeting_invitation
+ *   npx tsx src/seed_event_templates.ts [--update=…] [--remove-legacy]
+ *   npx tsx src/seed_event_templates.ts --update=event_attendance_confirmation
  */
 import { connectToDatabase, closeDatabaseConnection, getCollection } from "./db";
-import { BOARD_MEETING_TEMPLATES } from "./config/boardMeetingConfig";
+import { EVENT_TEMPLATES, LEGACY_BOARD_MEETING_TEMPLATES } from "./config/eventConfig";
 
 const layout = (heading: string, body: string): string => `<!DOCTYPE html>
 <html>
@@ -151,108 +152,71 @@ const noteSection = (title: string, body: string, top = 24): string => `
               </td>
             </tr>`;
 
-const themedMeetingRows: [string, string][] = [
-  ["Meeting", "<strong>{{MEETING_TITLE}}</strong>"],
-  ["Date", `<strong style="color: ${ORANGE};">{{MEETING_DATE}}</strong>`],
-  ["Time", "{{MEETING_TIME}}"],
-  ["Venue", "{{MEETING_VENUE}}"],
-  ["Location", "{{MEETING_LOCATION}}"],
-];
-
-const meetingRows: [string, string][] = [
-  ["Meeting", "{{MEETING_TITLE}}"],
-  ["Date", "{{MEETING_DATE}}"],
-  ["Time", "{{MEETING_TIME}}"],
-  ["Venue", "{{MEETING_VENUE}}"],
-  ["Location", "{{MEETING_LOCATION}}"],
+const themedEventRows: [string, string][] = [
+  ["Event", "<strong>{{EVENT_TITLE}}</strong>"],
+  ["Date", `<strong style="color: ${ORANGE};">{{EVENT_DATE}}</strong>`],
+  ["Time", "{{EVENT_TIME}}"],
+  ["Venue", "{{EVENT_VENUE}}"],
+  ["Location", "{{EVENT_LOCATION}}"],
 ];
 
 const templates = [
   {
-    name: BOARD_MEETING_TEMPLATES.notification,
-    subject: "Board meeting request – {{MEETING_TITLE}} – {{REQUESTER_NAME}}",
+    name: EVENT_TEMPLATES.notification,
+    subject: "Event attendance confirmed – {{EVENT_TITLE}} – {{REQUESTER_NAME}}",
     html: layout(
-      "New Board Meeting Request",
-      `<p>A member has requested to join a board meeting.</p>
+      "Event Attendance Confirmed",
+      `<p>A member has confirmed their attendance at an event.</p>
        ${detailsTable([
          ["Reference", "{{REFERENCE}}"],
          ["Name", "{{REQUESTER_NAME}}"],
          ["Email", "{{REQUESTER_EMAIL}}"],
          ["Phone", "{{REQUESTER_PHONE}}"],
-         ...meetingRows,
-         ["Submitted at", "{{SUBMITTED_AT}}"],
+         ["Event", "{{EVENT_TITLE}}"],
+         ["Date", "{{EVENT_DATE}}"],
+         ["Time", "{{EVENT_TIME}}"],
+         ["Venue", "{{EVENT_VENUE}}"],
+         ["Location", "{{EVENT_LOCATION}}"],
+         ["Confirmed at", "{{CONFIRMED_AT}}"],
+         ["Seats left", "{{SEATS_LEFT}}"],
        ])}
-       <p><a href="{{DASHBOARD_URL}}" style="color:#D9B144;font-weight:bold;">Review in the dashboard</a></p>`
+       <p><a href="{{DASHBOARD_URL}}" style="color:#D9B144;font-weight:bold;">View attendees in the dashboard</a></p>`
     ),
     text:
-      "New board meeting request {{REFERENCE}} from {{REQUESTER_NAME}} ({{REQUESTER_EMAIL}}, {{REQUESTER_PHONE}}) " +
-      "for {{MEETING_TITLE}} on {{MEETING_DATE}} at {{MEETING_TIME}}, {{MEETING_VENUE}}, {{MEETING_LOCATION}}. " +
-      "Submitted at {{SUBMITTED_AT}}. Review: {{DASHBOARD_URL}}",
+      "{{REQUESTER_NAME}} ({{REQUESTER_EMAIL}}, {{REQUESTER_PHONE}}) has confirmed attendance at {{EVENT_TITLE}} " +
+      "on {{EVENT_DATE}} at {{EVENT_TIME}}, {{EVENT_VENUE}}, {{EVENT_LOCATION}}. Reference {{REFERENCE}}. " +
+      "Confirmed at {{CONFIRMED_AT}}. Seats left: {{SEATS_LEFT}}. Attendees: {{DASHBOARD_URL}}",
     variables: [
       "REFERENCE",
       "REQUESTER_NAME",
       "REQUESTER_EMAIL",
       "REQUESTER_PHONE",
-      "MEETING_TITLE",
-      "MEETING_DATE",
-      "MEETING_TIME",
-      "MEETING_VENUE",
-      "MEETING_LOCATION",
-      "SUBMITTED_AT",
+      "EVENT_TITLE",
+      "EVENT_DATE",
+      "EVENT_TIME",
+      "EVENT_VENUE",
+      "EVENT_LOCATION",
+      "CONFIRMED_AT",
+      "SEATS_LEFT",
       "DASHBOARD_URL",
     ],
   },
   {
-    name: BOARD_MEETING_TEMPLATES.receipt,
-    subject: "Your board meeting request – {{MEETING_TITLE}}",
+    name: EVENT_TEMPLATES.confirmation,
+    subject: "Your attendance is confirmed – {{EVENT_TITLE}}, {{EVENT_DATE}}",
     html: themedLayout(
-      "Board Meeting Request Received",
+      "Attendance Confirmed",
       [
         textSection([
           "Dear {{REQUESTER_NAME}},",
-          "Thank you for your interest. Your request to join the board meeting below has been sent to the board team. We will review it and update you shortly.",
+          "Thank you for confirming. Your place at the following event is reserved.",
         ]),
         referenceSection,
-        detailsSection("Meeting Details", themedMeetingRows),
+        detailsSection("Event Details", themedEventRows),
+        noteSection("About the Event", "{{EVENT_DESCRIPTION}}"),
         textSection(
           [
-            "Please quote reference <strong>{{REFERENCE}}</strong> if you contact us about this request. You can also follow its status under <strong>Events → My Requests</strong> in your GIC Dashboard.",
-            "Kind regards,<br />The German Industry Club Team",
-          ],
-          24
-        ),
-      ].join("")
-    ),
-    text:
-      "Dear {{REQUESTER_NAME}}, your request to join {{MEETING_TITLE}} on {{MEETING_DATE}} at {{MEETING_TIME}} " +
-      "({{MEETING_VENUE}}, {{MEETING_LOCATION}}) has been sent to the board team. We will review it and update you shortly. " +
-      "Reference: {{REFERENCE}}.",
-    variables: [
-      "REQUESTER_NAME",
-      "REFERENCE",
-      "MEETING_TITLE",
-      "MEETING_DATE",
-      "MEETING_TIME",
-      "MEETING_VENUE",
-      "MEETING_LOCATION",
-    ],
-  },
-  {
-    name: BOARD_MEETING_TEMPLATES.invitation,
-    subject: "Invitation: {{MEETING_TITLE}} – {{MEETING_DATE}}",
-    html: themedLayout(
-      "Board Meeting Invitation",
-      [
-        textSection([
-          "Dear {{REQUESTER_NAME}},",
-          "We are pleased to confirm that your request has been approved. You are cordially invited to attend the following board meeting.",
-        ]),
-        referenceSection,
-        detailsSection("Meeting Details", themedMeetingRows),
-        noteSection("About the Meeting", "{{MEETING_DESCRIPTION}}"),
-        textSection(
-          [
-            "Seating is limited. If you are no longer able to attend, please reply to this email so we can offer your seat to another member, quoting reference <strong>{{REFERENCE}}</strong>.",
+            "Seating is limited. If you can no longer attend, please reply to this email so we can offer your seat to another member, quoting reference <strong>{{REFERENCE}}</strong>. You can also see this event under <strong>Events → My Events</strong> in your GIC Dashboard.",
             "We look forward to welcoming you.<br />The German Industry Club Team",
           ],
           24
@@ -260,18 +224,18 @@ const templates = [
       ].join("")
     ),
     text:
-      "Dear {{REQUESTER_NAME}}, your request has been approved. You are invited to {{MEETING_TITLE}} on {{MEETING_DATE}} " +
-      "at {{MEETING_TIME}}, {{MEETING_VENUE}}, {{MEETING_LOCATION}}. {{MEETING_DESCRIPTION}} " +
+      "Dear {{REQUESTER_NAME}}, your attendance is confirmed. Your place at {{EVENT_TITLE}} on {{EVENT_DATE}} " +
+      "at {{EVENT_TIME}} ({{EVENT_VENUE}}, {{EVENT_LOCATION}}) is reserved. {{EVENT_DESCRIPTION}} " +
       "If you can no longer attend, please reply to this email. Reference: {{REFERENCE}}.",
     variables: [
       "REQUESTER_NAME",
       "REFERENCE",
-      "MEETING_TITLE",
-      "MEETING_DATE",
-      "MEETING_TIME",
-      "MEETING_VENUE",
-      "MEETING_LOCATION",
-      "MEETING_DESCRIPTION",
+      "EVENT_TITLE",
+      "EVENT_DATE",
+      "EVENT_TIME",
+      "EVENT_VENUE",
+      "EVENT_LOCATION",
+      "EVENT_DESCRIPTION",
     ],
   },
 ];
@@ -307,11 +271,16 @@ async function main() {
     await collection.insertOne({ ...template, createdAt: now, updatedAt: now } as any);
     console.log(`${template.name}: created`);
   }
+
+  if (process.argv.includes("--remove-legacy")) {
+    const { deletedCount } = await collection.deleteMany({ name: { $in: [...LEGACY_BOARD_MEETING_TEMPLATES] } });
+    console.log(`Legacy board meeting templates removed: ${deletedCount}`);
+  }
 }
 
 main()
   .catch((error) => {
-    console.error("Seeding board meeting templates failed:", error);
+    console.error("Seeding event templates failed:", error);
     process.exitCode = 1;
   })
   .finally(() => closeDatabaseConnection());

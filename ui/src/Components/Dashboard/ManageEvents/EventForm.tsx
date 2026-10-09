@@ -2,15 +2,15 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import type {
-    AdminBoardMeetingDto,
-    BoardMeetingInput,
-} from "../../../../../src/types/boardMeeting.types";
+    AdminEventDto,
+    EventInput,
+} from "../../../../../src/types/event.types";
 import {
-    adminCreateMeeting,
-    adminUpdateMeeting,
+    adminCreateEvent,
+    adminUpdateEvent,
     apiErrorMessage,
     apiFieldErrors,
-} from "@/api/boardMeetings";
+} from "@/api/events";
 import type ToastOptions from "@/Providers/ToastContext";
 
 const DESCRIPTION_MAX = 2000;
@@ -27,7 +27,7 @@ interface FormValues {
     description: string;
 }
 
-// Mirrors the server rules in boardMeetingAdmin.controller.ts.
+// Mirrors the server rules in eventAdmin.controller.ts.
 const validationSchema = Yup.object({
     title: Yup.string().trim().required("Title is required").min(3, "Title must be at least 3 characters").max(160, "Title must be at most 160 characters"),
     date: Yup.string().required("Date is required"),
@@ -44,18 +44,18 @@ const validationSchema = Yup.object({
     description: Yup.string().trim().max(DESCRIPTION_MAX, `Description must be at most ${DESCRIPTION_MAX} characters`),
 });
 
-const toInitialValues = (meeting?: AdminBoardMeetingDto): FormValues => ({
-    title: meeting?.title ?? "",
-    date: meeting?.date ?? "",
-    time: meeting?.time ?? "",
-    venue: meeting?.venue ?? "",
-    location: meeting?.location ?? "",
-    capacity: meeting?.capacity ?? 10,
-    imageUrl: meeting?.imageUrl ?? "",
-    description: meeting?.description ?? "",
+const toInitialValues = (event?: AdminEventDto): FormValues => ({
+    title: event?.title ?? "",
+    date: event?.date ?? "",
+    time: event?.time ?? "",
+    venue: event?.venue ?? "",
+    location: event?.location ?? "",
+    capacity: event?.capacity ?? 10,
+    imageUrl: event?.imageUrl ?? "",
+    description: event?.description ?? "",
 });
 
-const toPayload = (values: FormValues): BoardMeetingInput => ({
+const toPayload = (values: FormValues): EventInput => ({
     title: values.title.trim(),
     date: values.date,
     time: values.time,
@@ -70,8 +70,8 @@ const FieldError = ({ name }: { name: keyof FormValues }) => (
     <ErrorMessage name={name}>{(msg) => <div className="bm-error">{msg}</div>}</ErrorMessage>
 );
 
-interface MeetingFormProps {
-    meeting?: AdminBoardMeetingDto;
+interface EventFormProps {
+    event?: AdminEventDto;
     onSaved: () => void;
     onCancel: () => void;
     // Passed in rather than read with useToast(): the form renders inside the modal
@@ -79,30 +79,30 @@ interface MeetingFormProps {
     notify: (options: ToastOptions) => void;
 }
 
-const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel, notify }) => {
+const EventForm: React.FC<EventFormProps> = ({ event, onSaved, onCancel, notify }) => {
 
     const handleSubmit = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
         try {
             const payload = toPayload(values);
-            if (meeting) {
-                await adminUpdateMeeting(meeting.id, payload);
-                notify({ type: "success", message: "Meeting updated" });
+            if (event) {
+                await adminUpdateEvent(event.id, payload);
+                notify({ type: "success", message: "Event updated" });
             } else {
-                await adminCreateMeeting(payload);
-                notify({ type: "success", message: "Meeting created" });
+                await adminCreateEvent(payload);
+                notify({ type: "success", message: "Event created" });
             }
             onSaved();
         } catch (error) {
             const fieldErrors = apiFieldErrors(error);
             if (fieldErrors) helpers.setErrors(fieldErrors);
-            notify({ type: "error", message: apiErrorMessage(error, "Failed to save the meeting") });
+            notify({ type: "error", message: apiErrorMessage(error, "Failed to save the event") });
         } finally {
             helpers.setSubmitting(false);
         }
     };
 
     return (
-        <Formik initialValues={toInitialValues(meeting)} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        <Formik initialValues={toInitialValues(event)} validationSchema={validationSchema} onSubmit={handleSubmit}>
             {({ values, isSubmitting }) => (
                 <Form className="bm-form" noValidate>
                     <div className="bm-field">
@@ -127,7 +127,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel, n
                     <div className="bm-row">
                         <div className="bm-field">
                             <label htmlFor="bm-venue" className="required">Venue</label>
-                            <Field id="bm-venue" name="venue" className="form-control" placeholder="e.g. GIC Boardroom, Level 12" />
+                            <Field id="bm-venue" name="venue" className="form-control" placeholder="e.g. GIC Lounge, Level 12" />
                             <FieldError name="venue" />
                         </div>
                         <div className="bm-field">
@@ -165,7 +165,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel, n
                             Cancel
                         </button>
                         <button type="submit" className="dashboard-btn" disabled={isSubmitting}>
-                            {isSubmitting ? "Saving…" : meeting ? "Save changes" : "Create meeting"}
+                            {isSubmitting ? "Saving…" : event ? "Save changes" : "Create event"}
                         </button>
                     </div>
                 </Form>
@@ -174,4 +174,4 @@ const MeetingForm: React.FC<MeetingFormProps> = ({ meeting, onSaved, onCancel, n
     );
 };
 
-export default MeetingForm;
+export default EventForm;

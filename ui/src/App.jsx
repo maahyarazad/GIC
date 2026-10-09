@@ -7,7 +7,7 @@ import ContactUs from './Pages/ContactUs';
 import Login from './Pages/Login/Login';
 import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword/ResetPassword';
-import Boardroom from './Pages/Boardroom/Boardroom';
+import EventsPage from './Pages/Events/EventsPage';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import NotFound from './Pages/NotFound/NotFound';
 import ProtectedRoute from './Pages/ProtectedRoutes';
@@ -20,7 +20,7 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import MainLoader from './Components/MainLoader';
 
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useScrollRestoration } from './Components/useScrollRestoration';
 import './App.css';
 import { usePage } from '@/Providers/PageContext';
@@ -93,7 +93,8 @@ const App = () => {
                 <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/what-we-do" element={<WhatWeDo />} />
                 <Route path="/membership" element={<Membership />} />
-                <Route path="/boardroom" element={<Boardroom />} />
+                <Route path="/events" element={<EventsPage />} />
+                <Route path="/boardroom" element={<Navigate to="/events" replace />} />
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

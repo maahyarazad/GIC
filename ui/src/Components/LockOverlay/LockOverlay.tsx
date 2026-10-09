@@ -32,7 +32,7 @@ const LockOverlay: React.FC = () => {
     return (
         <div
             className={`lock-overlay ${closing ? "hide" : ""} ${closing ? "slide-out" : ""}`}
-            onClick={() => navigate("/login?redirect=/boardroom")}>
+            onClick={() => navigate("/login?redirect=/events")}>
             <h1 className="s-font">Restricted Access</h1>
             <h2 className="s-font">By Invitation Only</h2>
         </div>

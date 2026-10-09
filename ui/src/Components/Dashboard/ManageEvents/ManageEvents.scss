@@ -1,11 +1,11 @@
-// Admin Board Meetings section; table/card look matches My Requests (Events.scss)
+// Admin Manage Events section; table/card look matches My Events (Events.scss)
 // and the Business Letter tables.
 
 $bm-pending: #b7791f;
 $bm-approved: #2f855a;
 $bm-declined: #9b2c2c;
 
-.board-meetings {
+.manage-events {
   .bm-tabs {
     display: flex;
     gap: 0.25rem;
@@ -28,17 +28,6 @@ $bm-declined: #9b2c2c;
     &.active {
       color: var(--ora);
       border-bottom-color: var(--ora);
-    }
-
-    &__badge {
-      min-width: 1.4rem;
-      padding: 0 0.4rem;
-      border-radius: 999px;
-      background: var(--ora);
-      color: #fff;
-      font-size: 0.75rem;
-      line-height: 1.4rem;
-      text-align: center;
     }
   }
 
@@ -178,20 +167,16 @@ $bm-declined: #9b2c2c;
     white-space: nowrap;
     color: #fff;
 
-    &--pending {
-      background: $bm-pending;
-    }
-
-    &--approved {
+    &--confirmed {
       background: $bm-approved;
     }
 
-    &--declined {
+    &--cancelled {
       background: $bm-declined;
     }
   }
 
-  // Email delivery indicators: L(eadership), R(eceipt), I(nvitation).
+  // Email delivery indicators: L(eadership), C(onfirmation).
   .email-status {
     display: inline-flex;
     align-items: center;
@@ -225,7 +210,7 @@ $bm-declined: #9b2c2c;
   }
 }
 
-// The meeting form renders inside the dashboard modal, outside .board-meetings.
+// The event form renders inside the dashboard modal, outside .manage-events.
 .bm-form {
   text-align: left;
 

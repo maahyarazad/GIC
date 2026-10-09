@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DEFAULT_RECIPIENTS = [
-  "ricco.deutscher@german-industry-club.com",
   "philip.hoelzer@german-industry-club.com",
   "jan.hussing@german-industry-club.com",
   "thomas.hochberger@german-industry-club.com",

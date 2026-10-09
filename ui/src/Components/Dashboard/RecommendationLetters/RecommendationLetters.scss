@@ -1,0 +1,223 @@
+// Admin Recommendation Letters: requests on the left, letter editor on the right.
+// Card and form look match the member's letter request form (BusinessLetter.scss).
+
+$rl-new: #6b7280;
+$rl-draft: #b7791f;
+$rl-sent: #2f855a;
+$rl-failed: #9b2c2c;
+
+.recommendation-letters {
+  .rl-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    margin-top: 1.5rem;
+
+    @media (min-width: 992px) {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    }
+  }
+
+  .rl-card {
+    border: 1px solid var(--bdr);
+    background: var(--bgp);
+    padding: 1.5rem;
+
+    h4 {
+      font-family: var(--se);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--txt);
+      margin: 0 0 1.25rem;
+    }
+  }
+
+  .rl-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @media (min-width: 992px) {
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+  }
+
+  .rl-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--bdrs);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(200, 84, 26, 0.04);
+    }
+
+    &.is-selected {
+      border-left-color: var(--ora);
+      background: rgba(200, 84, 26, 0.08);
+    }
+
+    &__main {
+      min-width: 0;
+    }
+
+    &__top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    &__company {
+      font-weight: 600;
+      color: var(--txt);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .rl-ref {
+    font-family: SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ora);
+  }
+
+  .rl-status {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #fff;
+
+    &--new {
+      background: $rl-new;
+    }
+
+    &--draft {
+      background: $rl-draft;
+    }
+
+    &--sent {
+      background: $rl-sent;
+    }
+
+    &--failed {
+      background: $rl-failed;
+    }
+  }
+
+  .rl-tag {
+    font-size: 0.72rem;
+    color: var(--mu);
+    border: 1px solid var(--bdrs);
+    border-radius: 999px;
+    padding: 0 0.45rem;
+    white-space: nowrap;
+  }
+
+  .rl-muted {
+    font-size: 0.85rem;
+    color: var(--mu);
+    overflow-wrap: anywhere;
+  }
+
+  .rl-empty {
+    color: var(--mu);
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  .rl-action {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--ora);
+    color: var(--ora);
+    padding: 0.3rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--ora);
+      color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+
+  .rl-editor__header {
+    margin-bottom: 1rem;
+
+    h4 {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  .rl-group-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ora);
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  .rl-field {
+    margin-bottom: 0.9rem;
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--mu);
+      margin-bottom: 0.3rem;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--ora);
+    }
+  }
+
+  .rl-row2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 1rem;
+
+    @media (min-width: 576px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .rl-error {
+    font-size: 0.85rem;
+    color: var(--ora);
+    margin-top: 0.25rem;
+  }
+
+  .rl-hint {
+    font-size: 0.8rem;
+    color: $rl-draft;
+    margin-top: 0.25rem;
+  }
+
+  .rl-editor__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bdrs);
+  }
+}

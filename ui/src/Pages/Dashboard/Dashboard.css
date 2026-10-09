@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
   min-height: 92dvh;
-  overflow-x: scroll;
+  overflow-x: clip;
   background-color: var(--bg);
 }
 .dashboard .nav {
@@ -55,16 +55,21 @@
   border-right: 1px solid var(--bdr);
   width: 240px;
   min-width: 240px;
-  padding: 1rem;
+  padding: 0.5rem;
   box-sizing: border-box;
   transition: transform 0.3s ease-in-out, background-color 0.3s ease, border-color 0.3s ease;
   z-index: 999;
 }
 
-/* Desktop: sidebar always visible */
+/* Desktop: sidebar always visible, below the fixed 70px header, scrolling on its own */
 @media (min-width: 768px) {
   .sidebar {
-    position: relative;
+    position: sticky;
+    top: 70px;
+    margin-top: 70px;
+    align-self: flex-start;
+    height: calc(100dvh - 70px);
+    overflow-y: auto;
     transform: translateX(0);
   }
   .close-btn,
@@ -85,7 +90,7 @@
   }
   .sidebar.open {
     transform: translateX(0);
-    overflow: scroll;
+    overflow-y: auto;
   }
   .close-btn {
     background: transparent;

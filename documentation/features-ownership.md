@@ -22,6 +22,7 @@
 | 11 | Member Profile | Members view and update their own details | |
 | 12 | Member Roles & Permissions | Different dashboard access for Admin, Procurement and Member | |
 | 12a | Request a Business Letter | Members (all roles) request a business letter, see their past requests and download a PDF copy; GIC leadership is notified by email | |
+| 12b | Recommendation Letters | Admins edit, preview, download (PDF) and email letters of recommendation in Dashboard → Recommendation Letters | |
 
 ## 3. Administration Dashboard
 

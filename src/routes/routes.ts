@@ -10,6 +10,8 @@ import { SSOController } from './../controllers/sso.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { SitemapController } from './../controllers/sitemap.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { RecommendationLetterAdminController } from './../controllers/recommendationLetterAdmin.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ProductController } from './../controllers/product.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OtpController } from './../controllers/otp.controller';
@@ -114,6 +116,26 @@ const models: TsoaRoute.Models = {
             "role": {"ref":"UserRole"},
             "authorize": {"dataType":"boolean"},
             "profile": {"ref":"UserProfile"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "LetterFields": {
+        "dataType": "refObject",
+        "properties": {
+            "recipientCompany": {"dataType":"string","required":true},
+            "recipientStreet": {"dataType":"string","required":true},
+            "recipientCity": {"dataType":"string","required":true},
+            "recipientCountry": {"dataType":"string","required":true},
+            "letterDate": {"dataType":"string","required":true},
+            "companyName": {"dataType":"string","required":true},
+            "reference": {"dataType":"string","required":true},
+            "salutation": {"dataType":"string","required":true},
+            "companyLocation": {"dataType":"string","required":true},
+            "industry": {"dataType":"string","required":true},
+            "productsServices": {"dataType":"string","required":true},
+            "projectName": {"dataType":"string","required":true},
+            "closing": {"dataType":"string","required":true},
         },
         "additionalProperties": true,
     },
@@ -994,6 +1016,160 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getSitemap',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterAdminController_listLetterRequests: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/v1/admin/letter-requests',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController.prototype.listLetterRequests)),
+
+            async function RecommendationLetterAdminController_listLetterRequests(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterAdminController_listLetterRequests, request, response });
+
+                const controller = new RecommendationLetterAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'listLetterRequests',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterAdminController_getLetterRequest: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/api/v1/admin/letter-requests/:id',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController.prototype.getLetterRequest)),
+
+            async function RecommendationLetterAdminController_getLetterRequest(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterAdminController_getLetterRequest, request, response });
+
+                const controller = new RecommendationLetterAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'getLetterRequest',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterAdminController_saveLetter: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"LetterFields"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.put('/api/v1/admin/letter-requests/:id/letter',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController.prototype.saveLetter)),
+
+            async function RecommendationLetterAdminController_saveLetter(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterAdminController_saveLetter, request, response });
+
+                const controller = new RecommendationLetterAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'saveLetter',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterAdminController_letterPdf: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"LetterFields"},
+                disposition: {"in":"query","name":"disposition","dataType":"string"},
+        };
+        app.post('/api/v1/admin/letter-requests/:id/letter/pdf',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController.prototype.letterPdf)),
+
+            async function RecommendationLetterAdminController_letterPdf(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterAdminController_letterPdf, request, response });
+
+                const controller = new RecommendationLetterAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'letterPdf',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterAdminController_sendLetter: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/admin/letter-requests/:id/letter/send',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterAdminController.prototype.sendLetter)),
+
+            async function RecommendationLetterAdminController_sendLetter(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterAdminController_sendLetter, request, response });
+
+                const controller = new RecommendationLetterAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'sendLetter',
                 controller,
                 response,
                 next,

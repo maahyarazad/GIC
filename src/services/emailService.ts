@@ -290,6 +290,7 @@ export interface DynamicEmailOptions {
    * the subject and text body always use `data`.
    */
   htmlData?: Record<string, any>;
+  attachments?: EmailAttachment[];
 }
 
 /** Sends the emailtemplates record named `doc` to `data.email`. */
@@ -330,6 +331,7 @@ export async function sendDynamicEmailDoc(
       cc: options.cc,
       replyTo: options.replyTo,
       sender: options.sender,
+      attachments: options.attachments,
     });
 
     return result;

@@ -1,4 +1,42 @@
 import { Schema, model } from "mongoose";
+
+const letterText = (maxlength: number) => ({ type: String, trim: true, default: "", maxlength });
+
+// Admin-edited letter of recommendation (feature 005). Absent until first saved.
+const LetterSchema = new Schema(
+  {
+    recipientCompany: letterText(160),
+    recipientStreet: letterText(200),
+    recipientCity: letterText(120),
+    recipientCountry: letterText(120),
+    letterDate: letterText(10),
+    companyName: letterText(160),
+    reference: letterText(200),
+    salutation: letterText(160),
+    companyLocation: letterText(80),
+    industry: letterText(200),
+    productsServices: letterText(300),
+    projectName: letterText(200),
+    closing: letterText(1000),
+    savedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    savedAt: { type: Date, default: null },
+  },
+  { _id: false }
+);
+
+// Email delivery of the letter. Absent until first sent.
+const LetterDeliverySchema = new Schema(
+  {
+    status: { type: String, enum: ["sent", "failed"] },
+    sentAt: { type: Date, default: null },
+    sentBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    sentTo: { type: String, default: "" },
+    attemptedAt: { type: Date, default: null },
+    count: { type: Number, default: 0 },
+    error: { type: String, default: null, maxlength: 500 },
+  },
+  { _id: false }
+);
 import {
   BusinessLetterRequestDto,
   formatLetterType,
@@ -37,6 +75,8 @@ const BusinessLetterRequestSchema = new Schema(
       attemptedAt: { type: Date, default: null },
       error: { type: String, default: null },
     },
+    letter: { type: LetterSchema, default: undefined },
+    delivery: { type: LetterDeliverySchema, default: undefined },
   },
   {
     timestamps: true,
@@ -44,6 +84,7 @@ const BusinessLetterRequestSchema = new Schema(
 );
 
 BusinessLetterRequestSchema.index({ userId: 1, createdAt: -1 });
+BusinessLetterRequestSchema.index({ createdAt: -1 });
 
 export const BusinessLetterRequestModel = model(
   "BusinessLetterRequest",

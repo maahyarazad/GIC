@@ -6,10 +6,10 @@
  */
 import fs from "fs/promises";
 import path from "path";
-import { PDFDocument, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, PDFEmbeddedPage, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
 import { toWinAnsi, wrapText } from "./pdfText";
 import { buildSections } from "./recommendationLetterText";
-import { RUNNING_HEADER, SENDER_LINES, SIGNATORIES } from "../config/recommendationLetterConfig";
+import { RUNNING_HEADER, SENDER_LINES, SIGNATORIES, SignatureSource } from "../config/recommendationLetterConfig";
 import { LetterFields } from "../types/recommendationLetter.types";
 
 const PAGE_WIDTH = 595.28; // A4
@@ -41,6 +41,20 @@ const readLogo = (): Promise<Buffer> => {
   }
   return logoBytes;
 };
+
+// Signatures live in file_storage (uploads, kept out of git), resolved like client.controller.ts does.
+const SIGNATURE_DIR = path.join(process.cwd(), "file_storage");
+
+/** Embeds the cropped signature page, or returns null (logged) so the letter is still generated. */
+async function embedSignature(pdf: PDFDocument, source: SignatureSource): Promise<PDFEmbeddedPage | null> {
+  try {
+    const signaturePdf = await PDFDocument.load(await fs.readFile(path.join(SIGNATURE_DIR, source.file)));
+    return await pdf.embedPage(signaturePdf.getPage(0), source.box);
+  } catch (error) {
+    console.error(`Recommendation letter: signature ${source.file} could not be embedded:`, error);
+    return null;
+  }
+}
 
 export async function buildRecommendationLetterPdf(fields: LetterFields, reference: string): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
@@ -147,13 +161,28 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
 
   // ── Signatures: two columns, never split across pages ──
   const SIGNATURE_SPACE = 50;
+  const SIGNATURE_LINE_WIDTH = 150;
   const signatureHeight = 20 + SIGNATURE_SPACE + 4 + LEADING * 2;
   ensureSpace(signatureHeight);
   y -= 20;
   const lineTop = y - SIGNATURE_SPACE;
+  const signatures = await Promise.all(
+    SIGNATORIES.map((signatory) => (signatory.signature ? embedSignature(pdf, signatory.signature) : null))
+  );
   SIGNATORIES.forEach((signatory, index) => {
     const x = MARGIN_X + index * (CONTENT_WIDTH / 2);
-    page.drawLine({ start: { x, y: lineTop }, end: { x: x + 150, y: lineTop }, thickness: 0.5, color: MUTED });
+    const signature = signatures[index];
+    if (signature) {
+      // Fit inside the signature space above the line, keeping the aspect ratio.
+      const scale = Math.min(SIGNATURE_LINE_WIDTH / signature.width, (SIGNATURE_SPACE - 4) / signature.height);
+      page.drawPage(signature, {
+        x,
+        y: lineTop + 2,
+        width: signature.width * scale,
+        height: signature.height * scale,
+      });
+    }
+    page.drawLine({ start: { x, y: lineTop }, end: { x: x + SIGNATURE_LINE_WIDTH, y: lineTop }, thickness: 0.5, color: MUTED });
     page.drawText(clean(bold, signatory.name), { x, y: lineTop - 4 - BODY_SIZE, size: BODY_SIZE, font: bold, color: TEXT });
     page.drawText(clean(regular, signatory.title), { x, y: lineTop - 4 - BODY_SIZE - LEADING, size: BODY_SIZE, font: regular, color: TEXT });
   });

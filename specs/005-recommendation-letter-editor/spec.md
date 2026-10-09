@@ -140,7 +140,7 @@ Each row in the left list has a **Send** action. It emails the letter PDF, attac
 
 - **Email recipient**: "send the letter via email (info@…)" means sent **from** info@ **to** the requester's email address, with reply-to info@. No leadership CC.
 - **Logo**: the template's "LOGO" placeholder and its stray header image (another company's logo, left over from the template's source) are replaced by the GIC logo.
-- **Signatures**: the "Digital Signature" placeholders become a blank signature space above each signatory's name and title. Signature images can be configured later; they are out of scope until the client provides them.
+- **Signatures**: Thomas Hochberger's signature is drawn from `file_storage/Thomas_Signature.pdf` (page 1, cropped to the configured box in `recommendationLetterConfig.ts`). Jan A Hussing's space stays blank until his signature is provided. The files live in `file_storage` (uploads, not in git), so each server needs its own copy. A missing file leaves the space blank and logs a warning.
 - **Signatories**: the names and titles are fixed configuration, not editable per letter.
 - **Language**: English only. A German template is out of scope.
 - **Letter status**: the member does not see the letter status in their own tab in this feature.

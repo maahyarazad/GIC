@@ -95,8 +95,8 @@
       "id": 3
     },
     {
-      "label": "Boardroom",
-      "path": "/boardroom",
+      "label": "Events",
+      "path": "/events",
       "type": "link",
       "id": 4
     },

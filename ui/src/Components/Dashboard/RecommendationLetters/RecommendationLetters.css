@@ -1,0 +1,185 @@
+.recommendation-letters .rl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+@media (min-width: 992px) {
+  .recommendation-letters .rl-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+.recommendation-letters .rl-card {
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+}
+.recommendation-letters .rl-card h4 {
+  font-family: var(--se);
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--txt);
+  margin: 0 0 1.25rem;
+}
+.recommendation-letters .rl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 992px) {
+  .recommendation-letters .rl-list {
+    max-height: 75vh;
+    overflow-y: auto;
+  }
+}
+.recommendation-letters .rl-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--bdrs);
+  border-left: 3px solid transparent;
+  cursor: pointer;
+}
+.recommendation-letters .rl-row:hover {
+  background: rgba(200, 84, 26, 0.04);
+}
+.recommendation-letters .rl-row.is-selected {
+  border-left-color: var(--ora);
+  background: rgba(200, 84, 26, 0.08);
+}
+.recommendation-letters .rl-row__main {
+  min-width: 0;
+}
+.recommendation-letters .rl-row__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+.recommendation-letters .rl-row__company {
+  font-weight: 600;
+  color: var(--txt);
+  overflow-wrap: anywhere;
+}
+.recommendation-letters .rl-ref {
+  font-family: SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ora);
+}
+.recommendation-letters .rl-status {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+}
+.recommendation-letters .rl-status--new {
+  background: #6b7280;
+}
+.recommendation-letters .rl-status--draft {
+  background: #b7791f;
+}
+.recommendation-letters .rl-status--sent {
+  background: #2f855a;
+}
+.recommendation-letters .rl-status--failed {
+  background: #9b2c2c;
+}
+.recommendation-letters .rl-tag {
+  font-size: 0.72rem;
+  color: var(--mu);
+  border: 1px solid var(--bdrs);
+  border-radius: 999px;
+  padding: 0 0.45rem;
+  white-space: nowrap;
+}
+.recommendation-letters .rl-muted {
+  font-size: 0.85rem;
+  color: var(--mu);
+  overflow-wrap: anywhere;
+}
+.recommendation-letters .rl-empty {
+  color: var(--mu);
+  padding: 2rem 0;
+  text-align: center;
+}
+.recommendation-letters .rl-action {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--ora);
+  color: var(--ora);
+  padding: 0.3rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.recommendation-letters .rl-action:hover:not(:disabled) {
+  background: var(--ora);
+  color: #fff;
+}
+.recommendation-letters .rl-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.recommendation-letters .rl-editor__header {
+  margin-bottom: 1rem;
+}
+.recommendation-letters .rl-editor__header h4 {
+  margin-bottom: 0.25rem;
+}
+.recommendation-letters .rl-group-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ora);
+  margin: 1.25rem 0 0.75rem;
+}
+.recommendation-letters .rl-field {
+  margin-bottom: 0.9rem;
+}
+.recommendation-letters .rl-field label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--mu);
+  margin-bottom: 0.3rem;
+}
+.recommendation-letters .rl-field .required::after {
+  content: " *";
+  color: var(--ora);
+}
+.recommendation-letters .rl-row2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 1rem;
+}
+@media (min-width: 576px) {
+  .recommendation-letters .rl-row2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.recommendation-letters .rl-error {
+  font-size: 0.85rem;
+  color: var(--ora);
+  margin-top: 0.25rem;
+}
+.recommendation-letters .rl-hint {
+  font-size: 0.8rem;
+  color: #b7791f;
+  margin-top: 0.25rem;
+}
+.recommendation-letters .rl-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bdrs);
+}

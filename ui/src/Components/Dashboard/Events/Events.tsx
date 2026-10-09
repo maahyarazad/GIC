@@ -1,87 +1,84 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import './Events.css';
 import Loader from "@/Components/Loader/Loader";
-import {
-    MemberBoardMeetingDto,
-    BoardMeetingRequestStatus,
-} from '../../../../../src/types/boardMeeting.types';
-import { getBoardMeetings } from "@/api/boardMeetings";
-import { useBoardMeetingRequest } from "@/Hooks/useBoardMeetingRequest";
+import { MemberEventDto } from '../../../../../src/types/event.types';
+import { getEvents } from "@/api/events";
+import { useEventAttendance } from "@/Hooks/useEventAttendance";
 import EventCard, { EventCardBadgeTone } from "./EventCard";
-import MyRequests from "./MyRequests";
+import MyEvents from "./MyEvents";
 
-const BADGES: Record<BoardMeetingRequestStatus, { label: string; tone: EventCardBadgeTone }> = {
-    pending: { label: "Requested", tone: "pending" },
-    approved: { label: "Invited", tone: "approved" },
-    declined: { label: "Declined", tone: "declined" },
+const badgeFor = (event: MemberEventDto): { label: string; tone: EventCardBadgeTone } | undefined => {
+    if (event.myAttendance) return { label: "Attending", tone: "attending" };
+    if (!event.isPast && event.isFull) return { label: "Fully booked", tone: "full" };
+    return undefined;
 };
 
-// Splits meetings into upcoming (soonest first) and past (most recent first).
+// Splits events into upcoming (soonest first) and past (most recent first).
 // Pure function: lives outside the component so it isn't recreated per render.
-function splitMeetings(meetings: MemberBoardMeetingDto[]) {
-    const upcoming = meetings.filter((m) => !m.isPast).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-    const past = meetings.filter((m) => m.isPast).sort((a, b) => b.startsAt.localeCompare(a.startsAt));
+function splitEvents(events: MemberEventDto[]) {
+    const upcoming = events.filter((e) => !e.isPast).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+    const past = events.filter((e) => e.isPast).sort((a, b) => b.startsAt.localeCompare(a.startsAt));
     return { upcoming, past };
 }
 
 // --- Memoized list pieces ---
 
-interface MeetingItemProps {
-    meeting: MemberBoardMeetingDto;
+interface EventItemProps {
+    event: MemberEventDto;
     showUpcomingBadge: boolean;
-    onRequest?: (meeting: MemberBoardMeetingDto) => void;
+    onSelect?: (event: MemberEventDto) => void;
 }
 
 // Cards sit in the half-width left column, so two per row instead of 3–4.
 const EVENT_CARD_COLUMN = "col-12 col-sm-6 mb-3";
 
 // Wrapper keeps EventCard from re-rendering when unrelated parent state changes.
-const MeetingItem = memo(({ meeting, showUpcomingBadge, onRequest }: MeetingItemProps) => (
+const EventItem = memo(({ event, showUpcomingBadge, onSelect }: EventItemProps) => (
     <EventCard
         columnClassName={EVENT_CARD_COLUMN}
-        title={meeting.title}
-        date={meeting.date}
-        subtitle={`${meeting.venue} · ${meeting.time} GST`}
-        imageUrl={meeting.imageUrl}
-        badge={meeting.myRequest ? BADGES[meeting.myRequest.status] : undefined}
+        title={event.title}
+        date={event.date}
+        subtitle={`${event.venue} · ${event.time} GST`}
+        imageUrl={event.imageUrl}
+        badge={badgeFor(event)}
         showUpcomingBadge={showUpcomingBadge}
-        onClick={onRequest && (() => onRequest(meeting))}
+        onClick={onSelect && (() => onSelect(event))}
     />
 ));
-MeetingItem.displayName = "MeetingItem";
+EventItem.displayName = "EventItem";
 
-interface MeetingsGroupProps {
+interface EventsGroupProps {
     title: string;
     emptyText: string;
-    meetings: MemberBoardMeetingDto[];
+    events: MemberEventDto[];
     showUpcomingBadge: boolean;
-    onRequest?: (meeting: MemberBoardMeetingDto) => void;
+    onSelect?: (event: MemberEventDto) => void;
 }
 
-const MeetingsGroup = memo(({ title, emptyText, meetings, showUpcomingBadge, onRequest }: MeetingsGroupProps) => (
+const EventsGroup = memo(({ title, emptyText, events, showUpcomingBadge, onSelect }: EventsGroupProps) => (
     <section className="events-group">
         <h4 className="events-group__title">{title}</h4>
-        {meetings.length === 0 ? (
+        {events.length === 0 ? (
             <p className="events-group__empty">{emptyText}</p>
         ) : (
             <div className="products row mt-2">
-                {meetings.map((meeting) => (
-                    <MeetingItem
-                        key={meeting.id}
-                        meeting={meeting}
+                {events.map((event) => (
+                    <EventItem
+                        key={event.id}
+                        event={event}
                         showUpcomingBadge={showUpcomingBadge}
-                        onRequest={onRequest}
+                        onSelect={onSelect}
                     />
                 ))}
             </div>
         )}
     </section>
 ));
-MeetingsGroup.displayName = "MeetingsGroup";
+EventsGroup.displayName = "EventsGroup";
 
 // --- Component ---
 const Events: React.FC = () => {
-    const [meetings, setMeetings] = useState<MemberBoardMeetingDto[]>([]);
+    const [events, setEvents] = useState<MemberEventDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
 
@@ -95,10 +92,10 @@ const Events: React.FC = () => {
 
         try {
             setFailed(false);
-            setMeetings(await getBoardMeetings(controller.signal));
+            setEvents(await getEvents(controller.signal));
         } catch (err) {
             if (controller.signal.aborted) return;
-            console.error("Failed to fetch board meetings", err);
+            console.error("Failed to fetch events", err);
             setFailed(true);
         } finally {
             if (!controller.signal.aborted) setLoading(false);
@@ -110,10 +107,10 @@ const Events: React.FC = () => {
         return () => controllerRef.current?.abort();
     }, [load]);
 
-    const { request } = useBoardMeetingRequest(load);
+    const { confirm } = useEventAttendance(load);
 
-    const { upcoming, past } = useMemo(() => splitMeetings(meetings), [meetings]);
-    const requested = useMemo(() => meetings.filter((m) => m.myRequest), [meetings]);
+    const { upcoming, past } = useMemo(() => splitEvents(events), [events]);
+    const attending = useMemo(() => events.filter((e) => e.myAttendance), [events]);
 
     const retry = () => {
         setLoading(true);
@@ -126,31 +123,31 @@ const Events: React.FC = () => {
                 <h3>Events</h3>
             </div>
 
-            {/* Meetings on the left, My Requests on the right, top-aligned; stacked below lg. */}
+            {/* Events on the left, My Events on the right, top-aligned; stacked below lg. */}
             <div className="row align-items-start events-columns">
                 <div className="col-12 col-lg-6">
                     {loading ? (
                         <Loader />
                     ) : failed ? (
                         <p className="my-events-empty">
-                            Could not load board meetings.
+                            Could not load events.
                             <button type="button" className="my-events-action ms-2" onClick={retry}>
                                 Retry
                             </button>
                         </p>
                     ) : (
                         <>
-                            <MeetingsGroup
-                                title="Upcoming Meetings"
-                                emptyText="No upcoming meetings."
-                                meetings={upcoming}
+                            <EventsGroup
+                                title="Upcoming Events"
+                                emptyText="No upcoming events."
+                                events={upcoming}
                                 showUpcomingBadge
-                                onRequest={request}
+                                onSelect={confirm}
                             />
-                            <MeetingsGroup
-                                title="Past Meetings"
-                                emptyText="No past meetings."
-                                meetings={past}
+                            <EventsGroup
+                                title="Past Events"
+                                emptyText="No past events."
+                                events={past}
                                 showUpcomingBadge={false}
                             />
                         </>
@@ -158,7 +155,7 @@ const Events: React.FC = () => {
                 </div>
 
                 <div className="col-12 col-lg-6">
-                    {!loading && !failed && <MyRequests items={requested} />}
+                    {!loading && !failed && <MyEvents items={attending} />}
                 </div>
             </div>
         </div>

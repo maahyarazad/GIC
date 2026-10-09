@@ -16,7 +16,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   z-index: 0;
 }
 .card.event-card .card-bg-image--fallback {
@@ -114,14 +115,11 @@
   color: #ffffff;
   background: rgba(0, 0, 0, 0.7);
 }
-.card.event-card .event-status-badge--pending {
-  background: #b7791f;
-}
-.card.event-card .event-status-badge--approved {
+.card.event-card .event-status-badge--attending {
   background: #2f855a;
 }
-.card.event-card .event-status-badge--declined {
-  background: #9b2c2c;
+.card.event-card .event-status-badge--full {
+  background: #4a4a4a;
 }
 .card.event-card.event-card--static {
   cursor: default;
@@ -157,6 +155,4 @@
     transform: rotate(45deg) scale(1);
     opacity: 1;
   }
-}
-
-/*# sourceMappingURL=EventCard.css.map */
+}/*# sourceMappingURL=EventCard.css.map */

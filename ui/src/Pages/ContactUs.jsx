@@ -8,9 +8,25 @@ import { usePage } from "../Providers/PageContext";
 import { useToast } from "../Providers/ToastContext";
 
 import useIsMobile from '@/Hooks/useIsMobile'
+import { useLocation, useNavigate } from "react-router-dom";
 const ContactUs = ({ siteData }) => {
   const env = useContext(EnvContext);
   const { activePage } = usePage();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Other pages can send visitors here with `state: { focus: "<field id>" }` (e.g. the Events page).
+  // The page is display:none until active, and showPage scrolls to the top, so focus after both.
+  const focusField = location.state?.focus;
+  useEffect(() => {
+    if (!focusField || activePage !== "/contact") return;
+    const timer = setTimeout(() => {
+      document.getElementById(focusField)?.focus();
+      // Clear the flag so a reload or Back doesn't focus again.
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [focusField, activePage]);
   const { show } = useToast();
 const isMobile = useIsMobile();
   const server_endpoint = env.VITE_SERVER_API_URL;

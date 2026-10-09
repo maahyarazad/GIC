@@ -2732,6 +2732,48 @@
 					}
 				]
 			},
+			"EventInput": {
+				"description": "Create and update body (full replace). Date and time are Asia/Dubai.",
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string",
+						"description": "\"YYYY-MM-DD\""
+					},
+					"time": {
+						"type": "string",
+						"description": "\"HH:mm\" (24h)"
+					},
+					"venue": {
+						"type": "string"
+					},
+					"location": {
+						"type": "string"
+					},
+					"imageUrl": {
+						"type": "string",
+						"nullable": true
+					},
+					"capacity": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"title",
+					"date",
+					"time",
+					"venue",
+					"location"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"EmailTemplate": {
 				"properties": {
 					"_id": {
@@ -3370,48 +3412,6 @@
 					"purpose",
 					"neededBy",
 					"language"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"BoardMeetingInput": {
-				"description": "Create and update body (full replace). Date and time are Asia/Dubai.",
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"date": {
-						"type": "string",
-						"description": "\"YYYY-MM-DD\""
-					},
-					"time": {
-						"type": "string",
-						"description": "\"HH:mm\" (24h)"
-					},
-					"venue": {
-						"type": "string"
-					},
-					"location": {
-						"type": "string"
-					},
-					"imageUrl": {
-						"type": "string",
-						"nullable": true
-					},
-					"capacity": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"title",
-					"date",
-					"time",
-					"venue",
-					"location"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -5150,6 +5150,255 @@
 				]
 			}
 		},
+		"/api/v1/admin/events": {
+			"get": {
+				"operationId": "ListEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateEvent",
+				"responses": {
+					"201": {
+						"description": "Event created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EventInput"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/admin/events/{id}": {
+			"put": {
+				"operationId": "UpdateEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EventInput"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/admin/event-attendances": {
+			"get": {
+				"operationId": "ListAttendances",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "eventId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/admin/event-attendances/{id}/resend-confirmation": {
+			"post": {
+				"operationId": "ResendConfirmation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/events/public": {
+			"get": {
+				"operationId": "GetPublicEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/events": {
+			"get": {
+				"operationId": "GetEvents",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/events/{id}/attendance": {
+			"post": {
+				"operationId": "ConfirmAttendance",
+				"responses": {
+					"201": {
+						"description": "Your attendance is confirmed",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/email-templates": {
 			"post": {
 				"operationId": "CreateTemplate",
@@ -5849,313 +6098,6 @@
 				},
 				"tags": [
 					"Business Letters"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/admin/board-meetings": {
-			"get": {
-				"operationId": "ListMeetings",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateMeeting",
-				"responses": {
-					"201": {
-						"description": "Meeting created",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/BoardMeetingInput"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/api/v1/admin/board-meetings/{id}": {
-			"put": {
-				"operationId": "UpdateMeeting",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/BoardMeetingInput"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "DeleteMeeting",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/admin/board-meeting-requests": {
-			"get": {
-				"operationId": "ListRequests",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "status",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "meetingId",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/admin/board-meeting-requests/{id}/approve": {
-			"post": {
-				"operationId": "ApproveRequest",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/admin/board-meeting-requests/{id}/decline": {
-			"post": {
-				"operationId": "DeclineRequest",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/admin/board-meeting-requests/{id}/resend-invitation": {
-			"post": {
-				"operationId": "ResendInvitation",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings Admin"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/api/v1/board-meetings/public": {
-			"get": {
-				"operationId": "GetPublicBoardMeetings",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/board-meetings": {
-			"get": {
-				"operationId": "GetBoardMeetings",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/api/v1/board-meetings/{id}/requests": {
-			"post": {
-				"operationId": "CreateJoinRequest",
-				"responses": {
-					"201": {
-						"description": "Your request has been sent to the board meeting",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Board Meetings"
 				],
 				"security": [],
 				"parameters": [

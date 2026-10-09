@@ -22,6 +22,12 @@ import { LogController } from './../controllers/log.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { FileController } from './../controllers/file.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EventAdminController } from './../controllers/eventAdmin.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EventAttendanceAdminController } from './../controllers/eventAdmin.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EventController } from './../controllers/event.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { EmailTemplateController } from './../controllers/email.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ContinentController } from './../controllers/continent.controller';
@@ -31,12 +37,6 @@ import { ContactUsController } from './../controllers/contactus.controller';
 import { ClientController } from './../controllers/client.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { BusinessLetterController } from './../controllers/businessLetter.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { BoardMeetingAdminController } from './../controllers/boardMeetingAdmin.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { BoardMeetingRequestAdminController } from './../controllers/boardMeetingAdmin.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { BoardMeetingController } from './../controllers/boardMeeting.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { BlogController } from './../controllers/blog.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -469,6 +469,21 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse__files-UploadedFileDoc-Array--total-number__"},{"ref":"ErrorResponse"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EventInput": {
+        "dataType": "refObject",
+        "properties": {
+            "title": {"dataType":"string","required":true},
+            "description": {"dataType":"string"},
+            "date": {"dataType":"string","required":true},
+            "time": {"dataType":"string","required":true},
+            "venue": {"dataType":"string","required":true},
+            "location": {"dataType":"string","required":true},
+            "imageUrl": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "capacity": {"dataType":"double"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EmailTemplate": {
         "dataType": "refObject",
         "properties": {
@@ -642,21 +657,6 @@ const models: TsoaRoute.Models = {
             "purpose": {"dataType":"string","required":true},
             "neededBy": {"dataType":"string","required":true},
             "language": {"ref":"BusinessLetterLanguage","required":true},
-        },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "BoardMeetingInput": {
-        "dataType": "refObject",
-        "properties": {
-            "title": {"dataType":"string","required":true},
-            "description": {"dataType":"string"},
-            "date": {"dataType":"string","required":true},
-            "time": {"dataType":"string","required":true},
-            "venue": {"dataType":"string","required":true},
-            "location": {"dataType":"string","required":true},
-            "imageUrl": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
-            "capacity": {"dataType":"double"},
         },
         "additionalProperties": true,
     },
@@ -1875,6 +1875,279 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAdminController_listEvents: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/v1/admin/events',
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController.prototype.listEvents)),
+
+            async function EventAdminController_listEvents(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAdminController_listEvents, request, response });
+
+                const controller = new EventAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'listEvents',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAdminController_createEvent: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"EventInput"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/admin/events',
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController.prototype.createEvent)),
+
+            async function EventAdminController_createEvent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAdminController_createEvent, request, response });
+
+                const controller = new EventAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'createEvent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAdminController_updateEvent: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"EventInput"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.put('/api/v1/admin/events/:id',
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController.prototype.updateEvent)),
+
+            async function EventAdminController_updateEvent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAdminController_updateEvent, request, response });
+
+                const controller = new EventAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'updateEvent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAdminController_deleteEvent: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/api/v1/admin/events/:id',
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAdminController.prototype.deleteEvent)),
+
+            async function EventAdminController_deleteEvent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAdminController_deleteEvent, request, response });
+
+                const controller = new EventAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'deleteEvent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAttendanceAdminController_listAttendances: Record<string, TsoaRoute.ParameterSchema> = {
+                status: {"in":"query","name":"status","dataType":"string"},
+                eventId: {"in":"query","name":"eventId","dataType":"string"},
+        };
+        app.get('/api/v1/admin/event-attendances',
+            ...(fetchMiddlewares<RequestHandler>(EventAttendanceAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAttendanceAdminController.prototype.listAttendances)),
+
+            async function EventAttendanceAdminController_listAttendances(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAttendanceAdminController_listAttendances, request, response });
+
+                const controller = new EventAttendanceAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'listAttendances',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventAttendanceAdminController_resendConfirmation: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.post('/api/v1/admin/event-attendances/:id/resend-confirmation',
+            ...(fetchMiddlewares<RequestHandler>(EventAttendanceAdminController)),
+            ...(fetchMiddlewares<RequestHandler>(EventAttendanceAdminController.prototype.resendConfirmation)),
+
+            async function EventAttendanceAdminController_resendConfirmation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventAttendanceAdminController_resendConfirmation, request, response });
+
+                const controller = new EventAttendanceAdminController();
+
+              await templateService.apiHandler({
+                methodName: 'resendConfirmation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventController_getPublicEvents: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/api/v1/events/public',
+            ...(fetchMiddlewares<RequestHandler>(EventController)),
+            ...(fetchMiddlewares<RequestHandler>(EventController.prototype.getPublicEvents)),
+
+            async function EventController_getPublicEvents(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventController_getPublicEvents, request, response });
+
+                const controller = new EventController();
+
+              await templateService.apiHandler({
+                methodName: 'getPublicEvents',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventController_getEvents: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/api/v1/events',
+            ...(fetchMiddlewares<RequestHandler>(EventController)),
+            ...(fetchMiddlewares<RequestHandler>(EventController.prototype.getEvents)),
+
+            async function EventController_getEvents(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventController_getEvents, request, response });
+
+                const controller = new EventController();
+
+              await templateService.apiHandler({
+                methodName: 'getEvents',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEventController_confirmAttendance: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/events/:id/attendance',
+            ...(fetchMiddlewares<RequestHandler>(EventController)),
+            ...(fetchMiddlewares<RequestHandler>(EventController.prototype.confirmAttendance)),
+
+            async function EventController_confirmAttendance(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEventController_confirmAttendance, request, response });
+
+                const controller = new EventController();
+
+              await templateService.apiHandler({
+                methodName: 'confirmAttendance',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsEmailTemplateController_createTemplate: Record<string, TsoaRoute.ParameterSchema> = {
                 body: {"in":"body","name":"body","required":true,"ref":"CreateEmailTemplateRequest"},
         };
@@ -2510,341 +2783,6 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingAdminController_listMeetings: Record<string, TsoaRoute.ParameterSchema> = {
-        };
-        app.get('/api/v1/admin/board-meetings',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController.prototype.listMeetings)),
-
-            async function BoardMeetingAdminController_listMeetings(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingAdminController_listMeetings, request, response });
-
-                const controller = new BoardMeetingAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'listMeetings',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingAdminController_createMeeting: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"ref":"BoardMeetingInput"},
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.post('/api/v1/admin/board-meetings',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController.prototype.createMeeting)),
-
-            async function BoardMeetingAdminController_createMeeting(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingAdminController_createMeeting, request, response });
-
-                const controller = new BoardMeetingAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'createMeeting',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 201,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingAdminController_updateMeeting: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"BoardMeetingInput"},
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.put('/api/v1/admin/board-meetings/:id',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController.prototype.updateMeeting)),
-
-            async function BoardMeetingAdminController_updateMeeting(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingAdminController_updateMeeting, request, response });
-
-                const controller = new BoardMeetingAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'updateMeeting',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingAdminController_deleteMeeting: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.delete('/api/v1/admin/board-meetings/:id',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingAdminController.prototype.deleteMeeting)),
-
-            async function BoardMeetingAdminController_deleteMeeting(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingAdminController_deleteMeeting, request, response });
-
-                const controller = new BoardMeetingAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'deleteMeeting',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingRequestAdminController_listRequests: Record<string, TsoaRoute.ParameterSchema> = {
-                status: {"in":"query","name":"status","dataType":"string"},
-                meetingId: {"in":"query","name":"meetingId","dataType":"string"},
-        };
-        app.get('/api/v1/admin/board-meeting-requests',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController.prototype.listRequests)),
-
-            async function BoardMeetingRequestAdminController_listRequests(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingRequestAdminController_listRequests, request, response });
-
-                const controller = new BoardMeetingRequestAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'listRequests',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingRequestAdminController_approveRequest: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.post('/api/v1/admin/board-meeting-requests/:id/approve',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController.prototype.approveRequest)),
-
-            async function BoardMeetingRequestAdminController_approveRequest(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingRequestAdminController_approveRequest, request, response });
-
-                const controller = new BoardMeetingRequestAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'approveRequest',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingRequestAdminController_declineRequest: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.post('/api/v1/admin/board-meeting-requests/:id/decline',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController.prototype.declineRequest)),
-
-            async function BoardMeetingRequestAdminController_declineRequest(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingRequestAdminController_declineRequest, request, response });
-
-                const controller = new BoardMeetingRequestAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'declineRequest',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingRequestAdminController_resendInvitation: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-        };
-        app.post('/api/v1/admin/board-meeting-requests/:id/resend-invitation',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingRequestAdminController.prototype.resendInvitation)),
-
-            async function BoardMeetingRequestAdminController_resendInvitation(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingRequestAdminController_resendInvitation, request, response });
-
-                const controller = new BoardMeetingRequestAdminController();
-
-              await templateService.apiHandler({
-                methodName: 'resendInvitation',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingController_getPublicBoardMeetings: Record<string, TsoaRoute.ParameterSchema> = {
-        };
-        app.get('/api/v1/board-meetings/public',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController.prototype.getPublicBoardMeetings)),
-
-            async function BoardMeetingController_getPublicBoardMeetings(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingController_getPublicBoardMeetings, request, response });
-
-                const controller = new BoardMeetingController();
-
-              await templateService.apiHandler({
-                methodName: 'getPublicBoardMeetings',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingController_getBoardMeetings: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.get('/api/v1/board-meetings',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController.prototype.getBoardMeetings)),
-
-            async function BoardMeetingController_getBoardMeetings(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingController_getBoardMeetings, request, response });
-
-                const controller = new BoardMeetingController();
-
-              await templateService.apiHandler({
-                methodName: 'getBoardMeetings',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsBoardMeetingController_createJoinRequest: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-        };
-        app.post('/api/v1/board-meetings/:id/requests',
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController)),
-            ...(fetchMiddlewares<RequestHandler>(BoardMeetingController.prototype.createJoinRequest)),
-
-            async function BoardMeetingController_createJoinRequest(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsBoardMeetingController_createJoinRequest, request, response });
-
-                const controller = new BoardMeetingController();
-
-              await templateService.apiHandler({
-                methodName: 'createJoinRequest',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 201,
               });
             } catch (err) {
                 return next(err);

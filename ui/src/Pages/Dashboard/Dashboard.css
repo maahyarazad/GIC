@@ -1,7 +1,7 @@
 .dashboard {
   display: flex;
   min-height: 92dvh;
-  overflow-x: scroll;
+  overflow-x: clip;
   background-color: var(--bg);
 }
 .dashboard .nav {
@@ -61,10 +61,15 @@
   z-index: 999;
 }
 
-/* Desktop: sidebar always visible */
+/* Desktop: sidebar always visible, below the fixed 70px header, scrolling on its own */
 @media (min-width: 768px) {
   .sidebar {
-    position: relative;
+    position: sticky;
+    top: 70px;
+    margin-top: 70px;
+    align-self: flex-start;
+    height: calc(100dvh - 70px);
+    overflow-y: auto;
     transform: translateX(0);
   }
   .close-btn,
@@ -85,7 +90,7 @@
   }
   .sidebar.open {
     transform: translateX(0);
-    overflow: scroll;
+    overflow-y: auto;
   }
   .close-btn {
     background: transparent;

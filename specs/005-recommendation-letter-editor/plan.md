@@ -91,7 +91,7 @@ package.json                                    # EDIT  build += "&& npm run cop
 
 src/
 ├── assets/
-│   └── gic-logo.png                            # NEW   copy of ui/public/gic-logo-main.png (shipped via copy-assets)
+│   └── gic-logo.png                            # NEW   copy of ui/public/gic-logo-main-light.png (shipped via copy-assets)
 ├── email_templates/
 │   └── recommendation_letter_delivery.html     # NEW   GIC themed delivery email (same layout as PR #28 files)
 ├── config/

@@ -36,7 +36,7 @@ description: "Task list for Recommendation Letter Editor"
 ## Phase 1: Setup (Shared Infrastructure)
 
 - [X] T001 Ship runtime assets in `dist/` (research R11):
-  - Copy the logo: `mkdir -p src/assets && cp ui/public/gic-logo-main.png src/assets/gic-logo.png`.
+  - Copy the logo: `mkdir -p src/assets && cp ui/public/gic-logo-main-light.png src/assets/gic-logo.png`.
   - In `package.json`, add the script `"copy-assets": "mkdir -p dist/email_templates dist/assets && cp -R src/email_templates/. dist/email_templates/ && cp -R src/assets/. dist/assets/"`, and change `"build"` to `"rm -rf dist && npm run tsoa:routes && npm run tsoa:spec && tsc && npm run copy-assets"`.
   - Run `npm run build` and confirm `dist/assets/gic-logo.png` and `dist/email_templates/event_attendance_confirmation.html` exist.
 - [X] T002 [P] Create `src/types/recommendationLetter.types.ts` with the contract's DTO block exactly: `LetterStatus`, `LetterFields`, `LetterRequestListItem` and `LetterRequestDetail`. Also export:

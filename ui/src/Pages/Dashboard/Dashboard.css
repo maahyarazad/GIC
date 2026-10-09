@@ -10,7 +10,6 @@
 .dashboard .nav ul {
   list-style: none;
   padding: 0;
-  padding-top: 80px;
   margin: 0;
   text-decoration-line: none;
   position: relative;
@@ -86,6 +85,7 @@
   }
   .sidebar.open {
     transform: translateX(0);
+    overflow: scroll;
   }
   .close-btn {
     background: transparent;
@@ -240,6 +240,4 @@
 
 .dashboard .sidebar li[role=button]:focus-visible {
   outline-offset: -2px;
-}
-
-/*# sourceMappingURL=Dashboard.css.map */
+}/*# sourceMappingURL=Dashboard.css.map */

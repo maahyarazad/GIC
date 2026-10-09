@@ -67,7 +67,7 @@ const menuTitles: Record<MenuItem, string> = {
   member_profiles: "Member Profiles",
   events: "Events",
   manage_events: "Manage Events",
-  business_letter: "Request a Business Letter",
+  business_letter: "Request for letter of recommendation",
   blog: "Blog",
   newsletter: "Newsletter",
   sitedata: "Website Data",

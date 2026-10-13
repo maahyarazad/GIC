@@ -78,6 +78,65 @@
     gap: 16px;
 }
 
+// Industry / Sector multi-select: selected sectors show as removable tags
+// inside a box styled like a field, with a dropdown to add more.
+.co-multiselect {
+    @extend %co-field-base;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+
+    &__select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        flex: 1 1 160px;
+        min-width: 160px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--txt);
+        font-family: var(--se);
+        font-size: 15px;
+        font-weight: 700;
+        padding: 4px 0;
+        cursor: pointer;
+    }
+}
+
+.co-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ora);
+    color: var(--bg);
+    font-family: var(--se);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    padding: 4px 6px 4px 10px;
+
+    &__remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        color: var(--bg);
+        font-size: 16px;
+        line-height: 1;
+        padding: 0 2px;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.75;
+        }
+    }
+}
+
 .co-upload {
     @extend %co-field-base;
     display: flex;

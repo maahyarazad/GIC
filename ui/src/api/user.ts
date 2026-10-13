@@ -114,11 +114,11 @@ export async function getPDFBlob(fileId: string): Promise<PDFResponse> {
  */
 export async function checkNewsLetter(email: string) {
   try {
-    const response = await axiosInstance.get(`/newsletter/email/${email}`);
+    const response = await axiosInstance.get(`/newsletter/email/${encodeURIComponent(email)}`);
 
     return response.data;
   } catch (error) {
-    console.error("Upload user photo failed", error);
+    console.error("Check newsletter failed", error);
     throw error;
   }
 }
@@ -133,11 +133,15 @@ export async function upsertNewsletterSubscriber(
   body: Partial<NewsletterSubscriber>
 ) {
   try {
-    const response = await axiosInstance.put(`/newsletter/${email}`, body);
+    // Upsert by email (the /newsletter/:id route expects a Mongo id, not an email).
+    const response = await axiosInstance.put(
+      `/newsletter/email/${encodeURIComponent(email)}`,
+      body
+    );
 
     return response.data;
   } catch (error) {
-    console.error("Upload user photo failed", error);
+    console.error("Update newsletter subscription failed", error);
     throw error;
   }
 }

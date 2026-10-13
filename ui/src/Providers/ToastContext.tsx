@@ -24,10 +24,19 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const show = useCallback((options: ToastOptions) => {
 
         const id = Date.now();
+        // Guard against non-string messages (e.g. a thrown ApiError object):
+        // rendering an object as a React child crashes the whole app.
+        const raw = options.message as unknown;
+        const message =
+            typeof raw === "string"
+                ? raw
+                : raw && typeof raw === "object" && typeof (raw as any).message === "string"
+                    ? (raw as any).message
+                    : String(raw ?? "Something went wrong");
         const newToast: ToastItem = {
             id,
             type: options.type || "info",
-            message: options.message,
+            message,
             duration: options.duration || 5000,
 
         };
@@ -51,7 +60,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                         className={`app-toast app-toast-${toast.type}`}
                         drag="x"
                         dragConstraints={{ left: 0, right: 0 }}
-                        onDragEnd={(e, info) => {
+                        onDragEnd={(_e, info) => {
                             if (Math.abs(info.offset.x) > 120) {
                                 setToasts(prev => prev.filter(t => t.id !== toast.id));
                             }

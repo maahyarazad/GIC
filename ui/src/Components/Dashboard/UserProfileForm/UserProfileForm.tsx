@@ -171,9 +171,9 @@ export default function UserProfileForm({ initialProfile }: any) {
                 show({ type: "success", message: res.message });
                 fetchNewsletterStatus();
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            show({ type: "error", message: err });
+            show({ type: "error", message: err?.message || "Failed to update subscription" });
         }
     };
 

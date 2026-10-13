@@ -113,6 +113,50 @@ export class NewsletterController extends Controller {
     }
   }
 
+  @Get("email/{email}")
+  public async getSubscriberByEmail(@Path() email: string): Promise<ApiResponse<any>> {
+    try {
+      const normalized = email.trim().toLowerCase();
+      //@ts-ignore
+      const subscriber = await NewsletterSubscriberModel.findOne({ email: normalized }).lean();
+      // Never-subscribed is not an error: return null so the UI can render an "off" toggle.
+      return createSuccessResponse(
+        subscriber ? mapNewsletterSubscriber(subscriber) : null,
+        "Subscriber fetched"
+      );
+    } catch (err: any) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch subscriber", "FETCH_ERROR", err);
+    }
+  }
+
+  @Put("email/{email}")
+  public async upsertSubscriberByEmail(
+    @Path() email: string,
+    @Body() body: { active?: boolean }
+  ): Promise<ApiResponse<any>> {
+    try {
+      const normalized = email.trim().toLowerCase();
+      const subscriber = await NewsletterSubscriberModel.findOneAndUpdate(
+        //@ts-ignore
+        { email: normalized },
+        {
+          $set: { ...(body.active !== undefined ? { active: body.active } : {}), updatedAt: new Date() },
+          $setOnInsert: { email: normalized },
+        },
+        { new: true, upsert: true, lean: true, setDefaultsOnInsert: true }
+      );
+
+      return createSuccessResponse(
+        mapNewsletterSubscriber(subscriber),
+        "Subscription updated successfully"
+      );
+    } catch (err: any) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to update subscription", "UPDATE_ERROR", err);
+    }
+  }
+
   @Put("{id}")
   public async updateSubscriber(@Path() id: string, @Body() body: { active?: boolean }): Promise<ApiResponse<any>> {
     try {

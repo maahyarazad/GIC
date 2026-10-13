@@ -5,6 +5,7 @@ import { EnvContext } from "@/EnvContext.jsx";
 import Loader from "@/Components/Loader/Loader";
 import { useToast } from "@/Providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
+import ModalDialog from "@/Components/Generic/Dialog/Dialog";
 import { apiErrorMessage, closeTender, createTender, listTenders } from "@/api/tenders";
 import type { TenderListItem } from "../../../../../src/types/tender.types";
 import { INDUSTRY_SECTORS } from "../../../../../src/config/industrySectors";
@@ -29,7 +30,9 @@ const TenderBoard: React.FC = () => {
     const isSectorGatedRole = SECTOR_GATED_ROLES.includes(role);
     const selectableSectors = isSectorGatedRole ? INDUSTRY_SECTORS : ownSectors;
 
-    const [activeSector, setActiveSector] = useState<string>(selectableSectors[0] ?? "");
+    const [selectedSectors, setSelectedSectors] = useState<string[]>(
+        selectableSectors[0] ? [selectableSectors[0]] : []
+    );
     const [items, setItems] = useState<TenderListItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState(EMPTY_FORM);
@@ -68,20 +71,24 @@ const TenderBoard: React.FC = () => {
     };
 
     const load = useCallback(async () => {
-        if (!activeSector) {
+        if (selectedSectors.length === 0) {
             setItems([]);
             setLoading(false);
             return;
         }
         setLoading(true);
         try {
-            setItems(await listTenders(activeSector));
+            // The API filters by a single sector, so fetch each selected sector and merge.
+            const results = await Promise.all(selectedSectors.map((sector) => listTenders(sector)));
+            const byId = new Map(results.flat().map((tender) => [tender.id, tender]));
+            const merged = Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+            setItems(merged);
         } catch (error) {
             show({ type: "error", message: apiErrorMessage(error, "Failed to load tenders") });
         } finally {
             setLoading(false);
         }
-    }, [activeSector, show]);
+    }, [selectedSectors, show]);
 
     useEffect(() => {
         load();
@@ -106,8 +113,8 @@ const TenderBoard: React.FC = () => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleCreate = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleCreate = async (e?: React.FormEvent) => {
+        e?.preventDefault();
         setFormError(null);
 
         if (!form.sector || !form.publisher || !form.announcement || !form.publishedAt || !form.deadline) {
@@ -119,7 +126,7 @@ const TenderBoard: React.FC = () => {
         try {
             const created = await createTender(form, file);
             show({ type: "success", message: "Tender created" });
-            if (created.sector === activeSector) {
+            if (selectedSectors.includes(created.sector)) {
                 setItems((current) => [created, ...current]);
             }
             resetAndClose();
@@ -162,104 +169,119 @@ const TenderBoard: React.FC = () => {
             )}
 
             <div className="tender-filter">
-                <div className="tender-filter__scroll">
-                    {selectableSectors.map((sector) => (
-                        <button
-                            key={sector}
-                            type="button"
-                            className={sector === activeSector ? "is-active" : ""}
-                            onClick={() => setActiveSector(sector)}
-                        >
+                <div className="tender-multiselect">
+                    {selectedSectors.map((sector) => (
+                        <span key={sector} className="tender-tag">
                             {sector}
-                        </button>
+                            <button
+                                type="button"
+                                className="tender-tag__remove"
+                                aria-label={`Remove ${sector}`}
+                                onClick={() =>
+                                    setSelectedSectors((current) => current.filter((s) => s !== sector))
+                                }
+                            >
+                                &times;
+                            </button>
+                        </span>
                     ))}
+                    <select
+                        className="tender-multiselect__select"
+                        value=""
+                        onChange={(event) => {
+                            const sector = event.target.value;
+                            if (sector && !selectedSectors.includes(sector)) {
+                                setSelectedSectors((current) => [...current, sector]);
+                            }
+                        }}
+                    >
+                        <option value="">
+                            {selectedSectors.length ? "Add a sector…" : "Select a sector…"}
+                        </option>
+                        {selectableSectors
+                            .filter((sector) => !selectedSectors.includes(sector))
+                            .map((sector) => (
+                                <option key={sector} value={sector}>
+                                    {sector}
+                                </option>
+                            ))}
+                    </select>
                 </div>
             </div>
 
             {modalOpen && (
-                <div className="modal-ov open tender-modal" onClick={requestClose}>
-                    <div className="modal-box tender-modal__box" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-close" onClick={requestClose} role="button" aria-label="Close">
-                            &#x2715;
-                        </div>
-                        <div className="modal-bd">
-                            <div className="modal-st">Create Tender</div>
-                            <form className="tender-create" onSubmit={handleCreate}>
-                                {formError && <p className="tender-create__error">{formError}</p>}
-                                <div className="tender-create__row">
-                                    <select name="sector" value={form.sector} onChange={handleFormChange} required>
-                                        <option value="">Select sector…</option>
-                                        {selectableSectors.map((sector) => (
-                                            <option key={sector} value={sector}>
-                                                {sector}
-                                            </option>
-                                        ))}
-                                    </select>
+                <ModalDialog
+                    title="Create Tender"
+                    content={
+                        <form className="tender-create" onSubmit={handleCreate}>
+                            {formError && <p className="tender-create__error">{formError}</p>}
+                            <div className="tender-create__row">
+                                <select name="sector" value={form.sector} onChange={handleFormChange} required>
+                                    <option value="">Select sector…</option>
+                                    {selectableSectors.map((sector) => (
+                                        <option key={sector} value={sector}>
+                                            {sector}
+                                        </option>
+                                    ))}
+                                </select>
+                                <input
+                                    name="publisher"
+                                    placeholder="Who is publishing the tender"
+                                    value={form.publisher}
+                                    onChange={handleFormChange}
+                                    required
+                                />
+                            </div>
+                            <div className="tender-create__row">
+                                <textarea
+                                    name="announcement"
+                                    placeholder="What is being publicly announced"
+                                    value={form.announcement}
+                                    onChange={handleFormChange}
+                                    required
+                                />
+                            </div>
+                            <div className="tender-create__row">
+                                <label>
+                                    Published on
                                     <input
-                                        name="publisher"
-                                        placeholder="Who is publishing the tender"
-                                        value={form.publisher}
+                                        type="date"
+                                        name="publishedAt"
+                                        value={form.publishedAt}
                                         onChange={handleFormChange}
                                         required
                                     />
-                                </div>
-                                <div className="tender-create__row">
-                                    <textarea
-                                        name="announcement"
-                                        placeholder="What is being publicly announced"
-                                        value={form.announcement}
+                                </label>
+                                <label>
+                                    Submission deadline
+                                    <input
+                                        type="date"
+                                        name="deadline"
+                                        value={form.deadline}
                                         onChange={handleFormChange}
                                         required
                                     />
-                                </div>
-                                <div className="tender-create__row">
-                                    <label>
-                                        Published on
-                                        <input
-                                            type="date"
-                                            name="publishedAt"
-                                            value={form.publishedAt}
-                                            onChange={handleFormChange}
-                                            required
-                                        />
-                                    </label>
-                                    <label>
-                                        Submission deadline
-                                        <input
-                                            type="date"
-                                            name="deadline"
-                                            value={form.deadline}
-                                            onChange={handleFormChange}
-                                            required
-                                        />
-                                    </label>
-                                </div>
-                                <div className="tender-create__row">
-                                    <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-                                </div>
-                                <div className="tender-create__actions">
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary-contrast-inverse"
-                                        onClick={requestClose}
-                                        disabled={submitting}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button type="submit" className="btn btn-primary-contrast" disabled={submitting}>
-                                        {submitting ? "Creating…" : "Create Tender"}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                                </label>
+                            </div>
+                            <div className="tender-create__row">
+                                <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+                            </div>
+                        </form>
+                    }
+                    confirmText={submitting ? "Creating…" : "Create Tender"}
+                    disabled={submitting}
+                    cancelText="Cancel"
+                    onConfirm={() => handleCreate()}
+                    onCancel={requestClose}
+                />
             )}
 
             {loading ? (
                 <Loader />
+            ) : selectedSectors.length === 0 ? (
+                <p className="tender-empty">Select a sector above to view tenders.</p>
             ) : items.length === 0 ? (
-                <p className="tender-empty">No tenders yet for this sector.</p>
+                <p className="tender-empty">No tenders yet for the selected sector(s).</p>
             ) : (
                 <ul className="tender-list">
                     {items.map((item) => (

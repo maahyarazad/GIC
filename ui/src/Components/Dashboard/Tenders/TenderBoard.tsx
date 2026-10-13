@@ -264,9 +264,9 @@ const TenderBoard: React.FC = () => {
                                     />
                                 </label>
                             </div>
-                            <div className="tender-create__row">
+                            {/* <div className="tender-create__row">
                                 <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-                            </div>
+                            </div> */}
                         </form>
                     }
                     confirmText={submitting ? "Creating…" : "Create Tender"}

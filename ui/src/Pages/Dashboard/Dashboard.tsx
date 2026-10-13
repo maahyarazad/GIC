@@ -15,11 +15,11 @@ import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscrib
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
 import { usePage } from "@/Providers/PageContext";
-import UnderDevelopment from "@/Pages/UnderDevelopment/UnderDevelopment";
 import Events from "@/Components/Dashboard/Events/Events";
 import BusinessLetter from "@/Components/Dashboard/BusinessLetter/BusinessLetter";
 import ManageEvents from "@/Components/Dashboard/ManageEvents/ManageEvents";
 import RecommendationLetters from "@/Components/Dashboard/RecommendationLetters/RecommendationLetters";
+import Tenders from "@/Components/Dashboard/Tenders/Tenders";
 import Blog from "@/Components/Dashboard/Blog/Blog";
 import Newsletter from "@/Components/Dashboard/Newsletter/Newsletter";
 import type { RootState } from "../../store";
@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
     sub_region_management: <Continent />,
     country_intelligence: <EconomicInsights />,
     compare_countries: <CompareCountries />,
-    tenders: <UnderDevelopment withLockOverlay={false} />,
+    tenders: <Tenders />,
     events: <Events />,
     manage_events: <ManageEvents />,
     recommendation_letters: <RecommendationLetters />,

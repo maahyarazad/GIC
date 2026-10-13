@@ -66,3 +66,14 @@ export const RECOMMENDATION_LETTER_DELIVERY: EmailTemplateDefinition = {
     "If you have any questions, simply reply to this email.",
   variables: ["REQUESTER_NAME", "COMPANY_NAME", "REFERENCE", "PROJECT_NAME", "LETTER_DATE"],
 };
+
+export const TENDER_PUBLISHED_NOTIFICATION: EmailTemplateDefinition = {
+  name: "tender_published_notification",
+  subject: "New tender in {{SECTOR_NAME}}",
+  htmlFile: "tender_published_notification.html",
+  text:
+    "A new tender has been published in {{SECTOR_NAME}}, one of your assigned industry sectors. " +
+    "Publisher: {{PUBLISHER}}. Announcement: {{ANNOUNCEMENT}}. Submission deadline: {{DEADLINE}}. " +
+    "View it in your Tenders tab: {{DASHBOARD_URL}}",
+  variables: ["SECTOR_NAME", "PUBLISHER", "ANNOUNCEMENT", "DEADLINE", "DASHBOARD_URL"],
+};

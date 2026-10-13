@@ -23,6 +23,7 @@
 | 12 | Member Roles & Permissions | Different dashboard access for Admin, Procurement and Member | |
 | 12a | Request a Business Letter | Members (all roles) request a business letter, see their past requests and download a PDF copy; GIC leadership is notified by email | |
 | 12b | Recommendation Letters | Admins edit, preview, download (PDF) and email letters of recommendation in Dashboard → Recommendation Letters | |
+| 12c | Industry Sectors & Tenders | Members permanently pick 3 of 10 industry sectors (at sign-up, or via a one-time wizard for existing members) and publish/view tenders scoped to their sectors in Dashboard → Tenders; sector-matched members are notified by email | |
 
 ## 3. Administration Dashboard
 

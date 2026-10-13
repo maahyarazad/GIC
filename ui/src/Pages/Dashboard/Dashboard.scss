@@ -262,3 +262,9 @@ $ora-rgb: 200, 84, 26;
 .dashboard .sidebar li[role="button"]:focus-visible {
   outline-offset: -2px;
 }
+
+// Admin-only: tighten the vertical padding on the primary action button.
+.dashboard .btn-primary-contrast {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}

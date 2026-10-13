@@ -40,14 +40,16 @@ export async function getLogs(id: string) {
  */
 
 export async function updateUserProfile(
-  id: string,
+  _id: string,
   updateData: UpdateUserRequest
 ) {
   try {
-    const response = await axiosInstance.put(
-      `/users/user-profile/${id}`,
-      updateData
-    );
+    // Members update their own profile via the self endpoint (derives the user
+    // from the auth token); name and profile fields only, never role/authorize.
+    const response = await axiosInstance.put("/users/me/profile", {
+      name: updateData.name,
+      profile: updateData.profile,
+    });
     return response.data;
   } catch (error) {
     console.error("Update user failed", error);
@@ -155,6 +157,20 @@ export async function getUserData(id: string) {
     console.error("Upload user photo failed", error);
     throw error;
   }
+}
+
+/**
+ * One-time industry sector selection for the signed-in member (registration-time
+ * sectors are sent with the registration payload instead). Rejected with
+ * SECTORS_ALREADY_SET if the caller already has sectors on file.
+ */
+export async function setMyIndustrySectors(
+  industrySectors: string[]
+): Promise<{ industrySectors: string[]; industrySectorsSetAt: string }> {
+  const response = await axiosInstance.put("/users/me/industry-sectors", {
+    industrySectors,
+  });
+  return response.data.data;
 }
 
 /**

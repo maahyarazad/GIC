@@ -6,6 +6,8 @@ import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { TenderController } from './../controllers/tender.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { SSOController } from './../controllers/sso.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { SitemapController } from './../controllers/sitemap.controller';
@@ -84,7 +86,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_User.Exclude_keyofUser.password__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"ref":"UserRole"},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"string"}},"addresses":{"dataType":"array","array":{"dataType":"string"}},"authorize":{"dataType":"boolean","required":true},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"profile":{"ref":"UserProfile"},"remarks":{"dataType":"string"},"requirePasswordChange":{"dataType":"boolean","required":true},"_id":{"dataType":"string"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"email":{"dataType":"string","required":true},"createdAt":{"dataType":"datetime"},"role":{"ref":"UserRole"},"phone":{"dataType":"string"},"orders":{"dataType":"array","array":{"dataType":"string"}},"addresses":{"dataType":"array","array":{"dataType":"string"}},"authorize":{"dataType":"boolean","required":true},"googleId":{"dataType":"string"},"facebookId":{"dataType":"string"},"avatar":{"dataType":"string"},"profile":{"ref":"UserProfile"},"remarks":{"dataType":"string"},"requirePasswordChange":{"dataType":"boolean","required":true},"industrySectors":{"dataType":"array","array":{"dataType":"string"}},"industrySectorsSetAt":{"dataType":"string"},"_id":{"dataType":"string"},"updatedAt":{"dataType":"datetime"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Omit_User.password_": {
@@ -102,6 +104,7 @@ const models: TsoaRoute.Models = {
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]}]},
             "authorize": {"dataType":"boolean"},
             "remarks": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "industrySectors": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": true,
     },
@@ -955,6 +958,171 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'authorizeUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_setMyIndustrySectors: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"industrySectors":{"dataType":"array","array":{"dataType":"string"},"required":true}}},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.put('/api/v1/users/me/industry-sectors',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.setMyIndustrySectors)),
+
+            async function UserController_setMyIndustrySectors(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_setMyIndustrySectors, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'setMyIndustrySectors',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUserController_updateMyProfile: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"profile":{"ref":"UserProfile"},"name":{"dataType":"string"}}},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.put('/api/v1/users/me/profile',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateMyProfile)),
+
+            async function UserController_updateMyProfile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_updateMyProfile, request, response });
+
+                const controller = new UserController();
+
+              await templateService.apiHandler({
+                methodName: 'updateMyProfile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTenderController_createTender: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                sector: {"in":"formData","name":"sector","required":true,"dataType":"string"},
+                publisher: {"in":"formData","name":"publisher","required":true,"dataType":"string"},
+                announcement: {"in":"formData","name":"announcement","required":true,"dataType":"string"},
+                publishedAt: {"in":"formData","name":"publishedAt","required":true,"dataType":"string"},
+                deadline: {"in":"formData","name":"deadline","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","dataType":"file"},
+        };
+        app.post('/api/v1/tenders',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(TenderController)),
+            ...(fetchMiddlewares<RequestHandler>(TenderController.prototype.createTender)),
+
+            async function TenderController_createTender(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTenderController_createTender, request, response });
+
+                const controller = new TenderController();
+
+              await templateService.apiHandler({
+                methodName: 'createTender',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTenderController_listTenders: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                sector: {"in":"query","name":"sector","dataType":"string"},
+        };
+        app.get('/api/v1/tenders',
+            ...(fetchMiddlewares<RequestHandler>(TenderController)),
+            ...(fetchMiddlewares<RequestHandler>(TenderController.prototype.listTenders)),
+
+            async function TenderController_listTenders(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTenderController_listTenders, request, response });
+
+                const controller = new TenderController();
+
+              await templateService.apiHandler({
+                methodName: 'listTenders',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTenderController_closeTender: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.patch('/api/v1/tenders/:id/close',
+            ...(fetchMiddlewares<RequestHandler>(TenderController)),
+            ...(fetchMiddlewares<RequestHandler>(TenderController.prototype.closeTender)),
+
+            async function TenderController_closeTender(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTenderController_closeTender, request, response });
+
+                const controller = new TenderController();
+
+              await templateService.apiHandler({
+                methodName: 'closeTender',
                 controller,
                 response,
                 next,

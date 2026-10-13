@@ -7,6 +7,7 @@ import {
   UserSortKey,
   CreateUserRequest,
   UpdateUserRequest,
+  UserProfile,
 } from "../types/user.types";
 import {
   createSuccessResponse,
@@ -31,6 +32,8 @@ import {
 import dotenv from "dotenv";
 import { mapCreateUserRequestToDb, mapUser, mapUsers, mapUpdateUserRequestToDb } from "../mappers/user.mapper";
 import { UserModel } from "../models/user.model";
+import { isIndustrySector } from "../config/industrySectors";
+import { authMiddleware } from "../middleware/auth.middleware";
 import { LogChangeModel } from "../models/logChange.model";
 import { Request as ExpressRequest } from "express";
 
@@ -124,6 +127,20 @@ export class UserController extends Controller {
         return createErrorResponse(
           "The email you entered is already registered. Please use a different email to register.",
           "EMAIL_EXISTS"
+        );
+      }
+
+      const sectors = userData.industrySectors ?? [];
+      const uniqueSectors = new Set(sectors);
+      if (
+        sectors.length !== 3 ||
+        uniqueSectors.size !== 3 ||
+        !sectors.every(isIndustrySector)
+      ) {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Select exactly three industry sectors.",
+          "INVALID_SECTORS"
         );
       }
 
@@ -253,6 +270,105 @@ export class UserController extends Controller {
       console.error(error);
       this.setStatus(500);
       return createErrorResponse(error.message || "Failed to authorize user");
+    }
+  }
+
+  /** One-time wizard for members who registered before sector selection existed. Write-once, like registration. */
+  @Put("me/industry-sectors")
+  @Middlewares(authMiddleware)
+  public async setMyIndustrySectors(
+    @Body() body: { industrySectors: string[] },
+    @Request() request: AuthRequest
+  ): Promise<any> {
+    try {
+      const userId = (request as any).user?.userId;
+      if (!userId || !Types.ObjectId.isValid(userId)) {
+        this.setStatus(401);
+        return createErrorResponse("Unauthorized", "UNAUTHORIZED");
+      }
+
+      const sectors = body.industrySectors ?? [];
+      const uniqueSectors = new Set(sectors);
+      if (
+        sectors.length !== 3 ||
+        uniqueSectors.size !== 3 ||
+        !sectors.every(isIndustrySector)
+      ) {
+        this.setStatus(400);
+        return createErrorResponse(
+          "Select exactly three industry sectors.",
+          "INVALID_SECTORS"
+        );
+      }
+
+      //@ts-ignore
+      const current = await UserModel.findById(userId).lean();
+      if (!current) {
+        this.setStatus(404);
+        return createErrorResponse("User not found", "NOT_FOUND");
+      }
+      if ((current as any).industrySectors?.length) {
+        this.setStatus(409);
+        return createErrorResponse(
+          "Sectors are already set and cannot be changed.",
+          "SECTORS_ALREADY_SET"
+        );
+      }
+
+      const industrySectorsSetAt = new Date();
+      //@ts-ignore
+      await UserModel.findByIdAndUpdate(
+        userId,
+        { $set: { industrySectors: sectors, industrySectorsSetAt } }
+      );
+
+      return createSuccessResponse(
+        { industrySectors: sectors, industrySectorsSetAt },
+        "Industry sectors saved"
+      );
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to save industry sectors");
+    }
+  }
+
+  /** Member self-service profile update. Only name and profile fields; never role or authorization. */
+  @Put("me/profile")
+  @Middlewares(authMiddleware)
+  public async updateMyProfile(
+    @Body() body: { name?: string; profile?: UserProfile },
+    @Request() request: AuthRequest
+  ): Promise<any> {
+    try {
+      const userId = (request as any).user?.userId;
+      if (!userId || !Types.ObjectId.isValid(userId)) {
+        this.setStatus(401);
+        return createErrorResponse("Unauthorized", "UNAUTHORIZED");
+      }
+
+      const update: Record<string, any> = { updatedAt: new Date() };
+      if (typeof body.name === "string") update.name = body.name.trim();
+      if (body.profile !== undefined) update.profile = body.profile;
+
+      const id: string = String(userId);
+      const user = await UserModel.findByIdAndUpdate(
+        //@ts-ignore
+        id,
+        { $set: update },
+        { new: true, lean: true, projection: { password: 0 } as any }
+      );
+
+      if (!user) {
+        this.setStatus(404);
+        return createErrorResponse("User not found", "NOT_FOUND");
+      }
+
+      return createSuccessResponse(mapUser(user), "Profile updated successfully");
+    } catch (error: any) {
+      console.error(error);
+      this.setStatus(500);
+      return createErrorResponse(error.message || "Failed to update profile");
     }
   }
 }

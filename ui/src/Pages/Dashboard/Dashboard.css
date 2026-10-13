@@ -245,4 +245,9 @@
 
 .dashboard .sidebar li[role=button]:focus-visible {
   outline-offset: -2px;
+}
+
+.dashboard .btn-primary-contrast {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }/*# sourceMappingURL=Dashboard.css.map */

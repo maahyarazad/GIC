@@ -10,6 +10,8 @@ import Button from "../../Components/Button/Button";
 import {EnvContext} from '../../EnvContext.jsx';
 import {Link } from 'react-router-dom';
 import PasswordInput from '@/Components/PasswordInput';
+import IndustrySectorWizard from '@/Components/Dashboard/Tenders/IndustrySectorWizard';
+import '@/Components/Dashboard/Tenders/Tenders.css';
 interface SendOtpBody {
     email?: string;
     mobile_number?: string;
@@ -31,6 +33,7 @@ interface RegisterModel {
     password: string;
     phone: string;
     authorize: boolean;
+    industrySectors: string[];
 }
 
 
@@ -94,6 +97,7 @@ const Register: React.FC = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [sectorError, setSectorError] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let { name, value } = e.target;
@@ -257,7 +261,7 @@ const Register: React.FC = () => {
                 if (response.data.success) {
 
                     setValidOtpPhone(true);
-                    registerUser();
+                    setRegistrationProcess({ currentStep: 3 });
 
                 }
             }
@@ -275,7 +279,13 @@ const Register: React.FC = () => {
     };
 
 
-    const registerUser = async () => {
+    const registerUser = async (industrySectors: string[]) => {
+        setSectorError("");
+        if (industrySectors.length !== 3) {
+            setSectorError("Select exactly three industry sectors.");
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -284,7 +294,8 @@ const Register: React.FC = () => {
                 email: form.email,
                 password: form.password,
                 phone: form.phone,
-                authorize: false
+                authorize: false,
+                industrySectors,
             };
 
             const response = await axiosInstance.post("/users/", payload);
@@ -557,6 +568,15 @@ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8
                     </form>
                 </div>
 
+                <div className={`register-card otp-card ${registrationProcess?.currentStep === 3 ? "visible slide-in-right" : "hide"}`}>
+                    <h2 className="login-title">Select Your Industry Sectors</h2>
+                    <IndustrySectorWizard
+                        confirmLabel="Complete Registration"
+                        submitting={loading}
+                        error={sectorError}
+                        onConfirm={(sectors) => registerUser(sectors)}
+                    />
+                </div>
 
             </div>
 

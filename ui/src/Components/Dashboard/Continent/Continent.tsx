@@ -10,6 +10,8 @@ import { useSlideMenu } from "@/Providers/SlideMenuProvider";
 import ModifyContinent from "./ModifyContinent";
 import DataPackageDialog from "./DataPackageDialog";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa6";
+import GridActions from "@/Components/Generic/GridActions/GridActions";
 
 // Shared, never-mutated defaults: module scope keeps one identity across renders.
 const EMPTY_CONTINENT: ContinetViewModel = {
@@ -209,23 +211,7 @@ const CategoriesDataGrid = () => {
             headerName: "Actions",
             width: "20%",
             renderCell: (row) => (
-                <div className="d-flex gap-2 flex-wrap">
-                    <button
-                        title="Edit"
-                        className="dashboard-btn--ghost-minimal"
-                        onClick={() => onEdit(row)}
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        title="Delete"
-                        className="dashboard-btn--delete-ghost"
-                        onClick={() => onDelete(row)}
-                    >
-                        Delete
-                    </button>
-                </div>
+                <GridActions onEdit={() => onEdit(row)} onDelete={() => onDelete(row)} />
             ),
             sortable: false,
             filterable: false,
@@ -300,7 +286,7 @@ const CategoriesDataGrid = () => {
                         Initialize Db
                     </button>
                     <button className="dashboard-btn" onClick={onCreate}>
-                        Add New
+                        <FaPlus /> Add New
                     </button>
                 </div>
             </div>

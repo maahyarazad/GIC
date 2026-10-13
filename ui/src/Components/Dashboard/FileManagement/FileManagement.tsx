@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext, useMemo } from "react";
 import { GenericDataGrid, Column, PaginationModel, SortModel, FilterModel } from "../../GenericDataGrid/GenericDataGrid";
+import GridActions from "@/Components/Generic/GridActions/GridActions";
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
 import { EnvContext } from '../../../EnvContext.jsx';
@@ -167,9 +168,7 @@ const FileManagement = () => {
             sortable: false,
             filterable: false,
             renderCell: (row) => (
-                <button type="button" className="dashboard-btn--delete-ghost" onClick={() => deleteFile(row._id)}>
-                    Delete
-                </button>
+                <GridActions onDelete={() => deleteFile(row._id)} />
             ),
         },
     ];

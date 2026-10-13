@@ -10,6 +10,8 @@ import Loader from "@/Components/Loader/Loader";
 import { useSlideMenu } from "@/Providers/SlideMenuProvider"; // adjust path
 import TemplateForm from "./TemplateForm";
 import { useModal } from "@/Providers/ModalContext";
+import GridActions from "@/Components/Generic/GridActions/GridActions";
+import { FaPlus } from "react-icons/fa6";
 export interface EmailTemplate {
     _id?: string;
     name: string;
@@ -38,8 +40,7 @@ const EmailTemplatesDataGrid = () => {
             width: '30%',
             renderCell: (row) => (
                 <div className="email-template-row-actions" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <button className="dashboard-btn--ghost-minimal" onClick={() => onEdit(row)}>Edit</button>
-                    <button className="dashboard-btn--delete-ghost" onClick={() => onDelete(row)}>Delete</button>
+                    <GridActions onEdit={() => onEdit(row)} onDelete={() => onDelete(row)} />
                     <button className="dashboard-btn" onClick={() => onSendTestEmail(row)}>Send Test Email</button>
                 </div>
             ),
@@ -265,7 +266,7 @@ debugger;
             <div className="dash-header">
                 <h3>Email Templates</h3>
                 <button className="dashboard-btn" onClick={onCreate}>
-                    Add New
+                    <FaPlus /> Add New
                 </button>
             </div>
 

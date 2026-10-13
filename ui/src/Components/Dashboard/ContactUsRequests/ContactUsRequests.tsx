@@ -9,6 +9,7 @@ import {
 import axiosInstance from "../../../api/axiosInstance";
 import { useToast } from "../../../Providers/ToastContext";
 import { useModal } from "@/Providers/ModalContext";
+import { FaEye } from "react-icons/fa6";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
 import { EnvContext } from '@/EnvContext.jsx';
@@ -126,7 +127,9 @@ export const ContactUsRequests = () => {
             filterable: false,
             renderCell: (row) => (
                 <button
-                    className="dashboard-btn"
+                    className="dashboard-btn--icon"
+                    title="View"
+                    aria-label="View"
                     onClick={() =>
                         openModal({
                             variant: "default",
@@ -141,7 +144,7 @@ export const ContactUsRequests = () => {
                         })
                     }
                 >
-                    View
+                    <FaEye />
                 </button>
             ),
         },

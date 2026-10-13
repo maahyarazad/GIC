@@ -40,14 +40,16 @@ export async function getLogs(id: string) {
  */
 
 export async function updateUserProfile(
-  id: string,
+  _id: string,
   updateData: UpdateUserRequest
 ) {
   try {
-    const response = await axiosInstance.put(
-      `/users/user-profile/${id}`,
-      updateData
-    );
+    // Members update their own profile via the self endpoint (derives the user
+    // from the auth token); name and profile fields only, never role/authorize.
+    const response = await axiosInstance.put("/users/me/profile", {
+      name: updateData.name,
+      profile: updateData.profile,
+    });
     return response.data;
   } catch (error) {
     console.error("Update user failed", error);
@@ -112,11 +114,11 @@ export async function getPDFBlob(fileId: string): Promise<PDFResponse> {
  */
 export async function checkNewsLetter(email: string) {
   try {
-    const response = await axiosInstance.get(`/newsletter/email/${email}`);
+    const response = await axiosInstance.get(`/newsletter/email/${encodeURIComponent(email)}`);
 
     return response.data;
   } catch (error) {
-    console.error("Upload user photo failed", error);
+    console.error("Check newsletter failed", error);
     throw error;
   }
 }
@@ -131,11 +133,15 @@ export async function upsertNewsletterSubscriber(
   body: Partial<NewsletterSubscriber>
 ) {
   try {
-    const response = await axiosInstance.put(`/newsletter/${email}`, body);
+    // Upsert by email (the /newsletter/:id route expects a Mongo id, not an email).
+    const response = await axiosInstance.put(
+      `/newsletter/email/${encodeURIComponent(email)}`,
+      body
+    );
 
     return response.data;
   } catch (error) {
-    console.error("Upload user photo failed", error);
+    console.error("Update newsletter subscription failed", error);
     throw error;
   }
 }
@@ -155,6 +161,20 @@ export async function getUserData(id: string) {
     console.error("Upload user photo failed", error);
     throw error;
   }
+}
+
+/**
+ * One-time industry sector selection for the signed-in member (registration-time
+ * sectors are sent with the registration payload instead). Rejected with
+ * SECTORS_ALREADY_SET if the caller already has sectors on file.
+ */
+export async function setMyIndustrySectors(
+  industrySectors: string[]
+): Promise<{ industrySectors: string[]; industrySectorsSetAt: string }> {
+  const response = await axiosInstance.put("/users/me/industry-sectors", {
+    industrySectors,
+  });
+  return response.data.data;
 }
 
 /**

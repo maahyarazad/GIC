@@ -1,0 +1,222 @@
+.sector-wizard {
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1.5rem;
+  max-width: 640px;
+}
+.sector-wizard__notice {
+  color: var(--ora);
+  font-weight: 500;
+  margin: 0.5rem 0 1rem;
+}
+.sector-wizard__count {
+  color: var(--txt);
+  opacity: 0.75;
+  margin: 0 0 0.75rem;
+}
+.sector-wizard__list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.sector-wizard__option {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid var(--bdrs);
+  cursor: pointer;
+}
+.sector-wizard__option.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sector-wizard__option input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  flex-shrink: 0;
+  accent-color: var(--ora);
+  cursor: pointer;
+}
+.sector-wizard__error {
+  color: #c0392b;
+  margin: 0 0 0.75rem;
+}
+.sector-wizard__confirm {
+  margin-top: 0.5rem;
+}
+
+.tenders .tender-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.tenders .tender-header__sectors {
+  color: var(--txt);
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+.tenders .tender-header__notice {
+  color: var(--ora);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+
+.tenders .tender-create {
+  margin: 0;
+}
+.tenders .tender-create__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.tenders .tender-create__row > * {
+  flex: 1 1 220px;
+}
+.tenders .tender-create__row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--txt);
+}
+.tenders .tender-create input,
+.tenders .tender-create select,
+.tenders .tender-create textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  background: var(--bg);
+  border: 1px solid var(--bdr);
+  color: var(--txt);
+  border-radius: 0;
+  font: inherit;
+}
+.tenders .tender-create textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.tenders .tender-create input:focus,
+.tenders .tender-create select:focus,
+.tenders .tender-create textarea:focus {
+  outline: none;
+  border-color: var(--ora);
+}
+.tenders .tender-create__error {
+  color: #c0392b;
+  margin: 0 0 0.75rem;
+}
+
+.tenders .tender-filter {
+  margin-bottom: 1rem;
+}
+.tenders .tender-multiselect {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: var(--bgp);
+  border: 1px solid var(--bdr);
+}
+.tenders .tender-multiselect__select {
+  flex: 1 1 180px;
+  min-width: 180px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--txt);
+  font: inherit;
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+.tenders .tender-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--ora);
+  color: var(--bg);
+  border-radius: 20px;
+  padding: 0.25rem 0.35rem 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.tenders .tender-tag__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--bg);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+  cursor: pointer;
+}
+.tenders .tender-tag__remove:hover {
+  opacity: 0.75;
+}
+
+.tenders .tender-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tenders .tender-row {
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+.tenders .tender-row__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.tenders .tender-row__sector {
+  font-weight: 500;
+  color: var(--txt);
+}
+.tenders .tender-status {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.tenders .tender-status--open {
+  background: rgba(39, 174, 96, 0.15);
+  color: #27ae60;
+}
+.tenders .tender-status--closed {
+  background: rgba(192, 57, 43, 0.12);
+  color: #c0392b;
+}
+.tenders .tender-row__announcement {
+  margin: 0.5rem 0;
+  color: var(--txt);
+}
+.tenders .tender-row__meta {
+  color: var(--txt);
+  opacity: 0.75;
+  font-size: 0.85rem;
+}
+.tenders .tender-row__contact {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--txt);
+}
+.tenders .tender-row__close {
+  margin-top: 0.5rem;
+}
+.tenders .tender-empty {
+  color: var(--txt);
+  opacity: 0.7;
+}

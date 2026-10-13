@@ -112,6 +112,15 @@
 					"requirePasswordChange": {
 						"type": "boolean"
 					},
+					"industrySectors": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"industrySectorsSetAt": {
+						"type": "string"
+					},
 					"_id": {
 						"type": "string"
 					},
@@ -160,13 +169,20 @@
 					"remarks": {
 						"type": "string",
 						"nullable": true
+					},
+					"industrySectors": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
 					}
 				},
 				"required": [
 					"name",
 					"email",
 					"password",
-					"phone"
+					"phone",
+					"industrySectors"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -4039,6 +4055,201 @@
 				]
 			}
 		},
+		"/api/v1/users/me/industry-sectors": {
+			"put": {
+				"operationId": "SetMyIndustrySectors",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "One-time wizard for members who registered before sector selection existed. Write-once, like registration.",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"industrySectors": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									}
+								},
+								"required": [
+									"industrySectors"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/users/me/profile": {
+			"put": {
+				"operationId": "UpdateMyProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Member self-service profile update. Only name and profile fields; never role or authorization.",
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"profile": {
+										"$ref": "#/components/schemas/UserProfile"
+									},
+									"name": {
+										"type": "string"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/tenders": {
+			"post": {
+				"operationId": "CreateTender",
+				"responses": {
+					"201": {
+						"description": "Tender created",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tenders"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"sector": {
+										"type": "string"
+									},
+									"publisher": {
+										"type": "string"
+									},
+									"announcement": {
+										"type": "string"
+									},
+									"publishedAt": {
+										"type": "string"
+									},
+									"deadline": {
+										"type": "string"
+									},
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"sector",
+									"publisher",
+									"announcement",
+									"publishedAt",
+									"deadline"
+								]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListTenders",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tenders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "sector",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/tenders/{id}/close": {
+			"patch": {
+				"operationId": "CloseTender",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Tenders"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/sso": {
 			"get": {
 				"operationId": "GetSSOToken",
@@ -5081,6 +5292,81 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/newsletter/email/{email}": {
+			"get": {
+				"operationId": "GetSubscriberByEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_any_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpsertSubscriberByEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_any_"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"active": {
+										"type": "boolean"
+									}
+								},
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/newsletter/{id}": {

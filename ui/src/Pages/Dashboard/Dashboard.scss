@@ -262,3 +262,42 @@ $ora-rgb: 200, 84, 26;
 .dashboard .sidebar li[role="button"]:focus-visible {
   outline-offset: -2px;
 }
+
+// Admin-only: tighten the vertical padding on the primary action button.
+.dashboard .btn-primary-contrast {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+// Unify every dashboard button on the same 10px radius as .dashboard-btn
+// (the .btn-primary-contrast* theme buttons and Bootstrap .btn default to
+// square/other radii). Scoped to .dashboard so public pages are untouched.
+// (.dashboard-btn's own 10px comes from %dashboard-btn-base in index.scss,
+// which also covers the detached dialogs that render outside .dashboard.)
+.dashboard button,
+.dashboard .btn,
+.dashboard .btn-primary-contrast,
+.dashboard .btn-primary-contrast-inverse {
+  border-radius: 10px;
+}
+
+// Clickable things look clickable: pointer cursor on every interactive element
+// in the dashboard. Non-semantic click targets (div/span/tr with onClick) opt in
+// via the .is-clickable utility. Disabled controls keep not-allowed.
+.dashboard button,
+.dashboard a[href],
+.dashboard [role="button"],
+.dashboard [role="tab"],
+.dashboard summary,
+.dashboard select,
+.dashboard input[type="checkbox"],
+.dashboard input[type="radio"],
+.dashboard label:has(> input[type="checkbox"]),
+.dashboard label:has(> input[type="radio"]),
+.dashboard .is-clickable {
+  cursor: pointer;
+}
+.dashboard button:disabled,
+.dashboard [disabled] {
+  cursor: not-allowed;
+}

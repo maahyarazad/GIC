@@ -1,5 +1,6 @@
 import { Schema, model, models, Types } from "mongoose";
 import { SocialLink, UserProfile } from "../types/user.types";
+import { INDUSTRY_SECTORS } from "../config/industrySectors";
 
 export interface UserDocument {
   name: string;
@@ -18,6 +19,8 @@ export interface UserDocument {
   createdAt?: Date;
   updatedAt?: Date;
     remarks?: string | null;
+  industrySectors?: string[];
+  industrySectorsSetAt?: Date;
 }
 
 export interface CommentDocument {
@@ -93,6 +96,8 @@ const UserSchema = new Schema<UserDocument>(
     avatar: { type: String, default: undefined },
     profile: { type: UserProfileSchema, default: undefined },
     remarks: { type: String, required: false, default: "" },
+    industrySectors: { type: [String], enum: INDUSTRY_SECTORS, default: undefined },
+    industrySectorsSetAt: { type: Date, default: undefined },
   },
   {
     timestamps: true,

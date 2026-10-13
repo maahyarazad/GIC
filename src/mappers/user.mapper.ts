@@ -19,6 +19,8 @@ export interface UserDb {
   createdAt?: Date;
   updatedAt?: Date;
   remarks?: string | null;
+  industrySectors?: string[];
+  industrySectorsSetAt?: Date;
 }
 
 export const mapUser = (doc: any): User => ({
@@ -38,7 +40,9 @@ export const mapUser = (doc: any): User => ({
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt,
   remarks: doc.remarks,
-requirePasswordChange: doc.requirePasswordChange
+requirePasswordChange: doc.requirePasswordChange,
+  industrySectors: doc.industrySectors,
+  industrySectorsSetAt: doc.industrySectorsSetAt,
 });
 
 export const mapUsers = (docs: any[] = []): User[] => docs.map(mapUser);
@@ -64,8 +68,10 @@ export const mapCreateUserRequestToDb = (body: CreateUserRequest, hashedPassword
   phone: body.phone,
   role: body.role ?? "user",
   authorize: body.authorize ?? false,
-  remarks: body.remarks ?? "", 
+  remarks: body.remarks ?? "",
   createdAt: new Date(),
+  industrySectors: body.industrySectors,
+  industrySectorsSetAt: new Date(),
 });
 
 export const mapUpdateUserRequestToDb = (body: UpdateUserRequest): Partial<UserDb> => ({

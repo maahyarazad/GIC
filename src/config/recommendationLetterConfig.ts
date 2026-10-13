@@ -3,13 +3,16 @@
  */
 
 /**
- * A signature drawn above a signatory's name: page 1 of a PDF in file_storage (the server's
- * uploads folder, kept out of git), cropped to `box` (PDF points, origin bottom-left).
- * Measure the box again if the file is replaced.
+ * A signature drawn above a signatory's name, from a file in file_storage (the server's
+ * uploads folder, kept out of git). Two kinds are supported:
+ *  - PDF: page 1 is embedded, cropped to `box` (PDF points, origin bottom-left). Re-measure
+ *    the box if the file is replaced.
+ *  - Image (.png / .jpg / .jpeg): the whole image is embedded as-is, so `box` is omitted
+ *    (crop the image file itself to just the signature).
  */
 export interface SignatureSource {
   file: string;
-  box: { left: number; bottom: number; right: number; top: number };
+  box?: { left: number; bottom: number; right: number; top: number };
 }
 
 export interface Signatory {
@@ -19,7 +22,12 @@ export interface Signatory {
 }
 
 export const SIGNATORIES: readonly Signatory[] = [
-  { name: "Jan A Hussing", title: "Chairman" },
+  {
+    name: "Jan A Hussing",
+    title: "Chairman",
+    // Image signature — embedded whole (no box crop); crop the JPEG itself if needed.
+    signature: { file: "Jan_signiture.jpeg" },
+  },
   {
     name: "Thomas Hochberger",
     title: "General Manager",

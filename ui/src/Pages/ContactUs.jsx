@@ -9,6 +9,7 @@ import { useToast } from "../Providers/ToastContext";
 
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useLocation, useNavigate } from "react-router-dom";
+import { INDUSTRY_SECTORS } from "../../../src/config/industrySectors";
 const ContactUs = ({ siteData }) => {
   const env = useContext(EnvContext);
   const { activePage } = usePage();
@@ -38,7 +39,7 @@ const isMobile = useIsMobile();
     company: "",
     email: "",
     phone: "",
-    industry: "",
+    industry: [],
     countryOfInterest: "",
     meaObjective: "",
     referredBy: "",
@@ -51,7 +52,9 @@ const isMobile = useIsMobile();
       .trim()
       .email("Invalid email address")
       .required("Email is required"),
-    industry: Yup.string().trim().required("Industry / Sector is required"),
+    industry: Yup.array()
+      .of(Yup.string())
+      .min(3, "Please select at least 3 industries / sectors"),
     meaObjective: Yup.string()
       .trim()
       .required("Your MEA Objective is required"),
@@ -74,7 +77,7 @@ const isMobile = useIsMobile();
     form.append("company", values.company);
     form.append("email", values.email);
     form.append("phone", values.phone);
-    form.append("industry", values.industry);
+    form.append("industry", values.industry.join(", "));
     form.append("countryOfInterest", values.countryOfInterest);
     form.append("meaObjective", values.meaObjective);
     form.append("referredBy", values.referredBy);
@@ -197,7 +200,7 @@ const isMobile = useIsMobile();
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting, setFieldValue }) => (
+            {({ isSubmitting, setFieldValue, values }) => (
               <Form className="co-form" noValidate>
                 <div className="co-row">
                   <div className="co-group">
@@ -269,13 +272,53 @@ const isMobile = useIsMobile();
                   <label className="co-label" htmlFor="industry">
                     Industry / Sector <span>*</span>
                   </label>
-                  <Field
-                    id="industry"
-                    name="industry"
-                    type="text"
-                    className="co-field"
-                    placeholder="e.g. Manufacturing, Energy, Logistics"
-                  />
+                  <div className="co-multiselect">
+                    {values.industry.map((sector) => (
+                      <span key={sector} className="co-tag">
+                        {sector}
+                        <button
+                          type="button"
+                          className="co-tag__remove"
+                          aria-label={`Remove ${sector}`}
+                          onClick={() =>
+                            setFieldValue(
+                              "industry",
+                              values.industry.filter((s) => s !== sector)
+                            )
+                          }
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    ))}
+                    <select
+                      id="industry"
+                      className="co-multiselect__select"
+                      value=""
+                      onChange={(event) => {
+                        const sector = event.target.value;
+                        if (sector && !values.industry.includes(sector)) {
+                          setFieldValue("industry", [
+                            ...values.industry,
+                            sector,
+                          ]);
+                        }
+                      }}
+                    >
+                      <option value="">
+                        {values.industry.length >= 3
+                          ? "Add another sector…"
+                          : `Select at least 3 sectors (${values.industry.length}/3)…`}
+                      </option>
+                      {INDUSTRY_SECTORS.filter(
+                        (sector) => !values.industry.includes(sector)
+                      ).map((sector) => (
+                        <option key={sector} value={sector}>
+                          {sector}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <ErrorMessage
                     name="industry"
                     component="div"

@@ -5,6 +5,8 @@ import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useModal } from "@/Providers/ModalContext";
 import Loader from "@/Components/Loader/Loader";
 import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
+import GridActions from "@/Components/Generic/GridActions/GridActions";
+import { FaPlus } from "react-icons/fa6";
 import type { NewsletterArticle } from "../../../../../src/types/newsletterArticle.types";
 import "./Newsletter.css";
 
@@ -344,12 +346,11 @@ const Newsletter: React.FC = () => {
       width: "28%",
       renderCell: (a) => (
         <div className="newsletter-row-actions">
-          <button className="dashboard-btn--ghost-minimal" onClick={() => handlePreview(a)}>
-            Preview
-          </button>
-          <button className="dashboard-btn--ghost-minimal" onClick={() => openEdit(a)}>
-            Edit
-          </button>
+          <GridActions
+            onView={() => handlePreview(a)}
+            onEdit={() => openEdit(a)}
+            onDelete={() => handleDelete(a)}
+          />
           <button className="dashboard-btn--ghost-minimal" onClick={() => handleSendTest(a)}>
             Send Test
           </button>
@@ -359,9 +360,6 @@ const Newsletter: React.FC = () => {
             onClick={() => handleSendToSubscribers(a)}
           >
             {sendingId === a._id ? "Sending…" : "Send to Subscribers"}
-          </button>
-          <button className="dashboard-btn--delete-ghost" onClick={() => handleDelete(a)}>
-            Delete
           </button>
         </div>
       ),
@@ -378,7 +376,7 @@ const Newsletter: React.FC = () => {
           )}
         </h3>
         <button className="dashboard-btn" onClick={openCreate}>
-          + New Article
+          <FaPlus /> New Article
         </button>
       </div>
 

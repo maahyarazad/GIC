@@ -22,7 +22,9 @@ export const checkAuthToken = createAsyncThunk(
         email: res.data.data.email,
         avatar: res.data.data.avatar,
         createdAt: res.data.data.createdAt,
-        role: res.data.data.role
+        role: res.data.data.role,
+        industrySectors: res.data.data.industrySectors,
+        industrySectorsSetAt: res.data.data.industrySectorsSetAt
       };
 
     } catch (err: any) {

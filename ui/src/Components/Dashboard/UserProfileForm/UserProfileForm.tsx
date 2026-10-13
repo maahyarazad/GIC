@@ -171,9 +171,9 @@ export default function UserProfileForm({ initialProfile }: any) {
                 show({ type: "success", message: res.message });
                 fetchNewsletterStatus();
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            show({ type: "error", message: err });
+            show({ type: "error", message: err?.message || "Failed to update subscription" });
         }
     };
 
@@ -229,7 +229,7 @@ export default function UserProfileForm({ initialProfile }: any) {
         <div className="dash-section">
             <div className="dash-header">
                 <h3>Profile</h3>
-                <button type="button" form="profile-form" onClick={handleSubmit} className="dashboard-btn">
+                <button type="button" form="profile-form" onClick={handleSubmit} className="btn btn-primary-contrast">
                     Save Profile
                 </button>
             </div>

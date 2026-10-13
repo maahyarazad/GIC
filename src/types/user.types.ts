@@ -30,6 +30,8 @@ export interface User extends BaseModel {
   profile?: UserProfile;
   remarks?: string | null;
   requirePasswordChange:boolean;
+  industrySectors?: string[];
+  industrySectorsSetAt?: string;
 }
 
 export interface CreateUserRequest {
@@ -40,8 +42,11 @@ export interface CreateUserRequest {
   role?: "user" | "admin";
   authorize?: boolean;
   remarks?: string | null;
+  industrySectors: string[];
 }
 
+// industrySectors is intentionally absent here: once set it is permanent, so the
+// general update endpoint must have no payload shape capable of changing it.
 export interface UpdateUserRequest {
   name?: string;
   email?: string;

@@ -53,15 +53,8 @@
 /* ------------------------------------------
    GLOBAL TEXT STYLES
 ------------------------------------------- */
-body {
-  margin: 0;
-    font-family: 'Rajdhani', sans-serif;
-font-weight: 900;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-//   overflow-x: hidden;
-
-}
+// NOTE: the base `body` rule lives further down (background/colour/font);
+// the earlier duplicate here only restated font-family/weight it overrode.
 
 @media (max-width: 600px) {
   body {
@@ -153,7 +146,7 @@ font-weight: 900;
   gap: 6px;
   padding: 7px 14px;
   min-height: 34px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid transparent;
   font-family: inherit;
   font-size: 0.8rem;
@@ -327,18 +320,6 @@ font-weight: 900;
 /* ------------------------------------------
    LOADER
 ------------------------------------------- */
-.loader-container {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--bg);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .loader {
   width: 100px;
   height: 100px;
@@ -410,35 +391,6 @@ font-weight: 900;
 }
 
 
-
-
-
-/* Toast types with colored border + text */
-.app-toast-success {
-
-  border-color: #166534;
-  color: #166534;
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
-}
-.app-toast-error {
-  border-color: #991b1b;
-  color: #991b1b;
-background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
-}
-.app-toast-info {
-  border-color: #1e40af;
-  color: #1e40af;
-background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-.app-toast-warning {
-  border-color: #78350f;
-background-color: rgba(255, 255, 255, 0.9);
-  color: #78350f;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
-}
 
 
 
@@ -877,16 +829,6 @@ nav {
       background: var(--bgp);
     }
   }
-}
-
-.mob-cta {
-  margin: 14px 28px 4px !important;
-  background: $orange;
-  color: #fff !important;
-  text-align: center;
-  border: none !important;
-  padding: 12px 20px !important;
-  display: block !important;
 }
 
 // ─────────────────────────────────────────────
@@ -2241,48 +2183,6 @@ justify-content: center;
   }
 }
 
-.ac-sec {
-  background: var(--bgp);
-  padding: 86px 80px;
-  border-top: 1px solid var(--bdr);
-}
-
-.ac-in {
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.ac-icon {
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 26px;
-  border: 1px solid var(--bdr);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  color: $orange;
-}
-
-.ac-title {
-  font-family: $font-serif;
-  font-size: 38px;
-  font-weight: 500;
-  color: var(--txt);
-  margin-bottom: 12px;
-}
-
-.ac-body {
-  font-family: $font-serif;
-  font-size: 19px;
-  font-style: italic;
-  color: var(--mu);
-  line-height: 1.7;
-  margin-bottom: 34px;
-}
-
 // ─────────────────────────────────────────────
 // CONTACT
 // ─────────────────────────────────────────────
@@ -2682,7 +2582,6 @@ justify-content: center;
   .ev-hd   { flex-direction: column; align-items: flex-start; gap: 24px; }
   .ev-card { grid-template-columns: 1fr; }
   .ev-vis  { min-height: 180px; }
-  .ac-sec  { padding: 60px 32px; }
 
   .co-wrap  { grid-template-columns: 1fr; }
   .co-left  { padding: 120px 32px 60px; border-right: none; border-bottom: 1px solid var(--bdr); }
@@ -2741,7 +2640,6 @@ justify-content: center;
   .br-hero { padding: 100px 20px 44px; }
   .ev-sec  { padding: 56px 20px; }
   .ev-ct   { padding: 28px 24px; }
-  .ac-sec  { padding: 48px 20px; }
 
   .co-left  { padding: 100px 20px 48px; }
   .co-right { padding: 48px 20px 60px; }
@@ -2833,3 +2731,34 @@ p,
   
 }
 
+
+
+/* Toast types with colored border + text */
+.app-toast-success {
+
+    border-color: #166534;
+    color: #166534;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+}
+
+.app-toast-error {
+    border-color: #991b1b;
+    color: #991b1b;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.app-toast-info {
+    border-color: $orange;
+    color: $orange;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px $orange;
+}
+
+.app-toast-warning {
+    border-color: #78350f;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #78350f;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}

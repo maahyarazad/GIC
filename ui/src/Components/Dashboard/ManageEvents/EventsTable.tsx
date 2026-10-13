@@ -6,6 +6,7 @@ import { useToast } from "@/Providers/ToastContext";
 import { adminDeleteEvent, adminListEvents, apiErrorMessage } from "@/api/events";
 import type { AdminEventDto } from "../../../../../src/types/event.types";
 import EventForm from "./EventForm";
+import { FaPen, FaTrash, FaPlus } from "react-icons/fa6";
 import { formatDay } from "./format";
 
 interface EventsTableProps {
@@ -91,7 +92,7 @@ const EventsTable: React.FC<EventsTableProps> = ({ onChanged }) => {
             <div className="bm-card__header">
                 <h4>Events</h4>
                 <button type="button" className="dashboard-btn" onClick={() => openForm()}>
-                    New event
+                    <FaPlus /> New event
                 </button>
             </div>
 
@@ -132,16 +133,18 @@ const EventsTable: React.FC<EventsTableProps> = ({ onChanged }) => {
                                         {event.isFull ? " · Full" : ""}
                                     </td>
                                     <td className="bm-actions">
-                                        <button type="button" className="bm-action" onClick={() => openForm(event)}>
-                                            Edit
+                                        <button type="button" className="bm-action" title="Edit" aria-label="Edit" onClick={() => openForm(event)}>
+                                            <FaPen />
                                         </button>
                                         <button
                                             type="button"
                                             className="bm-action bm-action--danger"
+                                            title="Delete"
+                                            aria-label="Delete"
                                             disabled={deletingId === event.id}
                                             onClick={() => remove(event)}
                                         >
-                                            Delete
+                                            <FaTrash />
                                         </button>
                                     </td>
                                 </tr>

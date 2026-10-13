@@ -245,4 +245,35 @@
 
 .dashboard .sidebar li[role=button]:focus-visible {
   outline-offset: -2px;
+}
+
+.dashboard .btn-primary-contrast {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.dashboard button,
+.dashboard .btn,
+.dashboard .btn-primary-contrast,
+.dashboard .btn-primary-contrast-inverse {
+  border-radius: 10px;
+}
+
+.dashboard button,
+.dashboard a[href],
+.dashboard [role=button],
+.dashboard [role=tab],
+.dashboard summary,
+.dashboard select,
+.dashboard input[type=checkbox],
+.dashboard input[type=radio],
+.dashboard label:has(> input[type=checkbox]),
+.dashboard label:has(> input[type=radio]),
+.dashboard .is-clickable {
+  cursor: pointer;
+}
+
+.dashboard button:disabled,
+.dashboard [disabled] {
+  cursor: not-allowed;
 }/*# sourceMappingURL=Dashboard.css.map */

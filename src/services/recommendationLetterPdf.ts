@@ -45,10 +45,26 @@ const readLogo = (): Promise<Buffer> => {
 // Signatures live in file_storage (uploads, kept out of git), resolved like client.controller.ts does.
 const SIGNATURE_DIR = path.join(process.cwd(), "file_storage");
 
-/** Embeds the cropped signature page, or returns null (logged) so the letter is still generated. */
-async function embedSignature(pdf: PDFDocument, source: SignatureSource): Promise<PDFEmbeddedPage | null> {
+/**
+ * Embeds a signature from file_storage, or returns null (logged) so the letter is still generated.
+ * PDFs embed page 1 cropped to `box`; .png/.jpg/.jpeg embed the whole image as-is.
+ */
+async function embedSignature(
+  pdf: PDFDocument,
+  source: SignatureSource
+): Promise<PDFEmbeddedPage | PDFImage | null> {
   try {
-    const signaturePdf = await PDFDocument.load(await fs.readFile(path.join(SIGNATURE_DIR, source.file)));
+    const bytes = await fs.readFile(path.join(SIGNATURE_DIR, source.file));
+    const ext = path.extname(source.file).toLowerCase();
+
+    if (ext === ".png") return await pdf.embedPng(bytes);
+    if (ext === ".jpg" || ext === ".jpeg") return await pdf.embedJpg(bytes);
+
+    // PDF signature: embed page 1, cropped to the configured box.
+    if (!source.box) {
+      throw new Error("a PDF signature requires a `box` crop");
+    }
+    const signaturePdf = await PDFDocument.load(bytes);
     return await pdf.embedPage(signaturePdf.getPage(0), source.box);
   } catch (error) {
     console.error(`Recommendation letter: signature ${source.file} could not be embedded:`, error);
@@ -175,12 +191,17 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
     if (signature) {
       // Fit inside the signature space above the line, keeping the aspect ratio.
       const scale = Math.min(SIGNATURE_LINE_WIDTH / signature.width, (SIGNATURE_SPACE - 4) / signature.height);
-      page.drawPage(signature, {
+      const placement = {
         x,
         y: lineTop + 2,
         width: signature.width * scale,
         height: signature.height * scale,
-      });
+      };
+      if (signature instanceof PDFImage) {
+        page.drawImage(signature, placement);
+      } else {
+        page.drawPage(signature, placement);
+      }
     }
     page.drawLine({ start: { x, y: lineTop }, end: { x: x + SIGNATURE_LINE_WIDTH, y: lineTop }, thickness: 0.5, color: MUTED });
     page.drawText(clean(bold, signatory.name), { x, y: lineTop - 4 - BODY_SIZE, size: BODY_SIZE, font: bold, color: TEXT });

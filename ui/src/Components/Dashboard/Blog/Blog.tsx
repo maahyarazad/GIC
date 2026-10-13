@@ -7,6 +7,8 @@ import Loader from "@/Components/Loader/Loader";
 const QuillEditor = lazy(() => import("@/Components/QuillEditor/QuillEditor"));
 import { Blog as BlogType, BlogComment } from "../../../../../src/types/blog.types";
 import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
+import GridActions from "@/Components/Generic/GridActions/GridActions";
+import { FaPlus } from "react-icons/fa6";
 import "./Blog.css";
 
 type View = "list" | "form" | "comments";
@@ -409,7 +411,7 @@ const Blog: React.FC = () => {
           {total > 0 && <span className="blog-header-count">({total})</span>}
         </h3>
         <button className="dashboard-btn" onClick={openCreate}>
-          + New Blog
+          <FaPlus /> New Blog
         </button>
       </div>
 
@@ -481,14 +483,9 @@ const Blog: React.FC = () => {
             width: "20%",
             renderCell: (blog) => (
               <div className="blog-row-actions">
-                <button className="dashboard-btn--ghost-minimal" onClick={() => openEdit(blog)}>
-                  Edit
-                </button>
+                <GridActions onEdit={() => openEdit(blog)} onDelete={() => handleDelete(blog)} />
                 <button className="dashboard-btn--ghost-minimal" onClick={() => openComments(blog)}>
                   Comments
-                </button>
-                <button className="dashboard-btn--delete-ghost" onClick={() => handleDelete(blog)}>
-                  Delete
                 </button>
               </div>
             ),

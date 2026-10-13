@@ -5,7 +5,7 @@ import { User, UpdateUserRequest } from '../../../../../src/types/user.types';
 import { updateUser, getLogs } from '../../../api/user'
 import { useToast } from "../../../Providers/ToastContext";
 import { FaCheck, FaTimes } from "react-icons/fa";
-import { CiTimer } from "react-icons/ci";
+import { FaEye } from "react-icons/fa6";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useModal } from "@/Providers/ModalContext";
 import debounce from "@/Hooks/useDebounce";
@@ -44,8 +44,16 @@ export const UserProfilesDataGrid = () => {
             sortable: true,
             filterable: false,
             renderCell: (params) => (
-                <div style={{ display: "flex", justifyContent: "center", cursor: 'pointer' }} onClick={() => handleViewLogs(params._id)}>
-                    <CiTimer style={{ color: "gray", fontSize: "18px" }} />
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                        type="button"
+                        className="dashboard-btn--icon"
+                        title="View logs"
+                        aria-label="View logs"
+                        onClick={() => handleViewLogs(params._id)}
+                    >
+                        <FaEye />
+                    </button>
                 </div>
             ),
         },

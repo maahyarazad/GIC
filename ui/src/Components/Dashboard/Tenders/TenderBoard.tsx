@@ -6,6 +6,7 @@ import Loader from "@/Components/Loader/Loader";
 import { useToast } from "@/Providers/ToastContext";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import ModalDialog from "@/Components/Generic/Dialog/Dialog";
+import { FaPlus } from "react-icons/fa6";
 import { apiErrorMessage, closeTender, createTender, listTenders } from "@/api/tenders";
 import type { TenderListItem } from "../../../../../src/types/tender.types";
 import { INDUSTRY_SECTORS } from "../../../../../src/config/industrySectors";
@@ -158,7 +159,7 @@ const TenderBoard: React.FC = () => {
                     className="btn btn-primary-contrast"
                     onClick={() => setModalOpen(true)}
                 >
-                    Create Tender
+                    <FaPlus /> Create Tender
                 </button>
             </div>
 

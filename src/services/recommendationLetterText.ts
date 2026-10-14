@@ -23,11 +23,17 @@
 import { LETTER_TIMEZONE } from "../config/recommendationLetterConfig";
 import {
   ApprovalStatus,
+  DEFAULT_BODY_CLOSING,
   LetterFields,
   LetterRequestDetail,
   LetterRequestListItem,
   LetterStatus,
+  defaultBodyIntro,
+  defaultBodyMain,
 } from "../types/recommendationLetter.types";
+
+// Re-exported for back-compat with existing imports from this module.
+export { DEFAULT_BODY_CLOSING, defaultBodyIntro, defaultBodyMain };
 
 export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> = {
   recipientTitle: 120,
@@ -99,26 +105,6 @@ export const DEFAULT_CLOSING =
   "We welcome the opportunity to strengthen cooperation between the German industry and the organizations in the MEA region and remain available for any further information. Please do not hesitate to contact us in case any further questions may arise.";
 
 // ── Feature 010: three editable body parts (intro bold / main / closing) ──
-
-const COMPANY_PLACEHOLDER = "[Company Name]";
-const PROJECT_PLACEHOLDER = "[Project Name / Tender Number / Business Initiative]";
-
-export const defaultBodyIntro = (company: string): string =>
-  `On behalf of the German Industry Club Dubai and its German business community, we are pleased to recommend ${company || COMPANY_PLACEHOLDER} as a trusted and reliable business partner.`;
-
-export const defaultBodyMain = (company: string, project: string): string => {
-  const c = company || COMPANY_PLACEHOLDER;
-  const p = project || PROJECT_PLACEHOLDER;
-  return [
-    `Based on the positive feedback and recommendations received from its customers over the years, ${c} has established a strong reputation for professionalism, reliability, and commitment to high business standards. Its customers consistently recognize the company as a dependable and trustworthy business partner, valuing its dedication to quality, integrity, and customer satisfaction.`,
-    `As an active member of the German Industry Club Dubai, ${c} represents the values traditionally associated with German business excellence, including quality, integrity, technical competence, and long-term commitment.`,
-    `With specific reference to ${p}, we are pleased to endorse ${c}'s participation and support its efforts to contribute to the successful realization of this opportunity.`,
-    `Based on our longstanding positive experience with the company, we are confident in recommending ${c} for consideration as a reliable business partner for this initiative.`,
-  ].join("\n\n");
-};
-
-export const DEFAULT_BODY_CLOSING =
-  "We wish the company every success in pursuing this opportunity and its future business development.";
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 

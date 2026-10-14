@@ -15,7 +15,7 @@ import { Request as ExpressRequest } from "express";
 import { ObjectId } from "mongodb";
 import { Readable } from "stream";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { strictLimiter } from "../middleware/ratelimiter.middleware";
+import { previewLimiter, strictLimiter } from "../middleware/ratelimiter.middleware";
 import { Model } from "mongoose";
 import { UserDocument, UserModel } from "../models/user.model";
 import {
@@ -29,7 +29,10 @@ import {
   CreateBusinessLetterRequest,
   LANGUAGE_LABELS,
 } from "../types/businessLetter.types";
+import type { LetterFields } from "../types/recommendationLetter.types";
 import { buildBusinessLetterPdf } from "../services/businessLetterPdf";
+import { buildRecommendationLetterPdf } from "../services/recommendationLetterPdf";
+import { validateLetter } from "../services/recommendationLetterText";
 import { notifyLeadership, sendReceipt } from "../services/businessLetterNotifications";
 import {
   createErrorResponse,
@@ -135,6 +138,12 @@ export class BusinessLetterController extends Controller {
       }
 
       const letterType = body.letterType as BusinessLetterType;
+      // The member drafts the letter on the request form; seed `letter` from it (trimmed to the known
+      // LetterFields keys) so the editor opens on their draft instead of the auto-generated default.
+      const { value: letterValue } = validateLetter(body.letter ?? null, "preview");
+      const letter = letterValue
+        ? { ...letterValue, savedBy: userId, savedAt: new Date() }
+        : undefined;
       const fields = {
         userId,
         requester: {
@@ -156,6 +165,7 @@ export class BusinessLetterController extends Controller {
         purpose: str(body.purpose),
         neededBy: parseDateOnly(str(body.neededBy)),
         language: body.language,
+        ...(letter ? { letter } : {}),
       };
 
       let doc: any;
@@ -188,6 +198,43 @@ export class BusinessLetterController extends Controller {
       console.error("Error creating business letter request:", error);
       this.setStatus(500);
       return createErrorResponse("Failed to submit business letter request", "INTERNAL_ERROR");
+    }
+  }
+
+  /**
+   * Live preview of the drafted letter of recommendation, before any request is saved. Renders the
+   * real letter (same builder as the member/admin editor — no signatures, no DRAFT watermark) from
+   * the posted LetterFields. Read-only; nothing is persisted.
+   */
+  @Post("/preview")
+  @Middlewares<Function>(previewLimiter, authMiddleware)
+  public async previewBusinessLetterPdf(
+    @Body() body: LetterFields,
+    @Request() req: ExpressRequest
+  ): Promise<any> {
+    try {
+      const userId = toObjectId((req as any).user?.userId);
+      if (!userId) {
+        this.setStatus(401);
+        return createErrorResponse("Unauthorized", "UNAUTHORIZED");
+      }
+
+      const { value, errors } = validateLetter(body, "preview");
+      if (!value) {
+        this.setStatus(400);
+        return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
+      }
+
+      const bytes = await buildRecommendationLetterPdf(value, "DRAFT PREVIEW", { draft: false, signatures: false });
+
+      this.setStatus(200);
+      this.setHeader("Content-Type", "application/pdf");
+      this.setHeader("Content-Disposition", 'inline; filename="letter-preview.pdf"');
+      return Readable.from(Buffer.from(bytes));
+    } catch (error) {
+      console.error("Error generating business letter preview:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to generate preview", "PDF_ERROR");
     }
   }
 

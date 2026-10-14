@@ -701,6 +701,7 @@ const models: TsoaRoute.Models = {
             "letterType": {"ref":"BusinessLetterType"},
             "addressee": {"ref":"AddresseeFields","required":true},
             "purpose": {"dataType":"string","required":true},
+            "letter": {"ref":"LetterFields"},
             "neededBy": {"dataType":"string","required":true},
             "language": {"ref":"BusinessLetterLanguage","required":true},
         },
@@ -3335,6 +3336,37 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBusinessLetterController_previewBusinessLetterPdf: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"LetterFields"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/business-letters/preview',
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController)),
+            ...(fetchMiddlewares<RequestHandler>(BusinessLetterController.prototype.previewBusinessLetterPdf)),
+
+            async function BusinessLetterController_previewBusinessLetterPdf(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBusinessLetterController_previewBusinessLetterPdf, request, response });
+
+                const controller = new BusinessLetterController();
+
+              await templateService.apiHandler({
+                methodName: 'previewBusinessLetterPdf',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

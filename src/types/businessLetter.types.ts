@@ -1,3 +1,5 @@
+import type { LetterFields } from "./recommendationLetter.types";
+
 export type BusinessLetterType = "business_recommendation" | "partner_recommendation";
 
 export type BusinessLetterLanguage = "en" | "de";
@@ -54,6 +56,11 @@ export interface CreateBusinessLetterRequest {
   letterType?: BusinessLetterType;
   addressee: AddresseeFields;
   purpose: string;
+  /**
+   * The drafted letter of recommendation (feature 010). The member now writes the full letter on the
+   * request form, so it is seeded here instead of being auto-generated on first open.
+   */
+  letter?: LetterFields;
   /** Date only, YYYY-MM-DD */
   neededBy: string;
   language: BusinessLetterLanguage;

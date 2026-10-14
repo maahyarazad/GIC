@@ -60,6 +60,11 @@
   color: var(--ora);
   margin-top: 0.25rem;
 }
+.business-letter .bl-hint {
+  font-size: 0.8rem;
+  color: var(--mu);
+  margin-top: 0.25rem;
+}
 .business-letter .bl-counter {
   font-size: 0.8rem;
   color: var(--mu);
@@ -155,4 +160,31 @@
 .business-letter .bl-more {
   display: block;
   margin: 1rem auto 0;
+}
+@media (min-width: 992px) {
+  .business-letter .bl-preview-card {
+    position: sticky;
+    top: 1rem;
+  }
+}
+.business-letter .bl-preview__frame {
+  width: 100%;
+  height: 80vh;
+  min-height: 480px;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+}
+.business-letter .bl-preview__empty,
+.business-letter .bl-preview__msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 80vh;
+  min-height: 480px;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  color: var(--mu);
+  text-align: center;
+  padding: 1.5rem;
 }/*# sourceMappingURL=BusinessLetter.css.map */

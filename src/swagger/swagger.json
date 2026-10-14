@@ -3536,6 +3536,10 @@
 					"purpose": {
 						"type": "string"
 					},
+					"letter": {
+						"$ref": "#/components/schemas/LetterFields",
+						"description": "The drafted letter of recommendation (feature 010). The member now writes the full letter on the\nrequest form, so it is seeded here instead of being auto-generated on first open."
+					},
 					"neededBy": {
 						"type": "string",
 						"description": "Date only, YYYY-MM-DD"
@@ -6861,6 +6865,37 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/business-letters/preview": {
+			"post": {
+				"operationId": "PreviewBusinessLetterPdf",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Live preview of the drafted letter of recommendation, before any request is saved. Renders the\nreal letter (same builder as the member/admin editor — no signatures, no DRAFT watermark) from\nthe posted LetterFields. Read-only; nothing is persisted.",
+				"tags": [
+					"Business Letters"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LetterFields"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/business-letters/{id}/pdf": {

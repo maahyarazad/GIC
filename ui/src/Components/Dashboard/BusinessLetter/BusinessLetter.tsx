@@ -1,58 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import "./BusinessLetter.css";
 import type { RootState } from "../../../store";
-import type {
-  BusinessLetterLanguage,
-  BusinessLetterRequestDto,
-  CreateBusinessLetterRequest,
-} from "../../../../../src/types/businessLetter.types";
+import type { CreateBusinessLetterRequest } from "../../../../../src/types/businessLetter.types";
+import type { LetterFields } from "../../../../../src/types/recommendationLetter.types";
 import {
-  createBusinessLetterRequest,
-  downloadBusinessLetterPdf,
-  listBusinessLetterRequests,
-} from "@/api/businessLetter";
+  DEFAULT_BODY_CLOSING,
+  DEFAULT_SALUTATION,
+  defaultBodyIntro,
+  defaultBodyMain,
+} from "../../../../../src/types/recommendationLetter.types";
+import { createBusinessLetterRequest, previewBusinessLetterPdf } from "@/api/businessLetter";
 import { useToast } from "@/Providers/ToastContext";
-import Loader from "@/Components/Loader/Loader";
-import CountryCitySelect from "./CountryCitySelect";
+import LetterPreview from "../RecommendationLetters/LetterPreview";
 
-const PURPOSE_MAX = 2000;
-const PAGE_SIZE = 20;
-
-interface FormValues {
-  name: string;
-  phone: string;
-  company: string;
-  title: string;
-  fullName: string;
-  attn: string;
-  city: string;
-  country: string;
-  address: string;
-  reference: string;
-  purpose: string;
-  neededBy: string;
-  language: BusinessLetterLanguage;
-}
-
-// Server field paths → form field names, for mapping 400 validation details.
-const SERVER_FIELD_MAP: Record<string, keyof FormValues> = {
-  "requester.name": "name",
-  "requester.phone": "phone",
-  "requester.company": "company",
-  "addressee.title": "title",
-  "addressee.fullName": "fullName",
-  "addressee.attn": "attn",
-  "addressee.city": "city",
-  "addressee.country": "country",
-  "addressee.address": "address",
-  "addressee.reference": "reference",
-  purpose: "purpose",
-  neededBy: "neededBy",
-  language: "language",
-};
+// Characters the PDF's standard fonts (WinAnsi) can print; anything else becomes "?". Mirrors LetterEditor.
+const NOT_PRINTABLE = /[^\x00-\xFF‘’“”–—…€•]/;
 
 const todayLocalISO = () => {
   const now = new Date();
@@ -60,139 +25,126 @@ const todayLocalISO = () => {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 };
 
+// Validation mirrors LetterEditor's saveSchema: the full recipient block + reference are required to submit.
+const text = (label: string, max: number) =>
+  Yup.string().trim().max(max, `${label} must be at most ${max} characters`);
+const required = (label: string, max: number) => text(label, max).required(`${label} is required`);
+
 const validationSchema = Yup.object({
-  name: Yup.string().trim().required("Name is required").max(120, "Name must be at most 120 characters"),
-  phone: Yup.string().trim().max(40, "Phone must be at most 40 characters"),
-  company: Yup.string().trim().max(160, "Company must be at most 160 characters"),
-  title: Yup.string().trim().required("Title is required").max(120, "Title must be at most 120 characters"),
-  fullName: Yup.string().trim().required("Full name is required").max(160, "Full name must be at most 160 characters"),
-  attn: Yup.string().trim().required("Attn is required").max(160, "Attn must be at most 160 characters"),
-  city: Yup.string().trim().required("City is required").max(120, "City must be at most 120 characters"),
-  country: Yup.string().trim().required("Country is required").max(120, "Country must be at most 120 characters"),
-  address: Yup.string().trim().required("Address is required").max(300, "Address must be at most 300 characters"),
-  reference: Yup.string().trim().required("Reference is required").max(200, "Reference must be at most 200 characters"),
-  purpose: Yup.string()
-    .trim()
-    .required("Purpose is required")
-    .min(10, "Please give at least 10 characters")
-    .max(PURPOSE_MAX, `Purpose must be at most ${PURPOSE_MAX} characters`),
-  neededBy: Yup.string()
-    .required("Needed-by date is required")
-    .test("not-past", "Needed-by date cannot be in the past", (value) => !value || value >= todayLocalISO()),
-  language: Yup.mixed<BusinessLetterLanguage>().oneOf(["en", "de"]).required(),
+  recipientTitle: required("Title", 120),
+  recipientFullName: required("Full name", 160),
+  recipientAttn: required("Attn", 160),
+  recipientAddress: required("Address", 300),
+  recipientCity: required("City", 120),
+  recipientCountry: required("Country", 120),
+  letterDate: Yup.string().required("Date is required").matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid"),
+  reference: required("Reference", 200),
+  salutation: required("Salutation", 160),
+  companyName: required("Company name", 160).min(2, "Company name must be at least 2 characters"),
+  projectName: required("Project / business opportunity", 200),
+  bodyIntro: required("Intro paragraph", 600),
+  bodyMain: required("Body", 4000),
+  bodyClosing: required("Closing line", 1000),
 });
 
-const toPayload = (values: FormValues): CreateBusinessLetterRequest => ({
-  requester: {
-    name: values.name.trim(),
-    phone: values.phone.trim(),
-    company: values.company.trim(),
-  },
-  addressee: {
-    title: values.title.trim(),
-    fullName: values.fullName.trim(),
-    attn: values.attn.trim(),
-    city: values.city.trim(),
-    country: values.country.trim(),
-    address: values.address.trim(),
-    reference: values.reference.trim(),
-  },
-  purpose: values.purpose.trim(),
-  neededBy: values.neededBy,
-  language: values.language,
-});
-
-const formatDate = (value: string, dateOnly = false) =>
-  new Date(value).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    ...(dateOnly ? { timeZone: "UTC" } : {}),
+/** Trims every value so the stored letter and the preview stay tidy. */
+const trimmedLetter = (values: LetterFields): LetterFields => {
+  const out = {} as LetterFields;
+  (Object.keys(values) as (keyof LetterFields)[]).forEach((key) => {
+    out[key] = (values[key] ?? "").trim();
   });
+  return out;
+};
 
-const FieldError: React.FC<{ name: keyof FormValues }> = ({ name }) => (
-  <ErrorMessage name={name}>{(msg) => <div className="bl-error">{msg}</div>}</ErrorMessage>
+interface TextFieldProps {
+  name: keyof LetterFields;
+  label: string;
+  values: LetterFields;
+  required?: boolean;
+  type?: string;
+  as?: "textarea";
+  rows?: number;
+  placeholder?: string;
+}
+
+const TextField: React.FC<TextFieldProps> = ({ name, label, values, required: isRequired, type = "text", as, rows, placeholder }) => (
+  <div className="bl-field">
+    <label htmlFor={`bl-${name}`} className={isRequired ? "required" : undefined}>{label}</label>
+    <Field
+      id={`bl-${name}`}
+      name={name}
+      type={as ? undefined : type}
+      as={as}
+      rows={as ? rows ?? 4 : undefined}
+      className="form-control"
+      placeholder={placeholder}
+    />
+    {NOT_PRINTABLE.test(values[name] ?? "") && (
+      <div className="bl-hint">Some characters can't be printed in the PDF and will appear as “?”.</div>
+    )}
+    <ErrorMessage name={name}>{(msg) => <div className="bl-error">{msg}</div>}</ErrorMessage>
+  </div>
 );
 
 const BusinessLetter: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth?.user);
   const { show } = useToast();
 
-  const [requests, setRequests] = useState<BusinessLetterRequestDto[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [downloadingId, setDownloadingId] = useState<string | null>(null);
-
-  const initialValues = useMemo<FormValues>(
+  // Preset the letter the way the admin editor seeds a fresh draft: today's date, a generic greeting,
+  // and the template body (with [Company Name] / [Project] placeholders until the member fills them).
+  const initialValues = useMemo<LetterFields>(
     () => ({
-      name: user?.name ?? "",
-      phone: user?.phone ?? "",
-      company: "",
-      title: "",
-      fullName: "",
-      attn: "",
-      city: "",
-      country: "",
-      address: "",
+      recipientTitle: "",
+      recipientFullName: "",
+      recipientAttn: "",
+      recipientAddress: "",
+      recipientCity: "",
+      recipientCountry: "",
+      letterDate: todayLocalISO(),
+      companyName: "",
       reference: "",
-      purpose: "",
-      neededBy: "",
-      language: "en",
+      salutation: DEFAULT_SALUTATION,
+      companyLocation: "",
+      industry: "",
+      productsServices: "",
+      projectName: "",
+      bodyIntro: defaultBodyIntro(""),
+      bodyMain: defaultBodyMain("", ""),
+      bodyClosing: DEFAULT_BODY_CLOSING,
+      closing: "",
     }),
-    [user?.name, user?.phone]
+    []
   );
 
-  const fetchRequests = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await listBusinessLetterRequests({ limit: PAGE_SIZE, skip: 0 });
-      setRequests(data.items);
-      setTotal(data.total);
-    } catch (err) {
-      // Show the empty state rather than an error; the history is secondary to the form.
-      console.error("Failed to fetch business letter requests", err);
-      setRequests([]);
-      setTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const handleSubmit = async (values: LetterFields, helpers: FormikHelpers<LetterFields>) => {
+    const letter = trimmedLetter(values);
+    const payload: CreateBusinessLetterRequest = {
+      requester: {
+        name: user?.name ?? "",
+        phone: user?.phone ?? "",
+        company: letter.companyName,
+      },
+      addressee: {
+        title: letter.recipientTitle,
+        fullName: letter.recipientFullName,
+        attn: letter.recipientAttn,
+        address: letter.recipientAddress,
+        city: letter.recipientCity,
+        country: letter.recipientCountry,
+        reference: letter.reference,
+      },
+      // The real content now lives in `letter`; purpose is kept as a short request summary.
+      purpose: `Letter of recommendation for ${letter.companyName || "the member"} — ${letter.projectName}`.slice(0, 2000),
+      neededBy: todayLocalISO(),
+      language: "en",
+      letter,
+    };
 
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
-
-  const loadMore = async () => {
     try {
-      setLoadingMore(true);
-      const data = await listBusinessLetterRequests({ limit: PAGE_SIZE, skip: requests.length });
-      setRequests((prev) => [...prev, ...data.items]);
-      setTotal(data.total);
-    } catch (err) {
-      console.error("Failed to load more business letter requests", err);
-      show({ type: "error", message: "Failed to load more requests" });
-    } finally {
-      setLoadingMore(false);
-    }
-  };
-
-  const handleSubmit = async (values: FormValues, helpers: FormikHelpers<FormValues>) => {
-    try {
-      const res = await createBusinessLetterRequest(toPayload(values));
+      const res = await createBusinessLetterRequest(payload);
       show({ type: "success", message: `Request submitted – ${res.data.reference}` });
       helpers.resetForm({ values: initialValues });
-      fetchRequests();
     } catch (err: any) {
-      const error = err?.response?.data?.error;
-      if (error?.code === "VALIDATION_ERROR" && error.details) {
-        const formErrors: Partial<Record<keyof FormValues, string>> = {};
-        Object.entries(error.details as Record<string, string>).forEach(([field, message]) => {
-          const formField = SERVER_FIELD_MAP[field];
-          if (formField) formErrors[formField] = message;
-        });
-        helpers.setErrors(formErrors);
-      }
       show({
         type: "error",
         message: err?.response?.data?.message || "Failed to submit your request. Please try again.",
@@ -202,172 +154,67 @@ const BusinessLetter: React.FC = () => {
     }
   };
 
-  const handleDownload = async (request: BusinessLetterRequestDto) => {
-    try {
-      setDownloadingId(request.id);
-      await downloadBusinessLetterPdf(request.id, request.reference);
-    } catch (err) {
-      console.error("Failed to download business letter request", err);
-      show({ type: "error", message: "Failed to download the PDF" });
-    } finally {
-      setDownloadingId(null);
-    }
-  };
-
   return (
     <div className="dash-section business-letter">
-      <div className="bl-grid">
-        <div className="bl-card">
-          <h4>New request</h4>
-          <Formik
-            initialValues={initialValues}
-            enableReinitialize
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ values, isSubmitting }) => (
+      <Formik
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ values, isSubmitting }) => (
+          <div className="bl-grid">
+            <div className="bl-card">
+              <h4>New request</h4>
               <Form noValidate>
-                <div className="bl-group-title">Your details</div>
-                <div className="bl-field">
-                  <label htmlFor="bl-name" className="required">Name</label>
-                  <Field id="bl-name" name="name" className="form-control" />
-                  <FieldError name="name" />
-                </div>
-                <div className="bl-field">
-                  <label htmlFor="bl-email">Email</label>
-                  <input id="bl-email" className="form-control" value={user?.email ?? ""} readOnly disabled />
-                </div>
+                <div className="bl-group-title">Recipient</div>
                 <div className="bl-row">
-                  <div className="bl-field">
-                    <label htmlFor="bl-phone">Phone</label>
-                    <Field id="bl-phone" name="phone" className="form-control" />
-                    <FieldError name="phone" />
-                  </div>
-                  <div className="bl-field">
-                    <label htmlFor="bl-company">Company</label>
-                    <Field id="bl-company" name="company" className="form-control" />
-                    <FieldError name="company" />
-                  </div>
+                  <TextField name="recipientTitle" label="Title" required values={values} placeholder="Mr. / Ms. / Dr." />
+                  <TextField name="recipientFullName" label="Full name" required values={values} />
+                </div>
+                <TextField name="recipientAttn" label="Attn" required values={values} placeholder="Attention of / department" />
+                <TextField name="recipientAddress" label="Address" required values={values} />
+                <div className="bl-row">
+                  <TextField name="recipientCity" label="City" required values={values} />
+                  <TextField name="recipientCountry" label="Country" required values={values} />
                 </div>
 
-                <div className="bl-group-title">Addressee</div>
+                <div className="bl-group-title">Letter</div>
                 <div className="bl-row">
-                  <div className="bl-field">
-                    <label htmlFor="bl-title" className="required">Title</label>
-                    <Field id="bl-title" name="title" className="form-control" placeholder="Mr. / Ms. / Dr." />
-                    <FieldError name="title" />
-                  </div>
-                  <div className="bl-field">
-                    <label htmlFor="bl-fullname" className="required">Full name</label>
-                    <Field id="bl-fullname" name="fullName" className="form-control" />
-                    <FieldError name="fullName" />
-                  </div>
+                  <TextField name="letterDate" label="Date" type="date" required values={values} />
+                  <TextField name="reference" label="Reference" required values={values} placeholder="Project Name / Tender Number or Name / Business Initiative" />
                 </div>
-                <div className="bl-field">
-                  <label htmlFor="bl-attn" className="required">Attn</label>
-                  <Field id="bl-attn" name="attn" className="form-control" placeholder="Attention of / department" />
-                  <FieldError name="attn" />
-                </div>
-                <div className="bl-field">
-                  <label htmlFor="bl-address" className="required">Address</label>
-                  <Field id="bl-address" name="address" className="form-control" />
-                  <FieldError name="address" />
-                </div>
-                <CountryCitySelect />
-                <div className="bl-field">
-                  <label htmlFor="bl-reference" className="required">Reference</label>
-                  <Field id="bl-reference" name="reference" className="form-control" placeholder="Project Name / Tender Number or Name / Business Initiative" />
-                  <FieldError name="reference" />
-                </div>
-                <div className="bl-field">
-                  <label htmlFor="bl-purpose" className="required">Purpose</label>
-                  <Field
-                    as="textarea"
-                    id="bl-purpose"
-                    name="purpose"
-                    rows={5}
-                    maxLength={PURPOSE_MAX}
-                    className="form-control"
-                    placeholder="What is the letter for? Include any details it should mention."
-                  />
-                  <div className="bl-counter">{values.purpose.length}/{PURPOSE_MAX}</div>
-                  <FieldError name="purpose" />
-                </div>
-                <div className="bl-row">
-                  <div className="bl-field">
-                    <label htmlFor="bl-needed" className="required">Needed by</label>
-                    <Field id="bl-needed" name="neededBy" type="date" min={todayLocalISO()} className="form-control" />
-                    <FieldError name="neededBy" />
-                  </div>
-                  <div className="bl-field">
-                    <label>Language</label>
-                    <div className="bl-radios" role="radiogroup">
-                      <label>
-                        <Field type="radio" name="language" value="en" /> English
-                      </label>
-                      <label>
-                        <Field type="radio" name="language" value="de" /> German
-                      </label>
-                    </div>
-                  </div>
-                </div>
+                <TextField name="salutation" label="Salutation" required values={values} placeholder="Dear Mr. Smith," />
+
+                <div className="bl-group-title">Company</div>
+                <TextField name="companyName" label="Company name" required values={values} />
+                <TextField name="projectName" label="Project / business opportunity" required values={values} />
+
+                <div className="bl-group-title">Body</div>
+                <TextField name="bodyIntro" label="Intro paragraph (bold)" required as="textarea" rows={3} values={values} />
+                <TextField name="bodyMain" label="Body" required as="textarea" rows={12} values={values} />
+                <TextField name="bodyClosing" label="Closing line" required as="textarea" rows={3} values={values} />
 
                 <button type="submit" className="btn-p bl-submit justify-content-center" disabled={isSubmitting}>
                   {isSubmitting ? "Submitting…" : "Submit request"}
                 </button>
               </Form>
-            )}
-          </Formik>
-        </div>
+            </div>
 
-        <div className="bl-card">
-          <h4>My requests</h4>
-          {loading ? (
-            <Loader />
-          ) : requests.length === 0 ? (
-            <p className="bl-empty">You haven't requested any business letters yet.</p>
-          ) : (
-            <>
-              <div className="bl-table-wrap">
-                <table className="bl-table">
-                  <thead>
-                    <tr>
-                      <th>Reference</th>
-                      <th>Submitted</th>
-                      <th>Needed by</th>
-                      <th aria-label="Download" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {requests.map((request) => (
-                      <tr key={request.id}>
-                        <td className="bl-ref">{request.reference}</td>
-                        <td>{formatDate(request.createdAt)}</td>
-                        <td>{formatDate(request.neededBy, true)}</td>
-                        <td>
-                          <button
-                            type="button"
-                            className="bl-download"
-                            onClick={() => handleDownload(request)}
-                            disabled={downloadingId === request.id}
-                          >
-                            {downloadingId === request.id ? "Downloading…" : "Download PDF"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {total > requests.length && (
-                <button type="button" className="bl-download bl-more" onClick={loadMore} disabled={loadingMore}>
-                  {loadingMore ? "Loading…" : "Load more"}
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+            <div className="bl-card bl-preview-card">
+              <h4>Preview</h4>
+              <LetterPreview<LetterFields>
+                requestId="preview"
+                fields={values}
+                pdf={(_id, v) => previewBusinessLetterPdf(v)}
+                classPrefix="bl-preview"
+                emptyText="Fill in the form to preview the letter."
+                errorText="Fill in Company name and Project to preview the letter."
+              />
+            </div>
+          </div>
+        )}
+      </Formik>
     </div>
   );
 };

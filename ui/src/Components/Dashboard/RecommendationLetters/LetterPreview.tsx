@@ -1,22 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
-import type { LetterFields } from "../../../../../src/types/recommendationLetter.types";
+import { useEffect, useRef, useState } from "react";
 
-interface LetterPreviewProps {
+interface LetterPreviewProps<F> {
     /** The selected request, or null when nothing is open. */
     requestId: string | null;
     /** The values to render. Updated by the editor on field focus-out, so this changes per edit, not per keystroke. */
-    fields: LetterFields | null;
-    /** PDF generator for the current role (admin = final, member = DRAFT). */
-    pdf: (id: string, fields: LetterFields, disposition: "inline" | "attachment") => Promise<Blob>;
+    fields: F | null;
+    /** PDF generator for the current role/letter (admin = final, member = DRAFT, business = preview). */
+    pdf: (id: string, fields: F, disposition: "inline" | "attachment") => Promise<Blob>;
+    /** BEM-style class prefix; the host page styles `${classPrefix}__frame|__msg|__empty`. */
+    classPrefix?: string;
+    /** Shown when there is no request/fields to preview. */
+    emptyText?: string;
+    /** Shown when the last render failed (most often an incomplete draft). */
+    errorText?: string;
 }
 
 /**
  * Live PDF preview: renders the real generated PDF (inline) in an <iframe>, refreshing whenever
- * `fields` changes. Reuses the existing `POST /admin/letter-requests/{id}/letter/pdf?disposition=inline`
- * endpoint (read-only). Refreshes are debounced and skipped when the values are unchanged; an
- * incomplete draft that fails server validation shows a short message instead of a PDF.
+ * `fields` changes. Reuses the role's inline PDF endpoint (read-only). Refreshes are debounced and
+ * skipped when the values are unchanged; a render that fails server-side (e.g. an incomplete draft)
+ * shows a short message instead of a PDF.
  */
-const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields, pdf }) => {
+function LetterPreview<F>({
+    requestId,
+    fields,
+    pdf,
+    classPrefix = "rl-preview",
+    emptyText = "Select a request to preview the letter.",
+    errorText = "Fill in the required fields to preview the letter.",
+}: LetterPreviewProps<F>) {
     const [url, setUrl] = useState<string | null>(null);
     const [state, setState] = useState<"idle" | "loading" | "error">("idle");
     // Current blob URL and the last-rendered values key, kept in refs for cleanup/dedup.
@@ -71,16 +83,16 @@ const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields, pdf })
     );
 
     if (!requestId || !fields) {
-        return <div className="rl-preview__empty">Select a request to preview the letter.</div>;
+        return <div className={`${classPrefix}__empty`}>{emptyText}</div>;
     }
 
     if (!url) {
         return (
-            <div className="rl-preview__msg">
+            <div className={`${classPrefix}__msg`}>
                 {state === "loading"
                     ? "Generating preview…"
                     : state === "error"
-                    ? "Fill in the required fields to preview the letter."
+                    ? errorText
                     : "Preview will appear here."}
             </div>
         );
@@ -88,11 +100,11 @@ const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields, pdf })
 
     return (
         <iframe
-            className="rl-preview__frame"
+            className={`${classPrefix}__frame`}
             title="Letter preview"
             src={url}
         />
     );
-};
+}
 
 export default LetterPreview;

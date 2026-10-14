@@ -13,6 +13,8 @@
   border: 1px solid var(--bdr);
   background: var(--bgp);
   padding: 1.5rem;
+  height: 100vh;
+  overflow: scroll;
 }
 .business-letter .bl-card h4 {
   font-family: var(--se);

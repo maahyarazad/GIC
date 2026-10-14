@@ -121,9 +121,9 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   }
 
   // ── Recipient (left) and sender (right) side by side ──
-  // v2 addressee block: full name (bold), title, Attn, address, "City, Country".
+  // v2 addressee block: company name (bold), title, Attn, address, "City, Country".
   const recipient = [
-    fields.recipientFullName,
+    fields.companyName,
     fields.recipientTitle,
     fields.recipientAttn ? `Attn: ${fields.recipientAttn}` : "",
     fields.recipientAddress,
@@ -162,13 +162,14 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   gap(LEADING / 2);
 
   // ── Body (v2: flowing paragraphs, no headings) ──
-  for (const text of buildBody(fields)) {
+  buildBody(fields).forEach((text, index) => {
     gap(LEADING / 2);
     // Keep a paragraph from starting on the last line of a page.
     ensureSpace(LEADING * 2);
-    paragraph(text);
+    // The opening recommendation line is emphasised.
+    paragraph(text, index === 0 ? bold : regular);
     gap(PARAGRAPH_GAP);
-  }
+  });
 
   // ── Closing ──
   gap(LEADING / 2);

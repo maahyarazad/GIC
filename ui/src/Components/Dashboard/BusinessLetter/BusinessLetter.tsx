@@ -17,6 +17,7 @@ import {
 } from "@/api/businessLetter";
 import { useToast } from "@/Providers/ToastContext";
 import Loader from "@/Components/Loader/Loader";
+import CountryCitySelect from "./CountryCitySelect";
 
 const LETTER_TYPE_OPTIONS: { value: BusinessLetterType; label: string }[] = [
   { value: "business_recommendation", label: "Business Recommendation" },
@@ -300,18 +301,7 @@ const BusinessLetter: React.FC = () => {
                   <Field id="bl-address" name="address" className="form-control" />
                   <FieldError name="address" />
                 </div>
-                <div className="bl-row">
-                  <div className="bl-field">
-                    <label htmlFor="bl-city" className="required">City</label>
-                    <Field id="bl-city" name="city" className="form-control" />
-                    <FieldError name="city" />
-                  </div>
-                  <div className="bl-field">
-                    <label htmlFor="bl-country" className="required">Country</label>
-                    <Field id="bl-country" name="country" className="form-control" />
-                    <FieldError name="country" />
-                  </div>
-                </div>
+                <CountryCitySelect />
                 <div className="bl-field">
                   <label htmlFor="bl-reference" className="required">Reference</label>
                   <Field id="bl-reference" name="reference" className="form-control" placeholder="Project Name / Tender Number or Name / Business Initiative" />

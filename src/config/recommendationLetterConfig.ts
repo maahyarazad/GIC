@@ -25,7 +25,8 @@ export const SIGNATORIES: readonly Signatory[] = [
   {
     name: "Philip Hölzer",
     title: "Club Director",
-    // No signature image yet — the slot renders the line + name/title only.
+    // Image signature: the whole file is embedded as-is (crop the image itself), so no `box`.
+    signature: { file: "philip_signature.jpeg" },
   },
   {
     name: "Thomas Hochberger",

@@ -225,7 +225,7 @@ export class BusinessLetterController extends Controller {
         return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
       }
 
-      const bytes = await buildRecommendationLetterPdf(value, "DRAFT PREVIEW", { draft: false, signatures: false });
+      const bytes = await buildRecommendationLetterPdf(value, "DRAFT PREVIEW", { draft: true, signatures: false });
 
       this.setStatus(200);
       this.setHeader("Content-Type", "application/pdf");

@@ -28,9 +28,9 @@ const LOGO_WIDTH = 140;
 
 const TEXT = rgb(0.13, 0.13, 0.13);
 const MUTED = rgb(0.47, 0.47, 0.47);
-const DRAFT_GREY = rgb(0.6, 0.6, 0.6);
+const DRAFT_COLOR = rgb(0.8, 0, 0); // red
 const DRAFT_SIZE = 140;
-const DRAFT_OPACITY = 0.2; // 20%, per the member-preview requirement.
+const DRAFT_OPACITY = 0.3; // 30%
 
 /** Options for the member preview vs the admin final letter. */
 export interface LetterPdfOptions {
@@ -111,7 +111,7 @@ export async function buildRecommendationLetterPdf(
       y: PAGE_HEIGHT / 2 - dy,
       size: DRAFT_SIZE,
       font: bold,
-      color: DRAFT_GREY,
+      color: DRAFT_COLOR,
       opacity: DRAFT_OPACITY,
       rotate: degrees(angleDeg),
     });

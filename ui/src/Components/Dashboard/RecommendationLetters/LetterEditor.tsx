@@ -97,9 +97,11 @@ interface LetterEditorProps {
     onSaved(detail: LetterRequestDetail): void;
     onDirtyChange(dirty: boolean): void;
     submitRef?: React.MutableRefObject<SubmitLetter | null>;
+    /** Called with the current values on field focus-out, to refresh the live preview. */
+    onPreviewRefresh?(values: LetterFields): void;
 }
 
-const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyChange, submitRef }) => {
+const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyChange, submitRef, onPreviewRefresh }) => {
     const { show } = useToast();
     const [pdfBusy, setPdfBusy] = useState<"view" | "download" | null>(null);
 
@@ -203,6 +205,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyCha
                     save={save}
                     onView={() => view(form)}
                     onDownload={() => download(form)}
+                    onPreviewRefresh={onPreviewRefresh}
                 />
             )}
         </Formik>
@@ -218,10 +221,11 @@ interface EditorBodyProps {
     save(values: LetterFields, helpers: FormikHelpers<LetterFields>): Promise<LetterRequestDetail>;
     onView(): void;
     onDownload(): void;
+    onPreviewRefresh?(values: LetterFields): void;
 }
 
 // Separate component so hooks can depend on the Formik state.
-const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyChange, submitRef, save, onView, onDownload }) => {
+const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyChange, submitRef, save, onView, onDownload, onPreviewRefresh }) => {
     const { values, dirty, isSubmitting } = form;
 
     useEffect(() => {
@@ -250,7 +254,7 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
     });
 
     return (
-        <Form className="rl-editor" noValidate>
+        <Form className="rl-editor" noValidate onBlurCapture={() => onPreviewRefresh?.(form.values)}>
             <div className="rl-editor__header">
                 <h4>{detail.reference}</h4>
                 <div className="rl-muted">
@@ -262,6 +266,18 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
                         ? `Last saved${detail.savedBy?.name ? ` by ${detail.savedBy.name}` : ""} at ${formatSavedAt(detail.savedAt)}`
                         : "Not saved yet"}
                 </div>
+            </div>
+
+            <div className="rl-editor__actions">
+                <button type="submit" className="dashboard-btn" disabled={isSubmitting}>
+                    {isSubmitting ? "Saving…" : "Save"}
+                </button>
+                <button type="button" className="dashboard-btn dashboard-btn--ghost-minimal" disabled={pdfBusy !== null} onClick={onView}>
+                    {pdfBusy === "view" ? "Generating…" : "View"}
+                </button>
+                <button type="button" className="dashboard-btn dashboard-btn--ghost-minimal" disabled={pdfBusy !== null} onClick={onDownload}>
+                    {pdfBusy === "download" ? "Generating…" : "Download PDF"}
+                </button>
             </div>
 
             <div className="rl-group-title">Recipient</div>
@@ -289,18 +305,6 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
 
             <div className="rl-group-title">Closing</div>
             <TextField name="closing" label="Closing line" required as="textarea" values={values} />
-
-            <div className="rl-editor__actions">
-                <button type="submit" className="dashboard-btn" disabled={isSubmitting}>
-                    {isSubmitting ? "Saving…" : "Save"}
-                </button>
-                <button type="button" className="dashboard-btn dashboard-btn--ghost-minimal" disabled={pdfBusy !== null} onClick={onView}>
-                    {pdfBusy === "view" ? "Generating…" : "View"}
-                </button>
-                <button type="button" className="dashboard-btn dashboard-btn--ghost-minimal" disabled={pdfBusy !== null} onClick={onDownload}>
-                    {pdfBusy === "download" ? "Generating…" : "Download PDF"}
-                </button>
-            </div>
         </Form>
     );
 };

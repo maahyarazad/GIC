@@ -75,11 +75,13 @@ interface LetterRequestListProps {
     onSelect(id: string): void;
     onSend?(item: LetterRequestListItem): void;
     busyId?: string | null;
+    /** Shown when `items` is empty (e.g. "No matching requests." while searching). */
+    emptyMessage?: string;
 }
 
-const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, busyId }) =>
+const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, busyId, emptyMessage = "No letter requests yet." }) =>
     items.length === 0 ? (
-        <p className="rl-empty">No letter requests yet.</p>
+        <p className="rl-empty">{emptyMessage}</p>
     ) : (
         <ul className="rl-list">
             {items.map((item) => (

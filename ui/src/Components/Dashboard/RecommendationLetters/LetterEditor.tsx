@@ -21,33 +21,41 @@ const text = (label: string, max: number) =>
     Yup.string().trim().max(max, `${label} must be at most ${max} characters`);
 const required = (label: string, max: number) => text(label, max).required(`${label} is required`);
 
+// Preview-level rules: an incomplete draft can still be previewed. The addressee block and the
+// subject reference are required only to save/send (mirrors validateLetter on the server).
 const base = {
-    recipientCompany: text("Recipient company", 160),
-    recipientStreet: text("Street", 200),
+    recipientTitle: text("Title", 120),
+    recipientFullName: text("Full name", 160),
+    recipientAttn: text("Attn", 160),
+    recipientAddress: text("Address", 300),
     recipientCity: text("City", 120),
     recipientCountry: text("Country", 120),
     letterDate: Yup.string().required("Date is required").matches(/^\d{4}-\d{2}-\d{2}$/, "Date is invalid"),
     companyName: required("Company name", 160).min(2, "Company name must be at least 2 characters"),
     reference: text("Reference", 200),
     salutation: required("Salutation", 160),
-    companyLocation: required("Company location", 80),
     projectName: required("Project / business opportunity", 200),
     closing: required("Closing", 1000),
+    // v1-only, retained for back-compat but no longer edited: keep lenient length rules.
+    companyLocation: text("Company location", 80),
+    industry: text("Industry / business sector", 200),
+    productsServices: text("Products / services", 300),
 };
 
-/** Save and send: everything the letter needs. */
+/** Save and send: the full v2 addressee block + subject reference are required. */
 const saveSchema = Yup.object({
     ...base,
-    industry: required("Industry / business sector", 200),
-    productsServices: required("Products / services", 300),
+    recipientTitle: required("Title", 120),
+    recipientFullName: required("Full name", 160),
+    recipientAttn: required("Attn", 160),
+    recipientAddress: required("Address", 300),
+    recipientCity: required("City", 120),
+    recipientCountry: required("Country", 120),
+    reference: required("Reference", 200),
 });
 
 /** View and Download: an incomplete draft can still be previewed. */
-const previewSchema = Yup.object({
-    ...base,
-    industry: text("Industry / business sector", 200),
-    productsServices: text("Products / services", 300),
-});
+const previewSchema = Yup.object(base);
 
 const formatSavedAt = (iso: string) =>
     new Date(iso).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -258,28 +266,25 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
 
             <div className="rl-group-title">Recipient</div>
             <div className="rl-row2">
-                <TextField name="recipientCompany" label="Company" values={values} />
-                <TextField name="recipientStreet" label="Street" values={values} />
+                <TextField name="recipientTitle" label="Title" required values={values} placeholder="Mr. / Ms. / Dr." />
+                <TextField name="recipientFullName" label="Full name" required values={values} />
             </div>
+            <TextField name="recipientAttn" label="Attn" required values={values} placeholder="Attention of / department" />
+            <TextField name="recipientAddress" label="Address" required values={values} />
             <div className="rl-row2">
-                <TextField name="recipientCity" label="City" values={values} />
-                <TextField name="recipientCountry" label="Country" values={values} />
+                <TextField name="recipientCity" label="City" required values={values} />
+                <TextField name="recipientCountry" label="Country" required values={values} />
             </div>
 
             <div className="rl-group-title">Letter</div>
             <div className="rl-row2">
                 <TextField name="letterDate" label="Date" type="date" required values={values} />
-                <TextField name="reference" label="Reference" values={values} placeholder="RFQ, Tender, Project" />
+                <TextField name="reference" label="Reference" required values={values} placeholder="Project Name / Tender Number or Name / Business Initiative" />
             </div>
             <TextField name="salutation" label="Salutation" required values={values} placeholder="Dear Mr. Smith," />
 
             <div className="rl-group-title">Company</div>
-            <div className="rl-row2">
-                <TextField name="companyName" label="Company name" required values={values} />
-                <TextField name="companyLocation" label="Company location" required values={values} placeholder="Dubai-based" />
-            </div>
-            <TextField name="industry" label="Industry / business sector" required values={values} />
-            <TextField name="productsServices" label="Products / services / solutions" required values={values} />
+            <TextField name="companyName" label="Company name" required values={values} />
             <TextField name="projectName" label="Project / business opportunity" required values={values} />
 
             <div className="rl-group-title">Closing</div>

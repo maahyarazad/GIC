@@ -2,11 +2,14 @@ import { Schema, model } from "mongoose";
 
 const letterText = (maxlength: number) => ({ type: String, trim: true, default: "", maxlength });
 
-// Admin-edited letter of recommendation (feature 005). Absent until first saved.
+// Admin-edited letter of recommendation (feature 005; recipient block v2 in feature 009).
+// Absent until first saved.
 const LetterSchema = new Schema(
   {
-    recipientCompany: letterText(160),
-    recipientStreet: letterText(200),
+    recipientTitle: letterText(120),
+    recipientFullName: letterText(160),
+    recipientAttn: letterText(160),
+    recipientAddress: letterText(300),
     recipientCity: letterText(120),
     recipientCountry: letterText(120),
     letterDate: letterText(10),
@@ -60,8 +63,16 @@ const BusinessLetterRequestSchema = new Schema(
         "partner_recommendation",
       ],
     },
+    // Letter addressee + subject reference (v2). Schema-optional (default "") for back-compat with
+    // legacy requests that only stored `address`; the controller enforces "required" on new submits.
     addressee: {
-      address: { type: String, default: "", trim: true, maxlength: 500 },
+      title: { type: String, default: "", trim: true, maxlength: 120 },
+      fullName: { type: String, default: "", trim: true, maxlength: 160 },
+      attn: { type: String, default: "", trim: true, maxlength: 160 },
+      city: { type: String, default: "", trim: true, maxlength: 120 },
+      country: { type: String, default: "", trim: true, maxlength: 120 },
+      address: { type: String, default: "", trim: true, maxlength: 300 },
+      reference: { type: String, default: "", trim: true, maxlength: 200 },
     },
     purpose: { type: String, required: true, trim: true, maxlength: 2000 },
     neededBy: { type: Date, required: true },
@@ -106,7 +117,13 @@ export const mapBusinessLetterRequest = (doc: any): BusinessLetterRequestDto => 
   letterType: doc.letterType,
   letterTypeLabel: formatLetterType(doc.letterType),
   addressee: {
+    title: doc.addressee?.title || "",
+    fullName: doc.addressee?.fullName || "",
+    attn: doc.addressee?.attn || "",
+    city: doc.addressee?.city || "",
+    country: doc.addressee?.country || "",
     address: doc.addressee?.address || "",
+    reference: doc.addressee?.reference || "",
   },
   purpose: doc.purpose,
   neededBy: toDateOnly(doc.neededBy),

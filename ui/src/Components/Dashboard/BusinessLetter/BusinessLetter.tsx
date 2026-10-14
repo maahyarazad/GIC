@@ -31,7 +31,13 @@ interface FormValues {
   phone: string;
   company: string;
   letterType: BusinessLetterType | "";
-  addresseeAddress: string;
+  title: string;
+  fullName: string;
+  attn: string;
+  city: string;
+  country: string;
+  address: string;
+  reference: string;
   purpose: string;
   neededBy: string;
   language: BusinessLetterLanguage;
@@ -43,7 +49,13 @@ const SERVER_FIELD_MAP: Record<string, keyof FormValues> = {
   "requester.phone": "phone",
   "requester.company": "company",
   letterType: "letterType",
-  "addressee.address": "addresseeAddress",
+  "addressee.title": "title",
+  "addressee.fullName": "fullName",
+  "addressee.attn": "attn",
+  "addressee.city": "city",
+  "addressee.country": "country",
+  "addressee.address": "address",
+  "addressee.reference": "reference",
   purpose: "purpose",
   neededBy: "neededBy",
   language: "language",
@@ -60,7 +72,13 @@ const validationSchema = Yup.object({
   phone: Yup.string().trim().max(40, "Phone must be at most 40 characters"),
   company: Yup.string().trim().max(160, "Company must be at most 160 characters"),
   letterType: Yup.string().required("Please choose a letter type"),
-  addresseeAddress: Yup.string().trim().max(500, "Address must be at most 500 characters"),
+  title: Yup.string().trim().required("Title is required").max(120, "Title must be at most 120 characters"),
+  fullName: Yup.string().trim().required("Full name is required").max(160, "Full name must be at most 160 characters"),
+  attn: Yup.string().trim().required("Attn is required").max(160, "Attn must be at most 160 characters"),
+  city: Yup.string().trim().required("City is required").max(120, "City must be at most 120 characters"),
+  country: Yup.string().trim().required("Country is required").max(120, "Country must be at most 120 characters"),
+  address: Yup.string().trim().required("Address is required").max(300, "Address must be at most 300 characters"),
+  reference: Yup.string().trim().required("Reference is required").max(200, "Reference must be at most 200 characters"),
   purpose: Yup.string()
     .trim()
     .required("Purpose is required")
@@ -80,7 +98,13 @@ const toPayload = (values: FormValues): CreateBusinessLetterRequest => ({
   },
   letterType: values.letterType as BusinessLetterType,
   addressee: {
-    address: values.addresseeAddress.trim(),
+    title: values.title.trim(),
+    fullName: values.fullName.trim(),
+    attn: values.attn.trim(),
+    city: values.city.trim(),
+    country: values.country.trim(),
+    address: values.address.trim(),
+    reference: values.reference.trim(),
   },
   purpose: values.purpose.trim(),
   neededBy: values.neededBy,
@@ -115,7 +139,13 @@ const BusinessLetter: React.FC = () => {
       phone: user?.phone ?? "",
       company: "",
       letterType: "",
-      addresseeAddress: "",
+      title: "",
+      fullName: "",
+      attn: "",
+      city: "",
+      country: "",
+      address: "",
+      reference: "",
       purpose: "",
       neededBy: "",
       language: "en",
@@ -247,10 +277,45 @@ const BusinessLetter: React.FC = () => {
                   </Field>
                   <FieldError name="letterType" />
                 </div>
+                <div className="bl-group-title">Addressee</div>
+                <div className="bl-row">
+                  <div className="bl-field">
+                    <label htmlFor="bl-title" className="required">Title</label>
+                    <Field id="bl-title" name="title" className="form-control" placeholder="Mr. / Ms. / Dr." />
+                    <FieldError name="title" />
+                  </div>
+                  <div className="bl-field">
+                    <label htmlFor="bl-fullname" className="required">Full name</label>
+                    <Field id="bl-fullname" name="fullName" className="form-control" />
+                    <FieldError name="fullName" />
+                  </div>
+                </div>
                 <div className="bl-field">
-                  <label htmlFor="bl-address">Address</label>
-                  <Field id="bl-address" name="addresseeAddress" className="form-control" />
-                  <FieldError name="addresseeAddress" />
+                  <label htmlFor="bl-attn" className="required">Attn</label>
+                  <Field id="bl-attn" name="attn" className="form-control" placeholder="Attention of / department" />
+                  <FieldError name="attn" />
+                </div>
+                <div className="bl-field">
+                  <label htmlFor="bl-address" className="required">Address</label>
+                  <Field id="bl-address" name="address" className="form-control" />
+                  <FieldError name="address" />
+                </div>
+                <div className="bl-row">
+                  <div className="bl-field">
+                    <label htmlFor="bl-city" className="required">City</label>
+                    <Field id="bl-city" name="city" className="form-control" />
+                    <FieldError name="city" />
+                  </div>
+                  <div className="bl-field">
+                    <label htmlFor="bl-country" className="required">Country</label>
+                    <Field id="bl-country" name="country" className="form-control" />
+                    <FieldError name="country" />
+                  </div>
+                </div>
+                <div className="bl-field">
+                  <label htmlFor="bl-reference" className="required">Reference</label>
+                  <Field id="bl-reference" name="reference" className="form-control" placeholder="Project Name / Tender Number or Name / Business Initiative" />
+                  <FieldError name="reference" />
                 </div>
                 <div className="bl-field">
                   <label htmlFor="bl-purpose" className="required">Purpose</label>

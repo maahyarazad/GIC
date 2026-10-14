@@ -8,7 +8,7 @@ import fs from "fs/promises";
 import path from "path";
 import { PDFDocument, PDFEmbeddedPage, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
 import { toWinAnsi, wrapText } from "./pdfText";
-import { buildSections } from "./recommendationLetterText";
+import { buildBody } from "./recommendationLetterText";
 import { RUNNING_HEADER, SENDER_LINES, SIGNATORIES, SignatureSource } from "../config/recommendationLetterConfig";
 import { LetterFields } from "../types/recommendationLetter.types";
 
@@ -121,7 +121,14 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   }
 
   // ── Recipient (left) and sender (right) side by side ──
-  const recipient = [fields.recipientCompany, fields.recipientStreet, fields.recipientCity, fields.recipientCountry]
+  // v2 addressee block: full name (bold), title, Attn, address, "City, Country".
+  const recipient = [
+    fields.recipientFullName,
+    fields.recipientTitle,
+    fields.recipientAttn ? `Attn: ${fields.recipientAttn}` : "",
+    fields.recipientAddress,
+    [fields.recipientCity, fields.recipientCountry].map((p) => p.trim()).filter(Boolean).join(", "),
+  ]
     .map((line) => line.trim())
     .filter(Boolean);
   const blockTop = y;
@@ -154,17 +161,13 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   paragraph(fields.salutation);
   gap(LEADING / 2);
 
-  // ── Sections ──
-  for (const section of buildSections(fields)) {
+  // ── Body (v2: flowing paragraphs, no headings) ──
+  for (const text of buildBody(fields)) {
     gap(LEADING / 2);
-    // Keep a heading with at least two lines of its first paragraph.
-    ensureSpace(LEADING * 3);
-    paragraph(section.heading, bold);
-    gap(PARAGRAPH_GAP / 2);
-    for (const text of section.paragraphs) {
-      paragraph(text);
-      gap(PARAGRAPH_GAP);
-    }
+    // Keep a paragraph from starting on the last line of a page.
+    ensureSpace(LEADING * 2);
+    paragraph(text);
+    gap(PARAGRAPH_GAP);
   }
 
   // ── Closing ──

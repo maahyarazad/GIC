@@ -7,19 +7,32 @@ export const LETTER_STATUS_LABELS: Record<LetterStatus, string> = {
     failed: "Send failed",
 };
 
-/** The editable values of a letter of recommendation (Draft_Template for Letter of Recommendation.docx). */
+/**
+ * The editable values of a letter of recommendation
+ * ("Draft_Template for Letter of Recommendation - v2.docx").
+ *
+ * The recipient block is the structured addressee (v2). `companyLocation`, `industry` and
+ * `productsServices` are retained for back-compat with older saved drafts but are no longer
+ * rendered by the v2 body or shown in the editor.
+ */
 export interface LetterFields {
-    recipientCompany: string;
-    recipientStreet: string;
+    recipientTitle: string;
+    recipientFullName: string;
+    recipientAttn: string;
+    recipientAddress: string;
     recipientCity: string;
     recipientCountry: string;
     /** "YYYY-MM-DD" */
     letterDate: string;
     companyName: string;
+    /** Subject reference: Project Name / Tender Number or Name / Business Initiative. */
     reference: string;
     salutation: string;
+    /** @deprecated v1 only — not used by the v2 body. */
     companyLocation: string;
+    /** @deprecated v1 only — not used by the v2 body. */
     industry: string;
+    /** @deprecated v1 only — not used by the v2 body. */
     productsServices: string;
     projectName: string;
     closing: string;
@@ -27,8 +40,10 @@ export interface LetterFields {
 
 /** Form order. */
 export const LETTER_FIELD_KEYS: (keyof LetterFields)[] = [
-    "recipientCompany",
-    "recipientStreet",
+    "recipientTitle",
+    "recipientFullName",
+    "recipientAttn",
+    "recipientAddress",
     "recipientCity",
     "recipientCountry",
     "letterDate",

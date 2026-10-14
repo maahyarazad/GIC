@@ -91,9 +91,18 @@ export async function buildBusinessLetterPdf(dto: BusinessLetterRequestDto): Pro
   drawField("Company", dto.requester.company);
   y -= 10;
 
+  drawSectionTitle("Addressee");
+  drawField("Title", dto.addressee?.title);
+  drawField("Full name", dto.addressee?.fullName);
+  drawField("Attn", dto.addressee?.attn);
+  drawField("Address", dto.addressee?.address);
+  drawField("City", dto.addressee?.city);
+  drawField("Country", dto.addressee?.country);
+  drawField("Reference", dto.addressee?.reference);
+  y -= 10;
+
   drawSectionTitle("Letter details");
   drawField("Letter type", dto.letterTypeLabel);
-  drawField("Address", dto.addressee?.address);
   drawField("Language", LANGUAGE_LABELS[dto.language] ?? dto.language);
   drawField("Needed by", formatDate(dto.neededBy));
   y -= 10;

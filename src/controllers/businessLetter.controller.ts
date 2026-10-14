@@ -23,6 +23,8 @@ import {
   mapBusinessLetterRequest,
 } from "../models/businessLetterRequest.model";
 import {
+  ADDRESSEE_LIMITS,
+  AddresseeFields,
   BusinessLetterLanguage,
   BusinessLetterType,
   CreateBusinessLetterRequest,
@@ -77,7 +79,20 @@ function validateCreate(body: CreateBusinessLetterRequest): Record<string, strin
     errors.letterType = "Letter type is invalid";
   }
 
-  checkLength("addressee.address", str(body.addressee?.address), 0, 500, "Address");
+  // Addressee block + subject reference (v2): all required on new submissions.
+  const addresseeLabels: Record<keyof AddresseeFields, string> = {
+    title: "Title",
+    fullName: "Full name",
+    attn: "Attn",
+    city: "City",
+    country: "Country",
+    address: "Address",
+    reference: "Reference",
+  };
+  for (const key of Object.keys(addresseeLabels) as (keyof AddresseeFields)[]) {
+    checkLength(`addressee.${key}`, str(body.addressee?.[key]), 1, ADDRESSEE_LIMITS[key], addresseeLabels[key]);
+  }
+
   checkLength("purpose", str(body.purpose), 10, 2000, "Purpose");
 
   const neededBy = parseDateOnly(str(body.neededBy));
@@ -116,7 +131,19 @@ async function notifyLeadership(doc: any): Promise<void> {
       REQUESTER_PHONE: orEmpty(doc.requester.phone),
       REQUESTER_COMPANY: orEmpty(doc.requester.company),
       LETTER_TYPE: escapeHtml(formatLetterType(doc.letterType)),
-      ADDRESSEE_ADDRESS: orEmpty(doc.addressee?.address),
+      ADDRESSEE_ADDRESS: escapeHtml(
+        [
+          doc.addressee?.fullName,
+          doc.addressee?.title,
+          doc.addressee?.attn ? `Attn: ${doc.addressee.attn}` : "",
+          doc.addressee?.address,
+          [doc.addressee?.city, doc.addressee?.country].filter(Boolean).join(", "),
+          doc.addressee?.reference ? `Ref: ${doc.addressee.reference}` : "",
+        ]
+          .map((part) => (part ?? "").toString().trim())
+          .filter(Boolean)
+          .join("\n") || EMPTY
+      ).replace(/\r?\n/g, "<br />"),
       LANGUAGE: escapeHtml(LANGUAGE_LABELS[doc.language as BusinessLetterLanguage] ?? doc.language),
       NEEDED_BY: new Date(doc.neededBy).toLocaleDateString("en-GB", {
         day: "2-digit",
@@ -201,7 +228,13 @@ export class BusinessLetterController extends Controller {
         },
         letterType,
         addressee: {
+          title: str(body.addressee?.title),
+          fullName: str(body.addressee?.fullName),
+          attn: str(body.addressee?.attn),
+          city: str(body.addressee?.city),
+          country: str(body.addressee?.country),
           address: str(body.addressee?.address),
+          reference: str(body.addressee?.reference),
         },
         purpose: str(body.purpose),
         neededBy: parseDateOnly(str(body.neededBy)),

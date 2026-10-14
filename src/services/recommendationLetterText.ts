@@ -1,8 +1,24 @@
 /**
  * Letter of recommendation wording, defaults, validation and DTO mappers.
  *
- * The section sentences come verbatim from "Draft_Template for Letter of Recommendation.docx";
- * this is the only place they live (the PDF builder and the controller import them).
+ * The body sentences come from "Draft_Template for Letter of Recommendation - v2.docx" (feature 009);
+ * this is the only place they live (the PDF builder and the controller import them). v2 is flowing
+ * paragraphs (no numbered sections). Verbatim v2 body paragraphs, with placeholders:
+ *   1. On behalf of the German Industry Club Dubai and its German business community, we are pleased
+ *      to recommend {company} as a trusted and reliable business partner.
+ *   2. Based on the positive feedback and recommendations received from its customers over the years,
+ *      {company} has established a strong reputation for professionalism, reliability, and commitment
+ *      to high business standards. Its customers consistently recognize the company as a dependable
+ *      and trustworthy business partner, valuing its dedication to quality, integrity, and customer
+ *      satisfaction.
+ *   3. As an active member of the German Industry Club Dubai, {company} represents the values
+ *      traditionally associated with German business excellence, including quality, integrity,
+ *      technical competence, and long-term commitment.
+ *   4. With specific reference to {project}, we are pleased to endorse {company}'s participation and
+ *      support its efforts to contribute to the successful realization of this opportunity.
+ *   5. Based on our longstanding positive experience with the company, we are confident in
+ *      recommending {company} for consideration as a reliable business partner for this initiative.
+ * Paragraphs 6–7 (the closing lines) live in the editable `closing` field (see DEFAULT_CLOSING).
  */
 import { LETTER_TIMEZONE } from "../config/recommendationLetterConfig";
 import {
@@ -13,8 +29,10 @@ import {
 } from "../types/recommendationLetter.types";
 
 export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> = {
-  recipientCompany: 160,
-  recipientStreet: 200,
+  recipientTitle: 120,
+  recipientFullName: 160,
+  recipientAttn: 160,
+  recipientAddress: 300,
   recipientCity: 120,
   recipientCountry: 120,
   companyName: 160,
@@ -28,8 +46,10 @@ export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> =
 };
 
 const LABELS: Record<keyof LetterFields, string> = {
-  recipientCompany: "Recipient company",
-  recipientStreet: "Street",
+  recipientTitle: "Title",
+  recipientFullName: "Full name",
+  recipientAttn: "Attn",
+  recipientAddress: "Address",
   recipientCity: "City",
   recipientCountry: "Country",
   letterDate: "Date",
@@ -43,20 +63,31 @@ const LABELS: Record<keyof LetterFields, string> = {
   closing: "Closing",
 };
 
-/** Required in every mode. */
+/** Required in every mode (preview included). */
 const ALWAYS_REQUIRED: (keyof LetterFields)[] = [
   "companyName",
   "salutation",
-  "companyLocation",
   "projectName",
   "closing",
 ];
 
-/** Required to save or send; a preview may leave them empty. */
-const REQUIRED_TO_SAVE: (keyof LetterFields)[] = ["industry", "productsServices"];
+/**
+ * Required to save or send; a preview may leave them empty. The v2 addressee block plus the subject
+ * reference. (companyLocation/industry/productsServices are v1-only and no longer required.)
+ */
+const REQUIRED_TO_SAVE: (keyof LetterFields)[] = [
+  "recipientTitle",
+  "recipientFullName",
+  "recipientAttn",
+  "recipientAddress",
+  "recipientCity",
+  "recipientCountry",
+  "reference",
+];
 
+/** v2 closing lines (paragraphs 6–7), editable in the `closing` field. */
 export const DEFAULT_CLOSING =
-  "We wish the company every success in pursuing this opportunity and its future business development.";
+  "We welcome the opportunity to strengthen cooperation between the German industry and the organizations in the MEA region and remain available for any further information. Please do not hesitate to contact us in case any further questions may arise.";
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -75,27 +106,46 @@ export const todayInDubai = (): string =>
 
 /** Prefill for a request without a saved draft (research R3). */
 export function buildDefaultLetter(request: any): LetterFields {
-  // One address line per field. A single-line address is split on commas instead,
-  // so "Acme, Main St 1, Dubai, UAE" still fills all four lines.
-  const address = String(request.addressee?.address ?? "");
-  const split = (separator: RegExp) =>
-    address.split(separator).map((part) => part.trim()).filter(Boolean);
-  const lines = split(/\r?\n/);
-  const parts = lines.length > 1 ? lines : split(/,/);
+  const addressee = request.addressee ?? {};
+  const trim = (value: unknown) => String(value ?? "").trim();
+
+  // v2 requests carry the structured addressee; legacy ones only have a single `address` string —
+  // split that on newlines/commas so old requests still prefill sensibly.
+  const hasStructured = Boolean(
+    addressee.title || addressee.fullName || addressee.attn || addressee.city || addressee.country
+  );
+  const legacy = trim(addressee.address);
+  const byLine = legacy.split(/\r?\n/).map((p: string) => p.trim()).filter(Boolean);
+  const parts = byLine.length > 1 ? byLine : legacy.split(/,/).map((p: string) => p.trim()).filter(Boolean);
+
+  const recipient = hasStructured
+    ? {
+        recipientTitle: trim(addressee.title),
+        recipientFullName: trim(addressee.fullName),
+        recipientAttn: trim(addressee.attn),
+        recipientAddress: trim(addressee.address),
+        recipientCity: trim(addressee.city),
+        recipientCountry: trim(addressee.country),
+      }
+    : {
+        recipientTitle: "",
+        recipientFullName: parts[0] ?? "",
+        recipientAttn: "",
+        recipientAddress: parts[1] ?? "",
+        recipientCity: parts[2] ?? "",
+        recipientCountry: parts.slice(3).join(", "),
+      };
 
   return {
-    recipientCompany: parts[0] ?? "",
-    recipientStreet: parts[1] ?? "",
-    recipientCity: parts[2] ?? "",
-    recipientCountry: parts.slice(3).join(", "),
+    ...recipient,
     letterDate: todayInDubai(),
-    companyName: String(request.requester?.company ?? "").trim(),
-    reference: "RFQ, Tender, Project",
+    companyName: trim(request.requester?.company),
+    reference: trim(addressee.reference),
     salutation: "Dear Sir or Madam,",
-    companyLocation: "Dubai-based",
+    companyLocation: "",
     industry: "",
     productsServices: "",
-    projectName: String(request.purpose ?? "").split(/\r?\n/)[0].trim().slice(0, LIMITS.projectName),
+    projectName: trim(request.purpose).split(/\r?\n/)[0].slice(0, LIMITS.projectName),
     closing: DEFAULT_CLOSING,
   };
 }
@@ -129,35 +179,18 @@ export function validateLetter(
   return Object.keys(errors).length > 0 ? { errors } : { value, errors };
 }
 
-/** The template's three numbered sections with the values filled in. */
-export function buildSections(f: LetterFields): { heading: string; paragraphs: string[] }[] {
+/** The v2 body paragraphs (no headings) with the values filled in. */
+export function buildBody(f: LetterFields): string[] {
   // A preview may lack these; keep the gap visible instead of printing an empty phrase.
-  const industry = f.industry || "[industry/business sector]";
-  const products = f.productsServices || "[products/services/solutions]";
+  const company = f.companyName || "[Company Name]";
+  const project = f.projectName || "[Project Name / Tender Number / Business Initiative]";
 
   return [
-    {
-      heading: "1. Company Introduction & Business Relationship",
-      paragraphs: [
-        `On behalf of the German Industry Club, we are pleased to provide this letter of recommendation for ${f.companyName}, a ${f.companyLocation} company operating in the ${industry} across the Middle East and Africa (MEA) region.`,
-        `The company specializes in ${products} and demonstrates a strong commitment to professional business practices, customer-oriented solutions, and the development of sustainable international business relationships.`,
-      ],
-    },
-    {
-      heading: "2. German Emirates Club Membership & German Quality Standards",
-      paragraphs: [
-        `As a valued member of the German Emirates Club, ${f.companyName} is part of an established business network connecting German and international companies, industry professionals, and decision-makers across the UAE and the wider MEA region.`,
-        `Through its membership, ${f.companyName} demonstrates its commitment to these principles and to fostering professional cooperation, international knowledge exchange, and sustainable business development.`,
-      ],
-    },
-    {
-      heading: "3. Project Reference & Recommendation",
-      paragraphs: [
-        `With regard to ${f.projectName}, we are pleased to support ${f.companyName} in its efforts to contribute its expertise and capabilities to this initiative.`,
-        `Based on our professional relationship and understanding of the company's business activities, we consider ${f.companyName} a suitable organization for consideration in connection with this project.`,
-        `We welcome the opportunity for ${f.companyName} to contribute to the successful implementation of this initiative and further strengthen business cooperation within the region.`,
-      ],
-    },
+    `On behalf of the German Industry Club Dubai and its German business community, we are pleased to recommend ${company} as a trusted and reliable business partner.`,
+    `Based on the positive feedback and recommendations received from its customers over the years, ${company} has established a strong reputation for professionalism, reliability, and commitment to high business standards. Its customers consistently recognize the company as a dependable and trustworthy business partner, valuing its dedication to quality, integrity, and customer satisfaction.`,
+    `As an active member of the German Industry Club Dubai, ${company} represents the values traditionally associated with German business excellence, including quality, integrity, technical competence, and long-term commitment.`,
+    `With specific reference to ${project}, we are pleased to endorse ${company}'s participation and support its efforts to contribute to the successful realization of this opportunity.`,
+    `Based on our longstanding positive experience with the company, we are confident in recommending ${company} for consideration as a reliable business partner for this initiative.`,
   ];
 }
 

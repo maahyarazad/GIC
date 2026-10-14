@@ -23,10 +23,9 @@ export interface Signatory {
 
 export const SIGNATORIES: readonly Signatory[] = [
   {
-    name: "Jan A Hussing",
-    title: "Chairman",
-    // Image signature — embedded whole (no box crop); crop the JPEG itself if needed.
-    signature: { file: "Jan_signiture.jpeg" },
+    name: "Philip Hölzer",
+    title: "Club Director",
+    // No signature image yet — the slot renders the line + name/title only.
   },
   {
     name: "Thomas Hochberger",

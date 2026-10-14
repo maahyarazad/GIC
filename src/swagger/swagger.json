@@ -215,12 +215,18 @@
 				"additionalProperties": true
 			},
 			"LetterFields": {
-				"description": "The editable values of a letter of recommendation (Draft_Template for Letter of Recommendation.docx).",
+				"description": "The editable values of a letter of recommendation\n(\"Draft_Template for Letter of Recommendation - v2.docx\").\n\nThe recipient block is the structured addressee (v2). `companyLocation`, `industry` and\n`productsServices` are retained for back-compat with older saved drafts but are no longer\nrendered by the v2 body or shown in the editor.",
 				"properties": {
-					"recipientCompany": {
+					"recipientTitle": {
 						"type": "string"
 					},
-					"recipientStreet": {
+					"recipientFullName": {
+						"type": "string"
+					},
+					"recipientAttn": {
+						"type": "string"
+					},
+					"recipientAddress": {
 						"type": "string"
 					},
 					"recipientCity": {
@@ -237,19 +243,23 @@
 						"type": "string"
 					},
 					"reference": {
-						"type": "string"
+						"type": "string",
+						"description": "Subject reference: Project Name / Tender Number or Name / Business Initiative."
 					},
 					"salutation": {
 						"type": "string"
 					},
 					"companyLocation": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"industry": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"productsServices": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"projectName": {
 						"type": "string"
@@ -259,8 +269,10 @@
 					}
 				},
 				"required": [
-					"recipientCompany",
-					"recipientStreet",
+					"recipientTitle",
+					"recipientFullName",
+					"recipientAttn",
+					"recipientAddress",
 					"recipientCity",
 					"recipientCountry",
 					"letterDate",
@@ -3434,6 +3446,43 @@
 					"partner_recommendation"
 				]
 			},
+			"AddresseeFields": {
+				"description": "The letter's addressee and project/tender reference (recommendation letter v2).\n`reference` is the subject reference — Project Name / Tender Number or Name / Business\nInitiative — NOT the request's BL-… tracking id.",
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"attn": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"reference": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"fullName",
+					"attn",
+					"city",
+					"country",
+					"address",
+					"reference"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"BusinessLetterLanguage": {
 				"type": "string",
 				"enum": [
@@ -3465,12 +3514,7 @@
 						"$ref": "#/components/schemas/BusinessLetterType"
 					},
 					"addressee": {
-						"properties": {
-							"address": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/AddresseeFields"
 					},
 					"purpose": {
 						"type": "string"

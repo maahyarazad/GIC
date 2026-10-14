@@ -17,6 +17,32 @@ export const LANGUAGE_LABELS: Record<BusinessLetterLanguage, string> = {
 export const formatLetterType = (type: BusinessLetterType): string =>
   LETTER_TYPE_LABELS[type] ?? type;
 
+/**
+ * The letter's addressee and project/tender reference (recommendation letter v2).
+ * `reference` is the subject reference — Project Name / Tender Number or Name / Business
+ * Initiative — NOT the request's BL-… tracking id.
+ */
+export interface AddresseeFields {
+  title: string;
+  fullName: string;
+  attn: string;
+  city: string;
+  country: string;
+  address: string;
+  reference: string;
+}
+
+/** Field length limits for the addressee block (shared by client and server validation). */
+export const ADDRESSEE_LIMITS: Record<keyof AddresseeFields, number> = {
+  title: 120,
+  fullName: 160,
+  attn: 160,
+  city: 120,
+  country: 120,
+  address: 300,
+  reference: 200,
+};
+
 /** Request body for POST /api/v1/business-letters. The requester email is taken from the user record. */
 export interface CreateBusinessLetterRequest {
   requester: {
@@ -25,9 +51,7 @@ export interface CreateBusinessLetterRequest {
     company?: string;
   };
   letterType: BusinessLetterType;
-  addressee: {
-    address?: string;
-  };
+  addressee: AddresseeFields;
   purpose: string;
   /** Date only, YYYY-MM-DD */
   neededBy: string;
@@ -45,9 +69,7 @@ export interface BusinessLetterRequestDto {
   };
   letterType: BusinessLetterType;
   letterTypeLabel: string;
-  addressee: {
-    address?: string;
-  };
+  addressee: AddresseeFields;
   purpose: string;
   /** Date only, YYYY-MM-DD */
   neededBy: string;

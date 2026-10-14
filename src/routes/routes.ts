@@ -126,8 +126,10 @@ const models: TsoaRoute.Models = {
     "LetterFields": {
         "dataType": "refObject",
         "properties": {
-            "recipientCompany": {"dataType":"string","required":true},
-            "recipientStreet": {"dataType":"string","required":true},
+            "recipientTitle": {"dataType":"string","required":true},
+            "recipientFullName": {"dataType":"string","required":true},
+            "recipientAttn": {"dataType":"string","required":true},
+            "recipientAddress": {"dataType":"string","required":true},
             "recipientCity": {"dataType":"string","required":true},
             "recipientCountry": {"dataType":"string","required":true},
             "letterDate": {"dataType":"string","required":true},
@@ -668,6 +670,20 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["business_recommendation"]},{"dataType":"enum","enums":["partner_recommendation"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AddresseeFields": {
+        "dataType": "refObject",
+        "properties": {
+            "title": {"dataType":"string","required":true},
+            "fullName": {"dataType":"string","required":true},
+            "attn": {"dataType":"string","required":true},
+            "city": {"dataType":"string","required":true},
+            "country": {"dataType":"string","required":true},
+            "address": {"dataType":"string","required":true},
+            "reference": {"dataType":"string","required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "BusinessLetterLanguage": {
         "dataType": "refAlias",
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["en"]},{"dataType":"enum","enums":["de"]}],"validators":{}},
@@ -678,7 +694,7 @@ const models: TsoaRoute.Models = {
         "properties": {
             "requester": {"dataType":"nestedObjectLiteral","nestedProperties":{"company":{"dataType":"string"},"phone":{"dataType":"string"},"name":{"dataType":"string","required":true}},"required":true},
             "letterType": {"ref":"BusinessLetterType","required":true},
-            "addressee": {"dataType":"nestedObjectLiteral","nestedProperties":{"address":{"dataType":"string"}},"required":true},
+            "addressee": {"ref":"AddresseeFields","required":true},
             "purpose": {"dataType":"string","required":true},
             "neededBy": {"dataType":"string","required":true},
             "language": {"ref":"BusinessLetterLanguage","required":true},

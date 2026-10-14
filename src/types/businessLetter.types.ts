@@ -50,7 +50,8 @@ export interface CreateBusinessLetterRequest {
     phone?: string;
     company?: string;
   };
-  letterType: BusinessLetterType;
+  /** @deprecated Removed from the UI (feature 010); defaulted server-side when omitted. */
+  letterType?: BusinessLetterType;
   addressee: AddresseeFields;
   purpose: string;
   /** Date only, YYYY-MM-DD */

@@ -6,7 +6,7 @@
  */
 import fs from "fs/promises";
 import path from "path";
-import { PDFDocument, PDFEmbeddedPage, PDFFont, PDFImage, PDFPage, StandardFonts, rgb } from "pdf-lib";
+import { PDFDocument, PDFEmbeddedPage, PDFFont, PDFImage, PDFPage, StandardFonts, degrees, rgb } from "pdf-lib";
 import { toWinAnsi, wrapText } from "./pdfText";
 import { buildBody } from "./recommendationLetterText";
 import { RUNNING_HEADER, SENDER_LINES, SIGNATORIES, SignatureSource } from "../config/recommendationLetterConfig";
@@ -28,6 +28,17 @@ const LOGO_WIDTH = 140;
 
 const TEXT = rgb(0.13, 0.13, 0.13);
 const MUTED = rgb(0.47, 0.47, 0.47);
+const DRAFT_GREY = rgb(0.6, 0.6, 0.6);
+const DRAFT_SIZE = 140;
+const DRAFT_OPACITY = 0.2; // 20%, per the member-preview requirement.
+
+/** Options for the member preview vs the admin final letter. */
+export interface LetterPdfOptions {
+  /** Stamp a large diagonal "DRAFT" watermark on every page (member preview). */
+  draft?: boolean;
+  /** Render the signatory blocks. False hides them entirely (member preview). */
+  signatures?: boolean;
+}
 
 // Resolves to src/assets under tsx and dist/assets in production (copied by `npm run copy-assets`).
 const LOGO_PATH = path.join(__dirname, "..", "assets", "gic-logo.png");
@@ -72,7 +83,12 @@ async function embedSignature(
   }
 }
 
-export async function buildRecommendationLetterPdf(fields: LetterFields, reference: string): Promise<Uint8Array> {
+export async function buildRecommendationLetterPdf(
+  fields: LetterFields,
+  reference: string,
+  options: LetterPdfOptions = {}
+): Promise<Uint8Array> {
+  const { draft = false, signatures: showSignatures = true } = options;
   const pdf = await PDFDocument.create();
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -81,11 +97,33 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   pdf.setSubject(reference);
   pdf.setAuthor("German Industry Club");
 
+  // Big diagonal "DRAFT", centred on the page, drawn first so the text sits on top of it.
+  const stampDraft = (p: PDFPage) => {
+    const text = "DRAFT";
+    const angleDeg = (Math.atan2(PAGE_HEIGHT, PAGE_WIDTH) * 180) / Math.PI;
+    const rad = (angleDeg * Math.PI) / 180;
+    const w = bold.widthOfTextAtSize(text, DRAFT_SIZE);
+    const h = DRAFT_SIZE * 0.5; // approximate cap height for vertical centring
+    const dx = (w / 2) * Math.cos(rad) - (h / 2) * Math.sin(rad);
+    const dy = (w / 2) * Math.sin(rad) + (h / 2) * Math.cos(rad);
+    p.drawText(text, {
+      x: PAGE_WIDTH / 2 - dx,
+      y: PAGE_HEIGHT / 2 - dy,
+      size: DRAFT_SIZE,
+      font: bold,
+      color: DRAFT_GREY,
+      opacity: DRAFT_OPACITY,
+      rotate: degrees(angleDeg),
+    });
+  };
+
   let page: PDFPage = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  if (draft) stampDraft(page);
   let y = FIRST_PAGE_TOP;
 
   const newPage = () => {
     page = pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+    if (draft) stampDraft(page);
     y = NEXT_PAGE_TOP;
   };
   const ensureSpace = (height: number) => {
@@ -161,56 +199,55 @@ export async function buildRecommendationLetterPdf(fields: LetterFields, referen
   paragraph(fields.salutation);
   gap(LEADING / 2);
 
-  // ── Body (v2: flowing paragraphs, no headings) ──
-  buildBody(fields).forEach((text, index) => {
+  // ── Body (feature 010: intro bold, main paragraphs, closing line) ──
+  buildBody(fields).forEach((para) => {
     gap(LEADING / 2);
     // Keep a paragraph from starting on the last line of a page.
     ensureSpace(LEADING * 2);
-    // The opening recommendation line is emphasised.
-    paragraph(text, index === 0 ? bold : regular);
+    paragraph(para.text, para.bold ? bold : regular);
     gap(PARAGRAPH_GAP);
   });
 
-  // ── Closing ──
+  // ── Sign-off ──
   gap(LEADING / 2);
-  paragraph(fields.closing);
-  gap();
   paragraph("Yours sincerely,");
   gap(LEADING / 2);
   paragraph("German Industry Club", bold);
 
-  // ── Signatures: two columns, never split across pages ──
-  const SIGNATURE_SPACE = 50;
-  const SIGNATURE_LINE_WIDTH = 150;
-  const signatureHeight = 20 + SIGNATURE_SPACE + 4 + LEADING * 2;
-  ensureSpace(signatureHeight);
-  y -= 20;
-  const lineTop = y - SIGNATURE_SPACE;
-  const signatures = await Promise.all(
-    SIGNATORIES.map((signatory) => (signatory.signature ? embedSignature(pdf, signatory.signature) : null))
-  );
-  SIGNATORIES.forEach((signatory, index) => {
-    const x = MARGIN_X + index * (CONTENT_WIDTH / 2);
-    const signature = signatures[index];
-    if (signature) {
-      // Fit inside the signature space above the line, keeping the aspect ratio.
-      const scale = Math.min(SIGNATURE_LINE_WIDTH / signature.width, (SIGNATURE_SPACE - 4) / signature.height);
-      const placement = {
-        x,
-        y: lineTop + 2,
-        width: signature.width * scale,
-        height: signature.height * scale,
-      };
-      if (signature instanceof PDFImage) {
-        page.drawImage(signature, placement);
-      } else {
-        page.drawPage(signature, placement);
+  // ── Signatures: two columns, never split across pages (omitted in the member DRAFT preview) ──
+  if (showSignatures) {
+    const SIGNATURE_SPACE = 50;
+    const SIGNATURE_LINE_WIDTH = 150;
+    const signatureHeight = 20 + SIGNATURE_SPACE + 4 + LEADING * 2;
+    ensureSpace(signatureHeight);
+    y -= 20;
+    const lineTop = y - SIGNATURE_SPACE;
+    const signatures = await Promise.all(
+      SIGNATORIES.map((signatory) => (signatory.signature ? embedSignature(pdf, signatory.signature) : null))
+    );
+    SIGNATORIES.forEach((signatory, index) => {
+      const x = MARGIN_X + index * (CONTENT_WIDTH / 2);
+      const signature = signatures[index];
+      if (signature) {
+        // Fit inside the signature space above the line, keeping the aspect ratio.
+        const scale = Math.min(SIGNATURE_LINE_WIDTH / signature.width, (SIGNATURE_SPACE - 4) / signature.height);
+        const placement = {
+          x,
+          y: lineTop + 2,
+          width: signature.width * scale,
+          height: signature.height * scale,
+        };
+        if (signature instanceof PDFImage) {
+          page.drawImage(signature, placement);
+        } else {
+          page.drawPage(signature, placement);
+        }
       }
-    }
-    page.drawLine({ start: { x, y: lineTop }, end: { x: x + SIGNATURE_LINE_WIDTH, y: lineTop }, thickness: 0.5, color: MUTED });
-    page.drawText(clean(bold, signatory.name), { x, y: lineTop - 4 - BODY_SIZE, size: BODY_SIZE, font: bold, color: TEXT });
-    page.drawText(clean(regular, signatory.title), { x, y: lineTop - 4 - BODY_SIZE - LEADING, size: BODY_SIZE, font: regular, color: TEXT });
-  });
+      page.drawLine({ start: { x, y: lineTop }, end: { x: x + SIGNATURE_LINE_WIDTH, y: lineTop }, thickness: 0.5, color: MUTED });
+      page.drawText(clean(bold, signatory.name), { x, y: lineTop - 4 - BODY_SIZE, size: BODY_SIZE, font: bold, color: TEXT });
+      page.drawText(clean(regular, signatory.title), { x, y: lineTop - 4 - BODY_SIZE - LEADING, size: BODY_SIZE, font: regular, color: TEXT });
+    });
+  }
 
   // ── Running header and page numbers on every page ──
   const pages = pdf.getPages();

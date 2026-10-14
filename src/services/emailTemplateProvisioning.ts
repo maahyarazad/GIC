@@ -67,6 +67,43 @@ export const RECOMMENDATION_LETTER_DELIVERY: EmailTemplateDefinition = {
   variables: ["REQUESTER_NAME", "COMPANY_NAME", "REFERENCE", "PROJECT_NAME", "LETTER_DATE"],
 };
 
+export const BUSINESS_LETTER_REQUEST: EmailTemplateDefinition = {
+  name: "business_letter_request",
+  subject: "New Business Letter Request – {{REFERENCE}}",
+  htmlFile: "business_letter_request.html",
+  text:
+    "A member has submitted a new business letter request (reference {{REFERENCE}}). " +
+    "Requester: {{REQUESTER_NAME}} ({{REQUESTER_EMAIL}}). Addressed to: {{ADDRESSEE_NAME}}. " +
+    "Needed by: {{NEEDED_BY}}. Open it in the dashboard: {{DASHBOARD_URL}}",
+  variables: [
+    "REFERENCE",
+    "REQUESTER_NAME",
+    "REQUESTER_EMAIL",
+    "REQUESTER_PHONE",
+    "REQUESTER_COMPANY",
+    "ADDRESSEE_NAME",
+    "ADDRESSEE_ATTN",
+    "ADDRESSEE_ADDRESS",
+    "ADDRESSEE_REFERENCE",
+    "LANGUAGE",
+    "NEEDED_BY",
+    "SUBMITTED_AT",
+    "PURPOSE",
+    "DASHBOARD_URL",
+  ],
+};
+
+export const BUSINESS_LETTER_RECEIPT: EmailTemplateDefinition = {
+  name: "business_letter_receipt",
+  subject: "We received your letter request – {{REFERENCE}}",
+  htmlFile: "business_letter_receipt.html",
+  text:
+    "Dear {{REQUESTER_NAME}}, thank you — we have received your request for a letter of recommendation " +
+    "(reference {{REFERENCE}}). Our team will prepare it and send it to this email address. " +
+    "Addressed to: {{ADDRESSEE_NAME}}. Needed by: {{NEEDED_BY}}.",
+  variables: ["REQUESTER_NAME", "REFERENCE", "ADDRESSEE_NAME", "NEEDED_BY", "SUBMITTED_AT"],
+};
+
 export const TENDER_PUBLISHED_NOTIFICATION: EmailTemplateDefinition = {
   name: "tender_published_notification",
   subject: "New tender in {{SECTOR_NAME}}",

@@ -5,8 +5,7 @@ import { useToast } from "@/Providers/ToastContext";
 import {
     apiErrorMessage,
     apiFieldErrors,
-    fetchLetterPdf,
-    saveLetter,
+    type LetterApiClient,
 } from "@/api/recommendationLetters";
 import type {
     LetterFields,
@@ -35,11 +34,15 @@ const base = {
     reference: text("Reference", 200),
     salutation: required("Salutation", 160),
     projectName: required("Project / business opportunity", 200),
-    closing: required("Closing", 1000),
-    // v1-only, retained for back-compat but no longer edited: keep lenient length rules.
+    // Three editable body parts (feature 010), required in every mode.
+    bodyIntro: required("Intro paragraph", 600),
+    bodyMain: required("Body", 4000),
+    bodyClosing: required("Closing line", 1000),
+    // v1-only / legacy, retained for back-compat but no longer edited: keep lenient length rules.
     companyLocation: text("Company location", 80),
     industry: text("Industry / business sector", 200),
     productsServices: text("Products / services", 300),
+    closing: text("Closing (legacy)", 1000),
 };
 
 /** Save and send: the full v2 addressee block + subject reference are required. */
@@ -67,10 +70,11 @@ interface TextFieldProps {
     required?: boolean;
     type?: string;
     as?: "textarea";
+    rows?: number;
     placeholder?: string;
 }
 
-const TextField = ({ name, label, values, required: isRequired, type = "text", as, placeholder }: TextFieldProps) => (
+const TextField = ({ name, label, values, required: isRequired, type = "text", as, rows, placeholder }: TextFieldProps) => (
     <div className="rl-field">
         <label htmlFor={`rl-${name}`} className={isRequired ? "required" : undefined}>{label}</label>
         <Field
@@ -78,7 +82,7 @@ const TextField = ({ name, label, values, required: isRequired, type = "text", a
             name={name}
             type={as ? undefined : type}
             as={as}
-            rows={as ? 4 : undefined}
+            rows={as ? rows ?? 4 : undefined}
             className="form-control"
             placeholder={placeholder}
         />
@@ -93,6 +97,8 @@ const TextField = ({ name, label, values, required: isRequired, type = "text", a
 export type SubmitLetter = () => Promise<LetterRequestDetail>;
 
 interface LetterEditorProps {
+    /** Admin or member API client — drives save and the preview/download PDF endpoint. */
+    api: LetterApiClient;
     detail: LetterRequestDetail;
     onSaved(detail: LetterRequestDetail): void;
     onDirtyChange(dirty: boolean): void;
@@ -101,14 +107,14 @@ interface LetterEditorProps {
     onPreviewRefresh?(values: LetterFields): void;
 }
 
-const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyChange, submitRef, onPreviewRefresh }) => {
+const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDirtyChange, submitRef, onPreviewRefresh }) => {
     const { show } = useToast();
     const [pdfBusy, setPdfBusy] = useState<"view" | "download" | null>(null);
 
     // Throws on validation or server errors, so "Save & send" can stop before sending.
     const save = async (values: LetterFields, helpers: FormikHelpers<LetterFields>): Promise<LetterRequestDetail> => {
         try {
-            const updated = await saveLetter(detail.id, values);
+            const updated = await api.save(detail.id, values);
             show({ type: "success", message: "Letter saved" });
             helpers.resetForm({ values: updated.letter });
             onSaved(updated);
@@ -158,7 +164,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyCha
 
         setPdfBusy("view");
         try {
-            const url = URL.createObjectURL(await fetchLetterPdf(detail.id, form.values, "inline"));
+            const url = URL.createObjectURL(await api.pdf(detail.id, form.values, "inline"));
             tab.location.href = url;
             setTimeout(() => URL.revokeObjectURL(url), 60_000);
         } catch (error) {
@@ -174,7 +180,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ detail, onSaved, onDirtyCha
 
         setPdfBusy("download");
         try {
-            const url = URL.createObjectURL(await fetchLetterPdf(detail.id, form.values, "attachment"));
+            const url = URL.createObjectURL(await api.pdf(detail.id, form.values, "attachment"));
             const link = document.createElement("a");
             link.href = url;
             link.download = `${detail.reference}.pdf`;
@@ -280,6 +286,7 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
                 </button>
             </div>
 
+            <div className="rl-editor__scroll">
             <div className="rl-group-title">Recipient</div>
             <div className="rl-row2">
                 <TextField name="recipientTitle" label="Title" required values={values} placeholder="Mr. / Ms. / Dr." />
@@ -303,8 +310,11 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
             <TextField name="companyName" label="Company name" required values={values} />
             <TextField name="projectName" label="Project / business opportunity" required values={values} />
 
-            <div className="rl-group-title">Closing</div>
-            <TextField name="closing" label="Closing line" required as="textarea" values={values} />
+            <div className="rl-group-title">Body</div>
+            <TextField name="bodyIntro" label="Intro paragraph (bold)" required as="textarea" rows={3} values={values} />
+            <TextField name="bodyMain" label="Body" required as="textarea" rows={12} values={values} />
+            <TextField name="bodyClosing" label="Closing line" required as="textarea" rows={3} values={values} />
+            </div>
         </Form>
     );
 };

@@ -7,7 +7,7 @@
 }
 @media (min-width: 992px) {
   .recommendation-letters .rl-grid {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
 }
 .recommendation-letters .rl-modal-search {
@@ -21,7 +21,7 @@
 }
 .recommendation-letters .rl-preview__frame {
   width: 100%;
-  height: 75vh;
+  height: 100vh;
   min-height: 480px;
   border: 1px solid var(--bdr);
   background: var(--bgp);
@@ -32,7 +32,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 75vh;
+  height: 100vh;
   min-height: 480px;
   border: 1px solid var(--bdr);
   background: var(--bgp);
@@ -130,6 +130,10 @@
   padding: 0 0.45rem;
   white-space: nowrap;
 }
+.recommendation-letters .rl-tag--approved {
+  color: #2f855a;
+  border-color: #2f855a;
+}
 .recommendation-letters .rl-muted {
   font-size: 0.85rem;
   color: var(--mu);
@@ -139,6 +143,12 @@
   color: var(--mu);
   padding: 2rem 0;
   text-align: center;
+}
+.recommendation-letters .rl-row__actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 .recommendation-letters .rl-action {
   flex-shrink: 0;
@@ -157,6 +167,17 @@
 .recommendation-letters .rl-action:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+.recommendation-letters .rl-action--approve {
+  border-color: #2f855a;
+  color: #2f855a;
+}
+.recommendation-letters .rl-action--approve:hover:not(:disabled) {
+  background: #2f855a;
+  color: #fff;
+}
+.recommendation-letters .rl-action--approve:disabled {
+  cursor: default;
 }
 .recommendation-letters .rl-editor__header {
   margin-bottom: 1rem;
@@ -212,4 +233,11 @@
   margin: 0 0 1.25rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--bdrs);
+}
+@media (min-width: 992px) {
+  .recommendation-letters .rl-editor__scroll {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
 }/*# sourceMappingURL=RecommendationLetters.css.map */

@@ -1,19 +1,23 @@
-export type LetterStatus = "new" | "draft" | "sent" | "failed";
+export type LetterStatus = "new" | "draft" | "approved" | "sent" | "failed";
 
 export const LETTER_STATUS_LABELS: Record<LetterStatus, string> = {
     new: "New",
     draft: "Draft",
+    approved: "Approved",
     sent: "Sent",
     failed: "Send failed",
 };
+
+export type ApprovalStatus = "pending" | "approved";
 
 /**
  * The editable values of a letter of recommendation
  * ("Draft_Template for Letter of Recommendation - v2.docx").
  *
- * The recipient block is the structured addressee (v2). `companyLocation`, `industry` and
- * `productsServices` are retained for back-compat with older saved drafts but are no longer
- * rendered by the v2 body or shown in the editor.
+ * The recipient block is the structured addressee (v2). The body is three editable parts
+ * (`bodyIntro` bold / `bodyMain` / `bodyClosing`) — feature 010. `companyLocation`, `industry`,
+ * `productsServices` and the legacy single `closing` are retained for back-compat with older
+ * saved drafts but are no longer rendered or shown in the editor.
  */
 export interface LetterFields {
     recipientTitle: string;
@@ -35,6 +39,13 @@ export interface LetterFields {
     /** @deprecated v1 only — not used by the v2 body. */
     productsServices: string;
     projectName: string;
+    /** Opening recommendation line, rendered bold in the PDF. */
+    bodyIntro: string;
+    /** Main body; blank lines separate paragraphs. */
+    bodyMain: string;
+    /** Closing line (e.g. "We wish the company every success …"). */
+    bodyClosing: string;
+    /** @deprecated legacy single closing field (feature 009); mapped into `bodyClosing`. */
     closing: string;
 }
 
@@ -54,6 +65,9 @@ export const LETTER_FIELD_KEYS: (keyof LetterFields)[] = [
     "industry",
     "productsServices",
     "projectName",
+    "bodyIntro",
+    "bodyMain",
+    "bodyClosing",
     "closing",
 ];
 
@@ -67,6 +81,8 @@ export interface LetterRequestListItem {
     language: "en" | "de";
     createdAt: string;
     letterStatus: LetterStatus;
+    approvalStatus: ApprovalStatus;
+    approvedAt: string | null;
     sentAt: string | null;
     sendCount: number;
     editedSinceSent: boolean;
@@ -89,5 +105,6 @@ export interface LetterRequestDetail extends Omit<LetterRequestListItem, "reques
     isDraftSaved: boolean;
     savedBy: { id: string; name: string } | null;
     savedAt: string | null;
+    approvedBy: { id: string; name: string } | null;
     delivery: LetterDelivery | null;
 }

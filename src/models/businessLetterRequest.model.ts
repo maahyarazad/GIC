@@ -20,6 +20,11 @@ const LetterSchema = new Schema(
     industry: letterText(200),
     productsServices: letterText(300),
     projectName: letterText(200),
+    // Body is three editable parts (feature 010); `closing` is the legacy single field, kept for
+    // back-compat and mapped into `bodyClosing` when old drafts are read.
+    bodyIntro: letterText(600),
+    bodyMain: letterText(4000),
+    bodyClosing: letterText(1000),
     closing: letterText(1000),
     savedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     savedAt: { type: Date, default: null },
@@ -55,13 +60,15 @@ const BusinessLetterRequestSchema = new Schema(
       phone: { type: String, default: "", trim: true, maxlength: 40 },
       company: { type: String, default: "", trim: true, maxlength: 160 },
     },
+    // Feature 010 removed the letter-type choice from both views. Kept optional with a default so
+    // existing records and `formatLetterType` still resolve; no longer set from the UI.
     letterType: {
       type: String,
-      required: true,
       enum: [
         "business_recommendation",
         "partner_recommendation",
       ],
+      default: "business_recommendation",
     },
     // Letter addressee + subject reference (v2). Schema-optional (default "") for back-compat with
     // legacy requests that only stored `address`; the controller enforces "required" on new submits.
@@ -85,6 +92,22 @@ const BusinessLetterRequestSchema = new Schema(
       },
       attemptedAt: { type: Date, default: null },
       error: { type: String, default: null },
+    },
+    // Requester receipt email outcome (feature 010). Mirrors `notification`.
+    receipt: {
+      status: {
+        type: String,
+        enum: ["pending", "sent", "failed"],
+        default: "pending",
+      },
+      attemptedAt: { type: Date, default: null },
+      error: { type: String, default: null, maxlength: 500 },
+    },
+    // Admin approval marker (feature 010): a status for tracking/visibility; it does NOT gate send.
+    approval: {
+      status: { type: String, enum: ["pending", "approved"], default: "pending" },
+      approvedAt: { type: Date, default: null },
+      approvedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     },
     letter: { type: LetterSchema, default: undefined },
     delivery: { type: LetterDeliverySchema, default: undefined },

@@ -30,6 +30,7 @@ type MenuItem =
   | "events"
   | "manage_events"
   | "recommendation_letters"
+  | "my_letters"
   | "business_letter"
   | "blog"
   | "newsletter"
@@ -50,6 +51,7 @@ const accessControl: Record<MenuItem, string[]> = {
   events: ["user", "admin", "procurement"],
   manage_events: ["admin"],
   recommendation_letters: ["admin"],
+  my_letters: ["user", "procurement"],
   business_letter: ["user", "admin", "procurement"],
   blog: ["admin", "procurement"],
   newsletter: ["admin", "procurement"],
@@ -70,7 +72,8 @@ const menuTitles: Record<MenuItem, string> = {
   member_profiles: "Member Profiles",
   events: "Events",
   manage_events: "Manage Events",
-  recommendation_letters: "Recommendation Letters",
+  recommendation_letters: "Manage Letter of Recommendation",
+  my_letters: "My Letter of Recommendation",
   business_letter: "Request for letter of recommendation",
   blog: "Blog",
   newsletter: "Newsletter",
@@ -106,6 +109,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "events",
     "manage_events",
     "recommendation_letters",
+    "my_letters",
     "business_letter",
     "blog",
     "newsletter",
@@ -149,6 +153,7 @@ const Dashboard: React.FC = () => {
     events: <Events />,
     manage_events: <ManageEvents />,
     recommendation_letters: <RecommendationLetters />,
+    my_letters: <RecommendationLetters mode="member" />,
     business_letter: <BusinessLetter />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,

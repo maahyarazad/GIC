@@ -29,14 +29,17 @@ import {
   BusinessLetterType,
   CreateBusinessLetterRequest,
   LANGUAGE_LABELS,
-  LETTER_TYPE_LABELS,
-  formatLetterType,
 } from "../types/businessLetter.types";
 import {
-  BUSINESS_LETTER_EMAIL_TEMPLATE_ID,
   BUSINESS_LETTER_RECIPIENTS,
+  businessLetterDashboardUrl,
 } from "../config/businessLetterConfig";
-import { sendDynamicEmailToUser } from "../services/emailService";
+import { sendDynamicEmailDoc } from "../services/emailService";
+import {
+  BUSINESS_LETTER_RECEIPT,
+  BUSINESS_LETTER_REQUEST,
+  ensureEmailTemplate,
+} from "../services/emailTemplateProvisioning";
 import { buildBusinessLetterPdf } from "../services/businessLetterPdf";
 import {
   createErrorResponse,
@@ -75,9 +78,7 @@ function validateCreate(body: CreateBusinessLetterRequest): Record<string, strin
   checkLength("requester.phone", str(body.requester?.phone), 0, 40, "Phone");
   checkLength("requester.company", str(body.requester?.company), 0, 160, "Company");
 
-  if (!Object.keys(LETTER_TYPE_LABELS).includes(body.letterType)) {
-    errors.letterType = "Letter type is invalid";
-  }
+  // Letter type removed from the UI (feature 010); accept any legacy value and default on save.
 
   // Addressee block + subject reference (v2): all required on new submissions.
   const addresseeLabels: Record<keyof AddresseeFields, string> = {
@@ -119,54 +120,66 @@ const buildReference = (id: ObjectId): string => {
   return `BL-${ymd}-${id.toHexString().slice(-6).toUpperCase()}`;
 };
 
+const formatNeededBy = (value: any): string =>
+  new Date(value).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" });
+
+const formatSubmittedAt = (value: any): string =>
+  new Date(value).toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "Asia/Dubai",
+  });
+
+/** The addressee "person" line and multi-line address for the request emails. */
+function addresseeLines(doc: any): { name: string; attn: string; address: string; reference: string } {
+  const t = (value?: string | null) => (value ?? "").toString().trim();
+  const name = [t(doc.addressee?.title), t(doc.addressee?.fullName)].filter(Boolean).join(" ");
+  const address = [t(doc.addressee?.address), [t(doc.addressee?.city), t(doc.addressee?.country)].filter(Boolean).join(", ")]
+    .filter(Boolean)
+    .join("\n");
+  return { name, attn: t(doc.addressee?.attn), address, reference: t(doc.addressee?.reference) };
+}
+
+/** HTML-escapes every value; `multiline` keys keep line breaks as <br />. */
+function toHtmlData(data: Record<string, string>, multiline: string[] = []): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => {
+      const safe = escapeHtml(value || EMPTY);
+      return [key, multiline.includes(key) ? safe.replace(/\r?\n/g, "<br />") : safe];
+    })
+  );
+}
+
 /** Sends the new-request email to the GIC leadership team and records the outcome. Never throws. */
 async function notifyLeadership(doc: any): Promise<void> {
-  const orEmpty = (value?: string | null) => escapeHtml(value?.trim() || EMPTY);
-
   try {
-    const data = {
-      REFERENCE: escapeHtml(doc.reference),
-      REQUESTER_NAME: escapeHtml(doc.requester.name),
-      REQUESTER_EMAIL: escapeHtml(doc.requester.email),
-      REQUESTER_PHONE: orEmpty(doc.requester.phone),
-      REQUESTER_COMPANY: orEmpty(doc.requester.company),
-      LETTER_TYPE: escapeHtml(formatLetterType(doc.letterType)),
-      ADDRESSEE_ADDRESS: escapeHtml(
-        [
-          doc.addressee?.fullName,
-          doc.addressee?.title,
-          doc.addressee?.attn ? `Attn: ${doc.addressee.attn}` : "",
-          doc.addressee?.address,
-          [doc.addressee?.city, doc.addressee?.country].filter(Boolean).join(", "),
-          doc.addressee?.reference ? `Ref: ${doc.addressee.reference}` : "",
-        ]
-          .map((part) => (part ?? "").toString().trim())
-          .filter(Boolean)
-          .join("\n") || EMPTY
-      ).replace(/\r?\n/g, "<br />"),
-      LANGUAGE: escapeHtml(LANGUAGE_LABELS[doc.language as BusinessLetterLanguage] ?? doc.language),
-      NEEDED_BY: new Date(doc.neededBy).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }),
-      SUBMITTED_AT: new Date(doc.createdAt).toLocaleString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "Asia/Dubai",
-      }),
-      PURPOSE: escapeHtml(doc.purpose).replace(/\r?\n/g, "<br />"),
+    const addressee = addresseeLines(doc);
+    const data: Record<string, string> = {
+      REFERENCE: doc.reference,
+      REQUESTER_NAME: doc.requester.name,
+      REQUESTER_EMAIL: doc.requester.email,
+      REQUESTER_PHONE: doc.requester.phone || EMPTY,
+      REQUESTER_COMPANY: doc.requester.company || EMPTY,
+      ADDRESSEE_NAME: addressee.name || EMPTY,
+      ADDRESSEE_ATTN: addressee.attn || EMPTY,
+      ADDRESSEE_ADDRESS: addressee.address || EMPTY,
+      ADDRESSEE_REFERENCE: addressee.reference || EMPTY,
+      LANGUAGE: LANGUAGE_LABELS[doc.language as BusinessLetterLanguage] ?? doc.language,
+      NEEDED_BY: formatNeededBy(doc.neededBy),
+      SUBMITTED_AT: formatSubmittedAt(doc.createdAt),
+      PURPOSE: doc.purpose,
+      DASHBOARD_URL: businessLetterDashboardUrl(),
     };
 
-    await sendDynamicEmailToUser({
-      template_id: BUSINESS_LETTER_EMAIL_TEMPLATE_ID,
-      email: BUSINESS_LETTER_RECIPIENTS.join(", "),
-      data,
-    });
+    await ensureEmailTemplate(BUSINESS_LETTER_REQUEST);
+    await sendDynamicEmailDoc(
+      BUSINESS_LETTER_REQUEST.name,
+      { ...data, email: BUSINESS_LETTER_RECIPIENTS.join(", ") },
+      { htmlData: { ...toHtmlData(data, ["ADDRESSEE_ADDRESS", "PURPOSE"]), DASHBOARD_URL: data.DASHBOARD_URL } }
+    );
 
     await BusinessLetterRequestModel.updateOne(
       { _id: doc._id },
@@ -187,6 +200,48 @@ async function notifyLeadership(doc: any): Promise<void> {
       );
     } catch (updateError) {
       console.error("Failed to record notification status:", updateError);
+    }
+  }
+}
+
+/** Sends the confirmation receipt to the requester and records the outcome. Never throws. */
+async function sendReceipt(doc: any): Promise<void> {
+  try {
+    const addressee = addresseeLines(doc);
+    const data: Record<string, string> = {
+      REQUESTER_NAME: doc.requester.name,
+      REFERENCE: doc.reference,
+      ADDRESSEE_NAME: addressee.name || EMPTY,
+      NEEDED_BY: formatNeededBy(doc.neededBy),
+      SUBMITTED_AT: formatSubmittedAt(doc.createdAt),
+    };
+
+    await ensureEmailTemplate(BUSINESS_LETTER_RECEIPT);
+    await sendDynamicEmailDoc(
+      BUSINESS_LETTER_RECEIPT.name,
+      { ...data, email: doc.requester.email },
+      { sender: "info", replyTo: process.env.SMTP_INFO_SENDER, htmlData: toHtmlData(data) }
+    );
+
+    await BusinessLetterRequestModel.updateOne(
+      { _id: doc._id },
+      { $set: { "receipt.status": "sent", "receipt.attemptedAt": new Date() } }
+    );
+  } catch (error: any) {
+    console.error(`Business letter receipt failed for ${doc.reference}:`, error);
+    try {
+      await BusinessLetterRequestModel.updateOne(
+        { _id: doc._id },
+        {
+          $set: {
+            "receipt.status": "failed",
+            "receipt.attemptedAt": new Date(),
+            "receipt.error": String(error?.message ?? error).slice(0, 500),
+          },
+        }
+      );
+    } catch (updateError) {
+      console.error("Failed to record receipt status:", updateError);
     }
   }
 }
@@ -258,7 +313,9 @@ export class BusinessLetterController extends Controller {
       }
 
       // Fire and forget: the request is saved regardless of the email outcome.
-      void notifyLeadership(doc.toObject());
+      const saved = doc.toObject();
+      void notifyLeadership(saved);
+      void sendReceipt(saved);
 
       this.setStatus(201);
       return createSuccessResponse(

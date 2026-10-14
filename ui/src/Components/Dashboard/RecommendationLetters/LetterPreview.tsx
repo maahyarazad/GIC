@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { fetchLetterPdf } from "@/api/recommendationLetters";
 import type { LetterFields } from "../../../../../src/types/recommendationLetter.types";
 
 interface LetterPreviewProps {
@@ -7,6 +6,8 @@ interface LetterPreviewProps {
     requestId: string | null;
     /** The values to render. Updated by the editor on field focus-out, so this changes per edit, not per keystroke. */
     fields: LetterFields | null;
+    /** PDF generator for the current role (admin = final, member = DRAFT). */
+    pdf: (id: string, fields: LetterFields, disposition: "inline" | "attachment") => Promise<Blob>;
 }
 
 /**
@@ -15,7 +16,7 @@ interface LetterPreviewProps {
  * endpoint (read-only). Refreshes are debounced and skipped when the values are unchanged; an
  * incomplete draft that fails server validation shows a short message instead of a PDF.
  */
-const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields }) => {
+const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields, pdf }) => {
     const [url, setUrl] = useState<string | null>(null);
     const [state, setState] = useState<"idle" | "loading" | "error">("idle");
     // Current blob URL and the last-rendered values key, kept in refs for cleanup/dedup.
@@ -43,7 +44,7 @@ const LetterPreview: React.FC<LetterPreviewProps> = ({ requestId, fields }) => {
         const handle = setTimeout(async () => {
             setState("loading");
             try {
-                const blob = await fetchLetterPdf(requestId, fields, "inline");
+                const blob = await pdf(requestId, fields, "inline");
                 if (cancelled) return;
                 setPreviewUrl(URL.createObjectURL(blob));
                 lastKeyRef.current = key;

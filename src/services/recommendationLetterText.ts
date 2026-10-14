@@ -22,6 +22,7 @@
  */
 import { LETTER_TIMEZONE } from "../config/recommendationLetterConfig";
 import {
+  ApprovalStatus,
   LetterFields,
   LetterRequestDetail,
   LetterRequestListItem,
@@ -42,6 +43,9 @@ export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> =
   industry: 200,
   productsServices: 300,
   projectName: 200,
+  bodyIntro: 600,
+  bodyMain: 4000,
+  bodyClosing: 1000,
   closing: 1000,
 };
 
@@ -60,7 +64,10 @@ const LABELS: Record<keyof LetterFields, string> = {
   industry: "Industry / business sector",
   productsServices: "Products / services",
   projectName: "Project / business opportunity",
-  closing: "Closing",
+  bodyIntro: "Intro paragraph",
+  bodyMain: "Body",
+  bodyClosing: "Closing line",
+  closing: "Closing (legacy)",
 };
 
 /** Required in every mode (preview included). */
@@ -68,7 +75,9 @@ const ALWAYS_REQUIRED: (keyof LetterFields)[] = [
   "companyName",
   "salutation",
   "projectName",
-  "closing",
+  "bodyIntro",
+  "bodyMain",
+  "bodyClosing",
 ];
 
 /**
@@ -85,9 +94,31 @@ const REQUIRED_TO_SAVE: (keyof LetterFields)[] = [
   "reference",
 ];
 
-/** v2 closing lines (paragraphs 6–7), editable in the `closing` field. */
+/** @deprecated v2 (feature 009) single closing field; superseded by the three body parts below. */
 export const DEFAULT_CLOSING =
   "We welcome the opportunity to strengthen cooperation between the German industry and the organizations in the MEA region and remain available for any further information. Please do not hesitate to contact us in case any further questions may arise.";
+
+// ── Feature 010: three editable body parts (intro bold / main / closing) ──
+
+const COMPANY_PLACEHOLDER = "[Company Name]";
+const PROJECT_PLACEHOLDER = "[Project Name / Tender Number / Business Initiative]";
+
+export const defaultBodyIntro = (company: string): string =>
+  `On behalf of the German Industry Club Dubai and its German business community, we are pleased to recommend ${company || COMPANY_PLACEHOLDER} as a trusted and reliable business partner.`;
+
+export const defaultBodyMain = (company: string, project: string): string => {
+  const c = company || COMPANY_PLACEHOLDER;
+  const p = project || PROJECT_PLACEHOLDER;
+  return [
+    `Based on the positive feedback and recommendations received from its customers over the years, ${c} has established a strong reputation for professionalism, reliability, and commitment to high business standards. Its customers consistently recognize the company as a dependable and trustworthy business partner, valuing its dedication to quality, integrity, and customer satisfaction.`,
+    `As an active member of the German Industry Club Dubai, ${c} represents the values traditionally associated with German business excellence, including quality, integrity, technical competence, and long-term commitment.`,
+    `With specific reference to ${p}, we are pleased to endorse ${c}'s participation and support its efforts to contribute to the successful realization of this opportunity.`,
+    `Based on our longstanding positive experience with the company, we are confident in recommending ${c} for consideration as a reliable business partner for this initiative.`,
+  ].join("\n\n");
+};
+
+export const DEFAULT_BODY_CLOSING =
+  "We wish the company every success in pursuing this opportunity and its future business development.";
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -136,17 +167,23 @@ export function buildDefaultLetter(request: any): LetterFields {
         recipientCountry: parts.slice(3).join(", "),
       };
 
+  const company = trim(request.requester?.company);
+  const projectName = trim(request.purpose).split(/\r?\n/)[0].slice(0, LIMITS.projectName);
+
   return {
     ...recipient,
     letterDate: todayInDubai(),
-    companyName: trim(request.requester?.company),
+    companyName: company,
     reference: trim(addressee.reference),
     salutation: "Dear Sir or Madam,",
     companyLocation: "",
     industry: "",
     productsServices: "",
-    projectName: trim(request.purpose).split(/\r?\n/)[0].slice(0, LIMITS.projectName),
-    closing: DEFAULT_CLOSING,
+    projectName,
+    bodyIntro: defaultBodyIntro(company),
+    bodyMain: defaultBodyMain(company, projectName),
+    bodyClosing: DEFAULT_BODY_CLOSING,
+    closing: "",
   };
 }
 
@@ -179,19 +216,30 @@ export function validateLetter(
   return Object.keys(errors).length > 0 ? { errors } : { value, errors };
 }
 
-/** The v2 body paragraphs (no headings) with the values filled in. */
-export function buildBody(f: LetterFields): string[] {
-  // A preview may lack these; keep the gap visible instead of printing an empty phrase.
-  const company = f.companyName || "[Company Name]";
-  const project = f.projectName || "[Project Name / Tender Number / Business Initiative]";
+/** A rendered body paragraph plus whether it is emphasised (the intro). */
+export interface BodyParagraph {
+  text: string;
+  bold: boolean;
+}
 
-  return [
-    `On behalf of the German Industry Club Dubai and its German business community, we are pleased to recommend ${company} as a trusted and reliable business partner.`,
-    `Based on the positive feedback and recommendations received from its customers over the years, ${company} has established a strong reputation for professionalism, reliability, and commitment to high business standards. Its customers consistently recognize the company as a dependable and trustworthy business partner, valuing its dedication to quality, integrity, and customer satisfaction.`,
-    `As an active member of the German Industry Club Dubai, ${company} represents the values traditionally associated with German business excellence, including quality, integrity, technical competence, and long-term commitment.`,
-    `With specific reference to ${project}, we are pleased to endorse ${company}'s participation and support its efforts to contribute to the successful realization of this opportunity.`,
-    `Based on our longstanding positive experience with the company, we are confident in recommending ${company} for consideration as a reliable business partner for this initiative.`,
-  ];
+/**
+ * The three editable body parts as renderable paragraphs: the intro (bold), then each blank-line
+ * separated paragraph of the main body, then the closing line. Defaults fill any empty part so a
+ * preview of an incomplete draft still reads sensibly.
+ */
+export function buildBody(f: LetterFields): BodyParagraph[] {
+  const company = f.companyName || "";
+  const project = f.projectName || "";
+  const intro = f.bodyIntro?.trim() || defaultBodyIntro(company);
+  const main = f.bodyMain?.trim() || defaultBodyMain(company, project);
+  const closing = f.bodyClosing?.trim() || f.closing?.trim() || DEFAULT_BODY_CLOSING;
+
+  const paragraphs: BodyParagraph[] = [{ text: intro, bold: true }];
+  for (const part of main.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)) {
+    paragraphs.push({ text: part, bold: false });
+  }
+  paragraphs.push({ text: closing, bold: false });
+  return paragraphs;
 }
 
 // ── DTO mappers ──
@@ -201,6 +249,7 @@ const toIso = (value: unknown): string | null => (value ? new Date(value as any)
 export function letterStatus(doc: any): LetterStatus {
   if (doc.delivery?.status === "failed") return "failed";
   if (doc.delivery?.status === "sent") return "sent";
+  if (doc.approval?.status === "approved") return "approved";
   return doc.letter ? "draft" : "new";
 }
 
@@ -209,6 +258,14 @@ const savedLetter = (doc: any): LetterFields | undefined => {
   if (!doc.letter) return undefined;
   const fields = {} as LetterFields;
   for (const key of Object.keys(LABELS) as (keyof LetterFields)[]) fields[key] = doc.letter[key] ?? "";
+  // Back-compat: a draft saved before feature 010 has only the legacy `closing`; seed the three
+  // body parts (closing text preserved) so it opens cleanly in the new editor.
+  if (!fields.bodyIntro && !fields.bodyMain && !fields.bodyClosing) {
+    const defaults = buildDefaultLetter(doc);
+    fields.bodyIntro = defaults.bodyIntro;
+    fields.bodyMain = defaults.bodyMain;
+    fields.bodyClosing = fields.closing || defaults.bodyClosing;
+  }
   return fields;
 };
 
@@ -228,6 +285,8 @@ export function toListItem(doc: any): LetterRequestListItem {
     language: doc.language === "de" ? "de" : "en",
     createdAt: new Date(doc.createdAt).toISOString(),
     letterStatus: letterStatus(doc),
+    approvalStatus: (doc.approval?.status === "approved" ? "approved" : "pending") as ApprovalStatus,
+    approvedAt: toIso(doc.approval?.approvedAt),
     sentAt: toIso(doc.delivery?.sentAt),
     sendCount: doc.delivery?.count ?? 0,
     editedSinceSent: !!(savedAt && sentAt && savedAt > sentAt),
@@ -248,6 +307,12 @@ export function toDetail(doc: any): LetterRequestDetail {
       ? { id: (savedBy._id ?? savedBy).toString(), name: savedBy.name ?? "" }
       : null,
     savedAt: toIso(doc.letter?.savedAt),
+    approvedBy: (() => {
+      const approver = doc.approval?.approvedBy;
+      return approver
+        ? { id: (approver._id ?? approver).toString(), name: approver.name ?? "" }
+        : null;
+    })(),
     delivery: doc.delivery?.status
       ? {
           status: doc.delivery.status,

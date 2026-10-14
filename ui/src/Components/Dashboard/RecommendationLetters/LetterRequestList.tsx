@@ -20,9 +20,10 @@ interface RowProps {
     busy: boolean;
     onSelect(id: string): void;
     onSend?(item: LetterRequestListItem): void;
+    onApprove?(item: LetterRequestListItem): void;
 }
 
-const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend }: RowProps) => (
+const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend, onApprove }: RowProps) => (
     <li
         className={`rl-row${selected ? " is-selected" : ""}`}
         onClick={() => onSelect(item.id)}
@@ -43,6 +44,7 @@ const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend }: RowPr
                     {LETTER_STATUS_LABELS[item.letterStatus]}
                     {item.letterStatus === "sent" && item.sentAt ? ` · ${formatShort(item.sentAt)}` : ""}
                 </span>
+                {item.approvalStatus === "approved" && <span className="rl-tag rl-tag--approved">approved</span>}
                 {item.editedSinceSent && <span className="rl-tag">edited since</span>}
                 {item.language === "de" && <span className="rl-tag">DE requested</span>}
             </div>
@@ -52,18 +54,35 @@ const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend }: RowPr
             </div>
             <div className="rl-muted">Needed by {formatDay(item.neededBy)}</div>
         </div>
-        {onSend && (
-            <button
-                type="button"
-                className="rl-action"
-                disabled={busy}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    onSend(item);
-                }}
-            >
-                {busy ? "Sending…" : "Send"}
-            </button>
+        {(onApprove || onSend) && (
+            <div className="rl-row__actions">
+                {onApprove && (
+                    <button
+                        type="button"
+                        className="rl-action rl-action--approve"
+                        disabled={busy || item.approvalStatus === "approved"}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onApprove(item);
+                        }}
+                    >
+                        {item.approvalStatus === "approved" ? "Approved" : busy ? "…" : "Approve"}
+                    </button>
+                )}
+                {onSend && (
+                    <button
+                        type="button"
+                        className="rl-action"
+                        disabled={busy}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSend(item);
+                        }}
+                    >
+                        {busy ? "Sending…" : "Send"}
+                    </button>
+                )}
+            </div>
         )}
     </li>
 ));
@@ -74,12 +93,13 @@ interface LetterRequestListProps {
     selectedId: string | null;
     onSelect(id: string): void;
     onSend?(item: LetterRequestListItem): void;
+    onApprove?(item: LetterRequestListItem): void;
     busyId?: string | null;
     /** Shown when `items` is empty (e.g. "No matching requests." while searching). */
     emptyMessage?: string;
 }
 
-const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, busyId, emptyMessage = "No letter requests yet." }) =>
+const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, onApprove, busyId, emptyMessage = "No letter requests yet." }) =>
     items.length === 0 ? (
         <p className="rl-empty">{emptyMessage}</p>
     ) : (
@@ -92,6 +112,7 @@ const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId
                     busy={busyId === item.id}
                     onSelect={onSelect}
                     onSend={onSend}
+                    onApprove={onApprove}
                 />
             ))}
         </ul>

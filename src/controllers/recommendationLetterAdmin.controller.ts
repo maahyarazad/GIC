@@ -33,6 +33,7 @@ const adminId = (req: ExpressRequest) => toObjectId((req as any).user?.userId);
 const loadDetail = async (id: unknown) => {
   const doc = await BusinessLetterRequestModel.findById(id)
     .populate("letter.savedBy", "name")
+    .populate("approval.approvedBy", "name")
     .lean();
   return doc ? toDetail(doc) : null;
 };
@@ -149,7 +150,8 @@ export class RecommendationLetterAdminController extends Controller {
         return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
       }
 
-      const bytes = await buildRecommendationLetterPdf(value, doc.reference);
+      // Admin always gets the final letter: signatures on, no DRAFT watermark.
+      const bytes = await buildRecommendationLetterPdf(value, doc.reference, { draft: false, signatures: true });
 
       this.setStatus(200);
       this.setHeader("Content-Type", "application/pdf");
@@ -204,7 +206,7 @@ export class RecommendationLetterAdminController extends Controller {
     const sentBy = adminId(req);
 
     try {
-      const bytes = await buildRecommendationLetterPdf(value, doc.reference);
+      const bytes = await buildRecommendationLetterPdf(value, doc.reference, { draft: false, signatures: true });
       await ensureEmailTemplate(RECOMMENDATION_LETTER_DELIVERY);
 
       const variables: Record<string, string> = {
@@ -276,5 +278,43 @@ export class RecommendationLetterAdminController extends Controller {
 
     this.setStatus(200);
     return createSuccessResponse(await loadDetail(requestId), `Letter sent to ${sentTo}`);
+  }
+
+  /**
+   * Marks the request as approved (feature 010). This is a tracking/visibility marker only — it does
+   * NOT gate sending. Idempotent: approving an already-approved request is a no-op success.
+   */
+  @Post("/{id}/approve")
+  @Middlewares(adminOnlyMiddleware)
+  public async approveLetter(@Path() id: string, @Request() req: ExpressRequest): Promise<any> {
+    try {
+      const requestId = toObjectId(id);
+      if (!requestId) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid request id", "INVALID_ID");
+      }
+
+      const { matchedCount } = await BusinessLetterRequestModel.updateOne(
+        { _id: requestId },
+        {
+          $set: {
+            "approval.status": "approved",
+            "approval.approvedAt": new Date(),
+            "approval.approvedBy": adminId(req),
+          },
+        }
+      );
+      if (!matchedCount) {
+        this.setStatus(404);
+        return createErrorResponse("Letter request not found", "NOT_FOUND");
+      }
+
+      this.setStatus(200);
+      return createSuccessResponse(await loadDetail(requestId), "Letter approved");
+    } catch (error) {
+      console.error("Error approving letter:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to approve the letter", "INTERNAL_ERROR");
+    }
   }
 }

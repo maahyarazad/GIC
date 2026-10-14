@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import "./RecommendationLetters.css";
 import Loader from "@/Components/Loader/Loader";
 import ModalDialog from "@/Components/Generic/Dialog/Dialog";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useToast } from "@/Providers/ToastContext";
 import {
+    adminLetterApi,
     apiErrorCode,
     apiErrorMessage,
-    getLetterRequest,
-    listLetterRequests,
-    sendLetter,
+    memberLetterApi,
+    type LetterApiClient,
 } from "@/api/recommendationLetters";
 import type {
     LetterFields,
@@ -25,7 +26,15 @@ const NOT_SAVED_MESSAGE = "Complete and save the letter before sending";
 const formatDay = (iso: string) =>
     new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
-const RecommendationLetters: React.FC = () => {
+interface RecommendationLettersProps {
+    /** "admin" (default) = full workflow; "member" = own letters, editable DRAFT, no send/approve. */
+    mode?: "admin" | "member";
+}
+
+const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "admin" }) => {
+    const isMember = mode === "member";
+    const api: LetterApiClient = isMember ? memberLetterApi : adminLetterApi;
+
     const [items, setItems] = useState<LetterRequestListItem[]>([]);
     const [listLoading, setListLoading] = useState(true);
     const [listFailed, setListFailed] = useState(false);
@@ -41,24 +50,36 @@ const RecommendationLetters: React.FC = () => {
     const dirtyRef = useRef(false);
     const submitRef = useRef<SubmitLetter | null>(null);
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const { confirm } = useConfirm();
     const { show } = useToast();
 
     const loadList = useCallback(async () => {
         try {
             setListFailed(false);
-            setItems(await listLetterRequests());
+            setItems(await api.list());
         } catch (error) {
             console.error("Failed to fetch letter requests", error);
             setListFailed(true);
         } finally {
             setListLoading(false);
         }
-    }, []);
+    }, [api]);
 
     useEffect(() => {
         loadList();
     }, [loadList]);
+
+    // The leadership notification email links here with ?requests=1 to open the modal (admin only).
+    useEffect(() => {
+        if (isMember) return;
+        if (searchParams.get("requests") === "1") {
+            setModalOpen(true);
+            const next = new URLSearchParams(searchParams);
+            next.delete("requests");
+            setSearchParams(next, { replace: true });
+        }
+    }, [isMember, searchParams, setSearchParams]);
 
     const onDirtyChange = useCallback((dirty: boolean) => {
         dirtyRef.current = dirty;
@@ -78,7 +99,7 @@ const RecommendationLetters: React.FC = () => {
     const loadDetail = async (id: string) => {
         setDetailLoading(true);
         try {
-            const loaded = await getLetterRequest(id);
+            const loaded = await api.get(id);
             setDetail(loaded);
             setPreviewFields(loaded.letter);
         } catch (error) {
@@ -131,7 +152,35 @@ const RecommendationLetters: React.FC = () => {
         );
     }, [items, query]);
 
+    const approve = async (item: LetterRequestListItem) => {
+        if (!api.approve) return;
+        if (item.approvalStatus === "approved") {
+            show({ type: "info", message: `${item.reference} is already approved.` });
+            return;
+        }
+        const confirmed = await confirm({
+            title: "Approve letter",
+            message: `Mark ${item.reference} as approved? This is a status marker and does not send the letter.`,
+            confirmText: "Approve",
+            cancelText: "Cancel",
+        });
+        if (!confirmed) return;
+
+        setBusyId(item.id);
+        try {
+            const { message, detail: updated } = await api.approve(item.id);
+            show({ type: "success", message });
+            if (item.id === selectedId) setDetail(updated);
+        } catch (error) {
+            show({ type: "error", message: apiErrorMessage(error, "Failed to approve the letter") });
+        } finally {
+            setBusyId(null);
+            loadList();
+        }
+    };
+
     const send = async (item: LetterRequestListItem) => {
+        if (!api.send) return;
         if (item.letterStatus === "new") {
             await select(item.id);
             show({ type: "info", message: NOT_SAVED_MESSAGE });
@@ -165,7 +214,7 @@ const RecommendationLetters: React.FC = () => {
                 if (!submitRef.current) throw new Error("The editor is not ready. Please try again.");
                 await submitRef.current();
             }
-            const { message, detail: updated } = await sendLetter(item.id);
+            const { message, detail: updated } = await api.send(item.id);
             show({ type: "success", message });
             if (item.id === selectedId) setDetail(updated);
         } catch (error) {
@@ -183,12 +232,16 @@ const RecommendationLetters: React.FC = () => {
         }
     };
 
+    const emptyMessage = isMember
+        ? (query.trim() ? "No matching letters." : "You have no letter requests yet.")
+        : (query.trim() ? "No matching requests." : "No letter requests yet.");
+
     return (
         <div className="dash-section recommendation-letters">
             <div className="dash-header">
-                <h3>Recommendation Letters</h3>
+                <h3>{isMember ? "My Letter of Recommendation" : "Manage Letter of Recommendation"}</h3>
                 <button type="button" className="dashboard-btn" onClick={() => setModalOpen(true)}>
-                    Requests
+                    {isMember ? "My letters" : "Requests"}
                 </button>
             </div>
 
@@ -199,6 +252,7 @@ const RecommendationLetters: React.FC = () => {
                     ) : detail ? (
                         <LetterEditor
                             key={`${detail.id}:${detail.savedAt ?? ""}`}
+                            api={api}
                             detail={detail}
                             onSaved={onSaved}
                             onDirtyChange={onDirtyChange}
@@ -206,18 +260,22 @@ const RecommendationLetters: React.FC = () => {
                             onPreviewRefresh={onPreviewRefresh}
                         />
                     ) : (
-                        <p className="rl-empty">Open the Requests list to pick a letter to edit.</p>
+                        <p className="rl-empty">
+                            {isMember
+                                ? "Open your letters to view and edit a draft."
+                                : "Open the Requests list to pick a letter to edit."}
+                        </p>
                     )}
                 </section>
 
                 <section className="rl-preview">
-                    <LetterPreview requestId={detail?.id ?? null} fields={previewFields} />
+                    <LetterPreview requestId={detail?.id ?? null} fields={previewFields} pdf={api.pdf} />
                 </section>
             </div>
 
             {modalOpen && (
                 <ModalDialog
-                    title="Requests"
+                    title={isMember ? "My letters" : "Requests"}
                     onCancel={() => setModalOpen(false)}
                     content={
                         <>
@@ -241,9 +299,10 @@ const RecommendationLetters: React.FC = () => {
                                     items={filteredItems}
                                     selectedId={selectedId}
                                     onSelect={select}
-                                    onSend={send}
+                                    onSend={isMember ? undefined : send}
+                                    onApprove={isMember ? undefined : approve}
                                     busyId={busyId}
-                                    emptyMessage={query.trim() ? "No matching requests." : "No letter requests yet."}
+                                    emptyMessage={emptyMessage}
                                 />
                             )}
                         </>

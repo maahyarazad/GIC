@@ -29,8 +29,11 @@ const formatDay = (iso: string) =>
 interface RecommendationLettersProps {
     /** "admin" (default) = full workflow; "member" = own letters, editable, no send/approve. */
     mode?: "admin" | "member";
-    /** Shown (full width, no preview) when no request is open — e.g. the member's request form. */
-    emptyState?: React.ReactNode;
+    /**
+     * Shown (full width, no preview) when no request is open — e.g. the member's request form. As a
+     * render function it receives `refresh`, to reload the requests list after a new one is created.
+     */
+    emptyState?: React.ReactNode | ((ctx: { refresh: () => void }) => React.ReactNode);
 }
 
 const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "admin", emptyState }) => {
@@ -249,7 +252,7 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
 
             {emptyState && !detail && !detailLoading ? (
                 // Nothing open: show the request form full width (creation stays in the form).
-                emptyState
+                typeof emptyState === "function" ? emptyState({ refresh: loadList }) : emptyState
             ) : (
                 <div className="rl-grid">
                     <section className="rl-card">

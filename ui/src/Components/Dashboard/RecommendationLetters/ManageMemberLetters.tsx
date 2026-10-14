@@ -8,7 +8,10 @@ import BusinessLetter from "../BusinessLetter/BusinessLetter";
  * the admin-style editor/preview (with View / Download / Submit), where Submit notifies the admin.
  */
 const ManageMemberLetters: React.FC = () => (
-    <RecommendationLetters mode="member" emptyState={<BusinessLetter />} />
+    <RecommendationLetters
+        mode="member"
+        emptyState={({ refresh }) => <BusinessLetter onCreated={refresh} />}
+    />
 );
 
 export default ManageMemberLetters;

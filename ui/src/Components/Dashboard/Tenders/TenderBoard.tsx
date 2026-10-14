@@ -156,7 +156,7 @@ const TenderBoard: React.FC = () => {
                 <h3>Tenders</h3>
                 <button
                     type="button"
-                    className="btn btn-primary-contrast"
+                    className="dashboard-btn"
                     onClick={() => setModalOpen(true)}
                 >
                     <FaPlus /> Create Tender

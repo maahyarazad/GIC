@@ -86,7 +86,12 @@ const TextField: React.FC<TextFieldProps> = ({ name, label, values, required: is
   </div>
 );
 
-const BusinessLetter: React.FC = () => {
+interface BusinessLetterProps {
+  /** Called after a request is created, so the parent can refetch the requests list. */
+  onCreated?: () => void;
+}
+
+const BusinessLetter: React.FC<BusinessLetterProps> = ({ onCreated }) => {
   const user = useSelector((state: RootState) => state.auth?.user);
   const { show } = useToast();
 
@@ -144,6 +149,7 @@ const BusinessLetter: React.FC = () => {
       const res = await createBusinessLetterRequest(payload);
       show({ type: "success", message: `Request submitted – ${res.data.reference}` });
       helpers.resetForm({ values: initialValues });
+      onCreated?.();
     } catch (err: any) {
       show({
         type: "error",
@@ -165,9 +171,9 @@ const BusinessLetter: React.FC = () => {
         {({ values, isSubmitting }) => (
           <div className="bl-grid">
             <div className="bl-card">
-              <h4>New request</h4>
+              
+                <h4 className="">New request</h4>
               <Form noValidate>
-                <div className="bl-group-title">Recipient</div>
                 <div className="bl-row">
                   <TextField name="recipientTitle" label="Title" required values={values} placeholder="Mr. / Ms. / Dr." />
                   <TextField name="recipientFullName" label="Full name" required values={values} />

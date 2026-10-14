@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers, useFormikContext } from "formik";
 import * as Yup from "yup";
 import "./BusinessLetter.css";
 import type { RootState } from "../../../store";
@@ -46,6 +46,50 @@ const validationSchema = Yup.object({
   bodyMain: required("Body", 4000),
   bodyClosing: required("Closing line", 1000),
 });
+
+// Fields in the order they appear on the form, so "first invalid" means the topmost one.
+const FIELD_ORDER: (keyof LetterFields)[] = [
+  "recipientTitle",
+  "recipientFullName",
+  "recipientAttn",
+  "recipientAddress",
+  "recipientCity",
+  "recipientCountry",
+  "letterDate",
+  "reference",
+  "salutation",
+  "companyName",
+  "projectName",
+  "bodyIntro",
+  "bodyMain",
+  "bodyClosing",
+];
+
+/**
+ * On a failed submit, scrolls the first invalid field into view and focuses it. Runs once per submit
+ * attempt (tracked via submitCount) and only after validation has settled (isValidating === false),
+ * so it reads the final errors rather than firing on every field-level revalidation.
+ */
+const ScrollToFirstError: React.FC<{ containerRef: React.RefObject<HTMLElement | null> }> = ({ containerRef }) => {
+  const { submitCount, isValidating, errors } = useFormikContext<LetterFields>();
+  const handledRef = useRef(0);
+
+  useEffect(() => {
+    if (isValidating || submitCount === handledRef.current) return;
+    handledRef.current = submitCount;
+
+    const firstInvalid = FIELD_ORDER.find((name) => errors[name]);
+    if (!firstInvalid) return;
+
+    const el = containerRef.current?.querySelector<HTMLElement>(`#bl-${firstInvalid}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.focus({ preventScroll: true });
+    }
+  }, [submitCount, isValidating, errors, containerRef]);
+
+  return null;
+};
 
 /** Trims every value so the stored letter and the preview stay tidy. */
 const trimmedLetter = (values: LetterFields): LetterFields => {
@@ -94,6 +138,8 @@ interface BusinessLetterProps {
 const BusinessLetter: React.FC<BusinessLetterProps> = ({ onCreated }) => {
   const user = useSelector((state: RootState) => state.auth?.user);
   const { show } = useToast();
+  // Scopes the "scroll to first invalid field" lookup to this form.
+  const formCardRef = useRef<HTMLDivElement>(null);
 
   // Preset the letter the way the admin editor seeds a fresh draft: today's date, a generic greeting,
   // and the template body (with [Company Name] / [Project] placeholders until the member fills them).
@@ -170,10 +216,11 @@ const BusinessLetter: React.FC<BusinessLetterProps> = ({ onCreated }) => {
       >
         {({ values, isSubmitting }) => (
           <div className="bl-grid">
-            <div className="bl-card">
-              
+            <div className="bl-card" ref={formCardRef}>
+
                 <h4 className="">New request</h4>
               <Form noValidate>
+                <ScrollToFirstError containerRef={formCardRef} />
                 <div className="bl-row">
                   <TextField name="recipientTitle" label="Title" required values={values} placeholder="Mr. / Ms. / Dr." />
                   <TextField name="recipientFullName" label="Full name" required values={values} />

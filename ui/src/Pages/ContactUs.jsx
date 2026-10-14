@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import './ContactUs.css'
@@ -10,6 +10,35 @@ import { useToast } from "../Providers/ToastContext";
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useLocation, useNavigate } from "react-router-dom";
 import { INDUSTRY_SECTORS } from "../../../src/config/industrySectors";
+
+// Validated fields in the order they appear on the form, so "first invalid" means the topmost one.
+const FIELD_ORDER = ["fullName", "email", "industry", "meaObjective"];
+
+/**
+ * On a failed submit, scrolls the first invalid field into view and focuses it. Runs once per submit
+ * attempt (tracked via submitCount) and only after validation has settled (isValidating === false).
+ */
+const ScrollToFirstError = ({ containerRef }) => {
+  const { submitCount, isValidating, errors } = useFormikContext();
+  const handledRef = useRef(0);
+
+  useEffect(() => {
+    if (isValidating || submitCount === handledRef.current) return;
+    handledRef.current = submitCount;
+
+    const firstInvalid = FIELD_ORDER.find((name) => errors[name]);
+    if (!firstInvalid) return;
+
+    const el = containerRef.current?.querySelector(`#${firstInvalid}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.focus({ preventScroll: true });
+    }
+  }, [submitCount, isValidating, errors, containerRef]);
+
+  return null;
+};
+
 const ContactUs = ({ siteData }) => {
   const env = useContext(EnvContext);
   const { activePage } = usePage();
@@ -32,6 +61,8 @@ const ContactUs = ({ siteData }) => {
 const isMobile = useIsMobile();
   const server_endpoint = env.VITE_SERVER_API_URL;
   const fileInputRef = useRef(null);
+  // Scopes the "scroll to first invalid field" lookup to this form.
+  const formRef = useRef(null);
   const [attachedFileName, setAttachedFileName] = useState("");
 
   const initialValues = {
@@ -201,7 +232,8 @@ const isMobile = useIsMobile();
             onSubmit={handleSubmit}
           >
             {({ isSubmitting, setFieldValue, values }) => (
-              <Form className="co-form" noValidate>
+              <Form className="co-form" noValidate ref={formRef}>
+                <ScrollToFirstError containerRef={formRef} />
                 <div className="co-row">
                   <div className="co-group">
                     <label className="co-label" htmlFor="fullName">

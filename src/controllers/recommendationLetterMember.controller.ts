@@ -17,6 +17,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { BusinessLetterRequestModel } from "../models/businessLetterRequest.model";
 import { toDetail, toListItem, validateLetter } from "../services/recommendationLetterText";
 import { buildRecommendationLetterPdf } from "../services/recommendationLetterPdf";
+import { notifyLeadership } from "../services/businessLetterNotifications";
 import { LetterFields } from "../types/recommendationLetter.types";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
 import { toObjectId } from "../mappers/objectId.mapper";
@@ -132,6 +133,53 @@ export class RecommendationLetterMemberController extends Controller {
     }
   }
 
+  /**
+   * Saves the member's edited letter and notifies the GIC admin group to finalise and send it.
+   * This is the member's "Submit" action (the admin remains the only one who sends the signed letter).
+   */
+  @Post("/{id}/submit")
+  @Middlewares(authMiddleware)
+  public async submitMyLetter(
+    @Path() id: string,
+    @Body() body: LetterFields,
+    @Request() req: ExpressRequest
+  ): Promise<any> {
+    try {
+      const userId = memberId(req);
+      const requestId = toObjectId(id);
+      if (!userId || !requestId) {
+        this.setStatus(400);
+        return createErrorResponse("Invalid request", "INVALID_ID");
+      }
+
+      const { value, errors } = validateLetter(body, "save");
+      if (!value) {
+        this.setStatus(400);
+        return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
+      }
+
+      const updated: any = await BusinessLetterRequestModel.findOneAndUpdate(
+        { _id: requestId, userId },
+        { $set: { letter: { ...value, savedBy: userId, savedAt: new Date() } } },
+        { new: true }
+      ).lean();
+      if (!updated) {
+        this.setStatus(404);
+        return createErrorResponse("Letter request not found", "NOT_FOUND");
+      }
+
+      // Fire-and-forget: the submit succeeds regardless of the email outcome.
+      void notifyLeadership(updated);
+
+      this.setStatus(200);
+      return createSuccessResponse(await loadOwnDetail(requestId, userId), "Submitted to the GIC team");
+    } catch (error) {
+      console.error("Error submitting member letter:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to submit the letter", "INTERNAL_ERROR");
+    }
+  }
+
   /** DRAFT preview of the posted letter values for the caller's own request (watermark, no signatures). */
   @Post("/{id}/letter/pdf")
   @Middlewares(authMiddleware)
@@ -163,8 +211,8 @@ export class RecommendationLetterMemberController extends Controller {
         return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
       }
 
-      // Members only ever see a DRAFT: watermark on, signatures off.
-      const bytes = await buildRecommendationLetterPdf(value, doc.reference, { draft: true, signatures: false });
+      // Member preview: no signatures (not finalised) and no DRAFT watermark.
+      const bytes = await buildRecommendationLetterPdf(value, doc.reference, { draft: false, signatures: false });
 
       this.setStatus(200);
       this.setHeader("Content-Type", "application/pdf");

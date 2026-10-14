@@ -15,6 +15,8 @@ export interface LetterApiClient {
   pdf(id: string, fields: LetterFields, disposition: "inline" | "attachment"): Promise<Blob>;
   send?(id: string): Promise<{ message: string; detail: LetterRequestDetail }>;
   approve?(id: string): Promise<{ message: string; detail: LetterRequestDetail }>;
+  /** Member-only: save the letter and notify the admin group. Returns the updated detail. */
+  submit?(id: string, fields: LetterFields): Promise<LetterRequestDetail>;
 }
 
 const makePath = (base: string) => (id: string, suffix = "") => `${base}/${encodeURIComponent(id)}${suffix}`;
@@ -90,9 +92,15 @@ export const getMyLetter = makeGet(memberPath);
 export const saveMyLetter = makeSave(memberPath);
 export const fetchMyLetterPdf = makePdf(memberPath);
 
+export const submitMyLetter = async (id: string, fields: LetterFields): Promise<LetterRequestDetail> => {
+  const response = await axiosInstance.post(memberPath(id, "/submit"), fields);
+  return response.data.data;
+};
+
 export const memberLetterApi: LetterApiClient = {
   list: listMyLetters,
   get: getMyLetter,
   save: saveMyLetter,
   pdf: fetchMyLetterPdf,
+  submit: submitMyLetter,
 };

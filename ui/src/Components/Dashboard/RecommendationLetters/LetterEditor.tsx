@@ -111,11 +111,15 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDir
     const { show } = useToast();
     const [pdfBusy, setPdfBusy] = useState<"view" | "download" | null>(null);
 
+    // Member "Submit" saves and notifies the admin group; admin "Save" just persists.
+    const isMemberSubmit = typeof api.submit === "function";
+
     // Throws on validation or server errors, so "Save & send" can stop before sending.
     const save = async (values: LetterFields, helpers: FormikHelpers<LetterFields>): Promise<LetterRequestDetail> => {
         try {
-            const updated = await api.save(detail.id, values);
-            show({ type: "success", message: "Letter saved" });
+            const persist = api.submit ?? api.save;
+            const updated = await persist(detail.id, values);
+            show({ type: "success", message: isMemberSubmit ? "Submitted to the GIC team" : "Letter saved" });
             helpers.resetForm({ values: updated.letter });
             onSaved(updated);
             return updated;
@@ -212,6 +216,8 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDir
                     onView={() => view(form)}
                     onDownload={() => download(form)}
                     onPreviewRefresh={onPreviewRefresh}
+                    primaryLabel={isMemberSubmit ? "Submit" : "Save"}
+                    primaryBusyLabel={isMemberSubmit ? "Submitting…" : "Saving…"}
                 />
             )}
         </Formik>
@@ -228,10 +234,12 @@ interface EditorBodyProps {
     onView(): void;
     onDownload(): void;
     onPreviewRefresh?(values: LetterFields): void;
+    primaryLabel: string;
+    primaryBusyLabel: string;
 }
 
 // Separate component so hooks can depend on the Formik state.
-const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyChange, submitRef, save, onView, onDownload, onPreviewRefresh }) => {
+const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyChange, submitRef, save, onView, onDownload, onPreviewRefresh, primaryLabel, primaryBusyLabel }) => {
     const { values, dirty, isSubmitting } = form;
 
     useEffect(() => {
@@ -276,7 +284,7 @@ const EditorBody: React.FC<EditorBodyProps> = ({ form, detail, pdfBusy, onDirtyC
 
             <div className="rl-editor__actions">
                 <button type="submit" className="dashboard-btn" disabled={isSubmitting}>
-                    {isSubmitting ? "Saving…" : "Save"}
+                    {isSubmitting ? primaryBusyLabel : primaryLabel}
                 </button>
                 <button type="button" className="dashboard-btn dashboard-btn--ghost-minimal" disabled={pdfBusy !== null} onClick={onView}>
                     {pdfBusy === "view" ? "Generating…" : "View"}

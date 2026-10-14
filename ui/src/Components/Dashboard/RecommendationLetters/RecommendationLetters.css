@@ -1,3 +1,8 @@
+.recommendation-letters .rl-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .recommendation-letters .rl-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -121,6 +126,12 @@
 }
 .recommendation-letters .rl-status--failed {
   background: #9b2c2c;
+}
+.recommendation-letters .rl-status--pending {
+  background: #6b7280;
+}
+.recommendation-letters .rl-status--completed {
+  background: #2f855a;
 }
 .recommendation-letters .rl-tag {
   font-size: 0.72rem;

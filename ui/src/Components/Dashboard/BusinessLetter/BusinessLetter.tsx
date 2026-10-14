@@ -216,10 +216,6 @@ const BusinessLetter: React.FC = () => {
 
   return (
     <div className="dash-section business-letter">
-      <div className="dash-header">
-        <h3>Request for Letter of Recommendation</h3>
-      </div>
-
       <div className="bl-grid">
         <div className="bl-card">
           <h4>New request</h4>

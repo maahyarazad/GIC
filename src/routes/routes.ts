@@ -1309,6 +1309,38 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecommendationLetterMemberController_submitMyLetter: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"LetterFields"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/v1/letter-requests/:id/submit',
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterMemberController)),
+            ...(fetchMiddlewares<RequestHandler>(RecommendationLetterMemberController.prototype.submitMyLetter)),
+
+            async function RecommendationLetterMemberController_submitMyLetter(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecommendationLetterMemberController_submitMyLetter, request, response });
+
+                const controller = new RecommendationLetterMemberController();
+
+              await templateService.apiHandler({
+                methodName: 'submitMyLetter',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecommendationLetterMemberController_myLetterPdf: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
                 body: {"in":"body","name":"body","required":true,"ref":"LetterFields"},

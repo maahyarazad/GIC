@@ -14,16 +14,21 @@ const formatDay = (value?: string | null) => {
 const formatShort = (iso?: string | null) =>
     iso ? new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : "";
 
+// Members see a simplified lifecycle: Completed once the admin has approved or sent, else Pending.
+const isCompleted = (item: LetterRequestListItem) =>
+    item.approvalStatus === "approved" || item.letterStatus === "sent";
+
 interface RowProps {
     item: LetterRequestListItem;
     selected: boolean;
     busy: boolean;
+    memberView?: boolean;
     onSelect(id: string): void;
     onSend?(item: LetterRequestListItem): void;
     onApprove?(item: LetterRequestListItem): void;
 }
 
-const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend, onApprove }: RowProps) => (
+const LetterRequestRow = memo(({ item, selected, busy, memberView, onSelect, onSend, onApprove }: RowProps) => (
     <li
         className={`rl-row${selected ? " is-selected" : ""}`}
         onClick={() => onSelect(item.id)}
@@ -40,13 +45,21 @@ const LetterRequestRow = memo(({ item, selected, busy, onSelect, onSend, onAppro
         <div className="rl-row__main">
             <div className="rl-row__top">
                 <span className="rl-ref">{item.reference}</span>
-                <span className={`rl-status rl-status--${item.letterStatus}`}>
-                    {LETTER_STATUS_LABELS[item.letterStatus]}
-                    {item.letterStatus === "sent" && item.sentAt ? ` · ${formatShort(item.sentAt)}` : ""}
-                </span>
-                {item.approvalStatus === "approved" && <span className="rl-tag rl-tag--approved">approved</span>}
-                {item.editedSinceSent && <span className="rl-tag">edited since</span>}
-                {item.language === "de" && <span className="rl-tag">DE requested</span>}
+                {memberView ? (
+                    <span className={`rl-status rl-status--${isCompleted(item) ? "completed" : "pending"}`}>
+                        {isCompleted(item) ? "Completed" : "Pending"}
+                    </span>
+                ) : (
+                    <>
+                        <span className={`rl-status rl-status--${item.letterStatus}`}>
+                            {LETTER_STATUS_LABELS[item.letterStatus]}
+                            {item.letterStatus === "sent" && item.sentAt ? ` · ${formatShort(item.sentAt)}` : ""}
+                        </span>
+                        {item.approvalStatus === "approved" && <span className="rl-tag rl-tag--approved">approved</span>}
+                        {item.editedSinceSent && <span className="rl-tag">edited since</span>}
+                        {item.language === "de" && <span className="rl-tag">DE requested</span>}
+                    </>
+                )}
             </div>
             <div className="rl-row__company">{item.requester.company || "—"}</div>
             <div className="rl-muted">
@@ -95,11 +108,13 @@ interface LetterRequestListProps {
     onSend?(item: LetterRequestListItem): void;
     onApprove?(item: LetterRequestListItem): void;
     busyId?: string | null;
+    /** Member view: show a simple Pending/Completed status and no admin tags. */
+    memberView?: boolean;
     /** Shown when `items` is empty (e.g. "No matching requests." while searching). */
     emptyMessage?: string;
 }
 
-const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, onApprove, busyId, emptyMessage = "No letter requests yet." }) =>
+const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId, onSelect, onSend, onApprove, busyId, memberView, emptyMessage = "No letter requests yet." }) =>
     items.length === 0 ? (
         <p className="rl-empty">{emptyMessage}</p>
     ) : (
@@ -110,6 +125,7 @@ const LetterRequestList: React.FC<LetterRequestListProps> = ({ items, selectedId
                     item={item}
                     selected={item.id === selectedId}
                     busy={busyId === item.id}
+                    memberView={memberView}
                     onSelect={onSelect}
                     onSend={onSend}
                     onApprove={onApprove}

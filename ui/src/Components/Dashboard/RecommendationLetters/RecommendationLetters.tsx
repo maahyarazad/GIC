@@ -27,11 +27,13 @@ const formatDay = (iso: string) =>
     new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
 interface RecommendationLettersProps {
-    /** "admin" (default) = full workflow; "member" = own letters, editable DRAFT, no send/approve. */
+    /** "admin" (default) = full workflow; "member" = own letters, editable, no send/approve. */
     mode?: "admin" | "member";
+    /** Shown (full width, no preview) when no request is open — e.g. the member's request form. */
+    emptyState?: React.ReactNode;
 }
 
-const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "admin" }) => {
+const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "admin", emptyState }) => {
     const isMember = mode === "member";
     const api: LetterApiClient = isMember ? memberLetterApi : adminLetterApi;
 
@@ -239,39 +241,40 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
     return (
         <div className="dash-section recommendation-letters">
             <div className="dash-header">
-                <h3>{isMember ? "My Letter of Recommendation" : "Manage Letter of Recommendation"}</h3>
+                <h3>Manage Letter of Recommendation</h3>
                 <button type="button" className="dashboard-btn" onClick={() => setModalOpen(true)}>
-                    {isMember ? "My letters" : "Requests"}
+                    {isMember ? "My requests" : "Requests"}
                 </button>
             </div>
 
-            <div className="rl-grid">
-                <section className="rl-card">
-                    {detailLoading ? (
-                        <Loader />
-                    ) : detail ? (
-                        <LetterEditor
-                            key={`${detail.id}:${detail.savedAt ?? ""}`}
-                            api={api}
-                            detail={detail}
-                            onSaved={onSaved}
-                            onDirtyChange={onDirtyChange}
-                            submitRef={submitRef}
-                            onPreviewRefresh={onPreviewRefresh}
-                        />
-                    ) : (
-                        <p className="rl-empty">
-                            {isMember
-                                ? "Open your letters to view and edit a draft."
-                                : "Open the Requests list to pick a letter to edit."}
-                        </p>
-                    )}
-                </section>
+            {emptyState && !detail && !detailLoading ? (
+                // Nothing open: show the request form full width (creation stays in the form).
+                emptyState
+            ) : (
+                <div className="rl-grid">
+                    <section className="rl-card">
+                        {detailLoading ? (
+                            <Loader />
+                        ) : detail ? (
+                            <LetterEditor
+                                key={`${detail.id}:${detail.savedAt ?? ""}`}
+                                api={api}
+                                detail={detail}
+                                onSaved={onSaved}
+                                onDirtyChange={onDirtyChange}
+                                submitRef={submitRef}
+                                onPreviewRefresh={onPreviewRefresh}
+                            />
+                        ) : (
+                            <p className="rl-empty">Open the Requests list to pick a letter to edit.</p>
+                        )}
+                    </section>
 
-                <section className="rl-preview">
-                    <LetterPreview requestId={detail?.id ?? null} fields={previewFields} pdf={api.pdf} />
-                </section>
-            </div>
+                    <section className="rl-preview">
+                        <LetterPreview requestId={detail?.id ?? null} fields={previewFields} pdf={api.pdf} />
+                    </section>
+                </div>
+            )}
 
             {modalOpen && (
                 <ModalDialog
@@ -302,6 +305,7 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
                                     onSend={isMember ? undefined : send}
                                     onApprove={isMember ? undefined : approve}
                                     busyId={busyId}
+                                    memberView={isMember}
                                     emptyMessage={emptyMessage}
                                 />
                             )}

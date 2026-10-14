@@ -7,6 +7,12 @@ $rl-sent: #2f855a;
 $rl-failed: #9b2c2c;
 
 .recommendation-letters {
+  .rl-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   .rl-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -149,6 +155,15 @@ $rl-failed: #9b2c2c;
 
     &--failed {
       background: $rl-failed;
+    }
+
+    // Member-facing simplified lifecycle.
+    &--pending {
+      background: $rl-new;
+    }
+
+    &--completed {
+      background: $rl-sent;
     }
   }
 

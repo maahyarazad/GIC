@@ -1,3 +1,8 @@
+.recommendation-letters .rl-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
 .recommendation-letters .rl-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -9,6 +14,36 @@
   .recommendation-letters .rl-grid {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
+}
+.recommendation-letters .rl-modal-search {
+  margin-bottom: 1rem;
+}
+@media (min-width: 992px) {
+  .recommendation-letters .rl-preview {
+    position: sticky;
+    top: 1rem;
+  }
+}
+.recommendation-letters .rl-preview__frame {
+  width: 100%;
+  height: 100vh;
+  min-height: 480px;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+}
+.recommendation-letters .rl-preview__empty,
+.recommendation-letters .rl-preview__msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  min-height: 480px;
+  border: 1px solid var(--bdr);
+  background: var(--bgp);
+  color: var(--mu);
+  text-align: center;
+  padding: 1.5rem;
 }
 .recommendation-letters .rl-card {
   border: 1px solid var(--bdr);
@@ -92,6 +127,12 @@
 .recommendation-letters .rl-status--failed {
   background: #9b2c2c;
 }
+.recommendation-letters .rl-status--pending {
+  background: #6b7280;
+}
+.recommendation-letters .rl-status--completed {
+  background: #2f855a;
+}
 .recommendation-letters .rl-tag {
   font-size: 0.72rem;
   color: var(--mu);
@@ -99,6 +140,10 @@
   border-radius: 999px;
   padding: 0 0.45rem;
   white-space: nowrap;
+}
+.recommendation-letters .rl-tag--approved {
+  color: #2f855a;
+  border-color: #2f855a;
 }
 .recommendation-letters .rl-muted {
   font-size: 0.85rem;
@@ -109,6 +154,12 @@
   color: var(--mu);
   padding: 2rem 0;
   text-align: center;
+}
+.recommendation-letters .rl-row__actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 .recommendation-letters .rl-action {
   flex-shrink: 0;
@@ -127,6 +178,17 @@
 .recommendation-letters .rl-action:disabled {
   opacity: 0.6;
   cursor: wait;
+}
+.recommendation-letters .rl-action--approve {
+  border-color: #2f855a;
+  color: #2f855a;
+}
+.recommendation-letters .rl-action--approve:hover:not(:disabled) {
+  background: #2f855a;
+  color: #fff;
+}
+.recommendation-letters .rl-action--approve:disabled {
+  cursor: default;
 }
 .recommendation-letters .rl-editor__header {
   margin-bottom: 1rem;
@@ -179,7 +241,14 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--bdrs);
+  margin: 0 0 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--bdrs);
+}
+@media (min-width: 992px) {
+  .recommendation-letters .rl-editor__scroll {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
 }/*# sourceMappingURL=RecommendationLetters.css.map */

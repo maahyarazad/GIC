@@ -1,20 +1,45 @@
 /**
  * Letter of recommendation wording, defaults, validation and DTO mappers.
  *
- * The section sentences come verbatim from "Draft_Template for Letter of Recommendation.docx";
- * this is the only place they live (the PDF builder and the controller import them).
+ * The body sentences come from "Draft_Template for Letter of Recommendation - v2.docx" (feature 009);
+ * this is the only place they live (the PDF builder and the controller import them). v2 is flowing
+ * paragraphs (no numbered sections). Verbatim v2 body paragraphs, with placeholders:
+ *   1. On behalf of the German Industry Club Dubai and its German business community, we are pleased
+ *      to recommend {company} as a trusted and reliable business partner.
+ *   2. Based on the positive feedback and recommendations received from its customers over the years,
+ *      {company} has established a strong reputation for professionalism, reliability, and commitment
+ *      to high business standards. Its customers consistently recognize the company as a dependable
+ *      and trustworthy business partner, valuing its dedication to quality, integrity, and customer
+ *      satisfaction.
+ *   3. As an active member of the German Industry Club Dubai, {company} represents the values
+ *      traditionally associated with German business excellence, including quality, integrity,
+ *      technical competence, and long-term commitment.
+ *   4. With specific reference to {project}, we are pleased to endorse {company}'s participation and
+ *      support its efforts to contribute to the successful realization of this opportunity.
+ *   5. Based on our longstanding positive experience with the company, we are confident in
+ *      recommending {company} for consideration as a reliable business partner for this initiative.
+ * Paragraphs 6–7 (the closing lines) live in the editable `closing` field (see DEFAULT_CLOSING).
  */
 import { LETTER_TIMEZONE } from "../config/recommendationLetterConfig";
 import {
+  ApprovalStatus,
+  DEFAULT_BODY_CLOSING,
   LetterFields,
   LetterRequestDetail,
   LetterRequestListItem,
   LetterStatus,
+  defaultBodyIntro,
+  defaultBodyMain,
 } from "../types/recommendationLetter.types";
 
+// Re-exported for back-compat with existing imports from this module.
+export { DEFAULT_BODY_CLOSING, defaultBodyIntro, defaultBodyMain };
+
 export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> = {
-  recipientCompany: 160,
-  recipientStreet: 200,
+  recipientTitle: 120,
+  recipientFullName: 160,
+  recipientAttn: 160,
+  recipientAddress: 300,
   recipientCity: 120,
   recipientCountry: 120,
   companyName: 160,
@@ -24,12 +49,17 @@ export const LIMITS: Record<Exclude<keyof LetterFields, "letterDate">, number> =
   industry: 200,
   productsServices: 300,
   projectName: 200,
+  bodyIntro: 600,
+  bodyMain: 4000,
+  bodyClosing: 1000,
   closing: 1000,
 };
 
 const LABELS: Record<keyof LetterFields, string> = {
-  recipientCompany: "Recipient company",
-  recipientStreet: "Street",
+  recipientTitle: "Title",
+  recipientFullName: "Full name",
+  recipientAttn: "Attn",
+  recipientAddress: "Address",
   recipientCity: "City",
   recipientCountry: "Country",
   letterDate: "Date",
@@ -40,23 +70,41 @@ const LABELS: Record<keyof LetterFields, string> = {
   industry: "Industry / business sector",
   productsServices: "Products / services",
   projectName: "Project / business opportunity",
-  closing: "Closing",
+  bodyIntro: "Intro paragraph",
+  bodyMain: "Body",
+  bodyClosing: "Closing line",
+  closing: "Closing (legacy)",
 };
 
-/** Required in every mode. */
+/** Required in every mode (preview included). */
 const ALWAYS_REQUIRED: (keyof LetterFields)[] = [
   "companyName",
   "salutation",
-  "companyLocation",
   "projectName",
-  "closing",
+  "bodyIntro",
+  "bodyMain",
+  "bodyClosing",
 ];
 
-/** Required to save or send; a preview may leave them empty. */
-const REQUIRED_TO_SAVE: (keyof LetterFields)[] = ["industry", "productsServices"];
+/**
+ * Required to save or send; a preview may leave them empty. The v2 addressee block plus the subject
+ * reference. (companyLocation/industry/productsServices are v1-only and no longer required.)
+ */
+const REQUIRED_TO_SAVE: (keyof LetterFields)[] = [
+  "recipientTitle",
+  "recipientFullName",
+  "recipientAttn",
+  "recipientAddress",
+  "recipientCity",
+  "recipientCountry",
+  "reference",
+];
 
+/** @deprecated v2 (feature 009) single closing field; superseded by the three body parts below. */
 export const DEFAULT_CLOSING =
-  "We wish the company every success in pursuing this opportunity and its future business development.";
+  "We welcome the opportunity to strengthen cooperation between the German industry and the organizations in the MEA region and remain available for any further information. Please do not hesitate to contact us in case any further questions may arise.";
+
+// ── Feature 010: three editable body parts (intro bold / main / closing) ──
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -75,28 +123,53 @@ export const todayInDubai = (): string =>
 
 /** Prefill for a request without a saved draft (research R3). */
 export function buildDefaultLetter(request: any): LetterFields {
-  // One address line per field. A single-line address is split on commas instead,
-  // so "Acme, Main St 1, Dubai, UAE" still fills all four lines.
-  const address = String(request.addressee?.address ?? "");
-  const split = (separator: RegExp) =>
-    address.split(separator).map((part) => part.trim()).filter(Boolean);
-  const lines = split(/\r?\n/);
-  const parts = lines.length > 1 ? lines : split(/,/);
+  const addressee = request.addressee ?? {};
+  const trim = (value: unknown) => String(value ?? "").trim();
+
+  // v2 requests carry the structured addressee; legacy ones only have a single `address` string —
+  // split that on newlines/commas so old requests still prefill sensibly.
+  const hasStructured = Boolean(
+    addressee.title || addressee.fullName || addressee.attn || addressee.city || addressee.country
+  );
+  const legacy = trim(addressee.address);
+  const byLine = legacy.split(/\r?\n/).map((p: string) => p.trim()).filter(Boolean);
+  const parts = byLine.length > 1 ? byLine : legacy.split(/,/).map((p: string) => p.trim()).filter(Boolean);
+
+  const recipient = hasStructured
+    ? {
+        recipientTitle: trim(addressee.title),
+        recipientFullName: trim(addressee.fullName),
+        recipientAttn: trim(addressee.attn),
+        recipientAddress: trim(addressee.address),
+        recipientCity: trim(addressee.city),
+        recipientCountry: trim(addressee.country),
+      }
+    : {
+        recipientTitle: "",
+        recipientFullName: parts[0] ?? "",
+        recipientAttn: "",
+        recipientAddress: parts[1] ?? "",
+        recipientCity: parts[2] ?? "",
+        recipientCountry: parts.slice(3).join(", "),
+      };
+
+  const company = trim(request.requester?.company);
+  const projectName = trim(request.purpose).split(/\r?\n/)[0].slice(0, LIMITS.projectName);
 
   return {
-    recipientCompany: parts[0] ?? "",
-    recipientStreet: parts[1] ?? "",
-    recipientCity: parts[2] ?? "",
-    recipientCountry: parts.slice(3).join(", "),
+    ...recipient,
     letterDate: todayInDubai(),
-    companyName: String(request.requester?.company ?? "").trim(),
-    reference: "RFQ, Tender, Project",
+    companyName: company,
+    reference: trim(addressee.reference),
     salutation: "Dear Sir or Madam,",
-    companyLocation: "Dubai-based",
+    companyLocation: "",
     industry: "",
     productsServices: "",
-    projectName: String(request.purpose ?? "").split(/\r?\n/)[0].trim().slice(0, LIMITS.projectName),
-    closing: DEFAULT_CLOSING,
+    projectName,
+    bodyIntro: defaultBodyIntro(company),
+    bodyMain: defaultBodyMain(company, projectName),
+    bodyClosing: DEFAULT_BODY_CLOSING,
+    closing: "",
   };
 }
 
@@ -129,36 +202,30 @@ export function validateLetter(
   return Object.keys(errors).length > 0 ? { errors } : { value, errors };
 }
 
-/** The template's three numbered sections with the values filled in. */
-export function buildSections(f: LetterFields): { heading: string; paragraphs: string[] }[] {
-  // A preview may lack these; keep the gap visible instead of printing an empty phrase.
-  const industry = f.industry || "[industry/business sector]";
-  const products = f.productsServices || "[products/services/solutions]";
+/** A rendered body paragraph plus whether it is emphasised (the intro). */
+export interface BodyParagraph {
+  text: string;
+  bold: boolean;
+}
 
-  return [
-    {
-      heading: "1. Company Introduction & Business Relationship",
-      paragraphs: [
-        `On behalf of the German Industry Club, we are pleased to provide this letter of recommendation for ${f.companyName}, a ${f.companyLocation} company operating in the ${industry} across the Middle East and Africa (MEA) region.`,
-        `The company specializes in ${products} and demonstrates a strong commitment to professional business practices, customer-oriented solutions, and the development of sustainable international business relationships.`,
-      ],
-    },
-    {
-      heading: "2. German Emirates Club Membership & German Quality Standards",
-      paragraphs: [
-        `As a valued member of the German Emirates Club, ${f.companyName} is part of an established business network connecting German and international companies, industry professionals, and decision-makers across the UAE and the wider MEA region.`,
-        `Through its membership, ${f.companyName} demonstrates its commitment to these principles and to fostering professional cooperation, international knowledge exchange, and sustainable business development.`,
-      ],
-    },
-    {
-      heading: "3. Project Reference & Recommendation",
-      paragraphs: [
-        `With regard to ${f.projectName}, we are pleased to support ${f.companyName} in its efforts to contribute its expertise and capabilities to this initiative.`,
-        `Based on our professional relationship and understanding of the company's business activities, we consider ${f.companyName} a suitable organization for consideration in connection with this project.`,
-        `We welcome the opportunity for ${f.companyName} to contribute to the successful implementation of this initiative and further strengthen business cooperation within the region.`,
-      ],
-    },
-  ];
+/**
+ * The three editable body parts as renderable paragraphs: the intro (bold), then each blank-line
+ * separated paragraph of the main body, then the closing line. Defaults fill any empty part so a
+ * preview of an incomplete draft still reads sensibly.
+ */
+export function buildBody(f: LetterFields): BodyParagraph[] {
+  const company = f.companyName || "";
+  const project = f.projectName || "";
+  const intro = f.bodyIntro?.trim() || defaultBodyIntro(company);
+  const main = f.bodyMain?.trim() || defaultBodyMain(company, project);
+  const closing = f.bodyClosing?.trim() || f.closing?.trim() || DEFAULT_BODY_CLOSING;
+
+  const paragraphs: BodyParagraph[] = [{ text: intro, bold: true }];
+  for (const part of main.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)) {
+    paragraphs.push({ text: part, bold: false });
+  }
+  paragraphs.push({ text: closing, bold: false });
+  return paragraphs;
 }
 
 // ── DTO mappers ──
@@ -168,6 +235,7 @@ const toIso = (value: unknown): string | null => (value ? new Date(value as any)
 export function letterStatus(doc: any): LetterStatus {
   if (doc.delivery?.status === "failed") return "failed";
   if (doc.delivery?.status === "sent") return "sent";
+  if (doc.approval?.status === "approved") return "approved";
   return doc.letter ? "draft" : "new";
 }
 
@@ -176,6 +244,14 @@ const savedLetter = (doc: any): LetterFields | undefined => {
   if (!doc.letter) return undefined;
   const fields = {} as LetterFields;
   for (const key of Object.keys(LABELS) as (keyof LetterFields)[]) fields[key] = doc.letter[key] ?? "";
+  // Back-compat: a draft saved before feature 010 has only the legacy `closing`; seed the three
+  // body parts (closing text preserved) so it opens cleanly in the new editor.
+  if (!fields.bodyIntro && !fields.bodyMain && !fields.bodyClosing) {
+    const defaults = buildDefaultLetter(doc);
+    fields.bodyIntro = defaults.bodyIntro;
+    fields.bodyMain = defaults.bodyMain;
+    fields.bodyClosing = fields.closing || defaults.bodyClosing;
+  }
   return fields;
 };
 
@@ -195,6 +271,8 @@ export function toListItem(doc: any): LetterRequestListItem {
     language: doc.language === "de" ? "de" : "en",
     createdAt: new Date(doc.createdAt).toISOString(),
     letterStatus: letterStatus(doc),
+    approvalStatus: (doc.approval?.status === "approved" ? "approved" : "pending") as ApprovalStatus,
+    approvedAt: toIso(doc.approval?.approvedAt),
     sentAt: toIso(doc.delivery?.sentAt),
     sendCount: doc.delivery?.count ?? 0,
     editedSinceSent: !!(savedAt && sentAt && savedAt > sentAt),
@@ -215,6 +293,12 @@ export function toDetail(doc: any): LetterRequestDetail {
       ? { id: (savedBy._id ?? savedBy).toString(), name: savedBy.name ?? "" }
       : null,
     savedAt: toIso(doc.letter?.savedAt),
+    approvedBy: (() => {
+      const approver = doc.approval?.approvedBy;
+      return approver
+        ? { id: (approver._id ?? approver).toString(), name: approver.name ?? "" }
+        : null;
+    })(),
     delivery: doc.delivery?.status
       ? {
           status: doc.delivery.status,

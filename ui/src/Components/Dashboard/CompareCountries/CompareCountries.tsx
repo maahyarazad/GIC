@@ -558,14 +558,14 @@ const CompareCountries: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="compare-section">
+      <div className="">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="compare-section">
+    <div className="">
       <div className="compare-header">
         <h3>Compare Countries</h3>
         <span className="compare-subtitle">

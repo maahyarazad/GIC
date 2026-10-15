@@ -30,3 +30,15 @@ export const BUSINESS_LETTER_RECIPIENTS: string[] =
 
 export const BUSINESS_LETTER_EMAIL_TEMPLATE_ID: string =
   process.env.BUSINESS_LETTER_EMAIL_TEMPLATE_ID || DEFAULT_EMAIL_TEMPLATE_ID;
+
+/**
+ * Deep link for the leadership notification's CTA button: opens the dashboard Recommendation
+ * Letters section with the requests modal (?requests=1), matching the tender/event notifications.
+ */
+export const businessLetterDashboardUrl = (): string => {
+  const origin =
+    process.env.NODE_ENV === "PRODUCTION"
+      ? process.env.CLIENT_ORIGIN_PROD
+      : process.env.CLIENT_ORIGIN_DEV;
+  return `${origin ?? ""}/dashboard?tab=recommendation_letters&requests=1`;
+};

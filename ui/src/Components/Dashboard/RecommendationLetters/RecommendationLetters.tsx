@@ -1,28 +1,45 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import "./RecommendationLetters.css";
 import Loader from "@/Components/Loader/Loader";
+import ModalDialog from "@/Components/Generic/Dialog/Dialog";
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import { useToast } from "@/Providers/ToastContext";
 import {
+    adminLetterApi,
     apiErrorCode,
     apiErrorMessage,
-    getLetterRequest,
-    listLetterRequests,
-    sendLetter,
+    memberLetterApi,
+    type LetterApiClient,
 } from "@/api/recommendationLetters";
 import type {
+    LetterFields,
     LetterRequestDetail,
     LetterRequestListItem,
 } from "../../../../../src/types/recommendationLetter.types";
 import LetterRequestList from "./LetterRequestList";
 import LetterEditor, { type SubmitLetter } from "./LetterEditor";
+import LetterPreview from "./LetterPreview";
 
 const NOT_SAVED_MESSAGE = "Complete and save the letter before sending";
 
 const formatDay = (iso: string) =>
     new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
-const RecommendationLetters: React.FC = () => {
+interface RecommendationLettersProps {
+    /** "admin" (default) = full workflow; "member" = own letters, editable, no send/approve. */
+    mode?: "admin" | "member";
+    /**
+     * Shown (full width, no preview) when no request is open — e.g. the member's request form. As a
+     * render function it receives `refresh`, to reload the requests list after a new one is created.
+     */
+    emptyState?: React.ReactNode | ((ctx: { refresh: () => void }) => React.ReactNode);
+}
+
+const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "admin", emptyState }) => {
+    const isMember = mode === "member";
+    const api: LetterApiClient = isMember ? memberLetterApi : adminLetterApi;
+
     const [items, setItems] = useState<LetterRequestListItem[]>([]);
     const [listLoading, setListLoading] = useState(true);
     const [listFailed, setListFailed] = useState(false);
@@ -30,28 +47,44 @@ const RecommendationLetters: React.FC = () => {
     const [detail, setDetail] = useState<LetterRequestDetail | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
     const [busyId, setBusyId] = useState<string | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    // Values shown in the live preview: the loaded letter, then the editor's latest focus-out values.
+    const [previewFields, setPreviewFields] = useState<LetterFields | null>(null);
 
     const dirtyRef = useRef(false);
     const submitRef = useRef<SubmitLetter | null>(null);
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const { confirm } = useConfirm();
     const { show } = useToast();
 
     const loadList = useCallback(async () => {
         try {
             setListFailed(false);
-            setItems(await listLetterRequests());
+            setItems(await api.list());
         } catch (error) {
             console.error("Failed to fetch letter requests", error);
             setListFailed(true);
         } finally {
             setListLoading(false);
         }
-    }, []);
+    }, [api]);
 
     useEffect(() => {
         loadList();
     }, [loadList]);
+
+    // The leadership notification email links here with ?requests=1 to open the modal (admin only).
+    useEffect(() => {
+        if (isMember) return;
+        if (searchParams.get("requests") === "1") {
+            setModalOpen(true);
+            const next = new URLSearchParams(searchParams);
+            next.delete("requests");
+            setSearchParams(next, { replace: true });
+        }
+    }, [isMember, searchParams, setSearchParams]);
 
     const onDirtyChange = useCallback((dirty: boolean) => {
         dirtyRef.current = dirty;
@@ -71,9 +104,12 @@ const RecommendationLetters: React.FC = () => {
     const loadDetail = async (id: string) => {
         setDetailLoading(true);
         try {
-            setDetail(await getLetterRequest(id));
+            const loaded = await api.get(id);
+            setDetail(loaded);
+            setPreviewFields(loaded.letter);
         } catch (error) {
             setDetail(null);
+            setPreviewFields(null);
             show({ type: "error", message: apiErrorMessage(error, "Failed to load the letter") });
         } finally {
             setDetailLoading(false);
@@ -81,7 +117,10 @@ const RecommendationLetters: React.FC = () => {
     };
 
     const select = async (id: string) => {
-        if (id === selectedId) return;
+        if (id === selectedId) {
+            setModalOpen(false);
+            return;
+        }
         if (dirtyRef.current) {
             const discard = await confirm({
                 title: "Unsaved changes",
@@ -93,15 +132,60 @@ const RecommendationLetters: React.FC = () => {
         }
         dirtyRef.current = false;
         setSelectedId(id);
+        setModalOpen(false);
         await loadDetail(id);
     };
 
     const onSaved = (updated: LetterRequestDetail) => {
         setDetail(updated);
+        setPreviewFields(updated.letter);
         loadList();
     };
 
+    // The editor reports its current values on field focus-out, driving the live preview.
+    const onPreviewRefresh = useCallback((values: LetterFields) => {
+        setPreviewFields(values);
+    }, []);
+
+    // Client-side filter over the already-loaded requests.
+    const filteredItems = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        if (!q) return items;
+        return items.filter((item) =>
+            [item.reference, item.requester.name, item.requester.email, item.requester.company]
+                .some((field) => (field ?? "").toLowerCase().includes(q))
+        );
+    }, [items, query]);
+
+    const approve = async (item: LetterRequestListItem) => {
+        if (!api.approve) return;
+        if (item.approvalStatus === "approved") {
+            show({ type: "info", message: `${item.reference} is already approved.` });
+            return;
+        }
+        const confirmed = await confirm({
+            title: "Approve letter",
+            message: `Mark ${item.reference} as approved? This is a status marker and does not send the letter.`,
+            confirmText: "Approve",
+            cancelText: "Cancel",
+        });
+        if (!confirmed) return;
+
+        setBusyId(item.id);
+        try {
+            const { message, detail: updated } = await api.approve(item.id);
+            show({ type: "success", message });
+            if (item.id === selectedId) setDetail(updated);
+        } catch (error) {
+            show({ type: "error", message: apiErrorMessage(error, "Failed to approve the letter") });
+        } finally {
+            setBusyId(null);
+            loadList();
+        }
+    };
+
     const send = async (item: LetterRequestListItem) => {
+        if (!api.send) return;
         if (item.letterStatus === "new") {
             await select(item.id);
             show({ type: "info", message: NOT_SAVED_MESSAGE });
@@ -135,7 +219,7 @@ const RecommendationLetters: React.FC = () => {
                 if (!submitRef.current) throw new Error("The editor is not ready. Please try again.");
                 await submitRef.current();
             }
-            const { message, detail: updated } = await sendLetter(item.id);
+            const { message, detail: updated } = await api.send(item.id);
             show({ type: "success", message });
             if (item.id === selectedId) setDetail(updated);
         } catch (error) {
@@ -153,49 +237,85 @@ const RecommendationLetters: React.FC = () => {
         }
     };
 
+    const emptyMessage = isMember
+        ? (query.trim() ? "No matching letters." : "You have no letter requests yet.")
+        : (query.trim() ? "No matching requests." : "No letter requests yet.");
+
     return (
         <div className="dash-section recommendation-letters">
             <div className="dash-header">
-                <h3>Recommendation Letters</h3>
+                <h3>Manage Letter of Recommendation</h3>
+                <button type="button" className="dashboard-btn" onClick={() => setModalOpen(true)}>
+                    {isMember ? "My requests" : "Requests"}
+                </button>
             </div>
 
-            <div className="rl-grid">
-                <section className="rl-card">
-                    <h4>Requests</h4>
-                    {listLoading ? (
-                        <Loader />
-                    ) : listFailed ? (
-                        <p className="rl-empty">
-                            Could not load letter requests.
-                            <button type="button" className="rl-action ms-2" onClick={loadList}>Retry</button>
-                        </p>
-                    ) : (
-                        <LetterRequestList
-                            items={items}
-                            selectedId={selectedId}
-                            onSelect={select}
-                            onSend={send}
-                            busyId={busyId}
-                        />
-                    )}
-                </section>
+            {emptyState && !detail && !detailLoading ? (
+                // Nothing open: show the request form full width (creation stays in the form).
+                typeof emptyState === "function" ? emptyState({ refresh: loadList }) : emptyState
+            ) : (
+                <div className="rl-grid">
+                    <section className="rl-card">
+                        {detailLoading ? (
+                            <Loader />
+                        ) : detail ? (
+                            <LetterEditor
+                                key={`${detail.id}:${detail.savedAt ?? ""}`}
+                                api={api}
+                                detail={detail}
+                                onSaved={onSaved}
+                                onDirtyChange={onDirtyChange}
+                                submitRef={submitRef}
+                                onPreviewRefresh={onPreviewRefresh}
+                            />
+                        ) : (
+                            <p className="rl-empty">Open the Requests list to pick a letter to edit.</p>
+                        )}
+                    </section>
 
-                <section className="rl-card">
-                    {detailLoading ? (
-                        <Loader />
-                    ) : detail ? (
-                        <LetterEditor
-                            key={`${detail.id}:${detail.savedAt ?? ""}`}
-                            detail={detail}
-                            onSaved={onSaved}
-                            onDirtyChange={onDirtyChange}
-                            submitRef={submitRef}
-                        />
-                    ) : (
-                        <p className="rl-empty">Select a request to edit its letter.</p>
-                    )}
-                </section>
-            </div>
+                    <section className="rl-preview">
+                        <LetterPreview requestId={detail?.id ?? null} fields={previewFields} pdf={api.pdf} />
+                    </section>
+                </div>
+            )}
+
+            {modalOpen && (
+                <ModalDialog
+                    title={isMember ? "My letters" : "Requests"}
+                    onCancel={() => setModalOpen(false)}
+                    content={
+                        <>
+                            <input
+                                type="text"
+                                className="form-control rl-modal-search"
+                                placeholder="Search by reference, name, email or company…"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                autoFocus
+                            />
+                            {listLoading ? (
+                                <Loader />
+                            ) : listFailed ? (
+                                <p className="rl-empty">
+                                    Could not load letter requests.
+                                    <button type="button" className="rl-action ms-2" onClick={loadList}>Retry</button>
+                                </p>
+                            ) : (
+                                <LetterRequestList
+                                    items={filteredItems}
+                                    selectedId={selectedId}
+                                    onSelect={select}
+                                    onSend={isMember ? undefined : send}
+                                    onApprove={isMember ? undefined : approve}
+                                    busyId={busyId}
+                                    memberView={isMember}
+                                    emptyMessage={emptyMessage}
+                                />
+                            )}
+                        </>
+                    }
+                />
+            )}
         </div>
     );
 };

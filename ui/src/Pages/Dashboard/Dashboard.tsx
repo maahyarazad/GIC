@@ -16,7 +16,7 @@ import LogoutComponent from "./Logout";
 import "./Dashboard.css";
 import { usePage } from "@/Providers/PageContext";
 import Events from "@/Components/Dashboard/Events/Events";
-import BusinessLetter from "@/Components/Dashboard/BusinessLetter/BusinessLetter";
+import ManageMemberLetters from "@/Components/Dashboard/RecommendationLetters/ManageMemberLetters";
 import ManageEvents from "@/Components/Dashboard/ManageEvents/ManageEvents";
 import RecommendationLetters from "@/Components/Dashboard/RecommendationLetters/RecommendationLetters";
 import Tenders from "@/Components/Dashboard/Tenders/Tenders";
@@ -50,7 +50,7 @@ const accessControl: Record<MenuItem, string[]> = {
   events: ["user", "admin", "procurement"],
   manage_events: ["admin"],
   recommendation_letters: ["admin"],
-  business_letter: ["user", "admin", "procurement"],
+  business_letter: ["user", "procurement"],
   blog: ["admin", "procurement"],
   newsletter: ["admin", "procurement"],
   sitedata: ["admin", "procurement"],
@@ -70,8 +70,8 @@ const menuTitles: Record<MenuItem, string> = {
   member_profiles: "Member Profiles",
   events: "Events",
   manage_events: "Manage Events",
-  recommendation_letters: "Recommendation Letters",
-  business_letter: "Request for letter of recommendation",
+  recommendation_letters: "Manage Letter of Recommendation",
+  business_letter: "Manage Letter of Recommendation",
   blog: "Blog",
   newsletter: "Newsletter",
   sitedata: "Website Data",
@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
     events: <Events />,
     manage_events: <ManageEvents />,
     recommendation_letters: <RecommendationLetters />,
-    business_letter: <BusinessLetter />,
+    business_letter: <ManageMemberLetters />,
     profile: <UserProfileForm initialProfile={userProfile} />,
     logout: <LogoutComponent />,
   };

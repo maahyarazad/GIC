@@ -15,7 +15,7 @@ import { Request as ExpressRequest } from "express";
 import { ObjectId } from "mongodb";
 import { Readable } from "stream";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { strictLimiter } from "../middleware/ratelimiter.middleware";
+import { previewLimiter, strictLimiter } from "../middleware/ratelimiter.middleware";
 import { Model } from "mongoose";
 import { UserDocument, UserModel } from "../models/user.model";
 import {
@@ -23,28 +23,24 @@ import {
   mapBusinessLetterRequest,
 } from "../models/businessLetterRequest.model";
 import {
-  BusinessLetterLanguage,
+  ADDRESSEE_LIMITS,
+  AddresseeFields,
   BusinessLetterType,
   CreateBusinessLetterRequest,
   LANGUAGE_LABELS,
-  LETTER_TYPE_LABELS,
-  formatLetterType,
 } from "../types/businessLetter.types";
-import {
-  BUSINESS_LETTER_EMAIL_TEMPLATE_ID,
-  BUSINESS_LETTER_RECIPIENTS,
-} from "../config/businessLetterConfig";
-import { sendDynamicEmailToUser } from "../services/emailService";
+import type { LetterFields } from "../types/recommendationLetter.types";
 import { buildBusinessLetterPdf } from "../services/businessLetterPdf";
+import { buildRecommendationLetterPdf } from "../services/recommendationLetterPdf";
+import { validateLetter } from "../services/recommendationLetterText";
+import { notifyLeadership, sendReceipt } from "../services/businessLetterNotifications";
 import {
   createErrorResponse,
   createSuccessResponse,
-  escapeHtml,
 } from "../utils/helpers";
 import { toObjectId } from "../mappers/objectId.mapper";
 
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
-const EMPTY = "—";
 
 const str = (value: unknown): string =>
   typeof value === "string" ? value.trim() : "";
@@ -73,11 +69,22 @@ function validateCreate(body: CreateBusinessLetterRequest): Record<string, strin
   checkLength("requester.phone", str(body.requester?.phone), 0, 40, "Phone");
   checkLength("requester.company", str(body.requester?.company), 0, 160, "Company");
 
-  if (!Object.keys(LETTER_TYPE_LABELS).includes(body.letterType)) {
-    errors.letterType = "Letter type is invalid";
+  // Letter type removed from the UI (feature 010); accept any legacy value and default on save.
+
+  // Addressee block + subject reference (v2): all required on new submissions.
+  const addresseeLabels: Record<keyof AddresseeFields, string> = {
+    title: "Title",
+    fullName: "Full name",
+    attn: "Attn",
+    city: "City",
+    country: "Country",
+    address: "Address",
+    reference: "Reference",
+  };
+  for (const key of Object.keys(addresseeLabels) as (keyof AddresseeFields)[]) {
+    checkLength(`addressee.${key}`, str(body.addressee?.[key]), 1, ADDRESSEE_LIMITS[key], addresseeLabels[key]);
   }
 
-  checkLength("addressee.address", str(body.addressee?.address), 0, 500, "Address");
   checkLength("purpose", str(body.purpose), 10, 2000, "Purpose");
 
   const neededBy = parseDateOnly(str(body.neededBy));
@@ -103,66 +110,6 @@ const buildReference = (id: ObjectId): string => {
   const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   return `BL-${ymd}-${id.toHexString().slice(-6).toUpperCase()}`;
 };
-
-/** Sends the new-request email to the GIC leadership team and records the outcome. Never throws. */
-async function notifyLeadership(doc: any): Promise<void> {
-  const orEmpty = (value?: string | null) => escapeHtml(value?.trim() || EMPTY);
-
-  try {
-    const data = {
-      REFERENCE: escapeHtml(doc.reference),
-      REQUESTER_NAME: escapeHtml(doc.requester.name),
-      REQUESTER_EMAIL: escapeHtml(doc.requester.email),
-      REQUESTER_PHONE: orEmpty(doc.requester.phone),
-      REQUESTER_COMPANY: orEmpty(doc.requester.company),
-      LETTER_TYPE: escapeHtml(formatLetterType(doc.letterType)),
-      ADDRESSEE_ADDRESS: orEmpty(doc.addressee?.address),
-      LANGUAGE: escapeHtml(LANGUAGE_LABELS[doc.language as BusinessLetterLanguage] ?? doc.language),
-      NEEDED_BY: new Date(doc.neededBy).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }),
-      SUBMITTED_AT: new Date(doc.createdAt).toLocaleString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "Asia/Dubai",
-      }),
-      PURPOSE: escapeHtml(doc.purpose).replace(/\r?\n/g, "<br />"),
-    };
-
-    await sendDynamicEmailToUser({
-      template_id: BUSINESS_LETTER_EMAIL_TEMPLATE_ID,
-      email: BUSINESS_LETTER_RECIPIENTS.join(", "),
-      data,
-    });
-
-    await BusinessLetterRequestModel.updateOne(
-      { _id: doc._id },
-      { $set: { "notification.status": "sent", "notification.attemptedAt": new Date() } }
-    );
-  } catch (error: any) {
-    console.error(`Business letter notification failed for ${doc.reference}:`, error);
-    try {
-      await BusinessLetterRequestModel.updateOne(
-        { _id: doc._id },
-        {
-          $set: {
-            "notification.status": "failed",
-            "notification.attemptedAt": new Date(),
-            "notification.error": String(error?.message ?? error).slice(0, 500),
-          },
-        }
-      );
-    } catch (updateError) {
-      console.error("Failed to record notification status:", updateError);
-    }
-  }
-}
 
 @Route("api/v1/business-letters")
 @Tags("Business Letters")
@@ -191,6 +138,12 @@ export class BusinessLetterController extends Controller {
       }
 
       const letterType = body.letterType as BusinessLetterType;
+      // The member drafts the letter on the request form; seed `letter` from it (trimmed to the known
+      // LetterFields keys) so the editor opens on their draft instead of the auto-generated default.
+      const { value: letterValue } = validateLetter(body.letter ?? null, "preview");
+      const letter = letterValue
+        ? { ...letterValue, savedBy: userId, savedAt: new Date() }
+        : undefined;
       const fields = {
         userId,
         requester: {
@@ -201,11 +154,18 @@ export class BusinessLetterController extends Controller {
         },
         letterType,
         addressee: {
+          title: str(body.addressee?.title),
+          fullName: str(body.addressee?.fullName),
+          attn: str(body.addressee?.attn),
+          city: str(body.addressee?.city),
+          country: str(body.addressee?.country),
           address: str(body.addressee?.address),
+          reference: str(body.addressee?.reference),
         },
         purpose: str(body.purpose),
         neededBy: parseDateOnly(str(body.neededBy)),
         language: body.language,
+        ...(letter ? { letter } : {}),
       };
 
       let doc: any;
@@ -225,7 +185,9 @@ export class BusinessLetterController extends Controller {
       }
 
       // Fire and forget: the request is saved regardless of the email outcome.
-      void notifyLeadership(doc.toObject());
+      const saved = doc.toObject();
+      void notifyLeadership(saved);
+      void sendReceipt(saved);
 
       this.setStatus(201);
       return createSuccessResponse(
@@ -236,6 +198,43 @@ export class BusinessLetterController extends Controller {
       console.error("Error creating business letter request:", error);
       this.setStatus(500);
       return createErrorResponse("Failed to submit business letter request", "INTERNAL_ERROR");
+    }
+  }
+
+  /**
+   * Live preview of the drafted letter of recommendation, before any request is saved. Renders the
+   * real letter (same builder as the member/admin editor — no signatures, no DRAFT watermark) from
+   * the posted LetterFields. Read-only; nothing is persisted.
+   */
+  @Post("/preview")
+  @Middlewares<Function>(previewLimiter, authMiddleware)
+  public async previewBusinessLetterPdf(
+    @Body() body: LetterFields,
+    @Request() req: ExpressRequest
+  ): Promise<any> {
+    try {
+      const userId = toObjectId((req as any).user?.userId);
+      if (!userId) {
+        this.setStatus(401);
+        return createErrorResponse("Unauthorized", "UNAUTHORIZED");
+      }
+
+      const { value, errors } = validateLetter(body, "preview");
+      if (!value) {
+        this.setStatus(400);
+        return createErrorResponse("Validation failed", "VALIDATION_ERROR", errors);
+      }
+
+      const bytes = await buildRecommendationLetterPdf(value, "DRAFT PREVIEW", { draft: true, signatures: false });
+
+      this.setStatus(200);
+      this.setHeader("Content-Type", "application/pdf");
+      this.setHeader("Content-Disposition", 'inline; filename="letter-preview.pdf"');
+      return Readable.from(Buffer.from(bytes));
+    } catch (error) {
+      console.error("Error generating business letter preview:", error);
+      this.setStatus(500);
+      return createErrorResponse("Failed to generate preview", "PDF_ERROR");
     }
   }
 

@@ -18,6 +18,24 @@ declare module '*.svg' {
   export default value;
 }
 
+declare module 'react-select-country-list' {
+  interface CountryData {
+    value: string;
+    label: string;
+  }
+  interface CountryList {
+    getData(): CountryData[];
+    getLabel(value: string): string;
+    getValue(label: string): string;
+    getLabels(): string[];
+    getValues(): string[];
+    setEmpty(label: string): void;
+    setLabel(value: string, label: string): CountryList;
+    native(): CountryList;
+  }
+  export default function countryList(): CountryList;
+}
+
 
 // declare module '*.svg' {
 //   import * as React from 'react';

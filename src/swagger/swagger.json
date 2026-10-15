@@ -215,12 +215,18 @@
 				"additionalProperties": true
 			},
 			"LetterFields": {
-				"description": "The editable values of a letter of recommendation (Draft_Template for Letter of Recommendation.docx).",
+				"description": "The editable values of a letter of recommendation\n(\"Draft_Template for Letter of Recommendation - v2.docx\").\n\nThe recipient block is the structured addressee (v2). The body is three editable parts\n(`bodyIntro` bold / `bodyMain` / `bodyClosing`) — feature 010. `companyLocation`, `industry`,\n`productsServices` and the legacy single `closing` are retained for back-compat with older\nsaved drafts but are no longer rendered or shown in the editor.",
 				"properties": {
-					"recipientCompany": {
+					"recipientTitle": {
 						"type": "string"
 					},
-					"recipientStreet": {
+					"recipientFullName": {
+						"type": "string"
+					},
+					"recipientAttn": {
+						"type": "string"
+					},
+					"recipientAddress": {
 						"type": "string"
 					},
 					"recipientCity": {
@@ -237,30 +243,49 @@
 						"type": "string"
 					},
 					"reference": {
-						"type": "string"
+						"type": "string",
+						"description": "Subject reference: Project Name / Tender Number or Name / Business Initiative."
 					},
 					"salutation": {
 						"type": "string"
 					},
 					"companyLocation": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"industry": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"productsServices": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					},
 					"projectName": {
 						"type": "string"
 					},
+					"bodyIntro": {
+						"type": "string",
+						"description": "Opening recommendation line, rendered bold in the PDF."
+					},
+					"bodyMain": {
+						"type": "string",
+						"description": "Main body; blank lines separate paragraphs."
+					},
+					"bodyClosing": {
+						"type": "string",
+						"description": "Closing line (e.g. \"We wish the company every success …\")."
+					},
 					"closing": {
-						"type": "string"
+						"type": "string",
+						"deprecated": true
 					}
 				},
 				"required": [
-					"recipientCompany",
-					"recipientStreet",
+					"recipientTitle",
+					"recipientFullName",
+					"recipientAttn",
+					"recipientAddress",
 					"recipientCity",
 					"recipientCountry",
 					"letterDate",
@@ -271,6 +296,9 @@
 					"industry",
 					"productsServices",
 					"projectName",
+					"bodyIntro",
+					"bodyMain",
+					"bodyClosing",
 					"closing"
 				],
 				"type": "object",
@@ -3434,6 +3462,43 @@
 					"partner_recommendation"
 				]
 			},
+			"AddresseeFields": {
+				"description": "The letter's addressee and project/tender reference (recommendation letter v2).\n`reference` is the subject reference — Project Name / Tender Number or Name / Business\nInitiative — NOT the request's BL-… tracking id.",
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"attn": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"reference": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title",
+					"fullName",
+					"attn",
+					"city",
+					"country",
+					"address",
+					"reference"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"BusinessLetterLanguage": {
 				"type": "string",
 				"enum": [
@@ -3462,18 +3527,18 @@
 						"type": "object"
 					},
 					"letterType": {
-						"$ref": "#/components/schemas/BusinessLetterType"
+						"$ref": "#/components/schemas/BusinessLetterType",
+						"deprecated": true
 					},
 					"addressee": {
-						"properties": {
-							"address": {
-								"type": "string"
-							}
-						},
-						"type": "object"
+						"$ref": "#/components/schemas/AddresseeFields"
 					},
 					"purpose": {
 						"type": "string"
+					},
+					"letter": {
+						"$ref": "#/components/schemas/LetterFields",
+						"description": "The drafted letter of recommendation (feature 010). The member now writes the full letter on the\nrequest form, so it is seeded here instead of being auto-generated on first open."
 					},
 					"neededBy": {
 						"type": "string",
@@ -3485,7 +3550,6 @@
 				},
 				"required": [
 					"requester",
-					"letterType",
 					"addressee",
 					"purpose",
 					"neededBy",
@@ -4310,6 +4374,182 @@
 				"parameters": []
 			}
 		},
+		"/api/v1/letter-requests": {
+			"get": {
+				"operationId": "ListMyLetterRequests",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recommendation Letters (Member)"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/letter-requests/{id}": {
+			"get": {
+				"operationId": "GetMyLetterRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recommendation Letters (Member)"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/letter-requests/{id}/letter": {
+			"put": {
+				"operationId": "SaveMyLetter",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recommendation Letters (Member)"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LetterFields"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/letter-requests/{id}/submit": {
+			"post": {
+				"operationId": "SubmitMyLetter",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Saves the member's edited letter and notifies the GIC admin group to finalise and send it.\nThis is the member's \"Submit\" action (the admin remains the only one who sends the signed letter).",
+				"tags": [
+					"Recommendation Letters (Member)"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LetterFields"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/letter-requests/{id}/letter/pdf": {
+			"post": {
+				"operationId": "MyLetterPdf",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "DRAFT preview of the posted letter values for the caller's own request (watermark, no signatures).",
+				"tags": [
+					"Recommendation Letters (Member)"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "disposition",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LetterFields"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v1/admin/letter-requests": {
 			"get": {
 				"operationId": "ListLetterRequests",
@@ -4460,6 +4700,36 @@
 					}
 				},
 				"description": "Emails the saved letter as a PDF attachment from info@ to the requester.",
+				"tags": [
+					"Recommendation Letters Admin"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/admin/letter-requests/{id}/approve": {
+			"post": {
+				"operationId": "ApproveLetter",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Marks the request as approved (feature 010). This is a tracking/visibility marker only — it does\nNOT gate sending. Idempotent: approving an already-approved request is a no-op success.",
 				"tags": [
 					"Recommendation Letters Admin"
 				],
@@ -6595,6 +6865,37 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/business-letters/preview": {
+			"post": {
+				"operationId": "PreviewBusinessLetterPdf",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Live preview of the drafted letter of recommendation, before any request is saved. Renders the\nreal letter (same builder as the member/admin editor — no signatures, no DRAFT watermark) from\nthe posted LetterFields. Read-only; nothing is persisted.",
+				"tags": [
+					"Business Letters"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LetterFields"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/business-letters/{id}/pdf": {

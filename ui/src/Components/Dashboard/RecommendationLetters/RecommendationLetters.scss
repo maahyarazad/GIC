@@ -7,6 +7,12 @@ $rl-sent: #2f855a;
 $rl-failed: #9b2c2c;
 
 .recommendation-letters {
+  .rl-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   .rl-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -15,8 +21,45 @@ $rl-failed: #9b2c2c;
     margin-top: 1.5rem;
 
     @media (min-width: 992px) {
+      // Editor on the left (wider), live PDF preview on the right.
       grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     }
+  }
+
+  // Search box above the requests list inside the modal.
+  .rl-modal-search {
+    margin-bottom: 1rem;
+  }
+
+  // Right-hand live PDF preview pane.
+  .rl-preview {
+    @media (min-width: 992px) {
+      position: sticky;
+      top: 1rem;
+    }
+  }
+
+  .rl-preview__frame {
+    width: 100%;
+    height: 100vh;
+    min-height: 480px;
+    border: 1px solid var(--bdr);
+    background: var(--bgp);
+  }
+
+  .rl-preview__empty,
+  .rl-preview__msg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    min-height: 480px;
+    border: 1px solid var(--bdr);
+    background: var(--bgp);
+    color: var(--mu);
+    text-align: center;
+    padding: 1.5rem;
   }
 
   .rl-card {
@@ -113,6 +156,15 @@ $rl-failed: #9b2c2c;
     &--failed {
       background: $rl-failed;
     }
+
+    // Member-facing simplified lifecycle.
+    &--pending {
+      background: $rl-new;
+    }
+
+    &--completed {
+      background: $rl-sent;
+    }
   }
 
   .rl-tag {
@@ -122,6 +174,11 @@ $rl-failed: #9b2c2c;
     border-radius: 999px;
     padding: 0 0.45rem;
     white-space: nowrap;
+
+    &--approved {
+      color: $rl-sent;
+      border-color: $rl-sent;
+    }
   }
 
   .rl-muted {
@@ -134,6 +191,14 @@ $rl-failed: #9b2c2c;
     color: var(--mu);
     padding: 2rem 0;
     text-align: center;
+  }
+
+  // Approve + Send stack together at the right of a request row (admin).
+  .rl-row__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
 
   .rl-action {
@@ -154,6 +219,21 @@ $rl-failed: #9b2c2c;
     &:disabled {
       opacity: 0.6;
       cursor: wait;
+    }
+
+    // Approve: green, distinct from the orange Send.
+    &--approve {
+      border-color: $rl-sent;
+      color: $rl-sent;
+
+      &:hover:not(:disabled) {
+        background: $rl-sent;
+        color: #fff;
+      }
+
+      &:disabled {
+        cursor: default;
+      }
     }
   }
 
@@ -212,12 +292,22 @@ $rl-failed: #9b2c2c;
     margin-top: 0.25rem;
   }
 
+  // Actions sit at the top of the editor, below the header.
   .rl-editor__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--bdrs);
+    margin: 0 0 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--bdrs);
+  }
+
+  // The fields scroll within ~70% of the viewport; the header + actions stay in view.
+  .rl-editor__scroll {
+    @media (min-width: 992px) {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
   }
 }

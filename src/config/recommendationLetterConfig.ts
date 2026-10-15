@@ -23,10 +23,10 @@ export interface Signatory {
 
 export const SIGNATORIES: readonly Signatory[] = [
   {
-    name: "Jan A Hussing",
-    title: "Chairman",
-    // Image signature — embedded whole (no box crop); crop the JPEG itself if needed.
-    signature: { file: "Jan_signiture.jpeg" },
+    name: "Philip Hölzer",
+    title: "Club Director",
+    // Image signature: the whole file is embedded as-is (crop the image itself), so no `box`.
+    signature: { file: "philip_signature.jpeg" },
   },
   {
     name: "Thomas Hochberger",

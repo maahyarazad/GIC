@@ -229,7 +229,7 @@ export default function UserProfileForm({ initialProfile }: any) {
         <div className="dash-section">
             <div className="dash-header">
                 <h3>Profile</h3>
-                <button type="button" form="profile-form" onClick={handleSubmit} className="btn btn-primary-contrast">
+                <button type="button" form="profile-form" onClick={handleSubmit} className="dashboard-btn">
                     Save Profile
                 </button>
             </div>

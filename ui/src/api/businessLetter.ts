@@ -4,10 +4,20 @@ import type {
   BusinessLetterRequestDto,
   BusinessLetterRequestList,
 } from '../../../src/types/businessLetter.types';
+import type { LetterFields } from '../../../src/types/recommendationLetter.types';
 
 export async function createBusinessLetterRequest(body: CreateBusinessLetterRequest) {
   const res = await axiosInstance.post('/business-letters', body);
   return res.data as { success: boolean; message: string; data: BusinessLetterRequestDto };
+}
+
+/**
+ * Render the drafted letter to an inline PDF for the live preview (the real letter, no signatures /
+ * no DRAFT watermark — same as the editor's preview). Read-only; nothing is saved.
+ */
+export async function previewBusinessLetterPdf(fields: LetterFields): Promise<Blob> {
+  const res = await axiosInstance.post('/business-letters/preview', fields, { responseType: 'blob' });
+  return new Blob([res.data], { type: 'application/pdf' });
 }
 
 export const EMPTY_BUSINESS_LETTER_LIST: BusinessLetterRequestList = { items: [], total: 0, page: 1, pages: 0 };

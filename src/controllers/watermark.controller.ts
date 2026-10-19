@@ -44,11 +44,15 @@ export function RegisterFileDownloadRoutes(app: Application) {
 
       const version = process.env.PDF_WATERMARK_VERSION;
 
+      // Private directory (not served at /uploads). basename() keeps fileId from escaping it.
       const inputPath = path.resolve(
         __dirname,
-        "file_storage",
-        `${fileId}.pdf`
+        "pdf_storage",
+        `${path.basename(String(fileId))}.pdf`
       );
+      if (!fs.existsSync(inputPath)) {
+        return res.status(404).json({ message: "File not found" });
+      }
 
       const outputPath = path.resolve(
         __dirname,

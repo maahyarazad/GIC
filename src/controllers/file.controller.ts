@@ -7,6 +7,11 @@ import { ApiResponse, createSuccessResponse, createErrorResponse , FilterModel, 
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
 import mime from "mime-types";
 
+// Country-intelligence PDFs live in a DEDICATED directory that is NOT mounted statically.
+// `file_storage` is served publicly at /uploads, so these are served ONLY through the
+// authenticated, watermarking route /api/v1/watermark/:fileId.
+export const PDF_STORAGE_DIR = "pdf_storage";
+
 export interface UploadedFileDoc {
   filename: string;
   mimetype: string;
@@ -21,8 +26,8 @@ export interface UploadedFileDoc {
 @Tags("files")
 export class FileController extends Controller {
   /**
-   * Dedicated PDF upload. Saves the file to file_storage under its original
-   * filename and returns the file id (the filename without the .pdf extension)
+   * Dedicated PDF upload. Saves the file to the private pdf_storage directory
+   * (never served statically) under its original filename and returns the file id (the filename without the .pdf extension)
    * so it can be assigned to a product's `fileId` separately from the
    * continent update request.
    */
@@ -46,14 +51,15 @@ export class FileController extends Controller {
       }
 
       // Preserve the original filename (ensuring a .pdf extension). Strip any
-      // path components so the filename can't escape file_storage.
+      // path components so the filename can't escape pdf_storage.
       const originalName = path.basename(file.originalname);
       const fileName = /\.pdf$/i.test(originalName)
         ? originalName
         : `${originalName}.pdf`;
       const fileId = fileName.replace(/\.pdf$/i, "");
 
-      const targetPath = path.join("file_storage", fileName);
+      if (!fs.existsSync(PDF_STORAGE_DIR)) fs.mkdirSync(PDF_STORAGE_DIR, { recursive: true });
+      const targetPath = path.join(PDF_STORAGE_DIR, fileName);
       fs.writeFileSync(targetPath, file.buffer);
 
       // Record it for the file manager.

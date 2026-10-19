@@ -59,6 +59,7 @@ database.sqlite
 *.bak
 /file_storage
 /presentation_storage
+/pdf_storage
 
 /gic
 !ui/public/bootstrap/dist/

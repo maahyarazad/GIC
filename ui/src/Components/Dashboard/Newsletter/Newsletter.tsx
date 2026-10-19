@@ -18,6 +18,10 @@ const StudioNewsletterEditor = lazy(
 );
 type View = "list" | "form";
 
+type EditorType = "html" | "studio";
+const EDITOR_LABELS: Record<EditorType, string> = { html: "HTML editor", studio: "Studio editor" };
+const EDITOR_STORAGE_KEY = "newsletter-editor";
+
 interface ArticleForm {
   title: string;
   subject: string;
@@ -56,6 +60,39 @@ const TestEmailInput: React.FC<{
   );
 };
 
+/** Radio choice for the "Change editor" modal. Writes to a ref the parent reads on confirm. */
+const EditorChoiceInput: React.FC<{
+  choiceRef: React.MutableRefObject<EditorType>;
+}> = ({ choiceRef }) => {
+  const [choice, setChoice] = useState<EditorType>(choiceRef.current);
+  return (
+    <div className="newsletter-editor-choice">
+      {(Object.keys(EDITOR_LABELS) as EditorType[]).map((type) => (
+        <label key={type} className="newsletter-editor-option">
+          <input
+            type="radio"
+            name="newsletter-editor"
+            checked={choice === type}
+            onChange={() => {
+              setChoice(type);
+              choiceRef.current = type;
+            }}
+          />
+          <span>
+            <strong>{EDITOR_LABELS[type]}</strong>
+            <small>
+              {type === "html"
+                ? "Edit the raw HTML code."
+                : "Visual drag-and-drop builder."}
+            </small>
+          </span>
+        </label>
+      ))}
+      <p className="newsletter-editor-note">Your content is kept when you switch.</p>
+    </div>
+  );
+};
+
 const Newsletter: React.FC = () => {
   const { show } = useToast();
   const { confirm } = useConfirm();
@@ -73,6 +110,39 @@ const Newsletter: React.FC = () => {
   const [paginationModel, setPaginationModel] = useState<PaginationModel>({ page: 1, pageSize: 10 });
 
   const testEmailRef = useRef<string>("");
+
+  // Which editor the form uses. Remembered per browser; both edit the same HTML string.
+  const [editorType, setEditorType] = useState<EditorType>("studio");
+  const editorChoiceRef = useRef<EditorType>("studio");
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(EDITOR_STORAGE_KEY);
+      if (saved === "html" || saved === "studio") setEditorType(saved);
+    } catch {
+      // storage unavailable — keep the default
+    }
+  }, []);
+
+  const handleChangeEditor = () => {
+    editorChoiceRef.current = editorType;
+    openModal({
+      variant: "default",
+      className: "newsletter-editor-modal",
+      title: "Choose editor",
+      content: <EditorChoiceInput choiceRef={editorChoiceRef} />,
+      confirmText: "Apply",
+      cancelText: "Cancel",
+      onConfirm: () => {
+        const next = editorChoiceRef.current;
+        setEditorType(next);
+        try {
+          localStorage.setItem(EDITOR_STORAGE_KEY, next);
+        } catch {
+          // ignore
+        }
+      },
+    });
+  };
 
   const fetchArticles = useCallback(async () => {
     try {
@@ -242,8 +312,8 @@ const Newsletter: React.FC = () => {
   /* ── Form view ── */
   if (view === "form") {
     return (
-      <div className="newsletter-section newsletter-section--full">
-        <div className="newsletter-header">
+      <div className="dash-section newsletter-section--full">
+        <div className="dash-header">
           <h3>{editingArticle ? "Edit Newsletter Article" : "New Newsletter Article"}</h3>
           <div className="newsletter-form-actions">
             <button type="button" className="newsletter-btn-back" onClick={() => setView("list")}>
@@ -280,12 +350,30 @@ const Newsletter: React.FC = () => {
             </div>
 
             <div className="col-12">
-              <label className="form-label">Content *</label>
+              <div className="newsletter-content-label">
+                <label className="form-label">Content *</label>
+                <button
+                  type="button"
+                  className="dashboard-btn--ghost-minimal"
+                  onClick={handleChangeEditor}
+                >
+                  {EDITOR_LABELS[editorType]} · Change
+                </button>
+              </div>
               <Suspense fallback={<Loader />}>
-                <HtmlEditor
-                  value={form.html}
-                  onChange={(html) => setForm((prev) => ({ ...prev, html }))}
-                />
+                {editorType === "html" ? (
+                  <HtmlEditor
+                    key="html"
+                    value={form.html}
+                    onChange={(html) => setForm((prev) => ({ ...prev, html }))}
+                  />
+                ) : (
+                  <StudioNewsletterEditor
+                    key="studio"
+                    value={form.html}
+                    onChange={(html) => setForm((prev) => ({ ...prev, html }))}
+                  />
+                )}
               </Suspense>
             </div>
           </div>
@@ -363,12 +451,12 @@ const Newsletter: React.FC = () => {
   ];
 
   return (
-    <div className="newsletter-section">
-      <div className="newsletter-header">
+    <div className="dash-section">
+      <div className="dash-header">
         <h3>
           Newsletter
           {articles.length > 0 && (
-            <span className="newsletter-header-count">({articles.length})</span>
+            <span className="dash-header-count">({articles.length})</span>
           )}
         </h3>
         <div className="newsletter-header-actions">
@@ -387,7 +475,7 @@ const Newsletter: React.FC = () => {
       {loading ? (
         <Loader />
       ) : articles.length === 0 ? (
-        <div className="newsletter-empty">
+        <div className="dash-empty">
           <p>No newsletter articles yet.</p>
           <button className="dashboard-btn" onClick={openCreate}>
             Create the first article

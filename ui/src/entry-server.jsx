@@ -39,17 +39,18 @@ export async function render(url, env, client) {
             <StaticRouter location={url}>
                 <Provider store={store}>
                     <PageProvider>
-                        <SlideMenuProvider>
-                            <ConfirmDialogProvider>
-                                <ModalProvider>
-                                    <ToastProvider>
-                                        <AuthProvider>
+                        <ConfirmDialogProvider>
+                            <ModalProvider>
+                                <ToastProvider>
+                                    <AuthProvider>
+                                        {/* Innermost so slide-menu content can use Toast/Modal/Confirm/Auth. */}
+                                        <SlideMenuProvider>
                                             <App />
-                                        </AuthProvider>
-                                    </ToastProvider>
-                                </ModalProvider>
-                            </ConfirmDialogProvider>
-                        </SlideMenuProvider>
+                                        </SlideMenuProvider>
+                                    </AuthProvider>
+                                </ToastProvider>
+                            </ModalProvider>
+                        </ConfirmDialogProvider>
                     </PageProvider>
                 </Provider>
             </StaticRouter>

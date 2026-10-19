@@ -6,7 +6,9 @@ import { useModal } from "@/Providers/ModalContext";
 import Loader from "@/Components/Loader/Loader";
 import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
 import GridActions from "@/Components/Generic/GridActions/GridActions";
-import { FaPlus } from "react-icons/fa6";
+import { useSlideMenu } from "@/Providers/SlideMenuProvider";
+import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
+import { FaPlus, FaUsers } from "react-icons/fa6";
 import type { NewsletterArticle } from "../../../../../src/types/newsletterArticle.types";
 import "./Newsletter.css";
 
@@ -56,6 +58,7 @@ const Newsletter: React.FC = () => {
   const { show } = useToast();
   const { confirm } = useConfirm();
   const { openModal, setModalDisabled } = useModal();
+  const { openMenu } = useSlideMenu();
 
   const [view, setView] = useState<View>("list");
   const [articles, setArticles] = useState<NewsletterArticle[]>([]);
@@ -375,9 +378,17 @@ const Newsletter: React.FC = () => {
             <span className="newsletter-header-count">({articles.length})</span>
           )}
         </h3>
-        <button className="dashboard-btn" onClick={openCreate}>
-          <FaPlus /> New Article
-        </button>
+        <div className="newsletter-header-actions">
+          <button className="dashboard-btn" onClick={openCreate}>
+            <FaPlus /> New Article
+          </button>
+          <button
+            className="dashboard-btn"
+            onClick={() => openMenu(<NewsletterSubscribers />, "Newsletter Subscribers")}
+          >
+            <FaUsers /> Newsletter Subscribers
+          </button>
+        </div>
       </div>
 
       {loading ? (

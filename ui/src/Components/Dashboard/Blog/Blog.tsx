@@ -57,7 +57,8 @@ const Blog: React.FC = () => {
       const res = await axiosInstance.get("/blogs");
       setBlogs(res.data.blogs ?? []);
       setTotal(res.data.total ?? 0);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch blogs:", error);
       show({ type: "error", message: "Failed to fetch blogs" });
     } finally {
       setLoading(false);
@@ -95,7 +96,8 @@ const Blog: React.FC = () => {
     try {
       const res = await axiosInstance.get(`/blogs/${blog._id}/comments`);
       setComments(res.data.data?.comments ?? []);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch blog comments:", error);
       show({ type: "error", message: "Failed to fetch comments" });
     } finally {
       setCommentsLoading(false);
@@ -115,7 +117,8 @@ const Blog: React.FC = () => {
       await axiosInstance.delete(`/blogs/${blog._id}`);
       show({ type: "success", message: "Blog deleted" });
       fetchBlogs();
-    } catch {
+    } catch (error) {
+      console.error("Failed to delete the blog:", error);
       show({ type: "error", message: "Failed to delete blog" });
     }
   };
@@ -150,7 +153,8 @@ const Blog: React.FC = () => {
       }
       setView("list");
       fetchBlogs();
-    } catch {
+    } catch (error) {
+      console.error("Failed to save the blog:", error);
       show({
         type: "error",
         message: editingBlog ? "Failed to update blog" : "Failed to create blog",
@@ -171,7 +175,8 @@ const Blog: React.FC = () => {
         prev.map((c) => (c._id === comment._id ? { ...c, approved: updated.approved } : c))
       );
       show({ type: "success", message: approved ? "Comment approved" : "Comment rejected" });
-    } catch {
+    } catch (error) {
+      console.error("Failed to update the blog comment:", error);
       show({ type: "error", message: "Failed to update comment" });
     }
   };

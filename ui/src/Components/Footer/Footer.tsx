@@ -51,6 +51,7 @@ const Footer: React.FC = () => {
                 show({ type: 'success', message: response.data.message });
             }
         } catch (error: any) {
+            console.error("Failed to subscribe to the newsletter:", error);
             show({ type: 'error', message: error.message });
         }
     };

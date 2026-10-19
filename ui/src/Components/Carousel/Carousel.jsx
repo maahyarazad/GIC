@@ -31,11 +31,6 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
                 ? containerWidth              // full width on mobile
                 : (containerWidth - totalGap) / visibleItems;
             setSlideWidth(width);
-            //     console.log(`containerWidth ==== ${containerWidth}`);
-
-            //   console.log(`visibleItems ==== ${visibleItems}`);
-            //   console.log(`totalGap ==== ${totalGap}`);
-            //   console.log(`width ==== ${width}`);
         };
 
 
@@ -55,14 +50,6 @@ const Carousel = ({ items, itemsPerPage, gap = 16 }) => {
     };
 
     const goNext = () => {
-        // console.log(`currentIndex ==== ${currentIndex}`);
-        // console.log(`maxIndex ==== ${maxIndex}`);
-        // console.log(`visibleItems ==== ${visibleItems}`);
-        // console.log(`gap ==== ${gap}`);
-        // console.log(`slideWidth ==== ${slideWidth}`);
-        // console.log(`containerRef.current.clientWidth ==== ${containerRef.current.clientWidth}`);
-        // console.log(`maxIndex ==== ${maxIndex}`);
-
         if (currentIndex === maxIndex) return;
         setCurrentIndex(prev => (prev + 1));
     };

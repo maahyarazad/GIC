@@ -141,7 +141,7 @@ const Register: React.FC = () => {
             setCurrentResponseStatusEmail(response.data.message);
 
         } catch (err: any) {
-
+            console.error("Failed to send email OTP:", err);
             show({ type: "error", message: err!.message })
 
         } finally {
@@ -202,7 +202,7 @@ const Register: React.FC = () => {
             setCurrentResponseStatusPhone(response.data.message);
 
         } catch (err: any) {
-
+            console.error("Failed to send phone OTP:", err);
             show({ type: "error", message: err!.message })
         } finally {
             setLoading(false);
@@ -237,8 +237,8 @@ const Register: React.FC = () => {
 
 
         } catch (err: any) {
+            console.error("Failed to verify email OTP:", err);
             show({ type: "error", message: err!.message })
-            // setError(err.response?.data?.message || "Registration failed");
         } finally {
             setLoading(false);
         }
@@ -270,6 +270,7 @@ const Register: React.FC = () => {
             setCurrentResponseStatusPhone(response.data.message);
 
         } catch (err: any) {
+            console.error("Failed to verify phone OTP:", err);
             show({ type: "error", message: err!.message })
 
         } finally {
@@ -309,6 +310,7 @@ const Register: React.FC = () => {
             navigate("/login");
 
         } catch (err: any) {
+            console.error("Failed to register user:", err);
             show({ type: "error", message: err!.message })
 
         } finally {

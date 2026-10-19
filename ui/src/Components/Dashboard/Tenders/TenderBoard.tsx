@@ -85,6 +85,7 @@ const TenderBoard: React.FC = () => {
             const merged = Array.from(byId.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
             setItems(merged);
         } catch (error) {
+            console.error("Failed to load tenders:", error);
             show({ type: "error", message: apiErrorMessage(error, "Failed to load tenders") });
         } finally {
             setLoading(false);
@@ -132,6 +133,7 @@ const TenderBoard: React.FC = () => {
             }
             resetAndClose();
         } catch (error) {
+            console.error("Failed to create the tender:", error);
             setFormError(apiErrorMessage(error, "Failed to create tender"));
         } finally {
             setSubmitting(false);
@@ -144,6 +146,7 @@ const TenderBoard: React.FC = () => {
             const updated = await closeTender(id);
             setItems((current) => current.map((item) => (item.id === id ? updated : item)));
         } catch (error) {
+            console.error("Failed to close the tender:", error);
             show({ type: "error", message: apiErrorMessage(error, "Failed to close tender") });
         } finally {
             setClosingId(null);

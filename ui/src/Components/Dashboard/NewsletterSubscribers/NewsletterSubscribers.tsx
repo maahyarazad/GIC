@@ -99,7 +99,7 @@ export const NewsletterSubscribers = () => {
             setRows(response.data.data.subscribers);
             setRowCount(response.data.data.total);
         } catch (err) {
-            console.error("Failed to fetch user profiles", err);
+            console.error("Failed to fetch newsletter subscribers:", err);
         } finally {
             setLoading(false);
         }

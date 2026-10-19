@@ -197,6 +197,7 @@ const BusinessLetter: React.FC<BusinessLetterProps> = ({ onCreated }) => {
       helpers.resetForm({ values: initialValues });
       onCreated?.();
     } catch (err: any) {
+      console.error("Failed to submit the business letter request:", err);
       show({
         type: "error",
         message: err?.response?.data?.message || "Failed to submit your request. Please try again.",

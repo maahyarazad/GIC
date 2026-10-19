@@ -143,6 +143,7 @@ const EmailTemplatesDataGrid = () => {
             fetchTemplates();
 
         } catch (err: any) {
+            console.error("Failed to save the email template:", err);
             show({ type: "error", message: err.message || "Operation failed" });
         }
     };
@@ -183,6 +184,7 @@ const EmailTemplatesDataGrid = () => {
 
             fetchTemplates();
         } catch (err: any) {
+            console.error("Failed to delete the email template:", err);
             show({ type: "error", message: err.message || "Failed to delete template" });
         }
     };
@@ -224,7 +226,8 @@ debugger;
             }
 
         } catch (err: any) {
-            show({ type: "error", message: err.message || "Failed to delete template" });
+            console.error("Failed to send the test email:", err);
+            show({ type: "error", message: err.message || "Failed to send test email" });
         }
     }
 

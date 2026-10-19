@@ -118,6 +118,7 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
                 setPackages(found);
                 if (found.length > 0) setSelected(found[0].name);
             } catch (err: any) {
+                console.error("Failed to load data packages:", err);
                 show({
                     type: "error",
                     message:
@@ -159,6 +160,7 @@ const DataPackageDialog: React.FC<DataPackageDialogProps> = ({ onClose, onImport
             show({ type: "success", message: data?.message || "Import completed." });
             onImported();
         } catch (err: any) {
+            console.error("Failed to import the data package:", err);
             show({
                 type: "error",
                 message: err.response?.data?.message || "Failed to import data package",

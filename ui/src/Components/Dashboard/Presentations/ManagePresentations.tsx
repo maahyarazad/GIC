@@ -48,7 +48,8 @@ const ManagePresentations: React.FC = () => {
       .then((rows) => {
         if (active) setEvents(rows);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Failed to load events:", err);
         if (active) setError("Could not load events.");
       });
     return () => {
@@ -66,6 +67,7 @@ const ManagePresentations: React.FC = () => {
     try {
       setPresentations(await getPresentationsByEvent(id));
     } catch (err) {
+      console.error("Failed to load presentations:", err);
       setError(apiErrorMessage(err, "Could not load presentations."));
     } finally {
       setListLoading(false);
@@ -107,6 +109,7 @@ const ManagePresentations: React.FC = () => {
       setFile(null);
       await loadPresentations(eventId);
     } catch (err) {
+      console.error("Failed to upload the presentation:", err);
       setError(apiErrorMessage(err, "Upload failed."));
     } finally {
       setUploading(false);
@@ -119,6 +122,7 @@ const ManagePresentations: React.FC = () => {
       await deletePresentation(id);
       setPresentations((rows) => rows.filter((p) => p.id !== id));
     } catch (err) {
+      console.error("Failed to delete the presentation:", err);
       setError(apiErrorMessage(err, "Could not delete presentation."));
     }
   };
@@ -128,7 +132,8 @@ const ManagePresentations: React.FC = () => {
       await navigator.clipboard.writeText(absoluteViewUrl(id));
       setCopiedId(id);
       setTimeout(() => setCopiedId((curr) => (curr === id ? null : curr)), 2000);
-    } catch {
+    } catch (err) {
+      console.error("Failed to copy the link to the clipboard:", err);
       setError("Could not copy the link.");
     }
   };

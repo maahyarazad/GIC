@@ -210,11 +210,6 @@ const Navbar = (
 
 
 
-      useEffect(()=> {
-      console.log(activePage);
-      console.log(/^\/blog(\/.*)?$/.test(activePage));
-      }, [activePage])
-      
       const isBlogPage = /^\/blog(\/.*)?$/.test(activePage);
 
 

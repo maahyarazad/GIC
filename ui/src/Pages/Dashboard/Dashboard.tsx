@@ -11,7 +11,6 @@ import UserProfileForm from "@/Components/Dashboard/UserProfileForm/UserProfileF
 import EconomicInsights from "@/Components/EconomicInsights/EconomicInsights";
 import CompareCountries from "@/Components/Dashboard/CompareCountries/CompareCountries";
 import Continent from "@/Components/Dashboard/Continent/Continent";
-import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
 import { usePage } from "@/Providers/PageContext";
@@ -38,7 +37,6 @@ type MenuItem =
   | "sitedata"
   | "file_management"
   | "email_management"
-  | "newsletter_subscribers"
   | "sub_region_management"
   | "profile"
   | "country_intelligence"
@@ -59,7 +57,6 @@ const accessControl: Record<MenuItem, string[]> = {
   sitedata: ["admin", "procurement"],
   file_management: ["admin", "procurement"],
   email_management: ["admin", "procurement"],
-  newsletter_subscribers: ["admin", "procurement"],
   sub_region_management: ["admin", "procurement"],
   profile: ["user"],
   country_intelligence: ["user", "admin", "procurement"],
@@ -81,7 +78,6 @@ const menuTitles: Record<MenuItem, string> = {
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
-  newsletter_subscribers: "Email Subscribers",
   sub_region_management: "Manage Sub Region",
   profile: "Profile",
   country_intelligence: "Country Intelligence",
@@ -117,7 +113,6 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "sitedata",
     "file_management",
     "email_management",
-    "newsletter_subscribers",
     "sub_region_management",
     "profile",
     "economic_insights",
@@ -146,7 +141,6 @@ const Dashboard: React.FC = () => {
     sitedata: <JsonViewer />,
     file_management: <FileManagement />,
     email_management: <EmailTemplatesDataGrid />,
-    newsletter_subscribers: <NewsletterSubscribers />,
     sub_region_management: <Continent />,
     country_intelligence: <EconomicInsights />,
     compare_countries: <CompareCountries />,

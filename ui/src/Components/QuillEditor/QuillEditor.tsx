@@ -58,8 +58,9 @@ const QuillEditor: React.FC<Props> = ({
                   const range = quill.getSelection(true);
                   quill.insertEmbed(range.index, "image", url);
                   quill.setSelection(range.index + 1, 0);
-                } catch {
-                  // error handled by caller via toast
+                } catch (error) {
+                  // The user-facing message is handled by the caller via a toast.
+                  console.error("Failed to upload the image:", error);
                 }
               };
             },

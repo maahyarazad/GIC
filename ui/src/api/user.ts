@@ -13,7 +13,7 @@ export async function updateUser(id: string, updateData: UpdateUserRequest) {
     const response = await axiosInstance.put(`/users/${id}`, updateData);
     return response.data;
   } catch (error) {
-    console.error("Update user failed", error);
+    console.error("Failed to update user:", error);
     throw error;
   }
 }
@@ -28,7 +28,7 @@ export async function getLogs(id: string) {
 
     return response.data;
   } catch (error) {
-    console.error("Update user failed", error);
+    console.error("Failed to fetch user logs:", error);
     throw error;
   }
 }
@@ -52,7 +52,7 @@ export async function updateUserProfile(
     });
     return response.data;
   } catch (error) {
-    console.error("Update user failed", error);
+    console.error("Failed to update user profile:", error);
     throw error;
   }
 }
@@ -60,7 +60,7 @@ export async function updateUserProfile(
 /**
  * Get user by ID
  * @param id - User ID
- 
+
  */
 
 export async function getUserProfile(id: string) {
@@ -68,7 +68,7 @@ export async function getUserProfile(id: string) {
     const response = await axiosInstance.get(`/users/user-profile/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Update user failed", error);
+    console.error("Failed to fetch user profile:", error);
     throw error;
   }
 }
@@ -118,7 +118,7 @@ export async function checkNewsLetter(email: string) {
 
     return response.data;
   } catch (error) {
-    console.error("Check newsletter failed", error);
+    console.error("Failed to check newsletter subscription:", error);
     throw error;
   }
 }
@@ -141,7 +141,7 @@ export async function upsertNewsletterSubscriber(
 
     return response.data;
   } catch (error) {
-    console.error("Update newsletter subscription failed", error);
+    console.error("Failed to update newsletter subscription:", error);
     throw error;
   }
 }
@@ -158,7 +158,7 @@ export async function getUserData(id: string) {
 
     return response.data;
   } catch (error) {
-    console.error("Upload user photo failed", error);
+    console.error("Failed to fetch user data:", error);
     throw error;
   }
 }
@@ -203,7 +203,7 @@ export async function uploadUserPhoto(
 
     return response.data;
   } catch (error: any) {
-    console.error("uploadUserPhoto error:", error);
+    console.error("Failed to upload user photo:", error);
     return {
       success: false,
       message:

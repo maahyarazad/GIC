@@ -6,7 +6,9 @@ import { useModal } from "@/Providers/ModalContext";
 import Loader from "@/Components/Loader/Loader";
 import { GenericDataGrid, Column, PaginationModel } from "@/Components/GenericDataGrid/GenericDataGrid";
 import GridActions from "@/Components/Generic/GridActions/GridActions";
-import { FaPlus } from "react-icons/fa6";
+import { useSlideMenu } from "@/Providers/SlideMenuProvider";
+import { NewsletterSubscribers } from "@/Components/Dashboard/NewsletterSubscribers/NewsletterSubscribers";
+import { FaPlus, FaUsers } from "react-icons/fa6";
 import type { NewsletterArticle } from "../../../../../src/types/newsletterArticle.types";
 import "./Newsletter.css";
 
@@ -56,6 +58,7 @@ const Newsletter: React.FC = () => {
   const { show } = useToast();
   const { confirm } = useConfirm();
   const { openModal, setModalDisabled } = useModal();
+  const { openMenu } = useSlideMenu();
 
   const [view, setView] = useState<View>("list");
   const [articles, setArticles] = useState<NewsletterArticle[]>([]);
@@ -74,7 +77,8 @@ const Newsletter: React.FC = () => {
       setLoading(true);
       const res = await axiosInstance.get("/newsletter-articles");
       setArticles(res.data.data ?? []);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch newsletter articles:", error);
       show({ type: "error", message: "Failed to fetch newsletter articles" });
     } finally {
       setLoading(false);
@@ -140,7 +144,8 @@ const Newsletter: React.FC = () => {
       }
       setView("list");
       fetchArticles();
-    } catch {
+    } catch (error) {
+      console.error("Failed to save the newsletter article:", error);
       show({
         type: "error",
         message: editingArticle ? "Failed to update article" : "Failed to create article",
@@ -163,7 +168,8 @@ const Newsletter: React.FC = () => {
       await axiosInstance.delete(`/newsletter-articles/${article._id}`);
       show({ type: "success", message: "Article deleted" });
       fetchArticles();
-    } catch {
+    } catch (error) {
+      console.error("Failed to delete the newsletter article:", error);
       show({ type: "error", message: "Failed to delete article" });
     }
   };
@@ -207,6 +213,7 @@ const Newsletter: React.FC = () => {
             show({ type: "success", message: res.data.message || "Test email sent" });
           }
         } catch (err: any) {
+          console.error("Failed to send the test email:", err);
           show({ type: "error", message: err.message || "Failed to send test email" });
         }
       },
@@ -232,6 +239,7 @@ const Newsletter: React.FC = () => {
         show({ type: "error", message: res.data.message || "Failed to send newsletter" });
       }
     } catch (err: any) {
+      console.error("Failed to send the newsletter:", err);
       show({ type: "error", message: err.message || "Failed to send newsletter" });
     } finally {
       setSendingId(null);
@@ -375,9 +383,17 @@ const Newsletter: React.FC = () => {
             <span className="newsletter-header-count">({articles.length})</span>
           )}
         </h3>
-        <button className="dashboard-btn" onClick={openCreate}>
-          <FaPlus /> New Article
-        </button>
+        <div className="newsletter-header-actions">
+          <button className="dashboard-btn" onClick={openCreate}>
+            <FaPlus /> New Article
+          </button>
+          <button
+            className="dashboard-btn"
+            onClick={() => openMenu(<NewsletterSubscribers />, "Newsletter Subscribers")}
+          >
+            <FaUsers /> Newsletter Subscribers
+          </button>
+        </div>
       </div>
 
       {loading ? (

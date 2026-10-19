@@ -124,6 +124,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDir
             onSaved(updated);
             return updated;
         } catch (error) {
+            console.error("Failed to save the letter:", error);
             const fieldErrors = apiFieldErrors(error);
             if (fieldErrors) helpers.setErrors(fieldErrors);
             show({ type: "error", message: apiErrorMessage(error, "Failed to save the letter") });
@@ -172,6 +173,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDir
             tab.location.href = url;
             setTimeout(() => URL.revokeObjectURL(url), 60_000);
         } catch (error) {
+            console.error("Failed to open the letter PDF:", error);
             tab.close();
             showPdfError(form, error);
         } finally {
@@ -193,6 +195,7 @@ const LetterEditor: React.FC<LetterEditorProps> = ({ api, detail, onSaved, onDir
             link.remove();
             URL.revokeObjectURL(url);
         } catch (error) {
+            console.error("Failed to download the letter PDF:", error);
             showPdfError(form, error);
         } finally {
             setPdfBusy(null);

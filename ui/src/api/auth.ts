@@ -15,7 +15,7 @@ export async function loginUser(loginData: LoginModel) {
 
     return response.data;
   } catch (error) {
-    console.error("Login failed", error);
+    console.error("Failed to log in:", error);
     throw error;
   }
 }
@@ -26,7 +26,7 @@ export const refreshToken = async () => {
 
     return response.data;
   } catch (error) {
-    console.error("Login failed", error);
+    console.error("Failed to refresh token:", error);
     throw error;
   }
 };

@@ -42,6 +42,7 @@ export default function ForgotPassword() {
       );
       
     } catch (err: any) {
+      console.error("Failed to request a password reset:", err);
       setError(
         err.message || "Something went wrong. Try again."
       );

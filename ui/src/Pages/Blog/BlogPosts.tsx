@@ -26,7 +26,8 @@ const BlogPosts: React.FC = () => {
       const res = await getPublishedBlogs(page, PAGE_SIZE);
       setBlogs(res.data?.blogs ?? []);
       setTotal(res.data?.total ?? 0);
-    } catch {
+    } catch (error) {
+      console.error("Failed to load blog posts:", error);
       show({ type: "error", message: "Failed to load blog posts" });
     } finally {
       setLoading(false);
@@ -36,11 +37,6 @@ const BlogPosts: React.FC = () => {
   useEffect(() => {
     fetchBlogs();
   }, [fetchBlogs]);
-
-useEffect(()=> {
-console.log(activePage);
-console.log(/^\/blog(\/.*)?$/.test(activePage));
-}, [activePage])
 
 const isBlogPage = /^\/blog(\/.*)?$/.test(activePage);
   const totalPages = Math.ceil(total / PAGE_SIZE);

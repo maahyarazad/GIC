@@ -135,10 +135,11 @@ const CategoriesDataGrid = () => {
         try {
 
             await axiosInstance.delete(`/continents/${row._id}`);
-            show({ type: "success", message: "ContinetViewModel deleted successfully" });
+            show({ type: "success", message: "Continent deleted successfully" });
             refreshCategories();
         } catch (err: any) {
-            show({ type: "error", message: err.message || "Failed to delete ContinetViewModel" });
+            console.error("Failed to delete the continent:", err);
+            show({ type: "error", message: err.message || "Failed to delete continent" });
         }
     }, [confirm, show, refreshCategories]);
 
@@ -245,7 +246,7 @@ const CategoriesDataGrid = () => {
             resetState();
             refreshCategories();
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to save the continent:", err);
             show({
                 type: "error",
                 message: err.response?.data?.message || "Failed to save continent",

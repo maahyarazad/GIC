@@ -69,7 +69,7 @@ const ContactForm = ({ siteData, sectionId }) => {
             setAttachedFileName("");;
             resetForm();
         } catch (error) {
-            console.error("Submission error:", error);
+            console.error("Failed to submit the contact form:", error);
 
             // Safe access for backend-defined error
             const errorMessage =

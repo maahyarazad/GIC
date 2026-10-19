@@ -137,7 +137,7 @@ const isMobile = useIsMobile();
       setAttachedFileName("");
       resetForm();
     } catch (error) {
-      console.error("Submission error:", error);
+      console.error("Failed to submit the contact form:", error);
 
       const errorMessage =
         error?.response?.data?.error ||

@@ -81,7 +81,7 @@ const EconomicInsights: React.FC = () => {
                 setSelectedCategory(continents[0]);
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to load categories:", err);
             setError("Failed to load categories");
         } finally {
             setLoadingCategories(false);
@@ -103,7 +103,7 @@ const EconomicInsights: React.FC = () => {
             setProducts(res.data.products);
 
         } catch (err) {
-            console.error(err);
+            console.error("Failed to load products:", err);
             setError("Failed to load products");
         } finally {
             setLoadingProducts(false);
@@ -147,7 +147,7 @@ const EconomicInsights: React.FC = () => {
         } catch (err) {
 
             show({ type: "error", message: err!.message! });
-            console.error(err);
+            console.error("Failed to download file:", err);
         } finally {
             setDownloadingProductId(null);
         }

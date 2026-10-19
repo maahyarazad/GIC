@@ -22,6 +22,7 @@ import RecommendationLetters from "@/Components/Dashboard/RecommendationLetters/
 import Tenders from "@/Components/Dashboard/Tenders/Tenders";
 import Blog from "@/Components/Dashboard/Blog/Blog";
 import Newsletter from "@/Components/Dashboard/Newsletter/Newsletter";
+import ManagePresentations from "@/Components/Dashboard/Presentations/ManagePresentations";
 import type { RootState } from "../../store";
 
 type MenuItem =
@@ -29,6 +30,7 @@ type MenuItem =
   | "member_profiles"
   | "events"
   | "manage_events"
+  | "manage_presentations"
   | "recommendation_letters"
   | "business_letter"
   | "blog"
@@ -49,6 +51,7 @@ const accessControl: Record<MenuItem, string[]> = {
   member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
   manage_events: ["admin"],
+  manage_presentations: ["user", "admin", "procurement"],
   recommendation_letters: ["admin"],
   business_letter: ["user", "procurement"],
   blog: ["admin", "procurement"],
@@ -70,6 +73,7 @@ const menuTitles: Record<MenuItem, string> = {
   member_profiles: "Member Profiles",
   events: "Events",
   manage_events: "Manage Events",
+  manage_presentations: "Manage Presentations",
   recommendation_letters: "Manage Letter of Recommendation",
   business_letter: "Manage Letter of Recommendation",
   blog: "Blog",
@@ -105,6 +109,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "member_profiles",
     "events",
     "manage_events",
+    "manage_presentations",
     "recommendation_letters",
     "business_letter",
     "blog",
@@ -148,6 +153,7 @@ const Dashboard: React.FC = () => {
     tenders: <Tenders />,
     events: <Events />,
     manage_events: <ManageEvents />,
+    manage_presentations: <ManagePresentations />,
     recommendation_letters: <RecommendationLetters />,
     business_letter: <ManageMemberLetters />,
     profile: <UserProfileForm initialProfile={userProfile} />,

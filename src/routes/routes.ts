@@ -18,6 +18,8 @@ import { RecommendationLetterAdminController } from './../controllers/recommenda
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ProductController } from './../controllers/product.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { PresentationController } from './../controllers/presentation.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OtpController } from './../controllers/otp.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { NewsletterArticleController } from './../controllers/newsletterArticle.controller';
@@ -1800,6 +1802,138 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: 200,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPresentationController_uploadPresentation: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                eventId: {"in":"formData","name":"eventId","required":true,"dataType":"string"},
+                title: {"in":"formData","name":"title","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","dataType":"file"},
+        };
+        app.post('/api/v1/presentations',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(PresentationController)),
+            ...(fetchMiddlewares<RequestHandler>(PresentationController.prototype.uploadPresentation)),
+
+            async function PresentationController_uploadPresentation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPresentationController_uploadPresentation, request, response });
+
+                const controller = new PresentationController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadPresentation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPresentationController_listByEvent: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                eventId: {"in":"query","name":"eventId","required":true,"dataType":"string"},
+        };
+        app.get('/api/v1/presentations',
+            ...(fetchMiddlewares<RequestHandler>(PresentationController)),
+            ...(fetchMiddlewares<RequestHandler>(PresentationController.prototype.listByEvent)),
+
+            async function PresentationController_listByEvent(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPresentationController_listByEvent, request, response });
+
+                const controller = new PresentationController();
+
+              await templateService.apiHandler({
+                methodName: 'listByEvent',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPresentationController_viewPresentation: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/api/v1/presentations/:id/view',
+            ...(fetchMiddlewares<RequestHandler>(PresentationController)),
+            ...(fetchMiddlewares<RequestHandler>(PresentationController.prototype.viewPresentation)),
+
+            async function PresentationController_viewPresentation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPresentationController_viewPresentation, request, response });
+
+                const controller = new PresentationController();
+
+              await templateService.apiHandler({
+                methodName: 'viewPresentation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsPresentationController_deletePresentation: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.delete('/api/v1/presentations/:id',
+            ...(fetchMiddlewares<RequestHandler>(PresentationController)),
+            ...(fetchMiddlewares<RequestHandler>(PresentationController.prototype.deletePresentation)),
+
+            async function PresentationController_deletePresentation(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsPresentationController_deletePresentation, request, response });
+
+                const controller = new PresentationController();
+
+              await templateService.apiHandler({
+                methodName: 'deletePresentation',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

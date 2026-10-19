@@ -16,6 +16,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { strictLimiter } from "../middleware/ratelimiter.middleware";
 import { UserDocument, UserModel } from "../models/user.model";
 import { EventModel, mapEvent } from "../models/event.model";
+import { PresentationModel } from "../models/presentation.model";
 import {
   EventAttendanceModel,
   buildEventReference,
@@ -67,15 +68,22 @@ export class EventController extends Controller {
         return createErrorResponse("Unauthorized", "UNAUTHORIZED");
       }
 
-      const [events, attendances] = await Promise.all([
+      const [events, attendances, presentationCounts] = await Promise.all([
         EventModel.find().sort({ startsAt: 1 }).lean(),
         EventAttendanceModel.find({ userId })
           .select("meetingId reference status createdAt")
           .lean(),
+        // One aggregation for all events (avoids an N+1 count per event). Feature 011.
+        PresentationModel.aggregate<{ _id: any; count: number }>([
+          { $group: { _id: "$eventId", count: { $sum: 1 } } },
+        ]),
       ]);
 
       const attendanceByEvent = new Map(
         attendances.map((attendance: any) => [attendance.meetingId.toString(), attendance])
+      );
+      const presentationCountByEvent = new Map(
+        presentationCounts.map((row: any) => [row._id?.toString(), row.count])
       );
       const now = new Date();
 
@@ -85,6 +93,7 @@ export class EventController extends Controller {
         return {
           ...mapEvent(event, now),
           myAttendance: myAttendance?.status === "confirmed" ? myAttendance : null,
+          presentationCount: presentationCountByEvent.get(event._id.toString()) ?? 0,
         };
       });
 

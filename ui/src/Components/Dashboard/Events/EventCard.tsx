@@ -23,7 +23,14 @@ const resolveImageUrl = (imageUrl?: string | null): string | null => {
 
 const isVideo = (file?: string | null) => file?.trimEnd().toLowerCase().endsWith(".webm");
 
-export type EventCardBadgeTone = "attending" | "full";
+export type EventCardBadgeTone = "attending" | "full" | "presentations";
+
+export interface EventCardBadge {
+    label: string;
+    tone: EventCardBadgeTone;
+    /** When set, the badge is clickable; its click stops propagation so the card's onClick doesn't also fire. */
+    onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
+}
 
 interface EventCardProps {
     title: string;
@@ -32,7 +39,8 @@ interface EventCardProps {
     /** One line under the title, e.g. "Venue · 18:30 GST". */
     subtitle?: string;
     imageUrl?: string | null;
-    badge?: { label: string; tone: EventCardBadgeTone };
+    /** One badge, or several (e.g. "Attending" plus a presentations badge). */
+    badge?: EventCardBadge | EventCardBadge[];
     showUpcomingBadge?: boolean;
     /** Omit to render a non-interactive card. */
     onClick?: () => void;
@@ -113,9 +121,22 @@ const EventCard: React.FC<EventCardProps> = ({
                     </time>
                 )}
 
-                {badge && (
-                    <span className={`event-status-badge event-status-badge--${badge.tone}`}>{badge.label}</span>
-                )}
+                {(Array.isArray(badge) ? badge : badge ? [badge] : []).map((b) => (
+                    <span
+                        key={b.tone}
+                        className={`event-status-badge event-status-badge--${b.tone}`}
+                        onClick={
+                            b.onClick
+                                ? (e) => {
+                                      e.stopPropagation();
+                                      b.onClick!(e);
+                                  }
+                                : undefined
+                        }
+                    >
+                        {b.label}
+                    </span>
+                ))}
 
                 <div className={`card-body text-center position-relative z-1${dateParts ? " has-date" : ""}`}>
                     <div className="event-card__text">

@@ -38,7 +38,7 @@
   cursor: not-allowed;
 }
 
-.sector-wizard__option input[type="checkbox"] {
+.sector-wizard__option input[type=checkbox] {
   width: 15px;
   height: 15px;
   min-width: 15px;

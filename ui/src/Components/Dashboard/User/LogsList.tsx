@@ -37,6 +37,7 @@ const LogsList: React.FC<LogsListProps> = ({ userId, show }) => {
             
             setLogs(response.data.logs);
         } catch (err: any) {
+            console.error("Failed to fetch user logs:", err);
             show({
                 type: "error",
                 message: err.message,

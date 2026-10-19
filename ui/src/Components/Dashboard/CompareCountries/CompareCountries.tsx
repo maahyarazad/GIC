@@ -380,7 +380,7 @@ const CompareCountries: React.FC = () => {
 
       setRegions(withCountries.filter((r) => r.countries.length > 0));
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load comparison data:", err);
       show({ type: "error", message: "Failed to load comparison data" });
     } finally {
       setLoading(false);

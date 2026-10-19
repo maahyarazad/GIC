@@ -39,7 +39,8 @@ const BlogDetail: React.FC = () => {
       } else {
         setNotFound(true);
       }
-    } catch {
+    } catch (error) {
+      console.error("Failed to load the blog post:", error);
       setNotFound(true);
     } finally {
       setLoading(false);
@@ -111,7 +112,8 @@ const BlogDetail: React.FC = () => {
       setForm(emptyForm);
       setSubmitted(true);
       show({ type: "success", message: "Comment submitted and pending approval." });
-    } catch {
+    } catch (error) {
+      console.error("Failed to submit comment:", error);
       show({ type: "error", message: "Failed to submit comment." });
     } finally {
       setSubmitting(false);

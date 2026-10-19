@@ -80,6 +80,7 @@ const AttendeesTable: React.FC<AttendeesTableProps> = ({ onChanged }) => {
             const { message } = await adminResendConfirmation(attendance.id);
             show({ type: /failed/i.test(message) ? "warning" : "success", message });
         } catch (error) {
+            console.error("Failed to resend the confirmation:", error);
             show({ type: "error", message: apiErrorMessage(error, "The action failed. Please try again.") });
         } finally {
             setBusyId(null);

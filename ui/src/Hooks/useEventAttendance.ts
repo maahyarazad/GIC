@@ -60,6 +60,7 @@ export function useEventAttendance(onChanged: () => void) {
                     show({ type: "info", message: ALREADY_ATTENDING });
                 }
             } catch (error) {
+                console.error("Failed to confirm attendance:", error);
                 const code = apiErrorCode(error);
                 if (code === "EVENT_FULL" || code === "EVENT_PAST") {
                     show({ type: "info", message: apiErrorMessage(error, FULLY_BOOKED) });

@@ -108,6 +108,7 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
             setDetail(loaded);
             setPreviewFields(loaded.letter);
         } catch (error) {
+            console.error("Failed to load the letter request:", error);
             setDetail(null);
             setPreviewFields(null);
             show({ type: "error", message: apiErrorMessage(error, "Failed to load the letter") });
@@ -177,6 +178,7 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
             show({ type: "success", message });
             if (item.id === selectedId) setDetail(updated);
         } catch (error) {
+            console.error("Failed to approve the letter:", error);
             show({ type: "error", message: apiErrorMessage(error, "Failed to approve the letter") });
         } finally {
             setBusyId(null);
@@ -223,6 +225,7 @@ const RecommendationLetters: React.FC<RecommendationLettersProps> = ({ mode = "a
             show({ type: "success", message });
             if (item.id === selectedId) setDetail(updated);
         } catch (error) {
+            console.error("Failed to send the letter:", error);
             if (apiErrorCode(error) === "LETTER_NOT_SAVED") {
                 await select(item.id);
                 show({ type: "info", message: NOT_SAVED_MESSAGE });

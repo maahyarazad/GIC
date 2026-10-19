@@ -102,7 +102,7 @@ export default function UserProfileForm({ initialProfile }: any) {
             }
 
         } catch (err) {
-            console.error(err)
+            console.error("Failed to fetch the user profile:", err)
         }
 
 
@@ -149,7 +149,7 @@ export default function UserProfileForm({ initialProfile }: any) {
             }
 
         } catch (err) {
-            console.error(err)
+            console.error("Failed to fetch the newsletter subscription status:", err)
         }
 
 
@@ -172,7 +172,7 @@ export default function UserProfileForm({ initialProfile }: any) {
                 fetchNewsletterStatus();
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to update the newsletter subscription:", err);
             show({ type: "error", message: err?.message || "Failed to update subscription" });
         }
     };
@@ -220,7 +220,7 @@ export default function UserProfileForm({ initialProfile }: any) {
 
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to update the profile:", err);
             show({ type: "error", message: err.message });
         }
     };

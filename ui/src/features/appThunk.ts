@@ -8,6 +8,7 @@ export const loadSiteData = createAsyncThunk(
     try {
       return await fetchSiteData(language);
     } catch (err: any) {
+      console.error("Failed to load site data:", err);
       return rejectWithValue(err.response?.data?.message || "Failed to load site data");
     }
   }

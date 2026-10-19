@@ -50,6 +50,7 @@ export default function JsonViewer() {
                 setData(response?.data?.data);
             }
         } catch (err: any) {
+            console.error("Failed to fetch the site data:", err);
             show({
                 type: "error",
                 message: err.message,
@@ -122,6 +123,7 @@ export default function JsonViewer() {
             }
         } catch (err: any) {
             // Stay in edit mode so the changes are not lost.
+            console.error("Failed to save the site data:", err);
             show({
                 type: "error",
                 message: err.message,

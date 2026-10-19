@@ -61,9 +61,10 @@ function LetterPreview<F>({
                 setPreviewUrl(URL.createObjectURL(blob));
                 lastKeyRef.current = key;
                 setState("idle");
-            } catch {
+            } catch (error) {
                 if (cancelled) return;
                 // Most commonly a 400 from an incomplete draft; show a hint, keep any prior preview URL.
+                console.error("Failed to render the letter preview:", error);
                 setState("error");
             }
         }, 400);

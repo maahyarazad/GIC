@@ -109,7 +109,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                 setCopyFeedback(null);
             }, 1500);
         }).catch((err) => {
-            console.error("Could not copy text: ", err);
+            console.error("Failed to copy text to the clipboard:", err);
         });
     };
 

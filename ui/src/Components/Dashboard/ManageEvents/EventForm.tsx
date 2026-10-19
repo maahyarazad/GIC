@@ -93,6 +93,7 @@ const EventForm: React.FC<EventFormProps> = ({ event, onSaved, onCancel, notify 
             }
             onSaved();
         } catch (error) {
+            console.error("Failed to save the event:", error);
             const fieldErrors = apiFieldErrors(error);
             if (fieldErrors) helpers.setErrors(fieldErrors);
             notify({ type: "error", message: apiErrorMessage(error, "Failed to save the event") });

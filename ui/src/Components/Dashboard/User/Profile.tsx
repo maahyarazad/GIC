@@ -23,8 +23,7 @@ export const UserProfilesDataGrid = () => {
                 title: "User Change Logs",
                 content: ( <LogsList userId={id} show={show}/>),
                 cancelText: "Close",
-                onCancel: () => console.log("Cancelled"),
-            }); 
+            });
 
 
 
@@ -217,6 +216,7 @@ export const UserProfilesDataGrid = () => {
                 fetchUserProfiles();
             }
         } catch (err: any) {
+            console.error("Failed to update the user:", err);
             show({
                 type: "error",
                 message: err.message,

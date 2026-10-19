@@ -26,6 +26,7 @@ const Tenders: React.FC = () => {
             await setMyIndustrySectors(selected);
             await dispatch(checkAuthToken());
         } catch (err: any) {
+            console.error("Failed to save industry sectors:", err);
             setError(
                 err?.response?.data?.message || err?.message || "Failed to save your industry sectors."
             );

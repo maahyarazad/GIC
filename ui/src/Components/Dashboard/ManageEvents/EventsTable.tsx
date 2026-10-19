@@ -81,6 +81,7 @@ const EventsTable: React.FC<EventsTableProps> = ({ onChanged }) => {
             show({ type: "success", message: "Event deleted" });
             changed();
         } catch (error) {
+            console.error("Failed to delete the event:", error);
             show({ type: "error", message: apiErrorMessage(error, "Failed to delete the event") });
         } finally {
             setDeletingId(null);

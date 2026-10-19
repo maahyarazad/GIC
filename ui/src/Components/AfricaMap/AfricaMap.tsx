@@ -183,7 +183,7 @@ const loadMap = useCallback(async () => {
     setSvgMarkup(serialized);
 
   } catch (err) {
-    console.error("SVG load failed", err);
+    console.error("Failed to load the SVG map:", err);
   } finally {
     setIsLoading(false);
   }

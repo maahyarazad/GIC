@@ -44,7 +44,7 @@ const Unsubscribe: React.FC = () => {
 
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to validate the unsubscribe link:", err);
             setError(
                 err?.response?.data?.message ||
                 "This unsubscribe link is invalid or expired."
@@ -86,7 +86,7 @@ const Unsubscribe: React.FC = () => {
                 setSuccess(res.data.message);
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to unsubscribe:", err);
             setError(
                 err?.response?.data?.message ||
                 "Failed to unsubscribe. Please try again."

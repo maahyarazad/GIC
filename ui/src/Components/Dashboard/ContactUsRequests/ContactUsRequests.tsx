@@ -222,6 +222,7 @@ export const ContactUsRequests = () => {
 
 
         } catch (err: any) {
+            console.error("Failed to authorize the member request:", err);
             show({ type: "error", message: err!.message })
 
         } finally {

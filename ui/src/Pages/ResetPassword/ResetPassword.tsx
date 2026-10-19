@@ -54,7 +54,7 @@ const ResetPassword: React.FC = () => {
                 setError("This password reset link is invalid or expired.");
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to validate the password reset link:", err);
             setInvalidToken(true);
             setError(
                 err?.response?.data?.message ||
@@ -105,7 +105,7 @@ const ResetPassword: React.FC = () => {
                 setTimeout(() => navigate("/login"), 2000);
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Failed to reset password:", err);
             setError(
                 err?.response?.data?.message ||
                 "Failed to reset password. Please try again."

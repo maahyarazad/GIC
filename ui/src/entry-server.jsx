@@ -13,10 +13,6 @@ import { PageProvider } from "./Providers/PageContext";
 
 export async function render(url, env, client) {
 
-    console.log("🔥 SSR RENDER FUNCTION HIT");
-    console.log(env)
-    console.log("🔥 SSR RENDER FUNCTION HIT");
-
     const preloadedState = {
         auth: {
             isAuthenticated: false,

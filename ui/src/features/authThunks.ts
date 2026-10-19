@@ -28,8 +28,7 @@ export const checkAuthToken = createAsyncThunk(
       };
 
     } catch (err: any) {
-      
-      
+      console.error("Failed to authenticate token:", err);
       return rejectWithValue(err.response?.data?.message || "Invalid token");
     }
   }

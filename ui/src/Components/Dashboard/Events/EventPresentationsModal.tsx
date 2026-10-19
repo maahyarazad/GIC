@@ -22,6 +22,7 @@ const EventPresentationsModal: React.FC<EventPresentationsModalProps> = ({ event
         if (active) setPresentations(rows);
       })
       .catch((err) => {
+        console.error("Failed to load presentations:", err);
         if (active) setError(apiErrorMessage(err, "Could not load presentations."));
       });
     return () => {

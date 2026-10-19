@@ -5893,7 +5893,7 @@
 						}
 					}
 				},
-				"description": "Dedicated PDF upload. Saves the file to file_storage under its original\nfilename and returns the file id (the filename without the .pdf extension)\nso it can be assigned to a product's `fileId` separately from the\ncontinent update request.",
+				"description": "Dedicated PDF upload. Saves the file to the private pdf_storage directory\n(never served statically) under its original filename and returns the file id (the filename without the .pdf extension)\nso it can be assigned to a product's `fileId` separately from the\ncontinent update request.",
 				"tags": [
 					"files"
 				],

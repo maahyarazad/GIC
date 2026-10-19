@@ -64,11 +64,13 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+  cursor: pointer;
 }
 .card.event-card .card-body.has-date {
   padding-left: clamp(64px, 22%, 110px);
 }
 .card.event-card .card-body .card-title {
+  cursor: pointer;
   background: rgba(0, 0, 0, 0.6);
   font-size: clamp(1rem, 2.2vw, 1.4rem) !important;
   color: #ffffff;
@@ -89,6 +91,7 @@
   align-items: flex-start;
   gap: 0.25rem;
   min-width: 0;
+  cursor: pointer;
 }
 .card.event-card .event-card__subtitle {
   margin: 0;
@@ -101,6 +104,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 .card.event-card .event-status-badge {
   position: absolute;
@@ -114,6 +118,7 @@
   letter-spacing: 0.03em;
   color: #ffffff;
   background: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
 }
 .card.event-card .event-status-badge--attending {
   background: #2f855a;
@@ -126,7 +131,7 @@
   bottom: 2.1rem;
 }
 .card.event-card.event-card--static {
-  cursor: default;
+  cursor: pointer;
 }
 .card.event-card.event-card--static:hover {
   transform: none;

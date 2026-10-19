@@ -123,16 +123,4 @@
 .manage-presentations .presentation-list__actions button.danger {
   color: #c53030;
   border-color: #feb2b2;
-}
-
-.event-presentations-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.event-presentations-list li {
-  padding: 0.4rem 0;
-}
-.event-presentations-list li a {
-  font-weight: 600;
-}
+}/*# sourceMappingURL=Presentations.css.map */

@@ -28,6 +28,8 @@ export type EventCardBadgeTone = "attending" | "full" | "presentations";
 export interface EventCardBadge {
     label: string;
     tone: EventCardBadgeTone;
+    /** When set, the badge is clickable; its click stops propagation so the card's onClick doesn't also fire. */
+    onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
 }
 
 interface EventCardProps {
@@ -120,7 +122,20 @@ const EventCard: React.FC<EventCardProps> = ({
                 )}
 
                 {(Array.isArray(badge) ? badge : badge ? [badge] : []).map((b) => (
-                    <span key={b.tone} className={`event-status-badge event-status-badge--${b.tone}`}>{b.label}</span>
+                    <span
+                        key={b.tone}
+                        className={`event-status-badge event-status-badge--${b.tone}`}
+                        onClick={
+                            b.onClick
+                                ? (e) => {
+                                      e.stopPropagation();
+                                      b.onClick!(e);
+                                  }
+                                : undefined
+                        }
+                    >
+                        {b.label}
+                    </span>
                 ))}
 
                 <div className={`card-body text-center position-relative z-1${dateParts ? " has-date" : ""}`}>

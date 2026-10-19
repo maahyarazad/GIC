@@ -17,7 +17,7 @@ const badgesFor = (
     onPresentations?: (event: MemberEventDto) => void
 ): EventCardBadge[] => {
     const badges: EventCardBadge[] = [];
-    if (event.myAttendance) badges.push({ label: "Attending", tone: "attending" });
+    if (event.myAttendance) badges.push({ label: event.isPast ? "Attended" : "Attending", tone: "attending" });
     else if (!event.isPast && event.isFull) badges.push({ label: "Fully booked", tone: "full" });
     if (event.presentationCount > 0) {
         badges.push({

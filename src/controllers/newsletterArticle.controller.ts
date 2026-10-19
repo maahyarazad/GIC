@@ -186,6 +186,7 @@ export class NewsletterArticleController extends Controller {
             textBody: article.text || "",
           },
         ],
+        sender: "info",
       });
 
       return createSuccessResponse(null, "Test email sent successfully");
@@ -211,7 +212,7 @@ export class NewsletterArticleController extends Controller {
 
       // sendMassDynamicEmailDoc reads subject/html/text and adds per-subscriber
       // unsubscribe tokens; the article is structurally compatible.
-      await sendMassDynamicEmailDoc(article as any, {});
+      await sendMassDynamicEmailDoc(article as any, {}, { sender: "info" });
 
       const sentAt = new Date();
       await NewsletterArticleModel.findByIdAndUpdate(

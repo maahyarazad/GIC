@@ -176,7 +176,8 @@ function getGlobalEmailVariables(extra: Record<string, any> = {}) {
 
 export async function sendMassDynamicEmailDoc(
   doc: EmailTemplate,
-  data: Record<string, any>
+  data: Record<string, any>,
+  options: { sender?: EmailSender } = {}
 ) {
   try {
     const collection = getCollection<NewsletterSubscriber>("newsletter_subscribers");
@@ -220,6 +221,7 @@ export async function sendMassDynamicEmailDoc(
 
     const result = await sendMassEmail({
       recipients: emails,
+      sender: options.sender,
     });
 
     return result;
@@ -354,12 +356,15 @@ export interface SendMassEmailParams {
   recipients: MassEmailRecipient[];
   batchSize?: number;
   concurrency?: number;
+  /** Defaults to "default" (do-not-reply@). */
+  sender?: EmailSender;
 }
 
 export async function sendMassEmail({
   recipients,
   batchSize = 50,
   concurrency = 5,
+  sender,
 }: SendMassEmailParams) {
   const limit = pLimit(concurrency);
   let totalSuccess = 0;
@@ -380,6 +385,7 @@ export async function sendMassEmail({
               subject: recipient.subject,
               html: recipient.htmlBody,
               text: recipient.textBody || "",
+              sender,
             });
 
             console.log(`✅ Email sent to ${recipient.email}`);

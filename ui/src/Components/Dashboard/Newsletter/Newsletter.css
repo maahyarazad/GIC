@@ -129,10 +129,8 @@
   padding: 0;
     margin: 1rem;
 }
-.newsletter-section--full .newsletter-header,
-.newsletter-section--full .newsletter-form .col-md-6,
-.newsletter-section--full .newsletter-form-actions {
-  /* Keep the normal fields within a comfortable gutter */
+.newsletter-section--full .newsletter-header {
+  /* Keep the header within a comfortable gutter */
   margin-left: 1rem;
   margin-right: 1rem;
 }
@@ -190,8 +188,6 @@
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--bdr);
 }
 
 /* ──────────────────────────────────────

@@ -12,10 +12,10 @@ import { FaPlus, FaUsers } from "react-icons/fa6";
 import type { NewsletterArticle } from "../../../../../src/types/newsletterArticle.types";
 import "./Newsletter.css";
 
+const HtmlEditor = lazy(() => import("@/Components/Dashboard/HtmlEditor/HtmlEditor"));
 const StudioNewsletterEditor = lazy(
   () => import("@/Components/StudioEditor/StudioNewsletterEditor")
 );
-
 type View = "list" | "form";
 
 interface ArticleForm {
@@ -245,12 +245,17 @@ const Newsletter: React.FC = () => {
       <div className="newsletter-section newsletter-section--full">
         <div className="newsletter-header">
           <h3>{editingArticle ? "Edit Newsletter Article" : "New Newsletter Article"}</h3>
-          <button className="newsletter-btn-back" onClick={() => setView("list")}>
-            ← Back
-          </button>
+          <div className="newsletter-form-actions">
+            <button type="button" className="newsletter-btn-back" onClick={() => setView("list")}>
+              Cancel
+            </button>
+            <button type="submit" form="newsletter-form" className="dashboard-btn" disabled={submitting}>
+              {submitting ? "Saving…" : editingArticle ? "Save Changes" : "Create Article"}
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="newsletter-form">
+        <form id="newsletter-form" onSubmit={handleSubmit} className="newsletter-form">
           <div className="row g-3">
             <div className="col-md-6">
               <label className="form-label">Title *</label>
@@ -277,20 +282,11 @@ const Newsletter: React.FC = () => {
             <div className="col-12">
               <label className="form-label">Content *</label>
               <Suspense fallback={<Loader />}>
-                <StudioNewsletterEditor
+                <HtmlEditor
                   value={form.html}
                   onChange={(html) => setForm((prev) => ({ ...prev, html }))}
                 />
               </Suspense>
-            </div>
-
-            <div className="col-12 newsletter-form-actions">
-              <button type="button" className="newsletter-btn-back" onClick={() => setView("list")}>
-                Cancel
-              </button>
-              <button type="submit" className="dashboard-btn" disabled={submitting}>
-                {submitting ? "Saving…" : editingArticle ? "Save Changes" : "Create Article"}
-              </button>
             </div>
           </div>
         </form>

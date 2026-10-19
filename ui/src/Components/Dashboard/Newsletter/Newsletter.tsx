@@ -169,6 +169,7 @@ const Newsletter: React.FC = () => {
   const handlePreview = (article: NewsletterArticle) => {
     openModal({
       variant: "default",
+      className: "newsletter-preview-modal",
       title: article.subject || article.title,
       content: (
         <div

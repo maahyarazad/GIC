@@ -127,7 +127,7 @@
 ────────────────────────────────────── */
 .newsletter-section--full {
   padding: 0;
-  margin: -1rem;
+    margin: 1rem;
 }
 .newsletter-section--full .newsletter-header,
 .newsletter-section--full .newsletter-form .col-md-6,
@@ -197,12 +197,22 @@
 /* ──────────────────────────────────────
    PREVIEW + TEST MODAL
 ────────────────────────────────────── */
+/* Newsletter preview modal — 20% larger than the default dashboard modal
+   (600px -> 720px, 70vh -> 84vh). Scoped so other dashboard modals are unchanged. */
+.dashboard-modal.newsletter-preview-modal {
+  width: 720px;
+  max-height: 84vh;
+}
+
 .newsletter-preview {
-  max-height: 65vh;
-  overflow-y: auto;
-  color: var(--txt);
-  font-family: var(--se);
-  line-height: 1.65;
+  overflow: auto;
+  /* Emails are authored for a white canvas with dark text; render them that way
+     instead of inheriting the dark dashboard modal colors. */
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 6px;
+  padding: 16px;
+  line-height: 1.6;
 }
 .newsletter-preview img {
   max-width: 100%;

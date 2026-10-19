@@ -10,6 +10,7 @@
   border: 1px solid var(--bdr);
   border-radius: 8px;
   overflow: hidden;
+  font-family: var(--sa);
 }
 
 /* Ensure the SDK root fills the host. */

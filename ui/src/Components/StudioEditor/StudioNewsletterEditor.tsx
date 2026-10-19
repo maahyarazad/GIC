@@ -1,6 +1,7 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import type {
+  CustomThemeConfig,
   ProjectData,
   ProjectFile,
   OnUploadAssetsProps,
@@ -26,6 +27,54 @@ const LICENSE_KEY: string =
 
 /** How long after the last edit to export + propagate the HTML. */
 const EXPORT_DEBOUNCE_MS = 400;
+
+type AppTheme = "dark" | "light";
+
+const readAppTheme = (): AppTheme =>
+  document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+
+/** Current app theme ("data-theme" on <html>, toggled by the navbar); updates when it changes. */
+const useAppTheme = (): AppTheme => {
+  const [theme, setTheme] = useState<AppTheme>(readAppTheme);
+  useEffect(() => {
+    const observer = new MutationObserver(() => setTheme(readAppTheme()));
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
+  return theme;
+};
+
+/** Builds the Studio theme from the app's CSS variables (index.css) for the active theme. */
+const buildCustomTheme = (): CustomThemeConfig => {
+  const css = getComputedStyle(document.documentElement);
+  const v = (name: string) => css.getPropertyValue(name).trim();
+  return {
+    default: {
+      colors: {
+        global: {
+          background1: v("--bg"),
+          background2: v("--bgp"),
+          background3: v("--bgp2"),
+          backgroundHover: v("--bg2"),
+          text: v("--txt"),
+          border: v("--bdrs"),
+          focus: v("--ora"),
+          placeholder: v("--mu"),
+        },
+        primary: {
+          background1: v("--ora"),
+          background2: v("--or2"),
+          background3: v("--or3"),
+          backgroundHover: v("--or2"),
+          text: "#ffffff",
+        },
+      },
+    },
+  };
+};
 
 /** Read a File as a base64 data URL (used so images embed inline, with no upload). */
 const fileToDataUrl = (file: File): Promise<string> =>
@@ -89,10 +138,17 @@ const exportInlinedHtml = async (editor: Editor): Promise<string> => {
  */
 const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
   const editorRef = useRef<Editor | null>(null);
-  const initialHtmlRef = useRef<string>(value);
+  const valueRef = useRef<string>(value);
+  valueRef.current = value;
+  const appTheme = useAppTheme();
   const onChangeRef = useRef(onChange);
   const readyRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // The editor is remounted when the app theme changes; wait for it to be ready again.
+  useEffect(() => {
+    readyRef.current = false;
+  }, [appTheme]);
 
   // Keep the latest onChange without re-creating the editor options.
   onChangeRef.current = onChange;
@@ -112,8 +168,11 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
   return (
     <div className="newsletter-studio-host">
       <StudioEditor
+        key={appTheme}
         options={{
           licenseKey: LICENSE_KEY,
+          theme: appTheme,
+          customTheme: buildCustomTheme(),
           project: { type: "web" },
           assets: {
             storageType: "self",
@@ -136,7 +195,7 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
             type: "self",
             // Seed the editor from the existing article HTML (legacy Quill HTML included).
             onLoad: async () => {
-              const html = initialHtmlRef.current || "";
+              const html = valueRef.current || "";
               const project: ProjectData = {
                 pages: [{ name: "Newsletter", component: html }],
               };

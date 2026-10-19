@@ -147,6 +147,13 @@ $event-date-block-width: clamp(64px, 22%, 110px);
         &--full {
             background: #4a4a4a;
         }
+
+        // Presentations attached (feature 011). Sits above the attendance badge so both
+        // can show at once without overlapping.
+        &--presentations {
+            background: #2b6cb0;
+            bottom: 2.1rem;
+        }
     }
 
     // Past events: not clickable.

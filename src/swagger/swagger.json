@@ -5075,6 +5075,141 @@
 				]
 			}
 		},
+		"/api/v1/presentations": {
+			"post": {
+				"operationId": "UploadPresentation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Upload a presentation file and attach it to an event. Max 50 MB (also enforced by the\nrequest's multer limit). Only PDF / PPT / PPTX are accepted.",
+				"tags": [
+					"Presentations"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"eventId": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									},
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"eventId",
+									"title"
+								]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "ListByEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "All presentations attached to an event. Any signed-in member may read (FR-010).",
+				"tags": [
+					"Presentations"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "eventId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/presentations/{id}/view": {
+			"get": {
+				"operationId": "ViewPresentation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Protected file view. authMiddleware rejects unauthenticated callers with 401 before this\nruns, so no bytes ever leak. Streams the stored file with its recorded content type.",
+				"tags": [
+					"Presentations"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/presentations/{id}": {
+			"delete": {
+				"operationId": "DeletePresentation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					}
+				},
+				"description": "Delete a presentation. Uploader or admin only (FR-011).",
+				"tags": [
+					"Presentations"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/otp/send-email": {
 			"post": {
 				"operationId": "SendOtpEmail",

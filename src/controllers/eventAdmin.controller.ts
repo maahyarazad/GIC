@@ -14,7 +14,10 @@ import {
   Tags,
 } from "tsoa";
 import { Request as ExpressRequest } from "express";
+import fs from "fs";
+import path from "path";
 import { adminOnlyMiddleware } from "../middleware/adminauth.middleware";
+import { PresentationModel } from "../models/presentation.model";
 import {
   EventModel,
   isValidEventDate,
@@ -226,9 +229,24 @@ export class EventAdminController extends Controller {
 
       const attendances = await EventAttendanceModel.deleteMany({ meetingId: eventId });
 
+      // Cascade: remove the event's presentations (records + files) so nothing is orphaned
+      // and no dangling badge remains (feature 011, FR-012).
+      const presentations = await PresentationModel.find({ eventId }).select("storedName").lean();
+      if (presentations.length) {
+        await PresentationModel.deleteMany({ eventId });
+        await Promise.all(
+          presentations.map((p: any) =>
+            fs.promises.unlink(path.join("presentation_storage", p.storedName)).catch(() => {})
+          )
+        );
+      }
+
       this.setStatus(200);
       return createSuccessResponse(
-        { deletedAttendances: attendances.deletedCount ?? 0 },
+        {
+          deletedAttendances: attendances.deletedCount ?? 0,
+          deletedPresentations: presentations.length,
+        },
         "Event deleted"
       );
     } catch (error) {

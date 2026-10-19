@@ -58,6 +58,7 @@ database.sqlite
 *.db
 *.bak
 /file_storage
+/presentation_storage
 
 /gic
 !ui/public/bootstrap/dist/

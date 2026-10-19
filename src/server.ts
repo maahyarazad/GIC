@@ -11,6 +11,7 @@ import swaggerUi from "swagger-ui-express";
 
 import { pathToFileURL } from "url";
 import { createServer as createViteServer } from "vite";
+import multer from "multer";
 
 import { RegisterRoutes } from "./routes/routes";
 import { RegisterFileDownloadRoutes } from "./controllers/watermark.controller";
@@ -79,7 +80,12 @@ app.use(
 app.use(express.json({ limit: "25mb" }));
 
 /* ---------------------- Routes ---------------------- */
-RegisterRoutes(app);
+// Presentations (feature 011) allow uploads up to 50 MB; the tsoa-generated routes otherwise
+// default to an 8 MB multer limit. Memory storage matches the other @UploadedFile routes
+// (they read file.buffer). Per-controller checks still enforce each route's own cap.
+RegisterRoutes(app, {
+  multer: multer({ limits: { fileSize: 50 * 1024 * 1024 } }),
+});
 RegisterFileDownloadRoutes(app);
 RegisterContactUsRoutes(app);
 RegisterBlogRoutes(app);

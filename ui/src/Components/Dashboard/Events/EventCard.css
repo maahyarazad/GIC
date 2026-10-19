@@ -121,6 +121,10 @@
 .card.event-card .event-status-badge--full {
   background: #4a4a4a;
 }
+.card.event-card .event-status-badge--presentations {
+  background: #2b6cb0;
+  bottom: 2.1rem;
+}
 .card.event-card.event-card--static {
   cursor: default;
 }

@@ -4,13 +4,20 @@ import Loader from "@/Components/Loader/Loader";
 import { MemberEventDto } from '../../../../../src/types/event.types';
 import { getEvents } from "@/api/events";
 import { useEventAttendance } from "@/Hooks/useEventAttendance";
-import EventCard, { EventCardBadgeTone } from "./EventCard";
+import { useModal } from "@/Providers/ModalContext";
+import EventCard, { EventCardBadge } from "./EventCard";
+import EventPresentationsModal from "./EventPresentationsModal";
 import MyEvents from "./MyEvents";
 
-const badgeFor = (event: MemberEventDto): { label: string; tone: EventCardBadgeTone } | undefined => {
-    if (event.myAttendance) return { label: "Attending", tone: "attending" };
-    if (!event.isPast && event.isFull) return { label: "Fully booked", tone: "full" };
-    return undefined;
+// Zero or more badges per card: "Attending"/"Fully booked" plus a presentations badge (feature 011).
+const badgesFor = (event: MemberEventDto): EventCardBadge[] => {
+    const badges: EventCardBadge[] = [];
+    if (event.myAttendance) badges.push({ label: "Attending", tone: "attending" });
+    else if (!event.isPast && event.isFull) badges.push({ label: "Fully booked", tone: "full" });
+    if (event.presentationCount > 0) {
+        badges.push({ label: "Presentations", tone: "presentations" });
+    }
+    return badges;
 };
 
 // Splits events into upcoming (soonest first) and past (most recent first).
@@ -40,7 +47,7 @@ const EventItem = memo(({ event, showUpcomingBadge, onSelect }: EventItemProps) 
         date={event.date}
         subtitle={`${event.venue} · ${event.time} GST`}
         imageUrl={event.imageUrl}
-        badge={badgeFor(event)}
+        badge={badgesFor(event)}
         showUpcomingBadge={showUpcomingBadge}
         onClick={onSelect && (() => onSelect(event))}
     />
@@ -53,9 +60,11 @@ interface EventsGroupProps {
     events: MemberEventDto[];
     showUpcomingBadge: boolean;
     onSelect?: (event: MemberEventDto) => void;
+    /** When given, a card is interactive only for events this returns true for. */
+    canSelect?: (event: MemberEventDto) => boolean;
 }
 
-const EventsGroup = memo(({ title, emptyText, events, showUpcomingBadge, onSelect }: EventsGroupProps) => (
+const EventsGroup = memo(({ title, emptyText, events, showUpcomingBadge, onSelect, canSelect }: EventsGroupProps) => (
     <section className="events-group">
         <h4 className="events-group__title">{title}</h4>
         {events.length === 0 ? (
@@ -67,7 +76,7 @@ const EventsGroup = memo(({ title, emptyText, events, showUpcomingBadge, onSelec
                         key={event.id}
                         event={event}
                         showUpcomingBadge={showUpcomingBadge}
-                        onSelect={onSelect}
+                        onSelect={!canSelect || canSelect(event) ? onSelect : undefined}
                     />
                 ))}
             </div>
@@ -108,6 +117,22 @@ const Events: React.FC = () => {
     }, [load]);
 
     const { confirm } = useEventAttendance(load);
+    const { openModal } = useModal();
+
+    const openPresentations = useCallback((event: MemberEventDto) => {
+        openModal({
+            title: event.title,
+            content: <EventPresentationsModal eventId={event.id} />,
+        });
+    }, [openModal]);
+
+    // Upcoming: events with presentations open the modal; otherwise confirm attendance.
+    const handleUpcomingSelect = useCallback((event: MemberEventDto) => {
+        if (event.presentationCount > 0) openPresentations(event);
+        else confirm(event);
+    }, [confirm, openPresentations]);
+
+    const hasPresentations = useCallback((event: MemberEventDto) => event.presentationCount > 0, []);
 
     const { upcoming, past } = useMemo(() => splitEvents(events), [events]);
     const attending = useMemo(() => events.filter((e) => e.myAttendance), [events]);
@@ -142,13 +167,15 @@ const Events: React.FC = () => {
                                 emptyText="No upcoming events."
                                 events={upcoming}
                                 showUpcomingBadge
-                                onSelect={confirm}
+                                onSelect={handleUpcomingSelect}
                             />
                             <EventsGroup
                                 title="Past Events"
                                 emptyText="No past events."
                                 events={past}
                                 showUpcomingBadge={false}
+                                onSelect={openPresentations}
+                                canSelect={hasPresentations}
                             />
                         </>
                     )}

@@ -37,6 +37,8 @@ export interface MyAttendance {
 /** Member view: includes the caller's own attendance, if any. */
 export interface MemberEventDto extends EventDto {
     myAttendance: MyAttendance | null;
+    /** Number of presentations attached to this event (feature 011); drives the badge when > 0. */
+    presentationCount: number;
 }
 
 export interface AdminEventDto extends EventDto {

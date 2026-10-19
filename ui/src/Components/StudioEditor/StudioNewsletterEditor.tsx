@@ -37,11 +37,12 @@ const fileToDataUrl = (file: File): Promise<string> =>
   });
 
 /**
- * Export the project's single email page as a self-contained HTML string.
+ * Export the project's single page as a self-contained HTML string.
  *
- * `studio:projectFiles` compiles the (email) project and inlines styles. If the
- * SDK externalises base64 images into separate asset files, we re-inline them so
- * the returned HTML keeps its `data:` image sources (base64, no server links).
+ * `studio:projectFiles` exports the (web) project with styles inlined into the
+ * elements (email-client friendly). If the SDK externalises base64 images into
+ * separate asset files, we re-inline them so the returned HTML keeps its `data:`
+ * image sources (base64, no server links).
  */
 const exportInlinedHtml = async (editor: Editor): Promise<string> => {
   const files: ProjectFile[] = await editor.runCommand("studio:projectFiles", {
@@ -81,9 +82,10 @@ const exportInlinedHtml = async (editor: Editor): Promise<string> => {
 };
 
 /**
- * Studio SDK (GrapesJS) email editor adapted to the same `{ value, onChange }`
- * contract the newsletter previously used with Quill. Client-only — loaded via
- * React.lazy + Suspense so it never runs during SSR.
+ * Studio SDK (GrapesJS) visual editor adapted to the same `{ value, onChange }`
+ * contract the newsletter previously used with Quill. Uses the web/HTML project
+ * type so plain (incl. legacy Quill) HTML loads and round-trips. Client-only —
+ * loaded via React.lazy + Suspense so it never runs during SSR.
  */
 const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
   const editorRef = useRef<Editor | null>(null);
@@ -112,7 +114,7 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
       <StudioEditor
         options={{
           licenseKey: LICENSE_KEY,
-          project: { type: "email" },
+          project: { type: "web" },
           assets: {
             storageType: "self",
             // Embed images inline as base64 data URLs — no upload endpoint (FR-003).
@@ -140,7 +142,7 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
               };
               return { project };
             },
-            // Autosave fires this; export the email HTML and push it to the host.
+            // Autosave fires this; export the HTML and push it to the host.
             onSave: async ({ editor }: { editor: Editor; project: ProjectData }) => {
               const html = await exportInlinedHtml(editor);
               onChangeRef.current(html);

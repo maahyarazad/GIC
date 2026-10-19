@@ -95,7 +95,7 @@ column or horizontal overflow.
 - **FR-004**: The newsletter editing UI MUST use the full width of the screen.
 - **FR-005**: The editor MUST be loaded client-side only and MUST NOT break SSR or the rest of the dashboard.
 - **FR-006**: The Studio SDK style sheet MUST be included so the editor renders correctly.
-- **FR-007**: The editor MUST use the Studio SDK **email project type** (`project: { type: 'email' }`) and export email-ready HTML (styles applied inline where email clients require it). *(Resolved: email type chosen by stakeholder.)*
+- **FR-007**: The editor MUST use the Studio SDK **web/HTML project type** (`project: { type: 'web' }`) and export HTML with styles applied inline (email-client friendly). *(The email/MJML type was tried but rejected: it requires MJML-structured content and crashed with `Parsing failed. Check your mjml.` on the existing plain-HTML/legacy articles. Web type loads and round-trips plain HTML and matches the send pipeline.)*
 - **FR-008**: The Studio SDK license key MUST be supplied via configuration (`VITE_GRAPESJS_LICENSE_KEY`, defaulting to `DEMO_LOCALHOST_KEY`), not hard-coded. *(Open: a valid production key is still required before non-localhost deploy.)*
 - **FR-009**: The old Quill editor MUST be removed from the **newsletter view only**. The `QuillEditor` component and the `quill` dependency MUST be kept because `Blog.tsx` still uses them.
 - **FR-010**: The editor MUST persist via `storage: { type: 'self' }` with autosave (`autosaveChanges: 100`, `autosaveIntervalMs: 10000`), saving the exported HTML into the existing article `html` field only — no Studio project JSON is persisted and no DB schema changes.

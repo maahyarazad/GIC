@@ -22,7 +22,7 @@ The existing article document, stored via the `/newsletter-articles` API in Mong
 **Validation / rules**
 - `html` is still a single string consumed as-is by save, the send endpoint, and the
   `dangerouslySetInnerHTML` preview — no new validation.
-- Legacy articles authored in Quill must still load (their HTML becomes the email page body).
+- Legacy articles authored in Quill must still load (their HTML becomes the page body).
 - The empty-content sentinel `"<p><br></p>"` (used by the current submit guard) is treated as empty;
   the Studio wrapper emits `""` for empty content so the guard keeps working.
 - `html` payload must stay within the server's 25 MB `express.json` limit even with base64 images.
@@ -62,7 +62,7 @@ is a no-op.
 
 | Hook                  | Direction | Behavior                                                                               |
 | --------------------- | --------- | -------------------------------------------------------------------------------------- |
-| `onLoad()`            | in        | Returns `{ project }` built from `value` (one email page whose body is the article HTML). |
+| `onLoad()`            | in        | Returns `{ project }` built from `value` (one page whose body is the article HTML). |
 | `onSave({ project })` | out       | Exports email HTML from the editor and calls host `onChange(html)`; nothing sent to a server. |
 
 Autosave config: `autosaveChanges: 100`, `autosaveIntervalMs: 10000`.
@@ -70,7 +70,7 @@ Autosave config: `autosaveChanges: 100`, `autosaveIntervalMs: 10000`.
 ## State transitions
 
 ```text
-open article (value=html) ──onLoad──▶ editor shows email page (legacy Quill HTML or prior export)
+open article (value=html) ──onLoad──▶ editor shows page (legacy Quill HTML or prior export)
         │
    user edits / inserts image (FileReader→base64 data URL, no upload)
         │

@@ -44,7 +44,7 @@ stakeholder's config, reconciled with FR-003 base64 and the HTML-string content 
 options = {
   licenseKey: import.meta.env.VITE_GRAPESJS_LICENSE_KEY ?? 'DEMO_LOCALHOST_KEY',
 
-  project: { type: 'email' },
+  project: { type: 'web' },   // email/MJML type reverted — crashed on plain/legacy HTML
 
   assets: {
     storageType: 'self',
@@ -80,7 +80,7 @@ options = {
 | `assets.onDelete` | `fetch('ASSETS_DELETE_URL', …)` | no-op | nothing stored server-side |
 | `storage.onSave` | throws / `fetch('PROJECT_SAVE_URL')` | export HTML → `onChange` | keep HTML-string model, no backend |
 | `storage.onLoad` | throws / `fetch('PROJECT_LOAD_URL')` | build project from `value` | seed from existing `form.html` |
-| `project.type` | `'email'` | `'email'` | adopted as-is (resolves FR-007) |
+| `project.type` | `'email'` | `'web'` | email/MJML type reverted — it crashed (`Parsing failed. Check your mjml.`) on plain/legacy HTML; web type round-trips plain HTML (FR-007) |
 | autosave fields | `100` / `10000` | `100` / `10000` | adopted as-is |
 | `licenseKey` | `'DEMO_LOCALHOST_KEY'` | env var, default `DEMO_LOCALHOST_KEY` | FR-008: not hard-coded |
 

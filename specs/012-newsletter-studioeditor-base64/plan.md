@@ -8,7 +8,7 @@
 
 Replace the newsletter's Quill editor with the GrapesJS Studio SDK React component
 (`StudioEditor` from `@grapesjs/studio-sdk/react` + its stylesheet), using the **email project
-type** (`project: { type: 'email' }`). Configure images to embed as **base64 data URLs** via a
+type** (`project: { type: 'web' }` — email/MJML type was reverted; it crashed with `Parsing failed. Check your mjml.` on plain/legacy HTML). Configure images to embed as **base64 data URLs** via a
 self-handled `onUpload` (no upload endpoint; `onDelete` is a no-op), and use `storage: { type:
 'self' }` with autosave (`autosaveChanges: 100`, `autosaveIntervalMs: 10000`) whose `onLoad` seeds
 the editor from the existing article `html` and whose `onSave` exports HTML back into that `html`

@@ -41,11 +41,11 @@ blog (`grapesjs.com/blog/converting-to-grapes`).
 - **Rationale**: The visual builder needs space; the request is explicit. GrapesJS/Studio requires its container to have a defined height or it collapses.
 - **Alternatives considered**: Leaving it in the narrow column — fails the requirement and cramps the builder.
 
-## 5. Project type: email (RESOLVED — email type)
+## 5. Project type: web/HTML (RESOLVED — web type, after reverting email)
 
-- **Decision**: Use `project: { type: 'email' }` — confirmed by stakeholder. The email project type gives email-oriented blocks and email-safe output. The content model stays a single HTML string (decision 2): `onLoad` seeds an email page from `form.html`, `onSave` exports HTML back into `form.html`.
-- **Rationale**: Resolves FR-007 explicitly. Email type produces output better suited to email clients than the generic web type, while the self-storage handlers keep the existing HTML-string pipeline intact (no schema change).
-- **Note**: The email type's internal model is MJML-like; we never persist that model — only the exported HTML — so the send/preview pipeline is unchanged. Legacy Quill HTML is loaded as the email page body.
+- **Decision**: Use `project: { type: 'web' }`. The email type was initially chosen but **reverted after testing**: the Studio SDK email type stores and compiles MJML (`<mjml><mj-body>…</mj-body></mjml>`), so seeding the existing plain/legacy Quill HTML produced a runtime `Error: Parsing failed. Check your mjml.` on every MJML compile (the "view code" button and the export used for autosave). The web type uses plain HTML with no MJML step.
+- **Rationale**: All existing articles and the send/preview pipeline are plain HTML. The web type loads and round-trips that content natively; `studio:projectFiles` with `styles: 'inline'` still inlines styles for email clients. Base64 images and full-width are unaffected.
+- **Trade-off**: Loses email-specific MJML blocks/responsive output. Acceptable to the stakeholder given the plain-HTML content model and the crash the email type caused.
 
 ## 6. License key
 

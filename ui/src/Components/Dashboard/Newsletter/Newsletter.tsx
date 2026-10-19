@@ -10,7 +10,9 @@ import { FaPlus } from "react-icons/fa6";
 import type { NewsletterArticle } from "../../../../../src/types/newsletterArticle.types";
 import "./Newsletter.css";
 
-const QuillEditor = lazy(() => import("@/Components/QuillEditor/QuillEditor"));
+const StudioNewsletterEditor = lazy(
+  () => import("@/Components/StudioEditor/StudioNewsletterEditor")
+);
 
 type View = "list" | "form";
 
@@ -100,16 +102,6 @@ const Newsletter: React.FC = () => {
   const handleField = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageUpload = async (file: File): Promise<string> => {
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await axiosInstance.post("/files", fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    const { fileId, extension } = res.data.data;
-    return `/uploads/${fileId}.${extension}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -241,7 +233,7 @@ const Newsletter: React.FC = () => {
   /* ── Form view ── */
   if (view === "form") {
     return (
-      <div className="newsletter-section">
+      <div className="newsletter-section newsletter-section--full">
         <div className="newsletter-header">
           <h3>{editingArticle ? "Edit Newsletter Article" : "New Newsletter Article"}</h3>
           <button className="newsletter-btn-back" onClick={() => setView("list")}>
@@ -276,10 +268,9 @@ const Newsletter: React.FC = () => {
             <div className="col-12">
               <label className="form-label">Content *</label>
               <Suspense fallback={<Loader />}>
-                <QuillEditor
+                <StudioNewsletterEditor
                   value={form.html}
                   onChange={(html) => setForm((prev) => ({ ...prev, html }))}
-                  onImageUpload={handleImageUpload}
                 />
               </Suspense>
             </div>

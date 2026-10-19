@@ -113,6 +113,43 @@
 .newsletter-form {
   max-width: 860px;
 }
+
+/* ──────────────────────────────────────
+   FULL-WIDTH EDITING (newsletter form view)
+   Cancels the .main-content 1rem padding so the Studio editor uses the full
+   width of the screen. .dashboard has `overflow-x: clip`, so no page scroll.
+────────────────────────────────────── */
+.newsletter-section--full {
+  padding: 0;
+  margin: -1rem;
+}
+.newsletter-section--full .newsletter-header,
+.newsletter-section--full .newsletter-form .col-md-6,
+.newsletter-section--full .newsletter-form-actions {
+  /* Keep the normal fields within a comfortable gutter */
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+.newsletter-section--full .newsletter-header {
+  margin-top: 1rem;
+}
+.newsletter-section--full .newsletter-form {
+  max-width: none;
+}
+/* The editor content column spans the full available width, flush to the edges. */
+.newsletter-section--full .newsletter-form .col-12 {
+  padding-left: 0;
+  padding-right: 0;
+}
+.newsletter-section--full .newsletter-form .col-12 .form-label {
+  padding-left: 1rem;
+}
+
+@media (max-width: 767px) {
+  .newsletter-section--full {
+    margin: -0.5rem;
+  }
+}
 .newsletter-form .form-label {
   font-family: var(--sa);
   font-size: 0.68rem;

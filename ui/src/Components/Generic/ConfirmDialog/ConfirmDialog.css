@@ -5,7 +5,7 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 999;
+  z-index: 1060; /* above the slide-out panel (1040/1050) */
   cursor: pointer;
   animation: fadeInBackdrop 0.3s ease forwards;
 }
@@ -22,7 +22,7 @@
   padding: 24px;
   border-radius: 8px;
   transform: translate(-50%, -50%) scale(0.8);
-  z-index: 1000;
+  z-index: 1070;
   display: flex;
   flex-direction: column;
   animation: fadeScaleIn 0.3s ease forwards;

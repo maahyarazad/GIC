@@ -25,6 +25,8 @@ import { RegisterBlogRoutes } from "./controllers/blog"
 const isProduction = process.env.NODE_ENV?.toLowerCase() === "production";
 
 const app = express();
+// Behind one reverse proxy: rate limits must key on the real client IP, not the proxy's.
+app.set("trust proxy", 1);
 const PORT = process.env.PORT ?? 5173;
 
 // ✅ Fix 2: envVars uses correct isProduction flag now

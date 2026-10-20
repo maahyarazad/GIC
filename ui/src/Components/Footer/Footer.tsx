@@ -116,7 +116,7 @@ const navigateToEvents = () => {showPage('/events');navigate('/events');}
                     </div>
 
                     {/* Newsletter */}
-                    {/* <div>
+                    <div>
                         <div className="ft-ct">Newsletter</div>
                         <div className="ft-nl">
                             <input
@@ -127,12 +127,12 @@ const navigateToEvents = () => {showPage('/events');navigate('/events');}
                                 onChange={(e) => setEmail(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                             />
-                            <button onClick={handleSubmit}>
+                            <button onClick={handleSubmit} aria-label="Subscribe to the newsletter">
                                 <FaArrowRight />
                             </button>
                         </div>
                         <div ref={validationMessageRef} className="ft-validation" />
-                    </div> */}
+                    </div>
 
                 </div>
 

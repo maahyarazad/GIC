@@ -13,3 +13,13 @@ export const previewLimiter = rateLimit({
   max: 60,
   message: "Too many requests to this endpoint"
 });
+
+// Public newsletter subscription: stops scripts from flooding the subscriber list.
+export const subscribeLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) =>
+    res.status(429).json({ success: false, message: "Too many attempts. Please try again later." }),
+});

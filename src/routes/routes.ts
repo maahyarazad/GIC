@@ -490,6 +490,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SubscriberType": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["internal"]},{"dataType":"enum","enums":["external"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "NewsletterSubscriber": {
         "dataType": "refObject",
         "properties": {
@@ -498,6 +503,7 @@ const models: TsoaRoute.Models = {
             "updatedAt": {"dataType":"datetime"},
             "email": {"dataType":"string","required":true},
             "active": {"dataType":"boolean","required":true},
+            "type": {"ref":"SubscriberType"},
         },
         "additionalProperties": true,
     },
@@ -517,6 +523,35 @@ const models: TsoaRoute.Models = {
         "properties": {
             "email": {"dataType":"string","required":true},
             "active": {"dataType":"boolean"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BulkAddSubscribersResult": {
+        "dataType": "refObject",
+        "properties": {
+            "added": {"dataType":"double","required":true},
+            "reactivated": {"dataType":"double","required":true},
+            "duplicates": {"dataType":"double","required":true},
+            "invalid": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SuccessResponse_BulkAddSubscribersResult_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"pagination":{"dataType":"nestedObjectLiteral","nestedProperties":{"pages":{"dataType":"double","required":true},"total":{"dataType":"double","required":true},"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},"timestamp":{"dataType":"string","required":true},"data":{"ref":"BulkAddSubscribersResult"},"message":{"dataType":"string"},"success":{"dataType":"enum","enums":[true],"required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ApiResponse_BulkAddSubscribersResult_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"ref":"SuccessResponse_BulkAddSubscribersResult_"},{"ref":"ErrorResponse"}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "BulkAddSubscribersRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "emails": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": true,
     },
@@ -2448,10 +2483,40 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewsletterController_bulkAddSubscribers: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"BulkAddSubscribersRequest"},
+        };
+        app.post('/api/v1/newsletter/admin/bulk',
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController)),
+            ...(fetchMiddlewares<RequestHandler>(NewsletterController.prototype.bulkAddSubscribers)),
+
+            async function NewsletterController_bulkAddSubscribers(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewsletterController_bulkAddSubscribers, request, response });
+
+                const controller = new NewsletterController();
+
+              await templateService.apiHandler({
+                methodName: 'bulkAddSubscribers',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsNewsletterController_getSubscribers: Record<string, TsoaRoute.ParameterSchema> = {
                 limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
                 skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
-                sortBy: {"in":"query","name":"sortBy","dataType":"enum","enums":["email","createdAt","_id","updatedAt","active"]},
+                sortBy: {"in":"query","name":"sortBy","dataType":"enum","enums":["email","createdAt","_id","updatedAt","active","type"]},
                 sortOrder: {"in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
                 filters: {"in":"query","name":"filters","dataType":"string"},
         };

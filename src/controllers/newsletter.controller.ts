@@ -1,18 +1,31 @@
-import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Query, Path } from "tsoa";
+import { Controller, Route, Tags, Post, Get, Put, Delete, Body, Query, Path, Middlewares } from "tsoa";
+import { Model } from "mongoose";
 import {
   ApiResponse,
   createErrorResponse,
   createSuccessResponse,
   FilterModel,
 } from "../utils/helpers";
-import { NewsletterSubscriber, CreateNewsletterSubscriberRequest } from "../types/newsletterSubscriber.types";
+import {
+  NewsletterSubscriber,
+  CreateNewsletterSubscriberRequest,
+  BulkAddSubscribersRequest,
+  BulkAddSubscribersResult,
+} from "../types/newsletterSubscriber.types";
+import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { subscribeLimiter } from "../middleware/ratelimiter.middleware";
+import { UserDocument, UserModel } from "../models/user.model";
 import { NewsletterSubscriberModel } from "../models/newsletterSubscriber.model";
 import { mapNewsletterSubscriber, mapNewsletterSubscribers } from "../mappers/newsletter.mapper";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_BULK_EMAILS = 200;
 
 @Route("api/v1/newsletter")
 @Tags("newsletter")
 export class NewsletterController extends Controller {
   @Post("/")
+  @Middlewares(subscribeLimiter)
   public async createSubscriber(
     @Body() body: CreateNewsletterSubscriberRequest
   ): Promise<ApiResponse<NewsletterSubscriber>> {
@@ -54,7 +67,72 @@ export class NewsletterController extends Controller {
     }
   }
 
+  /** Admin: add several emails at once. New ones become active, inactive ones are re-activated. */
+  @Post("admin/bulk")
+  @Middlewares(adminAuthMiddleware)
+  public async bulkAddSubscribers(
+    @Body() body: BulkAddSubscribersRequest
+  ): Promise<ApiResponse<BulkAddSubscribersResult>> {
+    try {
+      const raw = Array.isArray(body?.emails) ? body.emails : [];
+      if (raw.length === 0) {
+        this.setStatus(400);
+        return createErrorResponse("Provide at least one email", "NO_EMAILS");
+      }
+      if (raw.length > MAX_BULK_EMAILS) {
+        this.setStatus(400);
+        return createErrorResponse(`Add up to ${MAX_BULK_EMAILS} emails at a time`, "TOO_MANY_EMAILS");
+      }
+
+      const valid: string[] = [];
+      const invalid: string[] = [];
+      const seen = new Set<string>();
+      for (const item of raw) {
+        const email = String(item ?? "").trim().toLowerCase();
+        if (!email || seen.has(email)) continue;
+        seen.add(email);
+        (email.length <= 254 && EMAIL_RE.test(email) ? valid : invalid).push(email);
+      }
+
+      const existing: any[] = valid.length
+        ? //@ts-ignore
+          await NewsletterSubscriberModel.find({ email: { $in: valid } }).lean()
+        : [];
+      const existingByEmail = new Map(existing.map((d) => [d.email, d]));
+
+      const toInsert = valid.filter((e) => !existingByEmail.has(e));
+      const toReactivate = existing.filter((d) => !d.active).map((d) => d._id);
+
+      if (toInsert.length) {
+        await NewsletterSubscriberModel.insertMany(
+          toInsert.map((email) => ({ email, active: true })),
+          { ordered: false }
+        );
+      }
+      if (toReactivate.length) {
+        await NewsletterSubscriberModel.updateMany(
+          { _id: { $in: toReactivate } },
+          { $set: { active: true, updatedAt: new Date() } }
+        );
+      }
+
+      return createSuccessResponse<BulkAddSubscribersResult>(
+        {
+          added: toInsert.length,
+          reactivated: toReactivate.length,
+          duplicates: existing.length - toReactivate.length,
+          invalid,
+        },
+        "Subscribers processed"
+      );
+    } catch (err: any) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to add subscribers", "BULK_ADD_ERROR", err);
+    }
+  }
+
   @Get("/")
+  @Middlewares(adminAuthMiddleware)
   public async getSubscribers(
     @Query() limit: number = 10,
     @Query() skip: number = 0,
@@ -98,8 +176,21 @@ export class NewsletterController extends Controller {
         NewsletterSubscriberModel.countDocuments(query),
       ]);
 
+      // Internal = the subscriber's email belongs to a registered user (derived, not stored).
+      const userEmails = new Set<string>();
+      if (docs.length > 0) {
+        const users = await (UserModel as Model<UserDocument>)
+          .find({ email: { $in: docs.map((d: any) => d.email) } })
+          .select("email")
+          .lean();
+        users.forEach((u: any) => userEmails.add(String(u.email).toLowerCase()));
+      }
+      const subscribers = docs.map((d: any) =>
+        mapNewsletterSubscriber(d, userEmails.has(String(d.email).toLowerCase()) ? "internal" : "external")
+      );
+
       return createSuccessResponse(
-        { subscribers: mapNewsletterSubscribers(docs), total },
+        { subscribers, total },
         "Subscribers fetched successfully",
         {
           page: Math.floor(skip / limit) + 1,
@@ -158,6 +249,7 @@ export class NewsletterController extends Controller {
   }
 
   @Put("{id}")
+  @Middlewares(adminAuthMiddleware)
   public async updateSubscriber(@Path() id: string, @Body() body: { active?: boolean }): Promise<ApiResponse<any>> {
     try {
       const subscriber = await NewsletterSubscriberModel.findByIdAndUpdate(
@@ -183,6 +275,7 @@ export class NewsletterController extends Controller {
   }
 
   @Delete("{id}")
+  @Middlewares(adminAuthMiddleware)
   public async deleteSubscriber(@Path() id: string): Promise<ApiResponse<null>> {
     try {
         //@ts-ignore

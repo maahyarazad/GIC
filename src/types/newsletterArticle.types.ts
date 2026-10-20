@@ -23,3 +23,20 @@ export interface UpdateNewsletterArticleRequest
 export interface SendTestNewsletterRequest {
   email: string;
 }
+
+/** Landing-page view of a sent article. `preview` is only present for authorized callers; never the HTML. */
+export interface NewsletterTeaser {
+  id: string;
+  title: string;
+  sentAt: string;
+  preview?: string;
+}
+
+/** Full article for signed-in readers. */
+export interface NewsletterPublicDetail {
+  id: string;
+  title: string;
+  subject: string;
+  sentAt: string;
+  html: string;
+}

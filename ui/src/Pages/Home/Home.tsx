@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from "../../store";
 import { setReady } from '../../features/appSlice';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import NewsletterSection from './NewsletterSection';
 
 const Home = () => {
 
@@ -239,6 +240,8 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
+
+                {siteData?.newsletter && <NewsletterSection config={siteData.newsletter} />}
             </div>
         </>
     );

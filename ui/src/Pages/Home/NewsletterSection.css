@@ -1,0 +1,81 @@
+.nl-sub {
+  font-family: var(--se);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--mu);
+  margin-top: 12px;
+  max-width: 520px;
+  line-height: 1.7;
+}
+.nl-state {
+  margin-top: 32px;
+  color: var(--mu);
+}
+.nl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+.nl-card {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.nl-card:hover,
+.nl-card:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 32px var(--bo);
+  border-color: var(--bdrs);
+  outline: none;
+}
+.nl-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.nl-card-title {
+  font-size: 20px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nl-card-excerpt {
+  color: var(--mu);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.nl-card-date {
+  margin-top: auto;
+  font-size: 13px;
+  color: var(--mu);
+}
+/* Visitors: the text is placeholder copy (the API sends no body), the blur is presentation only. */
+.nl-card--locked .nl-card-body {
+  filter: blur(6px);
+  user-select: none;
+}
+.nl-lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}

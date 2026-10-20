@@ -9,16 +9,23 @@ import {
   Body,
   Path,
   Middlewares,
+  Query,
+  Request,
 } from "tsoa";
+import { Request as ExpressRequest } from "express";
 import {
   ApiResponse,
   createSuccessResponse,
   createErrorResponse,
 } from "../utils/helpers";
 import { adminAuthMiddleware } from "../middleware/adminauth.middleware";
+import { authMiddleware } from "../middleware/auth.middleware";
+import { optionalAuth } from "../middleware/optionalAuth";
 import {
   CreateNewsletterArticleRequest,
   NewsletterArticle,
+  NewsletterPublicDetail,
+  NewsletterTeaser,
   SendTestNewsletterRequest,
   UpdateNewsletterArticleRequest,
 } from "../types/newsletterArticle.types";
@@ -59,6 +66,74 @@ export class NewsletterArticleController extends Controller {
   public async getStudioLicenseKey(): Promise<ApiResponse<{ licenseKey: string }>> {
     const licenseKey = process.env.GRAPESJS_LICENSE_KEY?.trim() || "DEMO_LOCALHOST_KEY";
     return createSuccessResponse({ licenseKey }, "Studio license key retrieved");
+  }
+
+  /** Sent articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML. */
+  @Get("public")
+  @Middlewares(optionalAuth)
+  public async getPublicArticles(
+    @Request() req: ExpressRequest,
+    @Query() limit: number = 6
+  ): Promise<ApiResponse<{ items: NewsletterTeaser[]; authorized: boolean }>> {
+    try {
+      const authorized = !!(req as any).user;
+      const max = Math.min(Math.max(Math.floor(Number(limit)) || 6, 1), 24);
+      //@ts-ignore
+      const docs = await NewsletterArticleModel.find({ sentAt: { $ne: null } })
+        .sort({ sentAt: -1 })
+        .limit(max)
+        .select(authorized ? "title sentAt html" : "title sentAt")
+        .lean();
+      const items: NewsletterTeaser[] = docs.map((d: any) => ({
+        id: String(d._id),
+        title: d.title,
+        sentAt: new Date(d.sentAt).toISOString(),
+        ...(authorized
+          ? {
+              preview: String(d.html ?? "")
+                .replace(/<(style|script)[\s\S]*?<\/\1>/gi, " ")
+                .replace(/<[^>]+>/g, " ")
+                .replace(/&nbsp;/g, " ")
+                .replace(/\s+/g, " ")
+                .trim()
+                .slice(0, 160),
+            }
+          : {}),
+      }));
+      return createSuccessResponse({ items, authorized }, "Newsletters fetched successfully");
+    } catch (err: any) {
+      this.setStatus(500);
+      return createErrorResponse("Failed to fetch newsletters", "FETCH_ERROR", err);
+    }
+  }
+
+  /** Full sent article for signed-in users. */
+  @Get("public/{id}")
+  @Middlewares(authMiddleware)
+  public async getPublicArticle(
+    @Path() id: string
+  ): Promise<ApiResponse<NewsletterPublicDetail>> {
+    try {
+      //@ts-ignore
+      const d: any = await NewsletterArticleModel.findOne({ _id: id, sentAt: { $ne: null } }).lean();
+      if (!d) {
+        this.setStatus(404);
+        return createErrorResponse("Newsletter not found", "NOT_FOUND");
+      }
+      return createSuccessResponse(
+        {
+          id: String(d._id),
+          title: d.title,
+          subject: d.subject,
+          sentAt: new Date(d.sentAt).toISOString(),
+          html: d.html,
+        },
+        "Newsletter fetched successfully"
+      );
+    } catch (err: any) {
+      this.setStatus(404);
+      return createErrorResponse("Newsletter not found", "NOT_FOUND", err);
+    }
   }
 
   @Get("/")

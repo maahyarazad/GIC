@@ -205,7 +205,7 @@ Constants (`src/types/presentation.types.ts`, shared with the UI): `MAX_PRESENTA
 | `POST /` (multipart: `file`, `eventId`, `title`) | `authMiddleware` | Validates user, file present, title, valid existing event, MIME+extension, size. Generates the `ObjectId` first, writes `presentation_storage/<id>.<ext>`, creates the record; if the DB insert fails the file is unlinked. 201 `{ presentation }`. Errors: 400 (`NO_FILE`, `MISSING_TITLE`, `INVALID_EVENT`, `INVALID_FILE_TYPE`), 401, 413 `FILE_TOO_LARGE`. |
 | `GET /?eventId=` | `authMiddleware` | Any signed-in member lists an event's presentations (newest first). |
 | `GET /{id}/view` | `browserLoginRedirect` | Streams the file inline (`Content-Type` from the record, `Content-Disposition: inline; filename="…"`). 404 if record/file missing. |
-| `DELETE /{id}` | `authMiddleware` | Allowed for the uploader or `role === "admin"`; otherwise 403. Deletes the record, then the file (best effort). |
+| `DELETE /{id}` | `adminOnlyMiddleware` | Admin role (from the verified JWT) only; members and procurement get 403, no token 401. Deletes the record, then the file (best effort). |
 
 ### 3.3 Storage and serving rules
 

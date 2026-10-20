@@ -18,6 +18,7 @@ import fs from "fs";
 import path from "path";
 import mime from "mime-types";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminOnlyMiddleware } from "../middleware/adminauth.middleware";
 import { browserLoginRedirect } from "../middleware/browserLoginRedirect";
 import { EventModel } from "../models/event.model";
 import { PresentationModel, mapPresentation } from "../models/presentation.model";
@@ -199,21 +200,11 @@ export class PresentationController extends Controller {
     return fs.createReadStream(filePath);
   }
 
-  /** Delete a presentation. Uploader or admin only (FR-011). */
+  /** Delete a presentation. Admin only: the token's role is verified by adminOnlyMiddleware. */
   @Delete("{id}")
-  @Middlewares(authMiddleware)
-  public async deletePresentation(
-    @Path() id: string,
-    @Request() req: ExpressRequest
-  ): Promise<any> {
+  @Middlewares(adminOnlyMiddleware)
+  public async deletePresentation(@Path() id: string): Promise<any> {
     try {
-      const userId = toObjectId((req as any).user?.userId);
-      const role = (req as any).user?.role;
-      if (!userId) {
-        this.setStatus(401);
-        return createErrorResponse("Unauthorized", "UNAUTHORIZED");
-      }
-
       const presentationId = toObjectId(id);
       const doc = presentationId
         ? await PresentationModel.findById(presentationId)
@@ -221,12 +212,6 @@ export class PresentationController extends Controller {
       if (!doc) {
         this.setStatus(404);
         return createErrorResponse("Presentation not found", "NOT_FOUND");
-      }
-
-      const isOwner = doc.uploadedBy?.toString() === userId.toString();
-      if (!isOwner && role !== "admin") {
-        this.setStatus(403);
-        return createErrorResponse("Not allowed to delete this presentation", "FORBIDDEN");
       }
 
       const filePath = path.join(STORAGE_DIR, (doc as any).storedName);

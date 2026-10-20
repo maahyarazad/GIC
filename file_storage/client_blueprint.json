@@ -117,6 +117,12 @@
       "path": "/blog",
       "type": "link",
       "id": 7
+    },
+    {
+      "label": "Newsletter",
+      "path": "/newsletter",
+      "type": "link",
+      "id": 8
     }
   ],
   "media": {

@@ -2376,6 +2376,268 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"SuccessResponse__licenseKey-string__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"licenseKey": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"licenseKey"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse__licenseKey-string__": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse__licenseKey-string__"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"NewsletterTeaser": {
+				"description": "Landing-page view of a sent article. `preview` is only present for authorized callers; never the HTML.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"sentAt": {
+						"type": "string"
+					},
+					"preview": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"sentAt"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse__items-NewsletterTeaser-Array--authorized-boolean__": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"authorized": {
+								"type": "boolean"
+							},
+							"items": {
+								"items": {
+									"$ref": "#/components/schemas/NewsletterTeaser"
+								},
+								"type": "array"
+							}
+						},
+						"required": [
+							"authorized",
+							"items"
+						],
+						"type": "object"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse__items-NewsletterTeaser-Array--authorized-boolean__": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse__items-NewsletterTeaser-Array--authorized-boolean__"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"NewsletterPublicDetail": {
+				"description": "Full article for signed-in readers.",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"subject": {
+						"type": "string"
+					},
+					"sentAt": {
+						"type": "string"
+					},
+					"html": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"title",
+					"subject",
+					"sentAt",
+					"html"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_NewsletterPublicDetail_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/NewsletterPublicDetail"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_NewsletterPublicDetail_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_NewsletterPublicDetail_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
 			"SuccessResponse_NewsletterArticle-Array_": {
 				"properties": {
 					"pagination": {
@@ -5416,6 +5678,94 @@
 				],
 				"security": [],
 				"parameters": []
+			}
+		},
+		"/api/v1/newsletter-articles/studio-license-key": {
+			"get": {
+				"operationId": "GetStudioLicenseKey",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse__licenseKey-string__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/v1/newsletter-articles/public": {
+			"get": {
+				"operationId": "GetPublicArticles",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse__items-NewsletterTeaser-Array--authorized-boolean__"
+								}
+							}
+						}
+					}
+				},
+				"description": "Sent articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML.",
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 6,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/newsletter-articles/public/{id}": {
+			"get": {
+				"operationId": "GetPublicArticle",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_NewsletterPublicDetail_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Full sent article for signed-in users.",
+				"tags": [
+					"newsletter-articles"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/api/v1/newsletter-articles/{id}": {

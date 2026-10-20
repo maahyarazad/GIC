@@ -2280,13 +2280,18 @@
 						"type": "string",
 						"nullable": true,
 						"description": "Timestamp of when the article was sent to subscribers, or null."
+					},
+					"published": {
+						"type": "boolean",
+						"description": "Whether members can see it on the landing page."
 					}
 				},
 				"required": [
 					"title",
 					"subject",
 					"html",
-					"sentAt"
+					"sentAt",
+					"published"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -2366,6 +2371,9 @@
 					},
 					"text": {
 						"type": "string"
+					},
+					"published": {
+						"type": "boolean"
 					}
 				},
 				"required": [
@@ -2716,6 +2724,9 @@
 					},
 					"text": {
 						"type": "string"
+					},
+					"published": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -2800,6 +2811,14 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"SubscriberType": {
+				"type": "string",
+				"enum": [
+					"internal",
+					"external"
+				],
+				"description": "Derived at read time: internal = the email belongs to a registered user."
+			},
 			"NewsletterSubscriber": {
 				"properties": {
 					"_id": {
@@ -2818,6 +2837,9 @@
 					},
 					"active": {
 						"type": "boolean"
+					},
+					"type": {
+						"$ref": "#/components/schemas/SubscriberType"
 					}
 				},
 				"required": [
@@ -2900,6 +2922,113 @@
 				},
 				"required": [
 					"email"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"BulkAddSubscribersResult": {
+				"properties": {
+					"added": {
+						"type": "number",
+						"format": "double"
+					},
+					"reactivated": {
+						"type": "number",
+						"format": "double"
+					},
+					"duplicates": {
+						"type": "number",
+						"format": "double"
+					},
+					"invalid": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"added",
+					"reactivated",
+					"duplicates",
+					"invalid"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"SuccessResponse_BulkAddSubscribersResult_": {
+				"properties": {
+					"pagination": {
+						"properties": {
+							"pages": {
+								"type": "number",
+								"format": "double"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							},
+							"limit": {
+								"type": "number",
+								"format": "double"
+							},
+							"page": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"pages",
+							"total",
+							"limit",
+							"page"
+						],
+						"type": "object"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/BulkAddSubscribersResult"
+					},
+					"message": {
+						"type": "string"
+					},
+					"success": {
+						"type": "boolean",
+						"enum": [
+							true
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"timestamp",
+					"success"
+				],
+				"type": "object"
+			},
+			"ApiResponse_BulkAddSubscribersResult_": {
+				"anyOf": [
+					{
+						"$ref": "#/components/schemas/SuccessResponse_BulkAddSubscribersResult_"
+					},
+					{
+						"$ref": "#/components/schemas/ErrorResponse"
+					}
+				]
+			},
+			"BulkAddSubscribersRequest": {
+				"properties": {
+					"emails": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"emails"
 				],
 				"type": "object",
 				"additionalProperties": true
@@ -5455,7 +5584,7 @@
 						}
 					}
 				},
-				"description": "Delete a presentation. Uploader or admin only (FR-011).",
+				"description": "Delete a presentation. Admin only: the token's role is verified by adminOnlyMiddleware.",
 				"tags": [
 					"Presentations"
 				],
@@ -5717,7 +5846,7 @@
 						}
 					}
 				},
-				"description": "Sent articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML.",
+				"description": "Published articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML.",
 				"tags": [
 					"newsletter-articles"
 				],
@@ -6022,7 +6151,8 @@
 								"createdAt",
 								"_id",
 								"updatedAt",
-								"active"
+								"active",
+								"type"
 							]
 						}
 					},
@@ -6047,6 +6177,39 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/v1/newsletter/admin/bulk": {
+			"post": {
+				"operationId": "BulkAddSubscribers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse_BulkAddSubscribersResult_"
+								}
+							}
+						}
+					}
+				},
+				"description": "Admin: add several emails at once. New ones become active, inactive ones are re-activated.",
+				"tags": [
+					"newsletter"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BulkAddSubscribersRequest"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/newsletter/email/{email}": {

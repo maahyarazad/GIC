@@ -183,7 +183,7 @@ const Newsletter: React.FC = () => {
     return submitArticle(form.html);
   };
 
-  const submitArticle = async (htmlContent: string) => {
+  const submitArticle = async (htmlContent: string, opts: { stay?: boolean } = {}) => {
     if (!form.title.trim() || !form.subject.trim()) {
       show({ type: "error", message: "Title and subject are required." });
       return;
@@ -205,10 +205,12 @@ const Newsletter: React.FC = () => {
         await axiosInstance.put(`/newsletter-articles/${editingArticle._id}`, payload);
         show({ type: "success", message: "Newsletter article updated" });
       } else {
-        await axiosInstance.post("/newsletter-articles", payload);
+        const res = await axiosInstance.post("/newsletter-articles", payload);
         show({ type: "success", message: "Newsletter article created" });
+        // When staying in the editor, later saves must update this article, not create another.
+        if (opts.stay && res.data?.data) setEditingArticle(res.data.data);
       }
-      setView("list");
+      if (!opts.stay) setView("list");
       fetchArticles();
     } catch (error) {
       console.error("Failed to save the newsletter article:", error);
@@ -391,7 +393,7 @@ const Newsletter: React.FC = () => {
                     value={form.html}
                     onSave={(html) => {
                       setForm((prev) => ({ ...prev, html }));
-                      return submitArticle(html);
+                      return submitArticle(html, { stay: true });
                     }}
                     onChange={(html) => setForm((prev) => ({ ...prev, html }))}
                   />

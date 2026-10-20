@@ -194,7 +194,15 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange, onSave }) =>
   if (!licenseKey) return <div className="newsletter-studio-host" />;
 
   return (
-    <div className="newsletter-studio-host">
+    <div
+      className="newsletter-studio-host"
+      // Studio renders its own <form>s (e.g. page settings "Update") inside the article form.
+      // Keep their submit from reaching it, which would save the article and leave the editor.
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
       <StudioEditor
         key={appTheme}
         options={{

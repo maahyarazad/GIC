@@ -18,6 +18,7 @@ import fs from "fs";
 import path from "path";
 import mime from "mime-types";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { browserLoginRedirect } from "../middleware/browserLoginRedirect";
 import { EventModel } from "../models/event.model";
 import { PresentationModel, mapPresentation } from "../models/presentation.model";
 import { toObjectId } from "../mappers/objectId.mapper";
@@ -173,7 +174,7 @@ export class PresentationController extends Controller {
    * runs, so no bytes ever leak. Streams the stored file with its recorded content type.
    */
   @Get("{id}/view")
-  @Middlewares(authMiddleware)
+  @Middlewares(browserLoginRedirect)
   public async viewPresentation(
     @Path() id: string,
     @Request() req: ExpressRequest

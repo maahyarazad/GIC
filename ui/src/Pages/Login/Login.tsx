@@ -10,6 +10,7 @@ import Button from "../../Components/Button/Button";
 import { setReady } from "../../features/appSlice";
 import { useSelector, useDispatch } from "react-redux";
 import PasswordInput from "@/Components/PasswordInput";
+import { sanitizeRedirect } from "@/utils/safeRedirect";
 
 
 const Login: React.FC = () => {
@@ -51,7 +52,13 @@ const Login: React.FC = () => {
 
         if (user) {
 
-            navigate(decodeURIComponent(redirect ?? '/dashboard'), { replace: true });
+            const target = sanitizeRedirect(redirect) ?? '/dashboard';
+            if (target.startsWith('/api/')) {
+                // Served by the backend, not a client route: needs a full page load.
+                window.location.replace(target);
+            } else {
+                navigate(target, { replace: true });
+            }
         }
     }, [user]);
 

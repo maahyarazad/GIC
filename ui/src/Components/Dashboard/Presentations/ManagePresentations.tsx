@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import type { RootState } from "../../../store";
 import { getEvents } from "@/api/events";
 import type { MemberEventDto } from "../../../../../src/types/event.types";
@@ -30,6 +31,7 @@ const absoluteViewUrl = (id: string): string => {
 
 const ManagePresentations: React.FC = () => {
   const isAdmin = useSelector((state: RootState) => state.auth.user?.role === "admin");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [events, setEvents] = useState<MemberEventDto[]>([]);
   const [eventId, setEventId] = useState("");
   const [title, setTitle] = useState("");
@@ -44,12 +46,26 @@ const ManagePresentations: React.FC = () => {
   const [notice, setNotice] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Shareable link: ?tab=manage_presentations&event=<id> preselects that event once the list loads.
+  const eventParam = searchParams.get("event");
+
+  const selectEvent = (id: string) => {
+    setEventId(id);
+    const next = new URLSearchParams(searchParams);
+    if (id) next.set("event", id);
+    else next.delete("event");
+    setSearchParams(next, { replace: true });
+  };
+
   // Load events for the picker.
   useEffect(() => {
     let active = true;
     getEvents()
       .then((rows) => {
-        if (active) setEvents(rows);
+        if (!active) return;
+        setEvents(rows);
+        // An unknown id in the link is ignored.
+        if (eventParam && rows.some((ev) => ev.id === eventParam)) setEventId(eventParam);
       })
       .catch((err) => {
         console.error("Failed to load events:", err);
@@ -151,7 +167,7 @@ const ManagePresentations: React.FC = () => {
         <div className="presentation-form__row">
           <label>
             Event
-            <select value={eventId} onChange={(e) => setEventId(e.target.value)} required>
+            <select value={eventId} onChange={(e) => selectEvent(e.target.value)} required>
               <option value="">Select an event…</option>
               {events.map((ev) => (
                 <option key={ev.id} value={ev.id}>

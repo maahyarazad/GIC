@@ -202,6 +202,8 @@ const Dashboard: React.FC = () => {
 
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set("tab", item);
+    // Tab-specific params (e.g. the preselected presentations event) must not leak to other tabs.
+    nextParams.delete("event");
     setSearchParams(nextParams, { replace: true });
     setActiveTab(item);
 

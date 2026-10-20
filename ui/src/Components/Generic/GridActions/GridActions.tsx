@@ -10,6 +10,9 @@ interface GridActionsProps {
     onView?: () => void;
     /** Disable every rendered action (e.g. while a row operation is in flight). */
     disabled?: boolean;
+    /** Disable only the delete button, with `deleteDisabledReason` as its tooltip. */
+    deleteDisabled?: boolean;
+    deleteDisabledReason?: string;
 }
 
 /**
@@ -18,7 +21,14 @@ interface GridActionsProps {
  * (`dashboard-btn--icon` / `dashboard-btn--icon-danger`) so radius, focus ring and
  * pointer cursor come for free. Icons carry an accessible label via `aria-label` + `title`.
  */
-const GridActions: React.FC<GridActionsProps> = ({ onEdit, onDelete, onView, disabled }) => (
+const GridActions: React.FC<GridActionsProps> = ({
+    onEdit,
+    onDelete,
+    onView,
+    disabled,
+    deleteDisabled,
+    deleteDisabledReason,
+}) => (
     <div className="d-flex gap-2 flex-wrap">
         {onView && (
             <button
@@ -48,9 +58,9 @@ const GridActions: React.FC<GridActionsProps> = ({ onEdit, onDelete, onView, dis
             <button
                 type="button"
                 className="dashboard-btn--icon-danger"
-                title="Delete"
+                title={deleteDisabled && deleteDisabledReason ? deleteDisabledReason : "Delete"}
                 aria-label="Delete"
-                disabled={disabled}
+                disabled={disabled || deleteDisabled}
                 onClick={onDelete}
             >
                 <FaTrash />

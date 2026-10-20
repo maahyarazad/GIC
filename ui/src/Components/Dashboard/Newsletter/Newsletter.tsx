@@ -235,6 +235,7 @@ const Newsletter: React.FC = () => {
   };
 
   const handleDelete = async (article: NewsletterArticle) => {
+    if (article.published) return;
     const ok = await confirm({
       title: "Delete Newsletter Article",
       message: `Are you sure you want to delete "${article.title}"? This cannot be undone.`,
@@ -455,6 +456,8 @@ const Newsletter: React.FC = () => {
             onView={() => handlePreview(a)}
             onEdit={() => openEdit(a)}
             onDelete={() => handleDelete(a)}
+            deleteDisabled={!!a.published}
+            deleteDisabledReason="Unpublish this newsletter before deleting it"
           />
           <label
             className="newsletter-switch"

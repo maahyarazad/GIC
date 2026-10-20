@@ -1,46 +1,7 @@
 /* ──────────────────────────────────────
    BLOG DASHBOARD
 ────────────────────────────────────── */
-.blog-section {
-  padding: 1.5rem 0;
-  font-family: var(--sa);
-}
-
-/* Header */
-.blog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--bdr);
-}
-.blog-header h3 {
-  margin: 0;
-  font-family: var(--se);
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: var(--txt);
-  letter-spacing: 0.02em;
-}
-.blog-header-count {
-  font-family: var(--sa);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--mu);
-  margin-left: 10px;
-}
-
-/* Empty state */
-.blog-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 5rem 0;
-  color: var(--mu);
-  font-size: 0.95rem;
-}
+/* Section wrapper, header and empty state use the shared .dash-* styles (Dashboard.css). */
 
 /* ──────────────────────────────────────
    TABLE CELLS (used via GenericDataGrid renderCell)

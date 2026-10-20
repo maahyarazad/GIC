@@ -54,6 +54,13 @@ export class NewsletterArticleController extends Controller {
     }
   }
 
+  @Get("/studio-license-key")
+  @Middlewares(adminAuthMiddleware)
+  public async getStudioLicenseKey(): Promise<ApiResponse<{ licenseKey: string }>> {
+    const licenseKey = process.env.GRAPESJS_LICENSE_KEY?.trim() || "DEMO_LOCALHOST_KEY";
+    return createSuccessResponse({ licenseKey }, "Studio license key retrieved");
+  }
+
   @Get("/")
   @Middlewares(adminAuthMiddleware)
   public async getArticles(): Promise<ApiResponse<NewsletterArticle[]>> {
@@ -186,6 +193,7 @@ export class NewsletterArticleController extends Controller {
             textBody: article.text || "",
           },
         ],
+        sender: "info",
       });
 
       return createSuccessResponse(null, "Test email sent successfully");
@@ -211,7 +219,7 @@ export class NewsletterArticleController extends Controller {
 
       // sendMassDynamicEmailDoc reads subject/html/text and adds per-subscriber
       // unsubscribe tokens; the article is structurally compatible.
-      await sendMassDynamicEmailDoc(article as any, {});
+      await sendMassDynamicEmailDoc(article as any, {}, { sender: "info" });
 
       const sentAt = new Date();
       await NewsletterArticleModel.findByIdAndUpdate(

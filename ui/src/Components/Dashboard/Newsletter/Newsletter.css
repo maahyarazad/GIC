@@ -1,51 +1,12 @@
 /* ──────────────────────────────────────
    NEWSLETTER DASHBOARD
 ────────────────────────────────────── */
-.newsletter-section {
-  padding: 1.5rem 0;
-  font-family: var(--sa);
-}
-
-/* Header */
-.newsletter-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--bdr);
-}
-.newsletter-header h3 {
-  margin: 0;
-  font-family: var(--se);
-  font-size: 1.75rem;
-  font-weight: 500;
-  color: var(--txt);
-  letter-spacing: 0.02em;
-}
+/* Section wrapper, header and empty state use the shared .dash-* styles (Dashboard.css). */
 .newsletter-header-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
-}
-.newsletter-header-count {
-  font-family: var(--sa);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--mu);
-  margin-left: 10px;
-}
-
-/* Empty state */
-.newsletter-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 5rem 0;
-  color: var(--mu);
-  font-size: 0.95rem;
 }
 
 /* ──────────────────────────────────────
@@ -119,6 +80,23 @@
 .newsletter-form {
   max-width: 860px;
 }
+
+/* ──────────────────────────────────────
+   FULL-WIDTH EDITING (newsletter form view)
+   Cancels the .main-content 1rem padding so the Studio editor uses the full
+   width of the screen. .dashboard has `overflow-x: clip`, so no page scroll.
+────────────────────────────────────── */
+.newsletter-section--full .newsletter-form {
+  max-width: none;
+}
+/* The editor content column spans the full available width, flush to the edges. */
+.newsletter-section--full .newsletter-form .col-12 {
+  padding-left: 0;
+  padding-right: 0;
+}
+.newsletter-section--full .newsletter-form .col-12 .form-label {
+  padding-left: 1rem;
+}
 .newsletter-form .form-label {
   font-family: var(--sa);
   font-size: 0.68rem;
@@ -153,19 +131,76 @@
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--bdr);
 }
 
 /* ──────────────────────────────────────
    PREVIEW + TEST MODAL
 ────────────────────────────────────── */
-.newsletter-preview {
-  max-height: 65vh;
-  overflow-y: auto;
+/* Newsletter preview modal — 20% larger than the default dashboard modal
+   (600px -> 720px, 70vh -> 84vh). Scoped so other dashboard modals are unchanged. */
+/* Small "Choose editor" modal. */
+.dashboard-modal.newsletter-editor-modal {
+  width: 400px;
+  max-height: none;
+}
+.newsletter-editor-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.newsletter-editor-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--bdr);
+  border-radius: 6px;
+  cursor: pointer;
   color: var(--txt);
-  font-family: var(--se);
-  line-height: 1.65;
+}
+.newsletter-editor-option:hover {
+  border-color: var(--bdrs);
+}
+.newsletter-editor-option input {
+  margin-top: 0.25rem;
+  accent-color: var(--ora);
+}
+.newsletter-editor-option span {
+  display: flex;
+  flex-direction: column;
+}
+.newsletter-editor-option small,
+.newsletter-editor-note {
+  color: var(--mu);
+  font-size: 0.8rem;
+}
+.newsletter-editor-note {
+  margin: 0;
+}
+.newsletter-content-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem 6px 0;
+}
+.newsletter-content-label .form-label {
+  margin-bottom: 0;
+}
+
+.dashboard-modal.newsletter-preview-modal {
+  width: 720px;
+  max-height: 84vh;
+}
+
+.newsletter-preview {
+  overflow: auto;
+  /* Emails are authored for a white canvas with dark text; render them that way
+     instead of inheriting the dark dashboard modal colors. */
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 6px;
+  padding: 16px;
+  line-height: 1.6;
 }
 .newsletter-preview img {
   max-width: 100%;

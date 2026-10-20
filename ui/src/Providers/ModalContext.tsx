@@ -32,6 +32,7 @@ interface ModalOptions {
     onCancel?: () => void;
     onClose?: () => void;
     confirmClassName?: string;
+    className?: string;
     disabled?: boolean | (() => boolean);
 
 }
@@ -198,6 +199,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     onCancel={closeModal}
                     exiting={exiting}
                     confirmClassName={options?.confirmClassName}
+                    className={options?.className}
                     disabled={modalDisabled}
                 />
             )}

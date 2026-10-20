@@ -200,8 +200,8 @@ const Blog: React.FC = () => {
   /* ── Form view ── */
   if (view === "form") {
     return (
-      <div className="blog-section">
-        <div className="blog-header">
+      <div className="dash-section">
+        <div className="dash-header">
           <h3>{editingBlog ? "Edit Blog" : "New Blog"}</h3>
           <button className="blog-btn-back" onClick={() => setView("list")}>
             ← Back
@@ -316,8 +316,8 @@ const Blog: React.FC = () => {
     const approved = comments.filter((c) => c.approved);
 
     return (
-      <div className="blog-section">
-        <div className="blog-header">
+      <div className="dash-section">
+        <div className="dash-header">
           <h3>{selectedBlog.title}</h3>
           <button className="blog-btn-back" onClick={() => setView("list")}>
             ← Back to Blogs
@@ -409,11 +409,11 @@ const Blog: React.FC = () => {
 
   /* ── List view ── */
   return (
-    <div className="blog-section">
-      <div className="blog-header">
+    <div className="dash-section">
+      <div className="dash-header">
         <h3>
           Blog
-          {total > 0 && <span className="blog-header-count">({total})</span>}
+          {total > 0 && <span className="dash-header-count">({total})</span>}
         </h3>
         <button className="dashboard-btn" onClick={openCreate}>
           <FaPlus /> New Blog
@@ -423,7 +423,7 @@ const Blog: React.FC = () => {
       {loading ? (
         <Loader />
       ) : blogs.length === 0 ? (
-        <div className="blog-empty">
+        <div className="dash-empty">
           <p>No blog posts yet.</p>
           <button className="dashboard-btn" onClick={openCreate}>
             Create the first post

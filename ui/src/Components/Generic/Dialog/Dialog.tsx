@@ -5,6 +5,7 @@ interface ModalDialogProps {
         content: React.ReactNode;
         confirmText?: string;
         confirmClassName?: string;
+        className?: string;
         disabled?: boolean;
         cancelText?: string;
         onConfirm?: () => void;
@@ -17,6 +18,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
     content,
     confirmText,
     confirmClassName,
+    className,
     disabled,
     cancelText,
     onConfirm,
@@ -33,7 +35,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
 
             {/* Modal */}
             <div
-                className={`dashboard-modal ${exiting ? "dashboard-exit" : ""}`}
+                className={`dashboard-modal ${className ?? ""} ${exiting ? "dashboard-exit" : ""}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={title ? "dashboard-modal-title" : undefined}

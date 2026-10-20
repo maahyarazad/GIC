@@ -15,6 +15,7 @@ import Unsubscribe from './Pages/Unsubscribe/Unsubscribe';
 import WhatWeDo from './Pages/WhatWeDo/WhatWeDo';
 import Membership from './Pages/Membership/Membership';
 import NewsletterDetail from './Pages/Newsletter/NewsletterDetail';
+import NewsletterList from './Pages/Newsletter/NewsletterList';
 import BlogPosts from './Pages/Blog/BlogPosts';
 import BlogDetail from './Pages/Blog/BlogDetail';
 import Navbar from './Components/Navbar/Navbar';
@@ -104,6 +105,7 @@ const App = () => {
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/blog" element={<ProtectedRoute><BlogPosts /></ProtectedRoute>} />
                 <Route path="/blog/:slug" element={<ProtectedRoute><BlogDetail /></ProtectedRoute>} />
+                <Route path="/newsletter" element={<NewsletterList />} />
                 <Route path="/newsletter/:id" element={<ProtectedRoute><NewsletterDetail /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
             </Routes>

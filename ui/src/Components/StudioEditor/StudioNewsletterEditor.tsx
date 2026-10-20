@@ -16,6 +16,8 @@ interface Props {
   value: string;
   /** Called with the exported, email-ready HTML on each change ("" when empty). */
   onChange: (html: string) => void;
+  /** Called with the exported HTML when the user explicitly saves (Studio save / Ctrl+S). */
+  onSave?: (html: string) => void | Promise<void>;
 }
 
 /** How long after the last edit to export + propagate the HTML. */
@@ -129,13 +131,15 @@ const exportInlinedHtml = async (editor: Editor): Promise<string> => {
  * type so plain (incl. legacy Quill) HTML loads and round-trips. Client-only —
  * loaded via React.lazy + Suspense so it never runs during SSR.
  */
-const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
+const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange, onSave }) => {
   const editorRef = useRef<Editor | null>(null);
   const valueRef = useRef<string>(value);
   valueRef.current = value;
   const appTheme = useAppTheme();
   const [licenseKey, setLicenseKey] = useState<string | null>(null);
   const onChangeRef = useRef(onChange);
+  const onSaveRef = useRef(onSave);
+  onSaveRef.current = onSave;
   const readyRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -173,6 +177,18 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
         // Export failures are non-fatal; the next edit retries.
       }
     }, EXPORT_DEBOUNCE_MS);
+  }, []);
+
+  // Ctrl/Cmd+S triggers the editor's save, which submits the form.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        void editorRef.current?.store();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   if (!licenseKey) return <div className="newsletter-studio-host" />;
@@ -217,9 +233,10 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
             onSave: async ({ editor }: { editor: Editor; project: ProjectData }) => {
               const html = await exportInlinedHtml(editor);
               onChangeRef.current(html);
+              await onSaveRef.current?.(html);
             },
-            autosaveChanges: 100,
-            autosaveIntervalMs: 10000,
+            // Save only on explicit user action, since saving submits the form.
+            autosaveChanges: 0,
           },
         }}
         onEditor={(editor: Editor) => {

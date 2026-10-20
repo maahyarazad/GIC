@@ -178,13 +178,17 @@ const Newsletter: React.FC = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    return submitArticle(form.html);
+  };
+
+  const submitArticle = async (htmlContent: string) => {
     if (!form.title.trim() || !form.subject.trim()) {
       show({ type: "error", message: "Title and subject are required." });
       return;
     }
-    if (!form.html || form.html === "<p><br></p>") {
+    if (!htmlContent || htmlContent === "<p><br></p>") {
       show({ type: "error", message: "Content cannot be empty." });
       return;
     }
@@ -193,7 +197,7 @@ const Newsletter: React.FC = () => {
     const payload = {
       title: form.title.trim(),
       subject: form.subject.trim(),
-      html: form.html,
+      html: htmlContent,
     };
 
     try {
@@ -371,6 +375,10 @@ const Newsletter: React.FC = () => {
                   <StudioNewsletterEditor
                     key="studio"
                     value={form.html}
+                    onSave={(html) => {
+                      setForm((prev) => ({ ...prev, html }));
+                      return submitArticle(html);
+                    }}
                     onChange={(html) => setForm((prev) => ({ ...prev, html }))}
                   />
                 )}

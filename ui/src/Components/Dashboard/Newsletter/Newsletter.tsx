@@ -432,7 +432,7 @@ const Newsletter: React.FC = () => {
     {
       headerName: "Title",
       field: "title",
-      width: "20%",
+      width: "24%",
       sortable: true,
       filterable: true,
       renderCell: (a) => (
@@ -442,13 +442,13 @@ const Newsletter: React.FC = () => {
     {
       headerName: "Subject",
       field: "subject",
-      width: "18%",
+      width: "20%",
       renderCell: (a) => <span title={a.subject}>{a.subject}</span>,
     },
     {
       headerName: "Sent Date",
       field: "sentAt",
-      width: "14%",
+      width: "15%",
       sortable: true,
       renderCell: (a) =>
         a.sentAt ? (
@@ -468,25 +468,8 @@ const Newsletter: React.FC = () => {
         a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "—",
     },
     {
-      headerName: "Published",
-      field: "published",
-      width: "11%",
-      renderCell: (a) => (
-        <label className="newsletter-switch" title={a.published ? "Published" : "Unpublished"}>
-          <input
-            type="checkbox"
-            role="switch"
-            aria-label={`Published: ${a.title}`}
-            checked={!!a.published}
-            onChange={() => handleTogglePublished(a)}
-          />
-          <span className="newsletter-switch-track" />
-        </label>
-      ),
-    },
-    {
       headerName: "Actions",
-      width: "28%",
+      width: "32%",
       renderCell: (a) => (
         <div className="newsletter-row-actions">
           <GridActions
@@ -494,6 +477,20 @@ const Newsletter: React.FC = () => {
             onEdit={() => openEdit(a)}
             onDelete={() => handleDelete(a)}
           />
+          <label
+            className="newsletter-switch"
+            title={a.published ? "Published: visible to members. Click to unpublish" : "Unpublished: click to publish"}
+          >
+            <input
+              type="checkbox"
+              role="switch"
+              aria-label={`Published: ${a.title}`}
+              checked={!!a.published}
+              onChange={() => handleTogglePublished(a)}
+            />
+            <span className="newsletter-switch-track" />
+            <span className="newsletter-switch-label">Published</span>
+          </label>
           <button className="dashboard-btn--ghost-minimal" onClick={() => handleSendTest(a)}>
             Send Test
           </button>

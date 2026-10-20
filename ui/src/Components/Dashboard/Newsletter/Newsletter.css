@@ -21,7 +21,8 @@
 }
 .newsletter-row-actions {
   display: flex;
-  gap: 6px;
+  gap: 6px 10px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
@@ -277,4 +278,8 @@
 .newsletter-switch input:focus-visible + .newsletter-switch-track {
   outline: 2px solid var(--ora);
   outline-offset: 2px;
+}
+.newsletter-switch-label {
+  font-size: 13px;
+  color: var(--mu);
 }

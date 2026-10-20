@@ -26,14 +26,12 @@ interface ArticleForm {
   title: string;
   subject: string;
   html: string;
-  published: boolean;
 }
 
 const emptyForm: ArticleForm = {
   title: "",
   subject: "",
   html: "",
-  published: false,
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -171,12 +169,7 @@ const Newsletter: React.FC = () => {
 
   const openEdit = (article: NewsletterArticle) => {
     setEditingArticle(article);
-    setForm({
-      title: article.title,
-      subject: article.subject,
-      html: article.html,
-      published: !!article.published,
-    });
+    setForm({ title: article.title, subject: article.subject, html: article.html });
     setView("form");
   };
 
@@ -205,7 +198,6 @@ const Newsletter: React.FC = () => {
       title: form.title.trim(),
       subject: form.subject.trim(),
       html: htmlContent,
-      published: form.published,
     };
 
     try {
@@ -372,19 +364,6 @@ const Newsletter: React.FC = () => {
                 onChange={handleField}
                 required
               />
-            </div>
-
-            <div className="col-12">
-              <label className="newsletter-switch">
-                <input
-                  type="checkbox"
-                  role="switch"
-                  checked={form.published}
-                  onChange={(e) => setForm((prev) => ({ ...prev, published: e.target.checked }))}
-                />
-                <span className="newsletter-switch-track" />
-                <span>Published (visible to members on the website)</span>
-              </label>
             </div>
 
             <div className="col-12">

@@ -113,11 +113,7 @@ const navigateToEvents = () => {showPage('/events');navigate('/events');}
                                 info@german-industry-club.com
                             </a>
                         </div>
-                    </div>
-
-                    {/* Newsletter */}
-                    <div>
-                        <div className="ft-ct">Newsletter</div>
+                        <div className="ft-ct ft-nl-title">Newsletter</div>
                         <div className="ft-nl">
                             <input
                                 ref={inputRef}
@@ -133,6 +129,7 @@ const navigateToEvents = () => {showPage('/events');navigate('/events');}
                         </div>
                         <div ref={validationMessageRef} className="ft-validation" />
                     </div>
+
 
                 </div>
 

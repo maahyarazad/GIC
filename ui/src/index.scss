@@ -2462,6 +2462,73 @@ justify-content: center;
   color: var(--mu);
 }
 
+// Newsletter signup in the Headquarters column (themed with the app tokens).
+.ft-nl {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 12px;
+    background: var(--bgp);
+    color: var(--txt);
+    border: 1px solid var(--bdr);
+    border-radius: 10px;
+    font-family: $font-sans;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder { color: var(--mu); }
+
+    &:hover { border-color: var(--bdrs); }
+
+    &:focus {
+      outline: none;
+      border-color: var(--ora);
+      box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.25);
+    }
+
+    &.invalid { border-color: #d11a2a; }
+  }
+
+  button {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--ora);
+    color: var(--bg);
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+
+    &:hover { background: var(--or2); }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(200, 84, 26, 0.45);
+    }
+
+    &:active { transform: scale(0.97); }
+  }
+}
+
+.ft-nl-title {
+  margin-top: 28px;
+}
+
+.ft-validation {
+  min-height: 18px;
+  margin-top: 6px;
+  font-family: $font-sans;
+  font-size: 12px;
+  color: #d11a2a;
+}
+
 .ft-bot {
   display: flex;
   align-items: center;

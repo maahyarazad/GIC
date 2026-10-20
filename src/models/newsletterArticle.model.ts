@@ -7,6 +7,8 @@ export interface NewsletterArticleDocument {
   text?: string;
   /** Set when the article is sent to subscribers; null until then. */
   sentAt: Date | null;
+  /** Visible to members on the landing page / newsletter pages. Independent of sending. */
+  published: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -18,6 +20,7 @@ const NewsletterArticleSchema = new Schema<NewsletterArticleDocument>(
     html: { type: String, required: true },
     text: { type: String, default: undefined },
     sentAt: { type: Date, default: null },
+    published: { type: Boolean, default: false, index: true },
   },
   {
     timestamps: true,

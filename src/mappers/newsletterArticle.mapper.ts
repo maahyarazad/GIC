@@ -8,6 +8,7 @@ export const mapNewsletterArticle = (doc: any): NewsletterArticle => ({
   html: doc.html,
   text: doc.text,
   sentAt: doc.sentAt ?? null,
+  published: !!doc.published,
   createdAt: doc.createdAt,
   updatedAt: doc.updatedAt,
 });

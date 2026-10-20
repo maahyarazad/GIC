@@ -7,6 +7,8 @@ export interface NewsletterArticle extends BaseModel {
   text?: string;
   /** Timestamp of when the article was sent to subscribers, or null. */
   sentAt: string | null;
+  /** Whether members can see it on the landing page. */
+  published: boolean;
 }
 
 export interface CreateNewsletterArticleRequest {
@@ -14,6 +16,7 @@ export interface CreateNewsletterArticleRequest {
   subject: string;
   html: string;
   text?: string;
+  published?: boolean;
 }
 
 export interface UpdateNewsletterArticleRequest

@@ -68,7 +68,7 @@ export class NewsletterArticleController extends Controller {
     return createSuccessResponse({ licenseKey }, "Studio license key retrieved");
   }
 
-  /** Sent articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML. */
+  /** Published articles for the landing page: titles for everyone, previews only for signed-in users, never the HTML. */
   @Get("public")
   @Middlewares(optionalAuth)
   public async getPublicArticles(
@@ -79,15 +79,15 @@ export class NewsletterArticleController extends Controller {
       const authorized = !!(req as any).user;
       const max = Math.min(Math.max(Math.floor(Number(limit)) || 6, 1), 24);
       //@ts-ignore
-      const docs = await NewsletterArticleModel.find({ sentAt: { $ne: null } })
-        .sort({ sentAt: -1 })
+      const docs = await NewsletterArticleModel.find({ published: true })
+        .sort({ sentAt: -1, createdAt: -1 })
         .limit(max)
-        .select(authorized ? "title sentAt html" : "title sentAt")
+        .select(authorized ? "title sentAt createdAt html" : "title sentAt createdAt")
         .lean();
       const items: NewsletterTeaser[] = docs.map((d: any) => ({
         id: String(d._id),
         title: d.title,
-        sentAt: new Date(d.sentAt).toISOString(),
+        sentAt: new Date(d.sentAt ?? d.createdAt).toISOString(),
         ...(authorized
           ? {
               preview: String(d.html ?? "")
@@ -115,7 +115,7 @@ export class NewsletterArticleController extends Controller {
   ): Promise<ApiResponse<NewsletterPublicDetail>> {
     try {
       //@ts-ignore
-      const d: any = await NewsletterArticleModel.findOne({ _id: id, sentAt: { $ne: null } }).lean();
+      const d: any = await NewsletterArticleModel.findOne({ _id: id, published: true }).lean();
       if (!d) {
         this.setStatus(404);
         return createErrorResponse("Newsletter not found", "NOT_FOUND");
@@ -125,7 +125,7 @@ export class NewsletterArticleController extends Controller {
           id: String(d._id),
           title: d.title,
           subject: d.subject,
-          sentAt: new Date(d.sentAt).toISOString(),
+          sentAt: new Date(d.sentAt ?? d.createdAt).toISOString(),
           html: d.html,
         },
         "Newsletter fetched successfully"

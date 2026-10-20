@@ -26,12 +26,14 @@ interface ArticleForm {
   title: string;
   subject: string;
   html: string;
+  published: boolean;
 }
 
 const emptyForm: ArticleForm = {
   title: "",
   subject: "",
   html: "",
+  published: false,
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -169,7 +171,12 @@ const Newsletter: React.FC = () => {
 
   const openEdit = (article: NewsletterArticle) => {
     setEditingArticle(article);
-    setForm({ title: article.title, subject: article.subject, html: article.html });
+    setForm({
+      title: article.title,
+      subject: article.subject,
+      html: article.html,
+      published: !!article.published,
+    });
     setView("form");
   };
 
@@ -198,6 +205,7 @@ const Newsletter: React.FC = () => {
       title: form.title.trim(),
       subject: form.subject.trim(),
       html: htmlContent,
+      published: form.published,
     };
 
     try {
@@ -218,6 +226,19 @@ const Newsletter: React.FC = () => {
       });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleTogglePublished = async (article: NewsletterArticle) => {
+    const next = !article.published;
+    setArticles((prev) => prev.map((a) => (a._id === article._id ? { ...a, published: next } : a)));
+    try {
+      await axiosInstance.put(`/newsletter-articles/${article._id}`, { published: next });
+      show({ type: "success", message: next ? "Newsletter published" : "Newsletter unpublished" });
+    } catch (error) {
+      console.error("Failed to update published state:", error);
+      setArticles((prev) => prev.map((a) => (a._id === article._id ? { ...a, published: !next } : a)));
+      show({ type: "error", message: "Failed to update published state" });
     }
   };
 
@@ -354,6 +375,19 @@ const Newsletter: React.FC = () => {
             </div>
 
             <div className="col-12">
+              <label className="newsletter-switch">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  checked={form.published}
+                  onChange={(e) => setForm((prev) => ({ ...prev, published: e.target.checked }))}
+                />
+                <span className="newsletter-switch-track" />
+                <span>Published (visible to members on the website)</span>
+              </label>
+            </div>
+
+            <div className="col-12">
               <div className="newsletter-content-label">
                 <label className="form-label">Content *</label>
                 <button
@@ -398,7 +432,7 @@ const Newsletter: React.FC = () => {
     {
       headerName: "Title",
       field: "title",
-      width: "24%",
+      width: "20%",
       sortable: true,
       filterable: true,
       renderCell: (a) => (
@@ -408,13 +442,13 @@ const Newsletter: React.FC = () => {
     {
       headerName: "Subject",
       field: "subject",
-      width: "22%",
+      width: "18%",
       renderCell: (a) => <span title={a.subject}>{a.subject}</span>,
     },
     {
       headerName: "Sent Date",
       field: "sentAt",
-      width: "16%",
+      width: "14%",
       sortable: true,
       renderCell: (a) =>
         a.sentAt ? (
@@ -428,10 +462,27 @@ const Newsletter: React.FC = () => {
     {
       headerName: "Created",
       field: "createdAt",
-      width: "10%",
+      width: "9%",
       sortable: true,
       renderCell: (a) =>
         a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "—",
+    },
+    {
+      headerName: "Published",
+      field: "published",
+      width: "11%",
+      renderCell: (a) => (
+        <label className="newsletter-switch" title={a.published ? "Published" : "Unpublished"}>
+          <input
+            type="checkbox"
+            role="switch"
+            aria-label={`Published: ${a.title}`}
+            checked={!!a.published}
+            onChange={() => handleTogglePublished(a)}
+          />
+          <span className="newsletter-switch-track" />
+        </label>
+      ),
     },
     {
       headerName: "Actions",

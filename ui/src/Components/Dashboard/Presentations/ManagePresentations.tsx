@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store";
 import { getEvents } from "@/api/events";
 import type { MemberEventDto } from "../../../../../src/types/event.types";
 import {
@@ -27,6 +29,7 @@ const absoluteViewUrl = (id: string): string => {
 };
 
 const ManagePresentations: React.FC = () => {
+  const isAdmin = useSelector((state: RootState) => state.auth.user?.role === "admin");
   const [events, setEvents] = useState<MemberEventDto[]>([]);
   const [eventId, setEventId] = useState("");
   const [title, setTitle] = useState("");
@@ -206,9 +209,11 @@ const ManagePresentations: React.FC = () => {
                     <button type="button" onClick={() => onCopyLink(p.id)}>
                       {copiedId === p.id ? "Copied!" : "Copy link"}
                     </button>
-                    <button type="button" className="danger" onClick={() => onDelete(p.id)}>
-                      Delete
-                    </button>
+                    {isAdmin && (
+                      <button type="button" className="danger" onClick={() => onDelete(p.id)}>
+                        Delete
+                      </button>
+                    )}
                   </span>
                 </li>
               ))}

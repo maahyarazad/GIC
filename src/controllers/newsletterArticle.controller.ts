@@ -54,6 +54,13 @@ export class NewsletterArticleController extends Controller {
     }
   }
 
+  @Get("/studio-license-key")
+  @Middlewares(adminAuthMiddleware)
+  public async getStudioLicenseKey(): Promise<ApiResponse<{ licenseKey: string }>> {
+    const licenseKey = process.env.GRAPESJS_LICENSE_KEY?.trim() || "DEMO_LOCALHOST_KEY";
+    return createSuccessResponse({ licenseKey }, "Studio license key retrieved");
+  }
+
   @Get("/")
   @Middlewares(adminAuthMiddleware)
   public async getArticles(): Promise<ApiResponse<NewsletterArticle[]>> {

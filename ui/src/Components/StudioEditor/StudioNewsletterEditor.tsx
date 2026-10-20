@@ -9,6 +9,7 @@ import type {
 import type { Editor } from "grapesjs";
 import "@grapesjs/studio-sdk/style";
 import "./StudioNewsletterEditor.css";
+import axiosInstance from "../../api/axiosInstance";
 
 interface Props {
   /** Current article HTML to load into the editor. */
@@ -16,14 +17,6 @@ interface Props {
   /** Called with the exported, email-ready HTML on each change ("" when empty). */
   onChange: (html: string) => void;
 }
-
-/**
- * License key is supplied via Vite env and falls back to the localhost demo key.
- * A real key is required for production (non-localhost) domains.
- */
-const LICENSE_KEY: string =
-  (import.meta.env.VITE_GRAPESJS_LICENSE_KEY as string | undefined) ??
-  "DEMO_LOCALHOST_KEY";
 
 /** How long after the last edit to export + propagate the HTML. */
 const EXPORT_DEBOUNCE_MS = 400;
@@ -141,9 +134,26 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
   const valueRef = useRef<string>(value);
   valueRef.current = value;
   const appTheme = useAppTheme();
+  const [licenseKey, setLicenseKey] = useState<string | null>(null);
   const onChangeRef = useRef(onChange);
   const readyRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // The license key lives on the server; fetch it before mounting the editor.
+  useEffect(() => {
+    let cancelled = false;
+    axiosInstance
+      .get("/newsletter-articles/studio-license-key")
+      .then((res) => {
+        if (!cancelled) setLicenseKey(res.data?.data?.licenseKey ?? "DEMO_LOCALHOST_KEY");
+      })
+      .catch(() => {
+        if (!cancelled) setLicenseKey("DEMO_LOCALHOST_KEY");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // The editor is remounted when the app theme changes; wait for it to be ready again.
   useEffect(() => {
@@ -165,12 +175,14 @@ const StudioNewsletterEditor: React.FC<Props> = ({ value, onChange }) => {
     }, EXPORT_DEBOUNCE_MS);
   }, []);
 
+  if (!licenseKey) return <div className="newsletter-studio-host" />;
+
   return (
     <div className="newsletter-studio-host">
       <StudioEditor
         key={appTheme}
         options={{
-          licenseKey: LICENSE_KEY,
+          licenseKey,
           theme: appTheme,
           customTheme: buildCustomTheme(),
           project: { type: "web" },

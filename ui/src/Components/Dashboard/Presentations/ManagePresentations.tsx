@@ -46,14 +46,16 @@ const ManagePresentations: React.FC = () => {
   const [notice, setNotice] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Shareable link: ?tab=manage_presentations&event=<id> preselects that event once the list loads.
-  const eventParam = searchParams.get("event");
+  // Shareable link: ?tab=manage_presentations&eventId=<id> preselects that event once the list loads.
+  // The short "event" key is still read so links shared earlier keep working.
+  const eventParam = searchParams.get("eventId") ?? searchParams.get("event");
 
   const selectEvent = (id: string) => {
     setEventId(id);
     const next = new URLSearchParams(searchParams);
-    if (id) next.set("event", id);
-    else next.delete("event");
+    next.delete("event");
+    if (id) next.set("eventId", id);
+    else next.delete("eventId");
     setSearchParams(next, { replace: true });
   };
 

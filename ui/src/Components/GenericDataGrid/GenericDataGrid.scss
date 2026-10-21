@@ -1,8 +1,6 @@
 .table-wrapper {
     max-width: 100%;
     background: var(--bg);
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     color: var(--txt);
     border: 1px solid var(--bdr);
 
@@ -32,6 +30,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             user-select: none;
+            // Header (with its filters) stays visible while rows scroll.
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            // border-collapse drops borders on sticky cells; draw the line instead.
+            box-shadow: inset 0 -1px 0 var(--bdr);
         }
 
         td {
@@ -214,5 +218,34 @@ input[type="text"]:focus-visible {
     100% {
         opacity: 0;
         transform: translate(-50%, -160%) scale(0.95);
+    }
+}
+
+// Rows scroll inside .table-scroll so the pagination bar never scrolls away.
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+// ─── Fixed-height grid sections (spec 017) ──────────────────────────
+// Sections opt in with .dash-section--grid (see Dashboard.scss); the grid
+// then fills the height left below everything above it.
+@media (min-width: 601px) {
+    .dash-section--grid > .table-wrapper {
+        flex: 1 1 auto;
+        // Header with filters + ~4 rows + pagination; below this the dashboard area scrolls.
+        min-height: 20rem;
+        display: flex;
+        flex-direction: column;
+
+        > .table-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+        }
+
+        > .grid-pagination {
+            flex: none;
+        }
     }
 }

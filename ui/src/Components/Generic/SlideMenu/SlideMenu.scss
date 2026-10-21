@@ -91,6 +91,14 @@
   color: var(--txt);
 }
 
+// A fixed-height data grid section (spec 017) fills the panel below its header.
+@media (min-width: 601px) {
+  .slide-menu__content:has(> .dash-section--grid) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 768px) {
   .slide-menu {
     width: 100% !important;

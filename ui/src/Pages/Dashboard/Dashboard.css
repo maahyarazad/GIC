@@ -172,6 +172,23 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+@media (min-width: 601px) {
+  .main-content:has(> .dash-section--grid) {
+    height: calc(100dvh - 70px);
+    display: flex;
+    flex-direction: column;
+  }
+  .dash-section--grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .dash-section--grid > .application-loader, .dash-section--grid > .dash-empty {
+    flex: 1 1 auto;
+  }
+}
+
 .dashboard,
 .dashboard-modal,
 .confirm-dialog,

@@ -91,6 +91,13 @@
   color: var(--txt);
 }
 
+@media (min-width: 601px) {
+  .slide-menu__content:has(> .dash-section--grid) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 768px) {
   .slide-menu {
     width: 100% !important;

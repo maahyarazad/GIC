@@ -165,6 +165,8 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
                 </div>
             )}
             <div className="table-wrapper">
+                {/* Rows scroll here; the pagination bar below stays put. */}
+                <div className="table-scroll">
                 <table className="my-table" >
                     <thead>
                         <tr>
@@ -258,6 +260,7 @@ export function GenericDataGrid<T extends { _id?: string | number | ObjectId }>(
 
 
                 </table>
+                </div>
 
                 {/* Pagination Controls */}
                 <div className="grid-pagination">

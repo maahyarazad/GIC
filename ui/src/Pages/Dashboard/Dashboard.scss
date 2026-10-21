@@ -201,6 +201,32 @@
               color 0.3s ease;
 }
 
+// ─── Fixed-height data grid sections (spec 017) ─────────────────────
+// Sections opt in with .dash-section--grid. The area below the 70px navbar
+// becomes a fixed-height column, the header/toolbars keep their natural
+// height and the grid takes the rest (rules in GenericDataGrid.scss).
+// Phones (<= 600px) keep the natural card layout.
+@media (min-width: 601px) {
+  .main-content:has(> .dash-section--grid) {
+    height: calc(100dvh - 70px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dash-section--grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    // Loader / empty state stand in for the grid without changing the height.
+    > .application-loader,
+    > .dash-empty {
+      flex: 1 1 auto;
+    }
+  }
+}
+
 // ─────────────────────────────────────────────
 // Keyboard focus (:focus / :focus-visible) in the admin dashboard
 // ─────────────────────────────────────────────

@@ -1,0 +1,73 @@
+.email-log-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.email-log-toolbar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--mu);
+}
+
+.email-log-toolbar .co-field {
+  min-width: 10rem;
+}
+
+.email-log-status {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid var(--bdrs);
+  color: var(--txt);
+}
+
+.email-log-status--sent {
+  background: rgba(var(--secondary-contracts-color-rgb), 0.18);
+  border-color: rgba(var(--secondary-contracts-color-rgb), 0.5);
+}
+
+.email-log-status--failed {
+  background: rgba(var(--third-contracts-color-rgb), 0.18);
+  border-color: rgba(var(--third-contracts-color-rgb), 0.5);
+}
+
+.email-log-status--pending {
+  background: var(--bdr);
+}
+
+.email-log-details dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1rem;
+  margin: 0;
+}
+
+.email-log-details dt {
+  color: var(--mu);
+  font-weight: 600;
+}
+
+.email-log-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.email-log-details h4 {
+  margin: 1rem 0 0.4rem;
+}
+
+.email-log-error {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(var(--third-contracts-color-rgb), 0.5);
+  border-radius: 6px;
+  overflow-wrap: anywhere;
+}

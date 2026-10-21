@@ -36,6 +36,8 @@ import { EventAttendanceAdminController } from './../controllers/eventAdmin.cont
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { EventController } from './../controllers/event.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EmailLogController } from './../controllers/emailLog.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { EmailTemplateController } from './../controllers/email.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ContinentController } from './../controllers/continent.controller';
@@ -607,6 +609,11 @@ const models: TsoaRoute.Models = {
             "capacity": {"dataType":"double"},
         },
         "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "EmailLogSortKey": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["createdAt"]},{"dataType":"enum","enums":["subject"]},{"dataType":"enum","enums":["kind"]},{"dataType":"enum","enums":["status"]},{"dataType":"enum","enums":["sender"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "EmailTemplate": {
@@ -3102,6 +3109,43 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 next,
                 validatedArgs,
                 successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsEmailLogController_getEmailLogs: Record<string, TsoaRoute.ParameterSchema> = {
+                filtersJson: {"in":"query","name":"filters","dataType":"string"},
+                status: {"in":"query","name":"status","dataType":"string"},
+                from: {"in":"query","name":"from","dataType":"string"},
+                to: {"in":"query","name":"to","dataType":"string"},
+                limit: {"default":20,"in":"query","name":"limit","dataType":"double"},
+                skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
+                sortBy: {"default":"createdAt","in":"query","name":"sortBy","ref":"EmailLogSortKey"},
+                sortOrder: {"default":"desc","in":"query","name":"sortOrder","dataType":"union","subSchemas":[{"dataType":"enum","enums":["asc"]},{"dataType":"enum","enums":["desc"]}]},
+        };
+        app.get('/api/v1/email-logs',
+            ...(fetchMiddlewares<RequestHandler>(EmailLogController)),
+            ...(fetchMiddlewares<RequestHandler>(EmailLogController.prototype.getEmailLogs)),
+
+            async function EmailLogController_getEmailLogs(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsEmailLogController_getEmailLogs, request, response });
+
+                const controller = new EmailLogController();
+
+              await templateService.apiHandler({
+                methodName: 'getEmailLogs',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

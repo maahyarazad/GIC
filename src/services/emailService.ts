@@ -1,10 +1,9 @@
-import nodemailer, { SendMailOptions } from "nodemailer";
-import dotenv from "dotenv";
-
 import pLimit from "p-limit";
 import { ObjectId } from "mongodb";
+import { randomUUID } from "crypto";
 
-dotenv.config();
+import { sendLoggedEmail } from "./emailLogService";
+import type { SendRawEmailParams, EmailAttachment, EmailSender } from "./emailLogService";
 import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 import { getCollection } from "../db";
 import { generateUnsubscribeToken } from "../utils/helpers";
@@ -29,78 +28,14 @@ export interface EmailOtpRequest {
   message?: string;
 }
 
-export interface EmailAttachment {
-  filename?: string;
-  path?: string;
-  content?: any;
-  contentType?: string;
-}
-
-/** "default" sends from SMTP_SENDER (do-not-reply@), "info" from SMTP_INFO_SENDER (info@). */
-export type EmailSender = "default" | "info";
-
-export interface SendRawEmailParams {
-  to: string | string[];
-  subject: string;
-  html: string;
-  text?: string;
-  attachments?: EmailAttachment[];
-  bcc?: string | string[];
-  cc?: string | string[];
-  replyTo?: string;
-  sender?: EmailSender;
-}
-
-const SMTP_ACCOUNTS: Record<EmailSender, { user?: string; pass?: string; from?: string }> = {
-  default: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS, from: process.env.SMTP_SENDER },
-  info: { user: process.env.SMTP_INFO_USER, pass: process.env.SMTP_INFO_PASS, from: process.env.SMTP_INFO_SENDER },
-};
+export type { EmailAttachment, EmailSender, SendRawEmailParams };
 
 function slugToTitle(slug: string): string {
   return slug.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
-async function sendRawEmailWithAttachments({
-  to,
-  subject,
-  html,
-  text = "",
-  attachments = [],
-  bcc = [],
-  cc,
-  replyTo,
-  sender = "default",
-}: SendRawEmailParams) {
-  const account = SMTP_ACCOUNTS[sender];
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST!,
-    port: Number(process.env.SMTP_PORT!),
-    secure: false,
-    auth: {
-      user: account.user!,
-      pass: account.pass!,
-    },
-  });
-
-  const mailOptions: SendMailOptions = {
-    from: account.from!,
-    to,
-    cc,
-    replyTo,
-    subject,
-    html,
-    text,
-    attachments,
-    bcc,
-  };
-
-  try {
-    const response = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", response.messageId);
-    return response;
-  } catch (error) {
-    console.error("SMTP send error:", error);
-    throw error;
-  }
+/** All sending (and email logging) goes through emailLogService. */
+async function sendRawEmailWithAttachments(params: SendRawEmailParams) {
+  return sendLoggedEmail(params);
 }
 
 /**
@@ -154,6 +89,7 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
       subject,
       html: htmlBody,
       text: textBody,
+      kind: "otp_verification",
     });
   } catch (error) {
     console.error(error);
@@ -222,6 +158,8 @@ export async function sendMassDynamicEmailDoc(
     const result = await sendMassEmail({
       recipients: emails,
       sender: options.sender,
+      // Newsletter articles are passed in without a template name.
+      kind: (doc as any).name ?? "newsletter",
     });
 
     return result;
@@ -270,6 +208,7 @@ if (!template) throw new Error("Email template not found");
       to : param.email,
       subject: replacePlaceholders(template.subject, variables),
       html: replacePlaceholders(template.html, variables),
+      kind: template.name ?? param.template_name ?? "raw",
     };
 
     const result = await sendRawEmailWithAttachments(payload);
@@ -334,6 +273,7 @@ export async function sendDynamicEmailDoc(
       replyTo: options.replyTo,
       sender: options.sender,
       attachments: options.attachments,
+      kind: doc,
     });
 
     return result;
@@ -358,6 +298,8 @@ export interface SendMassEmailParams {
   concurrency?: number;
   /** Defaults to "default" (do-not-reply@). */
   sender?: EmailSender;
+  /** Recorded in the email log for every recipient. Defaults to "bulk". */
+  kind?: string;
 }
 
 export async function sendMassEmail({
@@ -365,8 +307,11 @@ export async function sendMassEmail({
   batchSize = 50,
   concurrency = 5,
   sender,
+  kind = "bulk",
 }: SendMassEmailParams) {
   const limit = pLimit(concurrency);
+  // One run id per call ties every recipient's email log record together.
+  const runId = randomUUID();
   let totalSuccess = 0;
 
   for (let i = 0; i < recipients.length; i += batchSize) {
@@ -386,6 +331,8 @@ export async function sendMassEmail({
               html: recipient.htmlBody,
               text: recipient.textBody || "",
               sender,
+              kind,
+              runId,
             });
 
             console.log(`✅ Email sent to ${recipient.email}`);

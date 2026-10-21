@@ -7,6 +7,7 @@ import { ContactUsRequests } from "@/Components/Dashboard/ContactUsRequests/Cont
 import JsonViewer from "@/Components/Dashboard/JsonViewer/JsonViewer";
 import FileManagement from "@/Components/Dashboard/FileManagement/FileManagement";
 import EmailTemplatesDataGrid from "@/Components/Dashboard/EmailTemplate/EmailTemplate";
+import EmailLogs from "@/Components/Dashboard/EmailLogs/EmailLogs";
 import UserProfileForm from "@/Components/Dashboard/UserProfileForm/UserProfileForm";
 import EconomicInsights from "@/Components/EconomicInsights/EconomicInsights";
 import CompareCountries from "@/Components/Dashboard/CompareCountries/CompareCountries";
@@ -37,6 +38,7 @@ type MenuItem =
   | "sitedata"
   | "file_management"
   | "email_management"
+  | "email_logs"
   | "sub_region_management"
   | "profile"
   | "country_intelligence"
@@ -57,6 +59,7 @@ const accessControl: Record<MenuItem, string[]> = {
   sitedata: ["admin", "procurement"],
   file_management: ["admin", "procurement"],
   email_management: ["admin", "procurement"],
+  email_logs: ["admin"],
   sub_region_management: ["admin", "procurement"],
   profile: ["user"],
   country_intelligence: ["user", "admin", "procurement"],
@@ -78,6 +81,7 @@ const menuTitles: Record<MenuItem, string> = {
   sitedata: "Website Data",
   file_management: "File Management",
   email_management: "Email Templates",
+  email_logs: "Email Logs",
   sub_region_management: "Manage Sub Region",
   profile: "Profile",
   country_intelligence: "Country Intelligence",
@@ -113,6 +117,7 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
     "sitedata",
     "file_management",
     "email_management",
+    "email_logs",
     "sub_region_management",
     "profile",
     "economic_insights",
@@ -141,6 +146,7 @@ const Dashboard: React.FC = () => {
     sitedata: <JsonViewer />,
     file_management: <FileManagement />,
     email_management: <EmailTemplatesDataGrid />,
+    email_logs: <EmailLogs />,
     sub_region_management: <Continent />,
     country_intelligence: <EconomicInsights />,
     compare_countries: <CompareCountries />,

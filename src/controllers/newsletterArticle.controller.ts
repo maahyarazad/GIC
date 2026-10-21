@@ -269,6 +269,7 @@ export class NewsletterArticleController extends Controller {
           },
         ],
         sender: "info",
+        kind: "newsletter_test",
       });
 
       return createSuccessResponse(null, "Test email sent successfully");

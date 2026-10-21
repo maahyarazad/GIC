@@ -205,7 +205,7 @@ export const NewsletterSubscribers = () => {
 
 
     return (
-        <div className="dash-section">
+        <div className="dash-section dash-section--grid">
             <div className="dash-header">
                 <h3>Newsletter Subscribers</h3>
                 <button type="button" className="dashboard-btn" onClick={handleAddSubscribers}>

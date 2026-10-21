@@ -409,7 +409,7 @@ const Blog: React.FC = () => {
 
   /* ── List view ── */
   return (
-    <div className="dash-section">
+    <div className="dash-section dash-section--grid">
       <div className="dash-header">
         <h3>
           Blog

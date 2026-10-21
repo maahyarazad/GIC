@@ -174,7 +174,7 @@ const FileManagement = () => {
     ];
 
     return (
-        <div className="dash-section">
+        <div className="dash-section dash-section--grid">
             <div className="dash-header">
                 <h3>File Manager</h3>
                 <label className="dashboard-btn" style={{ cursor: "pointer" }}>

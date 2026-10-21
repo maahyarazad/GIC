@@ -275,7 +275,7 @@ const CategoriesDataGrid = () => {
 
 
     return (
-        <div className="dash-section">
+        <div className="dash-section dash-section--grid">
             <div className="dash-header">
                 <h3>Manage Country Intelligence</h3>
                 <div className="d-flex gap-2">

@@ -265,7 +265,7 @@ debugger;
 
 
     return (
-        <div className="dash-section">
+        <div className="dash-section dash-section--grid">
             <div className="dash-header">
                 <h3>Email Templates</h3>
                 <button className="dashboard-btn" onClick={onCreate}>

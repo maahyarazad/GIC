@@ -236,7 +236,7 @@ export const EmailLogs = () => {
     }, [debouncedFetch]);
 
     return (
-        <div className="dash-section">
+        <div className="dash-section dash-section--grid">
             <div className="dash-header">
                 <h3>Email Logs</h3>
             </div>

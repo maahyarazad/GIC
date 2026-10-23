@@ -1,3 +1,5 @@
+@use "../../styles/navbar" as navbar;
+
 .dashboard {
   display: flex;
   min-height: 92dvh;
@@ -74,29 +76,24 @@
   z-index: 999;
 }
 
-/* Desktop: sidebar always visible, below the fixed 70px header, scrolling on its own */
-@media (min-width: 768px) {
+/* Desktop: sidebar always visible, below the fixed header, scrolling on its own */
+@media (min-width: navbar.$navbar-breakpoint + 1) {
   .sidebar {
     position: sticky;
-    top: 70px;
-    margin-top: 70px;
+    top: navbar.$nav-height;
+    margin-top: navbar.$nav-height;
     align-self: flex-start;
-    height: calc(100dvh - 70px);
+    height: calc(100dvh - #{navbar.$nav-height});
     overflow-y: auto;
     transform: translateX(0);
   }
-
-  .close-btn,
-  .open-sidebar-btn {
-    display: none;
-  }
 }
 
-/* Mobile/tablet: sidebar hidden by default, slides in */
-@media (max-width: 767px) {
+/* Mobile/tablet: off-canvas below the navbar, toggled by the navbar hamburger */
+@media (max-width: navbar.$navbar-breakpoint) {
   .sidebar {
     position: fixed;
-    top: 0;
+    top: navbar.$nav-height; // below the navbar so the hamburger stays clickable
     left: 0;
     bottom: 0;
     width: 250px;
@@ -107,35 +104,6 @@
   .sidebar.open {
     transform: translateX(0);
     overflow-y: auto;
-  }
-
-  .close-btn {
-    background: transparent;
-    border: none;
-    color: var(--txt);
-    font-size: 2rem;
-    cursor: pointer;
-    margin-bottom: 1rem;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--ora);
-    }
-  }
-
-  .open-sidebar-btn {
-    font-size: 2rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--mu);
-    margin: 1rem;
-    z-index: 1100;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--txt);
-    }
   }
 }
 
@@ -189,7 +157,7 @@
 /* Main content takes rest space */
 .main-content {
   flex-grow: 1;
-  margin-top: 70px;
+  margin-top: navbar.$nav-height;
   padding: 1rem;
   height: 100%;
   overflow-y: auto;

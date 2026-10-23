@@ -61,8 +61,8 @@
   z-index: 999;
 }
 
-/* Desktop: sidebar always visible, below the fixed 70px header, scrolling on its own */
-@media (min-width: 768px) {
+/* Desktop: sidebar always visible, below the fixed header, scrolling on its own */
+@media (min-width: 1025px) {
   .sidebar {
     position: sticky;
     top: 70px;
@@ -72,16 +72,12 @@
     overflow-y: auto;
     transform: translateX(0);
   }
-  .close-btn,
-  .open-sidebar-btn {
-    display: none;
-  }
 }
-/* Mobile/tablet: sidebar hidden by default, slides in */
-@media (max-width: 767px) {
+/* Mobile/tablet: off-canvas below the navbar, toggled by the navbar hamburger */
+@media (max-width: 1024px) {
   .sidebar {
     position: fixed;
-    top: 0;
+    top: 70px;
     left: 0;
     bottom: 0;
     width: 250px;
@@ -91,31 +87,6 @@
   .sidebar.open {
     transform: translateX(0);
     overflow-y: auto;
-  }
-  .close-btn {
-    background: transparent;
-    border: none;
-    color: var(--txt);
-    font-size: 2rem;
-    cursor: pointer;
-    margin-bottom: 1rem;
-    transition: color 0.2s ease;
-  }
-  .close-btn:hover {
-    color: var(--ora);
-  }
-  .open-sidebar-btn {
-    font-size: 2rem;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--mu);
-    margin: 1rem;
-    z-index: 1100;
-    transition: color 0.2s ease;
-  }
-  .open-sidebar-btn:hover {
-    color: var(--txt);
   }
 }
 .dash-section {

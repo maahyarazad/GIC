@@ -464,11 +464,22 @@ nav {
   background-color: #090201;
 }
 
+.nav-middle {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
   gap: 24px;
   list-style: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   margin-bottom: 0;
 }
 .nav-links a {
@@ -504,6 +515,15 @@ nav {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+nav.nav--compact .nav-links {
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none;
+}
+nav.nav--compact .hamburger {
+  display: flex;
 }
 
 .theme-wrap {
@@ -553,6 +573,16 @@ nav {
   gap: 5px;
   cursor: pointer;
   padding: 6px;
+  background: none;
+  border: 0;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  color: inherit;
+}
+.hamburger:focus-visible {
+  outline: 2px solid var(--ora);
+  outline-offset: 2px;
 }
 .hamburger span {
   display: block;

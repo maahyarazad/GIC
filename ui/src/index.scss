@@ -1,3 +1,5 @@
+@use "./styles/navbar" as navbar;
+
 /* ------------------------------------------
    FONT
 ------------------------------------------- */
@@ -453,7 +455,7 @@ $mu-light:   rgba(26, 20, 16, 0.50);
 $bo-light:   rgba(26, 20, 16, 0.78);
 
 // Breakpoints
-$bp-tablet: 1024px;
+$bp-tablet: navbar.$navbar-breakpoint;
 $bp-mobile: 640px;
 
 // ─────────────────────────────────────────────
@@ -642,7 +644,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 0 48px;
-  height: 70px;
+  height: navbar.$nav-height;
   background: rgba(10, 10, 10, 0.96);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--bdr);
@@ -680,11 +682,24 @@ nav {
   }
 }
 
+// Column holding the desktop links. It must be able to shrink (min-width: 0) so useNavbarFit
+// can compare the links' width against the room actually available.
+.nav-middle {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
   gap: 24px;
   list-style: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 
   margin-bottom: 0;
   a {
@@ -722,6 +737,18 @@ nav {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+// Wide screens where the links don't fit (set by useNavbarFit): fall back to the hamburger.
+// The links stay laid out, only hidden, so they can still be measured.
+nav.nav--compact {
+  .nav-links {
+    visibility: hidden;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .hamburger { display: flex; }
 }
 
 .theme-wrap {
@@ -777,6 +804,16 @@ nav {
   gap: 5px;
   cursor: pointer;
   padding: 6px;
+  // Rendered as a <button>: drop the native button chrome.
+  background: none;
+  border: 0;
+  appearance: none;
+  color: inherit;
+
+  &:focus-visible {
+    outline: 2px solid var(--ora);
+    outline-offset: 2px;
+  }
 
   span {
     display: block;
@@ -797,7 +834,7 @@ nav {
 .mob-nav {
   display: none;
   position: fixed;
-  top: 70px;
+  top: navbar.$nav-height;
   left: 0;
   right: 0;
   background: rgba(10, 10, 10, 0.98);
@@ -2564,7 +2601,7 @@ justify-content: center;
   }
 }
 
-.ptnav { padding-top: 70px; }
+.ptnav { padding-top: navbar.$nav-height; }
 
 // ─────────────────────────────────────────────
 // REGIONAL TEXT PANELS

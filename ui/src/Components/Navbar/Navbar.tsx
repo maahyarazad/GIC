@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import './Navbar.css';
@@ -9,7 +9,10 @@ import mainLogoLight from  '../../../public/gic-logo-transparent.png';
 import { usePage } from '@/Providers/PageContext';
 import useIsMobile from '@/Hooks/useIsMobile'
 import { useSelector, useDispatch } from 'react-redux';
-import { setReady } from '@/features/appSlice';
+import { setDashboardSidebarOpen, toggleDashboardSidebar } from '@/features/appSlice';
+import { isNavbarCollapsedWidth } from './navbarConfig';
+import { useNavbarFit } from './useNavbarFit';
+import { useDismissable } from './useDismissable';
 import { TfiEmail } from "react-icons/tfi";
 
 // Users allowed to see the webmail icon.
@@ -28,18 +31,6 @@ const Navbar = (
 ) => {
 
     const siteData = useSelector((state: RootState) => state.app.siteData);
-    useEffect(() => {
-
-    }, [siteData])
-
-
-    const _navLinks = useSelector(
-        (state: RootState) => state.app.siteData?.navLinks
-    );
-
-    useEffect(() => {
-
-    }, [_navLinks]);
 
 
     const navbarLinks = siteData?.navLinks;
@@ -53,11 +44,10 @@ const Navbar = (
 
     const location = useLocation();
     const navigate = useNavigate();
+    // Landing mobile menu (.mob-nav).
     const [menuOpen, setMenuOpen] = useState(false);
-    const [mobileView, setMobileView] = useState(false);
     const [language, setLanguage] = useState(currentlanguage);
     const [scrolled, setScrolled] = useState(false);
-    const [shouldScroll, setShouldScroll] = useState(false);
     const [pendingScrollKey, setPendingScrollKey] = useState(null);
 
 
@@ -84,38 +74,13 @@ const Navbar = (
         }
     }
     const isDashboard = location.pathname.startsWith('/dashboard');
-    const [showNavbar, setShowNavbar] = useState(false);
 
-
-    // Toggle the mobile menu
-    const toggleMenu = () => setMenuOpen(!menuOpen);
-    const GetStarted = (e) => {
-        e.preventDefault();
-
-        if (location.pathname !== '/') {
-            navigate('/', { replace: false });
-            setShouldScroll(true); // set a flag to scroll after navigation
-        } else {
-            scrollToForm();
-        }
-    };
-
-
-
-    const scrollToForm = () => {
-        const element = document.querySelector("section.request-form-section");
-        if (element) {
-            const yOffset = -100;
-            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: "smooth" });
-
-            const menu = document.querySelector(".mobile-menu.open");
-            if (menu) {
-                // menu.classList.remove("open");
-                setMenuOpen(false);
-            }
-        }
-    };
+    // One hamburger: on dashboard routes it toggles the dashboard sidebar (shared via Redux),
+    // everywhere else the mobile menu below.
+    const dispatch = useDispatch();
+    const sidebarOpen = useSelector((state: RootState) => state.app.dashboardSidebarOpen);
+    const toggleSidebar = useCallback(() => dispatch(toggleDashboardSidebar()), [dispatch]);
+    const closeSidebar = useCallback(() => dispatch(setDashboardSidebarOpen(false)), [dispatch]);
 
 
     const switchLanguage = () => {
@@ -174,32 +139,6 @@ const Navbar = (
 
 
     useEffect(() => {
-        const handleScroll = () => {
-            if (window.innerWidth > 1024) { // desktop only
-                if (window.scrollY > 100) {
-                    setShowNavbar(true);
-                } else {
-                    setShowNavbar(false);
-                }
-            } else {
-                // always show on mobile
-                setShowNavbar(true);
-                setMobileView(true);
-            }
-        };
-
-        handleScroll(); // run on mount
-        window.addEventListener("scroll", handleScroll);
-        window.addEventListener("resize", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-            window.removeEventListener("resize", handleScroll);
-        };
-    }, []);
-
-
-    useEffect(() => {
         const onScroll = () => {
             setScrolled(window.scrollY > 0);
         };
@@ -238,7 +177,7 @@ const Navbar = (
                         className={`span-link user-link ${activePage === "/dashboard" ? "active" : ""
                             }`}
                         onClick={(e) => {
-                            closeMob();
+                            closeMenu();
                             handleScroll(e, "dashboard", "link", "/dashboard");
                         }}
                     >
@@ -253,7 +192,7 @@ const Navbar = (
                         className={`span-link ${activePage === "/login" ? "active" : ""
                             }`}
                         onClick={(e) => {
-                            closeMob();
+                            closeMenu();
                             handleScroll(e, "login", "link", "/login");
                         }}
                     >
@@ -276,20 +215,11 @@ const Navbar = (
     const logoSrc = theme === "light" ? mainLogo : mainLogoLight;
 
 
-    const NavLogo = (
-        <>
-            <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
-                {/* in light theme the logo should change */}
-                <img src={logoSrc} className="main-logo" alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
-            </div>
-
-        </>
-    );
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    const mobNavRef = useRef(null);
-    const hamburgerRef = useRef(null);
+    const mobNavRef = useRef<HTMLDivElement | null>(null);
+    const hamburgerRef = useRef<HTMLButtonElement | null>(null);
+    const sidebarRef = useRef<HTMLElement | null>(null);
+    const middleRef = useRef<HTMLDivElement | null>(null);
+    const linksRef = useRef<HTMLUListElement | null>(null);
 
     const toggleTheme = () => {
         const next = theme === "light" ? "dark" : "light";
@@ -297,45 +227,63 @@ const Navbar = (
         setTheme(next);
     };
 
-    const toggleMob = () => {
-        setIsOpen((prev) => !prev);
+    const toggleMenu = () => {
+        if (isDashboard) return;
+        setMenuOpen((prev) => !prev);
     };
 
-    const closeMob = () => {
-        setIsOpen(false);
-    };
+    const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+    // The mobile menu never opens on dashboard routes.
     useEffect(() => {
+        if (isDashboard) setMenuOpen(false);
+    }, [isDashboard]);
 
-        const handleClickOutside = (e) => {
-            if (
-                isOpen &&
-                mobNavRef.current &&
-                hamburgerRef.current &&
-                !mobNavRef.current.contains(e.target) &&
-                !hamburgerRef.current.contains(e.target)
-            ) {
-                closeMob();
-            }
+    // Landing links that don't fit fall back to the hamburger at any width. The dashboard has no links.
+    const fits = useNavbarFit(middleRef, linksRef, [navbarLinks, user, currentlanguage]);
+    const compact = !isDashboard && fits;
+
+    // Widening the window until the links fit closes the menu. Below the breakpoint the media query
+    // keeps the hamburger, so the menu stays as it is.
+    useEffect(() => {
+        if (!compact && !isNavbarCollapsedWidth()) setMenuOpen(false);
+    }, [compact]);
+
+    // Above the breakpoint the sidebar is always in view; drop the flag so narrowing again starts closed.
+    useEffect(() => {
+        if (!sidebarOpen) return;
+        const onResize = () => {
+            if (!isNavbarCollapsedWidth()) closeSidebar();
         };
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, [sidebarOpen, closeSidebar]);
 
-        document.addEventListener("click", handleClickOutside);
-        return () => document.removeEventListener("click", handleClickOutside);
-    }, [isOpen]);
+    // The sidebar lives in the Dashboard tree, so look it up rather than holding a ref to it.
+    useEffect(() => {
+        sidebarRef.current = isDashboard ? document.getElementById('dashboard-sidebar') : null;
+    }, [isDashboard, sidebarOpen]);
 
+    useDismissable({ open: !isDashboard && menuOpen, onClose: closeMenu, panelRef: mobNavRef, toggleRef: hamburgerRef });
+    useDismissable({
+        open: isDashboard && sidebarOpen && isNavbarCollapsedWidth(),
+        onClose: closeSidebar,
+        panelRef: sidebarRef,
+        toggleRef: hamburgerRef,
+    });
 
-
+    const panelOpen = isDashboard ? sidebarOpen : menuOpen;
 
     return (
 
         <>
-            <nav>
+            <nav className={compact ? 'nav--compact' : undefined}>
                 <div className="nav-brand" onClick={() => { showPage(''); navigate("/"); }}>
                     <img src={logoSrc} className={theme === "light" ? "nav-logo" : "nav-logo"} alt="German Industry Club Logo" fetchPriority='high' decoding="async" title="German Industry Club Logo" />
                 </div>
-                <div className='d-flex justify-content-center'>
+                <div className="nav-middle" ref={middleRef}>
 
-                    <ul className="nav-links" style={isDashboard ? { display: 'none' } : undefined}>
+                    <ul className="nav-links" ref={linksRef} style={isDashboard ? { display: 'none' } : undefined}>
 
                         {Array.isArray(navbarLinks) &&
                             navbarLinks.map((link) => (
@@ -375,19 +323,30 @@ const Navbar = (
                 </div>
 
                 <div className="nav-right">
-                    {isMobile ? null : User}
+                    {/* In the dashboard the mobile menu never opens, so the avatar stays in the bar. */}
+                    {isMobile && !isDashboard ? null : User}
                     <div className="theme-wrap" onClick={toggleTheme}>
                         <span className="theme-lbl" id="themeLbl">{theme === "light" ? "Light" : "Dark"}</span>
                         <div className="theme-tog"></div>
                     </div>
-                    <div className="hamburger" id="hamburger" onClick={toggleMob}>
+                    <button
+                        type="button"
+                        ref={hamburgerRef}
+                        className={`hamburger${panelOpen ? ' open' : ''}`}
+                        id="hamburger"
+                        aria-label={panelOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={panelOpen}
+                        aria-controls={isDashboard ? 'dashboard-sidebar' : 'mobile-nav'}
+                        onClick={isDashboard ? toggleSidebar : toggleMenu}
+                    >
                         <span></span><span></span><span></span>
-                    </div>
+                    </button>
                 </div>
             </nav>
 
             <div
-                className={`mob-nav ${isOpen ? "open" : ""}`}
+                id="mobile-nav"
+                className={`mob-nav ${menuOpen ? "open" : ""}`}
                 ref={mobNavRef}
             >
                 {!isDashboard && Array.isArray(navbarLinks) && navbarLinks?.map((link) => (
@@ -396,7 +355,7 @@ const Navbar = (
                             link.type === 'link' && <span className={`span-link ${(link.path === '/blog' ? isBlogPage : activePage === link.path) ? 'active' : ''}`}
 
                                 onClick={() => {
-                                    closeMob();
+                                    closeMenu();
                                     showPage(link.path);
                                     navigate(link.path);
                                 }}
@@ -410,7 +369,7 @@ const Navbar = (
                     </li>
 
                 ))}
-                {User}
+                {!isDashboard && User}
                 {/* <li><a onClick={() => {
                     showPage('/contact');
                     navigate('/contact');

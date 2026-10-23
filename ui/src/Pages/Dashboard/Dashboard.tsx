@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
 import { UserProfilesDataGrid } from "@/Components/Dashboard/User/Profile";
@@ -14,6 +14,8 @@ import CompareCountries from "@/Components/Dashboard/CompareCountries/CompareCou
 import Continent from "@/Components/Dashboard/Continent/Continent";
 import LogoutComponent from "./Logout";
 import "./Dashboard.css";
+import { setDashboardSidebarOpen } from "@/features/appSlice";
+import { isNavbarCollapsedWidth } from "@/Components/Navbar/navbarConfig";
 import { usePage } from "@/Providers/PageContext";
 import Events from "@/Components/Dashboard/Events/Events";
 import ManageMemberLetters from "@/Components/Dashboard/RecommendationLetters/ManageMemberLetters";
@@ -130,7 +132,14 @@ const isValidMenuItem = (value: string | null): value is MenuItem => {
 
 const Dashboard: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  // Opened by the navbar hamburger; shared through Redux because the navbar is a separate tree.
+  const isSidebarOpen = useSelector((state: RootState) => state.app.dashboardSidebarOpen);
+  const dispatch = useDispatch();
+
+  // Start closed on the next visit.
+  useEffect(() => () => {
+    dispatch(setDashboardSidebarOpen(false));
+  }, [dispatch]);
 
   const userProfile = useSelector((state: RootState) => state.auth?.user);
   const authLoading = useSelector((state: RootState) => state.auth?.loading);
@@ -214,8 +223,8 @@ const Dashboard: React.FC = () => {
     setSearchParams(nextParams, { replace: true });
     setActiveTab(item);
 
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      setSidebarOpen(false);
+    if (isNavbarCollapsedWidth()) {
+      dispatch(setDashboardSidebarOpen(false));
     }
   };
 
@@ -225,15 +234,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className={`dashboard ${activePage === "/dashboard" ? "active" : ""}`}>
-      <aside className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-        <button
-          className="close-btn"
-          onClick={() => setSidebarOpen((prev) => !prev)}
-          aria-label="Close sidebar"
-        >
-          ×
-        </button>
-
+      <aside id="dashboard-sidebar" className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="nav">
           <ul>
             {filteredMenuItems.map((item) => (
@@ -241,6 +242,12 @@ const Dashboard: React.FC = () => {
                 key={item}
                 className={activeTab === item ? "active" : ""}
                 onClick={() => handleMenuClick(item)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleMenuClick(item);
+                  }
+                }}
                 role="button"
                 tabIndex={0}
               >
@@ -252,14 +259,6 @@ const Dashboard: React.FC = () => {
       </aside>
 
       <main className="main-content">
-        <button
-          className="open-sidebar-btn"
-          onClick={() => setSidebarOpen((prev) => !prev)}
-          aria-label="Open sidebar"
-        >
-          ☰
-        </button>
-
         {activeComponent}
       </main>
     </div>

@@ -136,7 +136,6 @@ async function startSSR() {
       },
       optimizeDeps: {
         include: [
-          "@animated-burgers/burger-rotate",
           "react-icons/fa",
           "@reduxjs/toolkit",
           "react-slick",

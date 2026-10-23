@@ -5489,7 +5489,7 @@
 						}
 					}
 				},
-				"description": "Upload a presentation file and attach it to an event. Max 50 MB (also enforced by the\nrequest's multer limit). Only PDF / PPT / PPTX are accepted.",
+				"description": "Upload a presentation file and attach it to an event. Admin and procurement only; members\ncan read presentations but not add them. Max 50 MB (also enforced by the request's multer\nlimit). Only PDF / PPT / PPTX are accepted.",
 				"tags": [
 					"Presentations"
 				],

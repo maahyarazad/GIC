@@ -51,7 +51,7 @@ const accessControl: Record<MenuItem, string[]> = {
   member_profiles: ["admin"],
   events: ["user", "admin", "procurement"],
   manage_events: ["admin"],
-  manage_presentations: ["user", "admin", "procurement"],
+  manage_presentations: ["admin", "procurement"],
   recommendation_letters: ["admin"],
   business_letter: ["user", "procurement"],
   blog: ["admin", "procurement"],

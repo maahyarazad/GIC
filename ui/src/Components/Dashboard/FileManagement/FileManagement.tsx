@@ -7,6 +7,9 @@ import { EnvContext } from '../../../EnvContext.jsx';
 import { useConfirm } from "@/Providers/ConfirmDialogProvider";
 import debounce from "@/Hooks/useDebounce";
 import Loader from "@/Components/Loader/Loader";
+import { uploadFile, apiErrorMessage } from "@/api/files";
+import UploadOverlay, { UploadItem, batchPercentOf } from "./UploadOverlay";
+import "./FileManagement.css";
 
 interface UploadedFileDoc {
     _id: string;
@@ -25,6 +28,7 @@ const FileManagement = () => {
     const [sortModel, setSortModel] = useState<SortModel<UploadedFileDoc> | null>(null);
     const [filterModel, setFilterModel] = useState<FilterModel<UploadedFileDoc>[] | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [uploadItems, setUploadItems] = useState<UploadItem[]>([]);
     const { show } = useToast();
     const { confirm } = useConfirm();
     const env = useContext(EnvContext);
@@ -73,29 +77,58 @@ const FileManagement = () => {
 
         
 
+    // Leaving the page would abort the requests still in flight.
+    useEffect(() => {
+        if (!uploading) return;
+        const warn = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = "";
+        };
+        window.addEventListener("beforeunload", warn);
+        return () => window.removeEventListener("beforeunload", warn);
+    }, [uploading]);
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files?.length) return;
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append("file", file);
+        const selected = Array.from(e.target.files ?? []);
+        // Reset so picking the same files again still fires onChange.
+        e.target.value = "";
+        if (!selected.length || uploading) return;
+
+        const patch = (index: number, change: Partial<UploadItem>) =>
+            setUploadItems((prev) => prev.map((item, i) => (i === index ? { ...item, ...change } : item)));
+
+        setUploadItems(selected.map((file) => ({ name: file.name, size: file.size, loaded: 0, status: "queued" })));
         setUploading(true);
 
-        try {
-            const response = await axiosInstance.post("/files", formData, { headers: { "Content-Type": "multipart/form-data" } });
-
-            const message: string = response.data.message;
-            if (response.data.success) {
-
-                show({ type: "success", message });
-                fetchFiles();
-            } else {
-                show({ type: "error", message });
+        // One request per file, in order: a failure only affects its own file.
+        const failures: string[] = [];
+        for (const [index, file] of selected.entries()) {
+            patch(index, { status: "uploading" });
+            try {
+                await uploadFile(file, (loaded, total) =>
+                    patch(index, { loaded, status: loaded >= total ? "processing" : "uploading" })
+                );
+                patch(index, { loaded: file.size, status: "done" });
+            } catch (err) {
+                const reason = apiErrorMessage(err, "Upload failed");
+                console.error(`Upload failed for ${file.name}`, err);
+                failures.push(`${file.name} (${reason})`);
+                patch(index, { status: "failed", error: reason });
             }
-        } catch (err: any) {
-            console.error("Upload failed", err);
-            show({ type: "error", message: err.message });
-        } finally {
-            setUploading(false);
+        }
+
+        setUploading(false);
+        setUploadItems([]);
+        fetchFiles();
+
+        const uploaded = selected.length - failures.length;
+        const files = (n: number) => `${n} file${n === 1 ? "" : "s"}`;
+        if (!failures.length) {
+            show({ type: "success", message: `${files(uploaded)} uploaded` });
+        } else if (!uploaded) {
+            show({ type: "error", message: `Upload failed: ${failures.join(", ")}` });
+        } else {
+            show({ type: "warning", message: `${uploaded} uploaded, ${failures.length} failed: ${failures.join(", ")}` });
         }
     };
 
@@ -174,12 +207,16 @@ const FileManagement = () => {
     ];
 
     return (
-        <div className="dash-section">
+        <div className="dash-section file-management-section">
             <div className="dash-header">
                 <h3>File Manager</h3>
-                <label className="dashboard-btn" style={{ cursor: "pointer" }}>
-                    {uploading ? "Uploading…" : "Upload File"}
-                    <input type="file" onChange={handleFileUpload} hidden />
+                <label
+                    className={`dashboard-btn${uploading ? " file-upload-btn--disabled" : ""}`}
+                    style={{ cursor: "pointer" }}
+                    aria-disabled={uploading}
+                >
+                    {uploading ? "Uploading…" : "Upload Files"}
+                    <input type="file" multiple onChange={handleFileUpload} disabled={uploading} hidden />
                 </label>
             </div>
 
@@ -202,6 +239,8 @@ const FileManagement = () => {
                 getRowId={(row) => row._id}
             />
              }
+
+            {uploading && <UploadOverlay items={uploadItems} batchPercent={batchPercentOf(uploadItems)} />}
         </div>
     );
 };

@@ -85,10 +85,16 @@ export class FileController extends Controller {
   }
 
   @Post("/")
+  @Middlewares(adminAuthMiddleware)
   public async uploadFile(
     @UploadedFile("file") file: Express.Multer.File
   ): Promise<ApiResponse<any>> {
     try {
+      if (!file) {
+        this.setStatus(400);
+        return createErrorResponse("No file provided", "NO_FILE");
+      }
+
       const collection = getCollection("uploaded_files");
 
       const extension = mime.extension(file.mimetype);
@@ -291,6 +297,7 @@ export class FileController extends Controller {
 
 
   @Delete("/{id}")
+  @Middlewares(adminAuthMiddleware)
   public async deleteFile(id: string): Promise<ApiResponse<null>> {
     try {
       const collection = getCollection("uploaded_files");

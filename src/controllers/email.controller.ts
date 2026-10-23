@@ -14,7 +14,6 @@ import {
 import { EmailTemplateModel } from "../models/emailTemplate.model";
 import { mapEmailTemplate, mapEmailTemplates } from "../mappers/email.mapper";
 import { sendDynamicEmailDoc } from "../services/emailService";
-import {extractTemplateVariables} from '../utils/helpers';
 
 
 @Route("api/v1/email-templates")
@@ -130,33 +129,13 @@ public async sendEmail(
       return createErrorResponse("Template not found", "NOT_FOUND");
     }
 
-    template.variables = extractTemplateVariables(template.html);
-
     const { variables = {}, email } = body;
 
-    // Build final params (merge system + user input)
+    // Global variables ({{CURRENT_YEAR}}, ...) are filled in by the email service.
     const params: Record<string, any> = {
       email,
       ...variables,
     };
-
-    // Inject GLOBAL variables automatically
-    for (const v of template.variables || []) {
-      if (v.type === "G") {
-        if (v.name === "CURRENT_YEAR") {
-          params[v.name] = new Date().getFullYear().toString();
-        }
-
-        if (v.name === "EVENT_NAME") {
-          params[v.name] = "German Industry Club";
-        }
-
-        // fallback support
-        if (!params[v.name] && v.defaultValue) {
-          params[v.name] = v.defaultValue;
-        }
-      }
-    }
 
     // Ensure required base fields
     params.USER_NAME = params.USER_NAME || email;

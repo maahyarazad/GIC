@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { tokenExpiry } from "../config/tokenConfig";
+import { GLOBAL_EMAIL_VARIABLE_NAMES } from "../config/emailGlobalVariables";
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 /* ============================================================
@@ -139,7 +140,6 @@ interface TemplateVariable {
   type: VariableType;
 }
 
-const GLOBAL_VARS = new Set(["CURRENT_YEAR", "EVENT_NAME"]);
 
 export function extractTemplateVariables(html: string): TemplateVariable[] {
   const regex = /{{\s*([^}]+)\s*}}/g;
@@ -157,7 +157,7 @@ export function extractTemplateVariables(html: string): TemplateVariable[] {
 
     result.push({
       name,
-      type: GLOBAL_VARS.has(name) ? "G" : "NG",
+      type: GLOBAL_EMAIL_VARIABLE_NAMES.has(name) ? "G" : "NG",
     });
   }
 

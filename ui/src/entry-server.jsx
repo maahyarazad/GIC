@@ -24,7 +24,8 @@ export async function render(url, env, client) {
             loading: false,
             error: null,
             isReady: true,
-            env: env
+            env: env,
+            dashboardSidebarOpen: false,
         },
     };
 

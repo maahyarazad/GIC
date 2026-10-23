@@ -7,6 +7,8 @@ interface AppState {
   loading: boolean;
   error: string | null;
   env: string | null;
+  /** Dashboard sidebar open below the navbar breakpoint; toggled by the navbar hamburger. */
+  dashboardSidebarOpen: boolean;
 }
 
 const initialState: AppState = {
@@ -15,6 +17,7 @@ const initialState: AppState = {
   loading: false,
   error: null,
   env: null,
+  dashboardSidebarOpen: false,
 };
 
 // ✅ Async thunk (client-side usage)
@@ -39,6 +42,12 @@ const appSlice = createSlice({
     setReady(state, action: PayloadAction<boolean>) {
       state.isReady = action.payload;
     },
+    setDashboardSidebarOpen(state, action: PayloadAction<boolean>) {
+      state.dashboardSidebarOpen = action.payload;
+    },
+    toggleDashboardSidebar(state) {
+      state.dashboardSidebarOpen = !state.dashboardSidebarOpen;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -57,5 +66,5 @@ const appSlice = createSlice({
   },
 });
 
-export const { setReady } = appSlice.actions;
+export const { setReady, setDashboardSidebarOpen, toggleDashboardSidebar } = appSlice.actions;
 export default appSlice.reducer;

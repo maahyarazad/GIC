@@ -13,7 +13,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@animated-burgers/burger-rotate": "^1.1.2",
     "@grapesjs/studio-sdk": "^1.2.1",
     "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^2.11.0",

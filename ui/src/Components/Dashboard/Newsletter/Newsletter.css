@@ -130,8 +130,28 @@
 }
 .newsletter-form-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: flex-end;
+}
+/* Secondary "Save" (stay in the editor) next to the primary "Save and Close". */
+.newsletter-btn-save {
+  background: transparent;
+  color: var(--ora);
+  border: 1px solid var(--ora);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--sa);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.newsletter-btn-save:hover:not(:disabled) {
+  background: rgba(200, 84, 26, 0.12);
+}
+.newsletter-btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ──────────────────────────────────────

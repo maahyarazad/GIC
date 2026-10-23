@@ -5,4 +5,121 @@
   background: #f7f7f7;
   border-radius: 8px;
   margin-bottom: 8px;
-}/*# sourceMappingURL=FileManagement.css.map */
+}
+/* Upload overlay (feature 018): covers the File Manager section while a batch uploads. */
+.file-management-section {
+  position: relative;
+}
+.file-upload-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 16px 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  pointer-events: auto;
+}
+.file-upload-overlay__card {
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100% - 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bgp2);
+  color: var(--txt);
+  border: 1px solid var(--bdrs);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+.file-upload-overlay__title {
+  margin: 0;
+  font-family: var(--sa);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.file-upload-overlay__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.file-upload-overlay__row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+.file-upload-overlay__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-upload-overlay__status {
+  flex-shrink: 0;
+  color: var(--mu);
+}
+.file-upload-overlay__status--done {
+  color: #38a169;
+}
+.file-upload-overlay__status--failed {
+  flex-shrink: 1;
+  color: #e53e3e;
+  text-align: right;
+}
+.file-upload-overlay__row-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.file-upload-overlay__bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bdrs);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.file-upload-overlay__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--ora);
+  transition: width 0.2s ease;
+}
+.file-upload-overlay__bar--done .file-upload-overlay__bar-fill {
+  background: #38a169;
+}
+.file-upload-overlay__bar--failed .file-upload-overlay__bar-fill {
+  background: #e53e3e;
+}
+.file-upload-overlay__pct {
+  min-width: 4ch;
+  text-align: right;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.file-upload-overlay__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bdr);
+}
+.file-upload-overlay__count {
+  font-size: 0.8rem;
+  color: var(--mu);
+}
+.file-upload-btn--disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+/*# sourceMappingURL=FileManagement.css.map */

@@ -7,6 +7,7 @@ import type { SendRawEmailParams, EmailAttachment, EmailSender } from "./emailLo
 import { NewsletterSubscriber } from "../types/newsletterSubscriber.types";
 import { getCollection } from "../db";
 import { generateUnsubscribeToken } from "../utils/helpers";
+import { withGlobalEmailVariables } from "../config/emailGlobalVariables";
 
  
 export interface EmailTemplate {
@@ -39,16 +40,18 @@ async function sendRawEmailWithAttachments(params: SendRawEmailParams) {
 }
 
 /**
- * Replaces all {{KEY}} placeholders in a template string with values from variables object
+ * Replaces all {{KEY}} placeholders in a template string with values from variables object.
+ * Global variables (e.g. {{CURRENT_YEAR}}) are always available; see config/emailGlobalVariables.
  */
 function replacePlaceholders(
   template: string,
   variables: Record<string, string | number>
 ): string {
+  const resolved = withGlobalEmailVariables(variables);
   return template.replace(/{{(.*?)}}/g, (_, key) => {
     const trimmedKey = key.trim();
-    return variables[trimmedKey] !== undefined
-      ? String(variables[trimmedKey])
+    return resolved[trimmedKey] !== undefined
+      ? String(resolved[trimmedKey])
       : "";
   });
 }
@@ -66,7 +69,6 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
     });
     if (!template) throw new Error("Email template not found");
 
-    const currentYear = new Date().getFullYear();
     const event_name = slugToTitle(event);
     const sectionMessage = message || `To complete your registration for`;
 
@@ -75,7 +77,6 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
       EVENT_NAME: event_name,
       SECTION_MESSAGE: sectionMessage,
       OTP: otp,
-      CURRENT_YEAR: currentYear,
       // You can add more dynamically if needed
       // USER_NAME: "John Doe",
     };
@@ -95,16 +96,6 @@ export async function emailOtp(reqBody: EmailOtpRequest) {
     console.error(error);
     throw error;
   }
-}
-
-
-
-function getGlobalEmailVariables(extra: Record<string, any> = {}) {
-  return {
-    CURRENT_YEAR: new Date().getFullYear(),
-    EVENT_NAME: "GIC", 
-    ...extra
-  };
 }
 
 
@@ -133,7 +124,6 @@ export async function sendMassDynamicEmailDoc(
 
         // 🔁 VARIABLES PER SUBSCRIBER
         const variables : Record<string, any> = {
-        ...getGlobalEmailVariables(data),
         ...data,
         SUBSCRIBER_TOKEN: unsubscribeToken, // token string
         EMAIL: subscriber.email,
@@ -196,11 +186,8 @@ export async function sendDynamicEmailToUser(
     const template = await templateCollection.findOne(query);
 
 if (!template) throw new Error("Email template not found");
-    // 🔁 GLOBAL + CUSTOM VARIABLES
-    const variables: Record<string, any> = {
-      ...getGlobalEmailVariables(param.data),
-      ...param.data,
-    };
+    // Global variables are added by replacePlaceholders.
+    const variables: Record<string, any> = { ...param.data };
 
 
 
@@ -249,16 +236,9 @@ export async function sendDynamicEmailDoc(
     });
     if (!template) throw new Error(`Email template not found: ${doc}`);
 
-    // Merge global variables + template-specific variables
-    const variables = {
-      ...getGlobalEmailVariables(data),
-      ...data, // data overrides global if needed
-    };
-    const htmlData = options.htmlData ?? data;
-    const htmlVariables = {
-      ...getGlobalEmailVariables(htmlData),
-      ...htmlData,
-    };
+    // Global variables are added by replacePlaceholders.
+    const variables = data;
+    const htmlVariables = options.htmlData ?? data;
 
     const htmlBody = replacePlaceholders(template.html, htmlVariables);
     const textBody = replacePlaceholders(template.text || "", variables);

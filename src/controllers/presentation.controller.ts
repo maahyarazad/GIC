@@ -18,7 +18,7 @@ import fs from "fs";
 import path from "path";
 import mime from "mime-types";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { adminOnlyMiddleware } from "../middleware/adminauth.middleware";
+import { adminAuthMiddleware, adminOnlyMiddleware } from "../middleware/adminauth.middleware";
 import { browserLoginRedirect } from "../middleware/browserLoginRedirect";
 import { EventModel } from "../models/event.model";
 import { PresentationModel, mapPresentation } from "../models/presentation.model";
@@ -47,11 +47,12 @@ const isAllowed = (contentType: string, extension: string): boolean =>
 @Tags("Presentations")
 export class PresentationController extends Controller {
   /**
-   * Upload a presentation file and attach it to an event. Max 50 MB (also enforced by the
-   * request's multer limit). Only PDF / PPT / PPTX are accepted.
+   * Upload a presentation file and attach it to an event. Admin and procurement only; members
+   * can read presentations but not add them. Max 50 MB (also enforced by the request's multer
+   * limit). Only PDF / PPT / PPTX are accepted.
    */
   @Post("/")
-  @Middlewares(authMiddleware)
+  @Middlewares(adminAuthMiddleware)
   public async uploadPresentation(
     @Request() req: ExpressRequest,
     @FormField() eventId: string,

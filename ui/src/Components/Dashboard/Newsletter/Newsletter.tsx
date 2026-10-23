@@ -339,8 +339,17 @@ const Newsletter: React.FC = () => {
             <button type="button" className="newsletter-btn-back" onClick={() => setView("list")}>
               Cancel
             </button>
+            {/* Save keeps the editor open; Save and Close (also the form's Enter key) returns to the list. */}
+            <button
+              type="button"
+              className="newsletter-btn-save"
+              disabled={submitting}
+              onClick={() => submitArticle(form.html, { stay: true })}
+            >
+              {submitting ? "Saving…" : "Save"}
+            </button>
             <button type="submit" form="newsletter-form" className="dashboard-btn" disabled={submitting}>
-              {submitting ? "Saving…" : editingArticle ? "Save Changes" : "Create Article"}
+              {submitting ? "Saving…" : "Save and Close"}
             </button>
           </div>
         </div>

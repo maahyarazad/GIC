@@ -1,3 +1,5 @@
+import { GLOBAL_EMAIL_VARIABLE_NAMES } from "../../../../../src/config/emailGlobalVariables";
+
 type VariableType = "G" | "NG";
 
 interface TemplateVariable {
@@ -5,7 +7,6 @@ interface TemplateVariable {
   type: VariableType;
 }
 
-const GLOBAL_VARS = new Set(["CURRENT_YEAR", "EVENT_NAME"]);
 
 export function extractTemplateVariables(html: string): TemplateVariable[] {
   const regex = /{{\s*([^}]+)\s*}}/g;
@@ -23,7 +24,7 @@ export function extractTemplateVariables(html: string): TemplateVariable[] {
 
     result.push({
       name,
-      type: GLOBAL_VARS.has(name) ? "G" : "NG",
+      type: GLOBAL_EMAIL_VARIABLE_NAMES.has(name) ? "G" : "NG",
     });
   }
 

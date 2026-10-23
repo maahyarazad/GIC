@@ -2188,56 +2188,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"SuccessResponse_unknown_": {
-				"properties": {
-					"pagination": {
-						"properties": {
-							"pages": {
-								"type": "number",
-								"format": "double"
-							},
-							"total": {
-								"type": "number",
-								"format": "double"
-							},
-							"limit": {
-								"type": "number",
-								"format": "double"
-							},
-							"page": {
-								"type": "number",
-								"format": "double"
-							}
-						},
-						"required": [
-							"pages",
-							"total",
-							"limit",
-							"page"
-						],
-						"type": "object"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"data": {},
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							true
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"timestamp",
-					"success"
-				],
-				"type": "object"
-			},
 			"OtpCheckMobileBody": {
 				"properties": {
 					"otp": {
@@ -5742,7 +5692,7 @@
 											"$ref": "#/components/schemas/ErrorResponse"
 										},
 										{
-											"$ref": "#/components/schemas/SuccessResponse_unknown_"
+											"$ref": "#/components/schemas/SuccessResponse_any_"
 										}
 									]
 								}
@@ -6770,26 +6720,6 @@
 						}
 					}
 				]
-			}
-		},
-		"/api/v1/events/public": {
-			"get": {
-				"operationId": "GetPublicEvents",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Events"
-				],
-				"security": [],
-				"parameters": []
 			}
 		},
 		"/api/v1/events": {

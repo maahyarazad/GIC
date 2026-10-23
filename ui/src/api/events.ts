@@ -2,7 +2,6 @@ import axiosInstance, { ApiError } from "./axiosInstance";
 import type {
   AdminEventDto,
   EventAttendanceDto,
-  EventDto,
   EventInput,
   MemberEventDto,
   MyAttendance,
@@ -25,10 +24,6 @@ const itemsOf = <T,>(response: { data: any }): T[] => {
 
 export const getEvents = async (signal?: AbortSignal): Promise<MemberEventDto[]> =>
   itemsOf(await axiosInstance.get("/events", { signal }));
-
-// No sign-in needed: all events (upcoming and past) without attendance data (Events page for visitors).
-export const getPublicEvents = async (signal?: AbortSignal): Promise<EventDto[]> =>
-  itemsOf(await axiosInstance.get("/events/public", { signal }));
 
 export type ConfirmAttendanceResult = MyAttendance & { kind: "created" | "exists" };
 

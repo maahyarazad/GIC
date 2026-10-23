@@ -23,7 +23,7 @@ import {
   toMyAttendance,
 } from "../models/eventAttendance.model";
 import { notifyAttendanceConfirmed } from "../services/eventNotifications";
-import { EventDto, MemberEventDto } from "../types/event.types";
+import { MemberEventDto } from "../types/event.types";
 import { createErrorResponse, createSuccessResponse } from "../utils/helpers";
 import { toObjectId } from "../mappers/objectId.mapper";
 
@@ -40,24 +40,6 @@ const releaseSeat = (eventId: ObjectId) =>
 @Route("api/v1/events")
 @Tags("Events")
 export class EventController extends Controller {
-  // Public (Events page for visitors): all events, upcoming and past, without attendance data.
-  @Get("/public")
-  public async getPublicEvents(): Promise<any> {
-    try {
-      const now = new Date();
-      const events = await EventModel.find().sort({ startsAt: 1 }).lean();
-
-      const items: EventDto[] = events.map((event: any) => mapEvent(event, now));
-
-      this.setStatus(200);
-      return createSuccessResponse({ items }, "Events fetched");
-    } catch (error) {
-      console.error("Error fetching public events:", error);
-      this.setStatus(500);
-      return createErrorResponse("Failed to fetch events", "INTERNAL_ERROR");
-    }
-  }
-
   @Get("/")
   @Middlewares(authMiddleware)
   public async getEvents(@Request() req: ExpressRequest): Promise<any> {

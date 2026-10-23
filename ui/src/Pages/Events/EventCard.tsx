@@ -3,10 +3,17 @@ import React from "react";
 type Props = {
     event: any;
     _onClick : (page: String) => void
+    // Visitor placeholder: blurred and hidden from assistive technology.
+    blurred?: boolean
 }
 
-const EventCard : React.FC<Props> = ({ event, _onClick }) => (
-  <div className="ev-card" style={event.cardStyle} onClick={()=> _onClick(event.page)} >
+const EventCard : React.FC<Props> = ({ event, _onClick, blurred }) => (
+  <div
+    className={`ev-card${blurred ? " ev-card--blurred" : ""}`}
+    style={event.cardStyle}
+    aria-hidden={blurred || undefined}
+    onClick={()=> _onClick(event.page)}
+  >
     <div className="ev-vis" style={event.visStyle}>
       <div className="ev-city">{event.city}</div>
       <div className="ev-date" style={event.dateStyle}>

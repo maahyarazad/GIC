@@ -6,13 +6,32 @@ import { useNavigate } from "react-router-dom";
 import type { RootState } from "../../store";
 import { usePage } from '@/Providers/PageContext';
 import EventCard from './EventCard';
-import { getEvents, getPublicEvents } from "@/api/events";
+import { getEvents } from "@/api/events";
 import { useEventAttendance } from "@/Hooks/useEventAttendance";
 import { MemberEventDto } from "../../../../src/types/event.types";
 
 interface Props {
     siteData?: any;
 }
+
+// Visitors get these blurred stand-ins instead of real board meetings: generic text only,
+// always three, so nothing about the real list (not even its size) reaches them.
+const PLACEHOLDER_CARDS = [1, 2, 3].map((n) => ({
+    id: `placeholder-${n}`,
+    page: `placeholder-${n}`,
+    city: "Members Only",
+    day: "··",
+    monthLabel: "Members Only",
+    type: "Upcoming · Members Board Meeting",
+    title: "Private Board Meeting",
+    description: "Details are shared with Club members.",
+    meta: ["Members Only", "Members Only", "Request Access"],
+    visStyle: {
+        background: "linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)",
+    },
+    dateStyle: { background: "" },
+    cardStyle: { opacity: 1, cursor: 'pointer' }
+}));
 
 const EventsPage: React.FC<Props> = () => {
     const { show } = useToast();
@@ -27,27 +46,31 @@ const EventsPage: React.FC<Props> = () => {
 
     const [_loading, _setLoading] = useState(true);
 
-    // Public page: visitors get all events; signed-in users also get their own attendance.
+    // Members only: visitors never request board meetings (they see PLACEHOLDER_CARDS).
     const fetchEvents = useCallback(async () => {
         try {
             _setLoading(true);
-            setEvents(user
-                ? await getEvents()
-                : (await getPublicEvents()).map((event) => ({ ...event, myAttendance: null })));
+            setEvents(await getEvents());
         } catch (err) {
-            show({ type: "error", message: "Failed to fetch events" });
-            console.error("Failed to fetch events", err);
+            show({ type: "error", message: "Failed to fetch board meetings" });
+            console.error("Failed to fetch board meetings", err);
         } finally {
             _setLoading(false);
         }
-    }, [user]);
+    }, []);
 
     useEffect(() => {
         if (loading) return;
+        if (!user) {
+            // Signed out (or never signed in): drop any real rows a member had loaded.
+            setEvents([]);
+            _setLoading(false);
+            return;
+        }
         fetchEvents();
-    }, [loading, fetchEvents]);
+    }, [loading, user, fetchEvents]);
 
-    const { confirm } = useEventAttendance(fetchEvents);
+    const { confirm } = useEventAttendance(fetchEvents, "board meeting");
 
     // Event → card shape.
     const toCard = useCallback((event: MemberEventDto) => {
@@ -69,7 +92,7 @@ const EventsPage: React.FC<Props> = () => {
             city: event.location,
             day: String(day),
             monthLabel,
-            type: `${event.isPast ? "Past" : "Upcoming"} · Members Event`,
+            type: `${event.isPast ? "Past" : "Upcoming"} · Members Board Meeting`,
             title: event.title,
             description: event.description,
             meta: [monthLabel, "Members Only", action],
@@ -77,10 +100,10 @@ const EventsPage: React.FC<Props> = () => {
                 background: "linear-gradient(135deg,var(--bgp2) 0%,var(--bg2) 100%)",
             },
             dateStyle: { background: "" },
-            // Members can't attend past events, so those cards are not clickable for them.
-            cardStyle: { opacity: 1, cursor: event.isPast && user ? 'default' : 'pointer' }
+            // Members can't attend past board meetings, so those cards are not clickable.
+            cardStyle: { opacity: 1, cursor: event.isPast ? 'default' : 'pointer' }
         };
-    }, [user]);
+    }, []);
 
     // Upcoming: soonest first. Past: most recent first.
     const upcomingCards = useMemo(() => events
@@ -115,7 +138,7 @@ const EventsPage: React.FC<Props> = () => {
                     <div className="br-content">
                         <div className="br-tag">Members Only &middot; By Invitation</div>
                         <h1 className="br-title">
-                            <em style={{ color: "var(--ora)" }}>Events</em>
+                            <em style={{ color: "var(--ora)" }}>Board Meetings</em>
                         </h1>
                         <p className="br-sub">
                             Private sessions, Business Breakfasts, and curated evenings for Club members across MEA.
@@ -126,8 +149,8 @@ const EventsPage: React.FC<Props> = () => {
                 <div className="ev-sec ev-sec--upcoming">
                     <div className="ev-hd">
                         <div>
-                            <div className="slbl">Events &amp; Gatherings</div>
-                            <h2 className="stit">Upcoming <em>Events</em></h2>
+                            <div className="slbl">Board Meetings &amp; Gatherings</div>
+                            <h2 className="stit">Upcoming <em>Board Meetings</em></h2>
                         </div>
 
                         <a
@@ -142,20 +165,24 @@ const EventsPage: React.FC<Props> = () => {
                         </a>
                     </div>
 
-                    {!_loading && upcomingCards.length === 0 && (
-                        <p className="ev-empty">No upcoming events are scheduled yet.</p>
+                    {!user && PLACEHOLDER_CARDS.map((card) => (
+                        <EventCard key={card.id} event={card} blurred _onClick={(id) => handleSelect(String(id))} />
+                    ))}
+
+                    {user && !_loading && upcomingCards.length === 0 && (
+                        <p className="ev-empty">No upcoming board meetings are scheduled yet.</p>
                     )}
-                    {upcomingCards.map((event) => (
+                    {user && upcomingCards.map((event) => (
                         <EventCard key={event.id} event={event} _onClick={(id) => handleSelect(String(id))} />
                     ))}
                 </div>
 
-                {pastCards.length > 0 && (
+                {user && pastCards.length > 0 && (
                     <div className="ev-sec ev-sec--past">
                         <div className="ev-hd">
                             <div>
                                 <div className="slbl">Archive</div>
-                                <h2 className="stit">Past <em>Events</em></h2>
+                                <h2 className="stit">Past <em>Board Meetings</em></h2>
                             </div>
                         </div>
 

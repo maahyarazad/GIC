@@ -93,6 +93,11 @@
   font-style: italic;
   color: var(--mu);
 }
+#page-events .ev-card--blurred {
+  filter: blur(6px);
+  user-select: none;
+  cursor: pointer;
+}
 @media (max-width: 1024px) {
   #page-events .br-hero {
     padding: 40px 32px 28px;
